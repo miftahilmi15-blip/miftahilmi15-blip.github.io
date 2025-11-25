@@ -15,7 +15,39 @@ const btnAbsen = document.getElementById('btn-absen');
 const btnClear = document.getElementById('btn-clear');
 const recordsDiv = document.getElementById('records');
 const userEmailSpan = document.getElementById('user-email');
+function loadPrayerTimes() {
+  // Lokasi: Jakarta (ganti sesuai lokasi kamu)
+  let latitude = -6.200000;
+  let longitude = 106.816666;
 
+  fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=11`)
+    .then(res => res.json())
+    .then(data => {
+      const times = data.data.timings;
+      const list = document.getElementById("pray-times");
+
+      list.innerHTML = `
+        <li>Subuh : ${times.Fajr}</li>
+        <li>Dzuhur : ${times.Dhuhr}</li>
+        <li>Ashar : ${times.Asr}</li>
+        <li>Maghrib : ${times.Maghrib}</li>
+        <li>Isya : ${times.Isha}</li>
+      `;
+    })
+    .catch(err => console.error("Error Waktu Sholat:", err));
+} 
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById("auth-section").classList.add("hidden");
+    document.getElementById("app-section").classList.remove("hidden");
+
+    loadPrayerTimes();
+    loadRecords();
+  } else {
+    document.getElementById("auth-section").classList.remove("hidden");
+    document.getElementById("app-section").classList.add("hidden");
+  }
+});
 btnRegister.onclick = async () => {
   const email = emailInput.value.trim();
   const pass = passInput.value.trim();
