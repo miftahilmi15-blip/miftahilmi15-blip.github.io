@@ -19,15 +19,28 @@ body {
 }
 
 /* Header */
-header {
-  text-align: center;
-  margin-bottom: 25px;
+.header-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
-header h1 {
-  font-size: 30px;
-  color: #2e5e4e;
-  font-weight: bold;
+.logo {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #2e5e4e;
+  background: #fff;
+  padding: 5px;
+}
+
+/* Biar tetap rapi di HP */
+@media (max-width: 480px) {
+  .header-box {
+    flex-direction: column;
+  }
 }
 
 .tagline {
