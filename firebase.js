@@ -1,12 +1,6 @@
-// Firebase v9+
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } 
-from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getFirestore, doc, setDoc } 
-from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-// Your Firebase Config
-const firebaseConfig = {
+// firebase.js - initialized with user's config
+// Replace these values only if you change project
+var firebaseConfig = {
   apiKey: "AIzaSyA9or0xsb5RB-Z-JzntgFEGb51wK0b4w4Y",
   authDomain: "database-santri-e1240.firebaseapp.com",
   projectId: "database-santri-e1240",
@@ -15,8 +9,7 @@ const firebaseConfig = {
   appId: "1:116390382568:web:23ce25e5e3ba3e9087b25d",
   measurementId: "G-CPKGG6X5TD"
 };
-
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+// Initialize Firebase (compat)
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var db = firebase.firestore();

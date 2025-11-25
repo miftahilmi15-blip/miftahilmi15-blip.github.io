@@ -1,0 +1,1 @@
+E-Santri static web app. Upload all files to a public GitHub repo and enable GitHub Pages (branch main, root) or host on Firebase Hosting. Use Firebase project already created. For help, ask the assistant.
