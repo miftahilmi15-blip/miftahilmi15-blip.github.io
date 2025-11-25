@@ -127,7 +127,7 @@ input:focus, select:focus {
 .menu-item {
   background: #ffffff;
   border-radius: 14px;
-  padding: 12px;
+  padding: 10px;
   text-align: center;
   border: 2px solid #2e5e4e;
   cursor: pointer;
@@ -135,8 +135,8 @@ input:focus, select:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 150px;       /* tinggi sama semua */
+  justify-content: space-between; /* penting agar gambar & teks proporsional */
+  height: 160px; /* tinggi card sama semua */
 }
 
 .menu-item:hover {
@@ -145,10 +145,10 @@ input:focus, select:focus {
 }
 
 .menu-icon {
-  width: 80px;         /* ukuran sama semua */
-  height: 80px;
-  object-fit: contain;  /* proporsional */
-  margin-bottom: 8px;
+  width: 100px;      /* ukuran gambar sama semua */
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 6px;
 }
 
 /* Hidden */
