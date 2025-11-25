@@ -127,10 +127,10 @@ input:focus, select:focus {
 .menu-item {
   background: #ffffff;
   border-radius: 14px;
-  padding: 12px;                   /* Padding lebih dari 8px agar tidak terlalu mepet */
+  padding: 10px;
   text-align: center;
-  border: 1px solid #ddd;          /* Mengganti border tebal menjadi tipis/shadow seperti pada gambar */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Menambahkan shadow seperti gambar */
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s;
 
@@ -138,35 +138,21 @@ input:focus, select:focus {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 120px;                  /* Tinggi card dibuat konsisten (sesuai proporsi gambar) */
+  height: 140px; /* tinggi konsisten */
 }
 
 .menu-item:hover {
   transform: scale(1.05);
-  background: #f0f8ff;            /* Hover sedikit lebih terang */
+  background: #f0f8ff;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .menu-icon {
-  /* ================================================= */
-  /* PERBAIKAN UTAMA AGAR GAMBAR TIDAK TERPOTONG */
-  /* ================================================= */
-  width: 60px;                    /* Ukuran gambar ikon yang lebih kecil (mirip gambar) */
+  width: 60px;       /* ukuran konsisten */
   height: 60px;
-  /* Kunci: Pastikan gambar diskalakan agar muat di dalam elemen */
-  object-fit: contain;          
-  margin-bottom: 6px;
+  object-fit: contain;
+  margin-bottom: 8px;
 }
-
-/* ================================================= */
-/* Tambahan untuk card bawah yang ikonnya lebih kecil */
-/* ================================================= */
-.menu-item:nth-child(n+3) .menu-icon {
-  width: 40px; 
-  height: 40px; 
-  opacity: 0.7; /* Gambar ikon di baris bawah tampak lebih redup/berbeda */
-}
-/* ================================================= */
 
 /* Hidden */
 .hidden {
