@@ -22,7 +22,7 @@ body {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 10px 20px;
+  padding: 15px 20px;
 }
 
 .header-box .logo {
@@ -31,7 +31,7 @@ body {
   object-fit: contain;
 }
 
-.header-box .header-text {
+.header-box div {
   display: flex;
   flex-direction: column;
 }
@@ -39,11 +39,12 @@ body {
 .header-box .title {
   margin: 0;
   font-size: 24px;
-  color: #333;
+  font-weight: 600;
+  color: #2e5e4e;
 }
 
 .header-box .tagline {
-  margin-top: 2px;
+  margin-top: 4px;
   font-size: 14px;
   color: #666;
 }
@@ -183,271 +184,6 @@ footer small {
     flex-direction: column;
   }
 
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}}
-
-.card.small {
-  text-align: center;
-  padding: 12px;
-  font-size: 12px;
-}
-
-/* Input + Select */
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  background: #fafafa;
-  transition: 0.2s ease;
-}
-
-input:focus, select:focus {
-  border-color: #2e5e4e;
-  background: #fff;
-  outline: none;
-}
-
-/* Buttons */
-.btn {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  background: #d9d9d9;
-  transition: 0.2s;
-  width: 48%;
-}
-
-.btn:hover {
-  background: #bfbfbf;
-}
-
-.btn.primary {
-  background: #2e5e4e;
-  color: #fff;
-}
-
-.btn.primary:hover {
-  background: #234a3d;
-}
-
-/* Layout row */
-.row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.between {
-  justify-content: space-between;
-}
-
-/* Dashboard Menu Grid */
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 20px;
-}
-
-.menu-item {
-  background: #ffffff;
-  border-radius: 14px;
-  /* PERUBAHAN: Mengurangi padding */
-  padding: 8px; 
-  text-align: center;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* PERUBAHAN: Mengurangi tinggi bingkai untuk tampilan yang lebih padat */
-  height: 105px; 
-}
-
-.menu-item:hover {
-  transform: scale(1.05);
-  background: #f0f8ff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.menu-icon {
-  /* PERUBAHAN: Memperbesar ikon sedikit lagi */
-  width: 80px;       
-  height: 80px;
-  object-fit: contain;
-  margin-bottom: 4px; 
-}
-
-/* Hidden */
-.hidden {
-  display: none;
-}
-
-/* Footer */
-footer small {
-  color: #666;
-  text-align: center;
-  width: 100%;
-  display: block;
-  margin-top: 20px;
-}
-
-/* Mobile Responsive */
-@media (max-width: 480px) {
-  .btn { width: 100%; }
-  .row { flex-direction: column; }
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}}
-
-.tagline {
-  font-size: 13px;
-  color: #888;
-}
-
-@media (max-width: 480px) {
-  .header-box {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-/* Cards */
-.card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  border-left: 5px solid #2e5e4e;
-}
-
-.card.small {
-  text-align: center;
-  padding: 12px;
-  font-size: 12px;
-}
-
-/* Input + Select */
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-  background: #fafafa;
-  transition: 0.2s ease;
-}
-
-input:focus, select:focus {
-  border-color: #2e5e4e;
-  background: #fff;
-  outline: none;
-}
-
-/* Buttons */
-.btn {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  background: #d9d9d9;
-  transition: 0.2s;
-  width: 48%;
-}
-
-.btn:hover {
-  background: #bfbfbf;
-}
-
-.btn.primary {
-  background: #2e5e4e;
-  color: #fff;
-}
-
-.btn.primary:hover {
-  background: #234a3d;
-}
-
-/* Layout row */
-.row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.between {
-  justify-content: space-between;
-}
-
-/* Dashboard Menu Grid */
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-top: 20px;
-}
-
-.menu-item {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* NILAI OPTIMAL: Tinggi bingkai disesuaikan untuk ikon 75px dan teks */
-  height: 100px; 
-}
-
-.menu-item:hover {
-  transform: scale(1.05);
-  background: #f0f8ff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.menu-icon {
-  /* NILAI OPTIMAL: Ukuran ikon diperbesar */
-  width: 60px;       
-  height: 60px;
-  object-fit: contain;
-  margin-bottom: 4px; 
-}
-
-/* Hidden */
-.hidden {
-  display: none;
-}
-
-/* Footer */
-footer small {
-  color: #666;
-  text-align: center;
-  width: 100%;
-  display: block;
-  margin-top: 20px;
-}
-
-/* Mobile Responsive */
-@media (max-width: 480px) {
-  .btn { width: 100%; }
-  .row { flex-direction: column; }
   .menu-grid {
     grid-template-columns: repeat(2, 1fr);
   }
