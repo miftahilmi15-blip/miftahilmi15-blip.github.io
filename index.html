@@ -1,241 +1,212 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>E-Santri</title>
-  <style>
-    /* ========== GLOBAL ========== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Santri</title>
+<style>
+  /* ========== GLOBAL ========== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+  }
 
-    body {
-      background: #f7f9fb;
-      color: #333;
-      padding: 20px;
-    }
+  body {
+    background: #f7f9fb;
+    color: #333;
+    padding: 20px;
+  }
 
-    .container {
-      max-width: 420px;
-      margin: auto;
-    }
+  .container {
+    max-width: 420px;
+    margin: auto;
+  }
 
-    /* ========== HEADER DENGAN LOGO BINGKAI ========== */
-    .header-box {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 15px 20px;
-    }
+  /* ========== HEADER ========== */
+  .header-box {
+    display: flex;
+    align-items: center; /* vertikal sejajar */
+    gap: 15px;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ccc;
+  }
 
-    .logo-box {
-      width: 70px;
-      height: 70px;
-      padding: 5px;
-      border: 2px solid #2e5e4e;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      flex-shrink: 0;
-    }
+  .logo-box {
+    width: 70px;
+    height: 70px;
+    padding: 5px;
+    border: 2px solid #2e5e4e;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
 
-    .logo {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-    }
+  .logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+  }
 
-    .header-text {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      height: 70px;  /* sama dengan logo-box */
-    }
+  .header-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertikal sejajar logo */
+  }
 
-    .header-text .title,
-    .header-text .tagline {
-      margin: 0;
-      line-height: 1.2;
-    }
+  .header-text .title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2e5e4e;
+  }
 
-    .header-text .title {
-      font-size: 24px;
-      font-weight: 600;
-      color: #2e5e4e;
-    }
+  .header-text .tagline {
+    font-size: 14px;
+    color: #666;
+    margin-top: 4px;
+  }
 
-    .header-text .tagline {
-      font-size: 14px;
-      color: #666;
-      margin-top: 4px;
-    }
+  /* ========== CARDS ========== */
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    margin: 18px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-left: 5px solid #2e5e4e;
+  }
 
-    /* ========== CARDS ========== */
-    .card {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      border-left: 5px solid #2e5e4e;
-    }
+  .card.small {
+    text-align: center;
+    padding: 12px;
+    font-size: 12px;
+  }
 
-    .card.small {
-      text-align: center;
-      padding: 12px;
-      font-size: 12px;
-    }
+  input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    transition: 0.2s ease;
+  }
 
-    /* ========== INPUT & SELECT ========== */
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      background: #fafafa;
-      transition: 0.2s ease;
-    }
+  input:focus, select:focus {
+    border-color: #2e5e4e;
+    background: #fff;
+    outline: none;
+  }
 
-    input:focus, select:focus {
-      border-color: #2e5e4e;
-      background: #fff;
-      outline: none;
-    }
+  .btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #d9d9d9;
+    transition: 0.2s;
+    width: 48%;
+  }
 
-    /* ========== BUTTONS ========== */
-    .btn {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background: #d9d9d9;
-      transition: 0.2s;
-      width: 48%;
-    }
+  .btn:hover {
+    background: #bfbfbf;
+  }
 
-    .btn:hover {
-      background: #bfbfbf;
-    }
+  .btn.primary {
+    background: #2e5e4e;
+    color: #fff;
+  }
 
-    .btn.primary {
-      background: #2e5e4e;
-      color: #fff;
-    }
+  .btn.primary:hover {
+    background: #234a3d;
+  }
 
-    .btn.primary:hover {
-      background: #234a3d;
-    }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
 
-    /* ========== LAYOUT ========== */
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
+  .between {
+    justify-content: space-between;
+  }
 
-    .between {
-      justify-content: space-between;
-    }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 14px;
+    margin-top: 20px;
+  }
 
-    /* ========== DASHBOARD MENU GRID ========== */
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      margin-top: 20px;
-    }
+  .menu-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    transition: transform 0.25s ease, box-shadow 0.25s;
+  }
 
-    .menu-item {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #ddd;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      cursor: pointer;
-      transition: transform 0.25s ease, box-shadow 0.25s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100px; 
-    }
+  .menu-item:hover {
+    transform: scale(1.05);
+    background: #f0f8ff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
 
-    .menu-item:hover {
-      transform: scale(1.05);
-      background: #f0f8ff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+  .menu-icon {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 4px;
+  }
 
-    .menu-icon {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-      margin-bottom: 4px; 
-    }
+  .hidden { display: none; }
 
-    .hidden {
-      display: none;
-    }
+  footer small {
+    color: #666;
+    text-align: center;
+    display: block;
+    margin-top: 20px;
+  }
 
-    footer small {
-      color: #666;
-      text-align: center;
-      width: 100%;
-      display: block;
-      margin-top: 20px;
-    }
-
-    @media (max-width: 480px) {
-      .header-box {
-        flex-direction: column;
-        text-align: center;
-        gap: 8px;
-      }
-
-      .logo-box {
-        margin-bottom: 5px;
-      }
-
-      .btn {
-        width: 100%;
-      }
-
-      .row {
-        flex-direction: column;
-      }
-
-      .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
+  @media (max-width:480px) {
+    .header-box { flex-direction: column; text-align: center; gap: 8px; }
+    .logo-box { margin-bottom: 5px; }
+    .btn { width: 100%; }
+    .row { flex-direction: column; }
+  }
+</style>
 </head>
 <body>
 
 <header class="header-box">
   <div class="logo-box">
-    <img src="logo-assunnah.png" alt="Logo Assunnah Cirebon" class="logo">
+    <img src="logo-assunnah.png" alt="Logo Assunnah" class="logo">
   </div>
   <div class="header-text">
     <h1 class="title">E-Santri</h1>
-    <p class="tagline">Berpegang teguhlah pada Al-Quran dan Hadist</p>
+    <p class="tagline">Berpegang teguh pada Al-Quran dan Hadist</p>
   </div>
 </header>
 
 <main class="container">
+  <!-- LOGIN SECTION -->
   <section id="auth-section" class="card">
     <h2>Login / Register</h2>
-    <input id="email" placeholder="Email" type="email" />
-    <input id="password" placeholder="Password" type="password" />
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
     <div class="row">
       <button id="btn-login" class="btn primary">Login</button>
       <button id="btn-register" class="btn">Register</button>
@@ -243,6 +214,7 @@
     <p class="note">Gunakan email & password untuk masuk.</p>
   </section>
 
+  <!-- DASHBOARD SECTION -->
   <section id="app-section" class="hidden">
     <div class="card small row between">
       <strong id="user-email"></strong>
@@ -278,7 +250,7 @@
   </section>
 </main>
 
-<footer class="footer">
+<footer>
   <small>© 2025 E-Santri | Aplikasi Absensi Santri</small>
 </footer>
 
