@@ -4,12 +4,220 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>E-Santri</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ========== GLOBAL ========== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    body {
+      background: #f7f9fb;
+      color: #333;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: auto;
+    }
+
+    /* ========== HEADER DENGAN LOGO BINGKAI ========== */
+    .header-box {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px 20px;
+    }
+
+    .logo-box {
+      width: 70px;
+      height: 70px;
+      padding: 5px;
+      border: 2px solid #2e5e4e;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+
+    .header-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 70px;  /* sama dengan logo-box */
+    }
+
+    .header-text .title,
+    .header-text .tagline {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .header-text .title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #2e5e4e;
+    }
+
+    .header-text .tagline {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    /* ========== CARDS ========== */
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-left: 5px solid #2e5e4e;
+    }
+
+    .card.small {
+      text-align: center;
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    /* ========== INPUT & SELECT ========== */
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      transition: 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #2e5e4e;
+      background: #fff;
+      outline: none;
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #d9d9d9;
+      transition: 0.2s;
+      width: 48%;
+    }
+
+    .btn:hover {
+      background: #bfbfbf;
+    }
+
+    .btn.primary {
+      background: #2e5e4e;
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: #234a3d;
+    }
+
+    /* ========== LAYOUT ========== */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .between {
+      justify-content: space-between;
+    }
+
+    /* ========== DASHBOARD MENU GRID ========== */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .menu-item {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100px; 
+    }
+
+    .menu-item:hover {
+      transform: scale(1.05);
+      background: #f0f8ff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .menu-icon {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 4px; 
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    footer small {
+      color: #666;
+      text-align: center;
+      width: 100%;
+      display: block;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .header-box {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+      }
+
+      .logo-box {
+        margin-bottom: 5px;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -23,74 +231,56 @@
   </div>
 </header>
 
-  <main class="container">
+<main class="container">
+  <section id="auth-section" class="card">
+    <h2>Login / Register</h2>
+    <input id="email" placeholder="Email" type="email" />
+    <input id="password" placeholder="Password" type="password" />
+    <div class="row">
+      <button id="btn-login" class="btn primary">Login</button>
+      <button id="btn-register" class="btn">Register</button>
+    </div>
+    <p class="note">Gunakan email & password untuk masuk.</p>
+  </section>
 
-    <!-- LOGIN SECTION -->
-    <section id="auth-section" class="card">
-      <h2>Login / Register</h2>
-      <input id="email" placeholder="Email" type="email" />
-      <input id="password" placeholder="Password" type="password" />
+  <section id="app-section" class="hidden">
+    <div class="card small row between">
+      <strong id="user-email"></strong>
+      <button id="btn-logout" class="btn">Logout</button>
+    </div>
 
-      <div class="row">
-        <button id="btn-login" class="btn primary">Login</button>
-        <button id="btn-register" class="btn">Register</button>
+    <section id="dashboard" class="menu-grid">
+      <div class="menu-item" onclick="location.href='absensi.html'">
+        <img src="icons/absensi.png" class="menu-icon" alt="Absensi">
+        <p>Absensi Santri</p>
       </div>
-
-      <p class="note">Gunakan email & password untuk masuk.</p>
-    </section>
-
-    <!-- DASHBOARD SECTION -->
-    <section id="app-section" class="hidden">
-
-      <div class="card small row between">
-        <strong id="user-email"></strong>
-        <button id="btn-logout" class="btn">Logout</button>
+      <div class="menu-item" onclick="location.href='tahfidz.html'">
+        <img src="icons/tahfidz.png" class="menu-icon" alt="Tahfidz">
+        <p>Tahfidz</p>
       </div>
-
-      <!-- MENU ICON GRID -->
-      <section id="dashboard" class="menu-grid">
-
-        <div class="menu-item" onclick="location.href='absensi.html'">
-          <img src="icons/absensi.png" class="menu-icon" alt="Absensi">
-          <p>Absensi Santri</p>
-        </div>
-
-        <div class="menu-item" onclick="location.href='tahfidz.html'">
-          <img src="icons/tahfidz.png" class="menu-icon" alt="Tahfidz">
-          <p>Tahfidz</p>
-        </div>
-
-        <div class="menu-item" onclick="location.href='sop.html'">
-          <img src="icons/sop.png" class="menu-icon" alt="SOP">
-          <p>SOP Santri</p>
-        </div>
-
-        <div class="menu-item" onclick="location.href='kaldik.html'">
-          <img src="icons/kaldik.png" class="menu-icon" alt="Kaldik">
-          <p>Kaldik Yayasan</p>
-        </div>
-
-        <div class="menu-item" onclick="location.href='izin.html'">
-          <img src="icons/izin.png" class="menu-icon" alt="Izin">
-          <p>Perizinan Santri</p>
-        </div>
-
-        <div class="menu-item" onclick="location.href='fitur.html'">
-          <img src="icons/fitur.png" class="menu-icon" alt="Fitur">
-          <p>Fitur Lainnya</p>
-        </div>
-
-      </section>
-
+      <div class="menu-item" onclick="location.href='sop.html'">
+        <img src="icons/sop.png" class="menu-icon" alt="SOP">
+        <p>SOP Santri</p>
+      </div>
+      <div class="menu-item" onclick="location.href='kaldik.html'">
+        <img src="icons/kaldik.png" class="menu-icon" alt="Kaldik">
+        <p>Kaldik Yayasan</p>
+      </div>
+      <div class="menu-item" onclick="location.href='izin.html'">
+        <img src="icons/izin.png" class="menu-icon" alt="Izin">
+        <p>Perizinan Santri</p>
+      </div>
+      <div class="menu-item" onclick="location.href='fitur.html'">
+        <img src="icons/fitur.png" class="menu-icon" alt="Fitur">
+        <p>Fitur Lainnya</p>
+      </div>
     </section>
+  </section>
+</main>
 
-  </main>
+<footer class="footer">
+  <small>© 2025 E-Santri | Aplikasi Absensi Santri</small>
+</footer>
 
-  <footer class="footer">
-    <small>© 2025 E-Santri | Aplikasi Absensi Santri</small>
-  </footer>
-
-  <script src="firebase.js"></script>
-  <script src="app.js"></script>
 </body>
 </html>
