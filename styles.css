@@ -17,25 +17,25 @@ body {
   margin: auto;
 }
 
-/* ========== HEADER DENGAN LOGO BINGKAI ========== */
+/* ========== HEADER ========== */
 .header-box {
   display: flex;
-  align-items: center;      /* pastikan logo dan teks sejajar vertikal */
+  align-items: center; /* vertikal sejajar */
   gap: 15px;
   padding: 15px 20px;
-  flex-wrap: nowrap;
+  border-bottom: 1px solid #ccc;
 }
 
 .logo-box {
-  width: 70px;                 
+  width: 70px;
   height: 70px;
-  padding: 5px;                
-  border: 2px solid #2e5e4e;  
-  border-radius: 12px;         
+  padding: 5px;
+  border: 2px solid #2e5e4e;
+  border-radius: 12px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: #fff;            
+  align-items: center;
+  background: #fff;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   flex-shrink: 0;
 }
@@ -49,29 +49,27 @@ body {
 .header-text {
   display: flex;
   flex-direction: column;
-  justify-content: center;      /* Vertikal sejajar dengan logo */
-  height: 70px;                 /* sama dengan tinggi logo-box */
+  justify-content: center; /* vertikal sejajar logo */
 }
 
 .header-text .title {
-  margin: 0;
   font-size: 24px;
   font-weight: 600;
   color: #2e5e4e;
 }
 
 .header-text .tagline {
-  margin: 2px 0 0 0;
   font-size: 14px;
   color: #666;
+  margin-top: 4px;
 }
 
 /* ========== CARDS ========== */
 .card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 14px;
   padding: 20px;
-  margin-bottom: 18px;
+  margin: 18px 0;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border-left: 5px solid #2e5e4e;
 }
@@ -123,7 +121,7 @@ input:focus, select:focus {
   background: #234a3d;
 }
 
-/* ========== LAYOUT ========== */
+/* ========== LAYOUT FLEX ========== */
 .row {
   display: flex;
   justify-content: space-between;
@@ -137,25 +135,25 @@ input:focus, select:focus {
 /* ========== DASHBOARD MENU GRID ========== */
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2,1fr);
   gap: 14px;
   margin-top: 20px;
 }
 
 .menu-item {
-  background: #ffffff;
+  background: #fff;
   border-radius: 14px;
   padding: 10px;
   text-align: center;
   border: 1px solid #ddd;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100px; 
+  height: 100px;
+  transition: transform 0.25s ease, box-shadow 0.25s;
 }
 
 .menu-item:hover {
@@ -168,49 +166,29 @@ input:focus, select:focus {
   width: 60px;
   height: 60px;
   object-fit: contain;
-  margin-bottom: 4px; 
+  margin-bottom: 4px;
 }
 
 /* ========== HIDDEN ========== */
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
 /* ========== FOOTER ========== */
 footer small {
   color: #666;
   text-align: center;
-  width: 100%;
   display: block;
   margin-top: 20px;
 }
 
-/* ========== MEDIA QUERY MOBILE ========== */
-@media (max-width: 480px) {
+/* ========== RESPONSIVE MOBILE ========== */
+@media (max-width:480px) {
   .header-box {
     flex-direction: column;
     text-align: center;
     gap: 8px;
   }
-
-  .header-text {
-    height: auto;              /* biar fleksibel di mobile */
-    justify-content: center;
-  }
-
-  .logo-box {
-    margin-bottom: 5px;
-  }
-  
-  .btn {
-    width: 100%;
-  }
-
-  .row {
-    flex-direction: column;
-  }
-
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .logo-box { margin-bottom: 5px; }
+  .btn { width: 100%; }
+  .row { flex-direction: column; }
+  .menu-grid { grid-template-columns: repeat(2, 1fr); }
 }
