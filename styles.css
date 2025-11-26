@@ -150,8 +150,8 @@ input:focus, select:focus {
 
 .menu-icon {
   /* NILAI OPTIMAL: Ukuran ikon diperbesar */
-  width: 75px;       
-  height: 75px;
+  width: 60px;       
+  height: 60px;
   object-fit: contain;
   margin-bottom: 4px; 
 }
