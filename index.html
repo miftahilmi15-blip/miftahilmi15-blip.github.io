@@ -354,6 +354,49 @@
   overlay.onclick = () => {
     sidebar.classList.remove("open");
     overlay.classList.remove("show");
+   <script>
+function openEdit() {
+  document.getElementById("edit-profile-popup").classList.remove("hidden");
+}
+
+function closeEdit() {
+  document.getElementById("edit-profile-popup").classList.add("hidden");
+}
+
+async function saveProfile() {
+  const user = auth.currentUser;
+  if (!user) return alert("Tidak ada user login.");
+
+  const newName = document.getElementById("edit-name").value.trim();
+  const newEmail = document.getElementById("edit-email").value.trim();
+  const newPass = document.getElementById("edit-pass").value.trim();
+
+  try {
+    // update display name
+    if (newName) {
+      await user.updateProfile({ displayName: newName });
+    }
+
+    // update email
+    if (newEmail) {
+      await user.updateEmail(newEmail);
+    }
+
+    // update password
+    if (newPass) {
+      await user.updatePassword(newPass);
+    }
+
+    alert("Profil berhasil diperbarui!");
+
+    closeEdit();
+    location.reload();
+
+  } catch (err) {
+    alert("Gagal update: " + err.message);
+  }
+}
+</script>
   };
 </script>
 <!-- POPUP EDIT PROFIL -->
