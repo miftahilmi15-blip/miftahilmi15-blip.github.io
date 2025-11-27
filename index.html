@@ -5,24 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>E-Santri</title>
 
-<!-- ========== CSS ========== -->
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
   body { background:#f7f9fb; color:#333; padding:20px; }
-  .container { max-width:420px; margin:auto; }
+  .container { max-width:460px; margin:auto; }
 
   /* Header */
   .header-box { display:flex; align-items:center; gap:15px; padding:15px 20px; border-bottom:1px solid #ccc; }
   .logo-box { width:70px; height:70px; padding:5px; border:2px solid #2e5e4e; border-radius:12px; display:flex; justify-content:center; align-items:center; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.1); flex-shrink:0; }
   .logo { width:60px; height:60px; object-fit:contain; }
-  .header-text { display:flex; flex-direction:column; justify-content:center; }
   .header-text .title { font-size:24px; font-weight:600; color:#2e5e4e; }
   .header-text .tagline { font-size:14px; color:#666; margin-top:4px; }
 
   /* Cards */
   .card { background:#fff; border-radius:14px; padding:20px; margin:18px 0; box-shadow:0 4px 12px rgba(0,0,0,0.08); border-left:5px solid #2e5e4e; }
   .card.small { text-align:center; padding:12px; font-size:12px; }
-  input, button { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #ddd; background:#fafafa; transition:0.2s ease; }
+
+  input, button { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #ddd; background:#fafafa; transition:0.2s; }
   input:focus { border-color:#2e5e4e; background:white; outline:none; }
 
   /* Buttons */
@@ -34,6 +33,45 @@
 
   .hidden { display:none; }
 
+  /* MENU GRID */
+  .menu-grid {
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:18px;
+    margin-top:10px;
+  }
+
+  .menu-item {
+    background:#fff;
+    padding:15px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,0.1);
+    text-align:center;
+    cursor:pointer;
+    transition:0.2s;
+    border:1px solid #e0e0e0;
+  }
+
+  .menu-item:hover {
+    transform:translateY(-4px);
+    background:#f1f7f5;
+  }
+
+  .menu-icon {
+    width:50px;
+    height:50px;
+    margin-bottom:8px;
+    object-fit:contain;
+  }
+
+  .menu-item span {
+    font-size:13px;
+    color:#333;
+    font-weight:500;
+    display:block;
+    margin-top:6px;
+  }
+
   footer small { color:#666; text-align:center; display:block; margin-top:20px; }
 
   @media(max-width:480px) {
@@ -42,7 +80,6 @@
   }
 </style>
 
-<!-- Firebase Compat (Auth Version Lama yang Cocok) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
@@ -75,10 +112,8 @@
   </section>
 
   <!-- DASHBOARD -->
-<!-- DASHBOARD (Tampilan Setelah Login) -->
-<section id="dashboard" class="hidden">
+  <section id="dashboard" class="hidden">
 
-    <!-- Card Email + Logout -->
     <div class="card small">
       <strong id="user-email"></strong><br><br>
       <button class="btn secondary" onclick="logout()">Logout</button>
@@ -119,7 +154,7 @@
 
     </div>
 
-</section>
+  </section>
 
 </main>
 
@@ -128,7 +163,6 @@
 </footer>
 
 <script>
-  /* Firebase Config */
   const firebaseConfig = {
     apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
     authDomain: "e-santri-ed555.firebaseapp.com",
@@ -144,24 +178,21 @@
   const msg = (t) => document.getElementById("msg").innerHTML = t;
 
   function login(){
-    const email = email.value;
-    const pwd = password.value;
+    const email = document.getElementById("email").value;
+    const pwd = document.getElementById("password").value;
 
     auth.signInWithEmailAndPassword(email, pwd)
-    .then(()=>{
-      msg("");
-      showDashboard(auth.currentUser.email);
-    })
-    .catch(e => msg(e.message));
+      .then(()=>{ msg(""); showDashboard(auth.currentUser.email); })
+      .catch(e=>msg(e.message));
   }
 
   function register(){
-    const email = email.value;
-    const pwd = password.value;
+    const email = document.getElementById("email").value;
+    const pwd = document.getElementById("password").value;
 
     auth.createUserWithEmailAndPassword(email, pwd)
-    .then(()=> msg("Akun berhasil dibuat!"))
-    .catch(e => msg(e.message));
+      .then(()=> msg("Akun berhasil dibuat! Silakan login."))
+      .catch(e=>msg(e.message));
   }
 
   function logout(){
@@ -169,9 +200,8 @@
   }
 
   auth.onAuthStateChanged(user=>{
-    if(user){
-      showDashboard(user.email);
-    } else {
+    if(user){ showDashboard(user.email); }
+    else{
       document.getElementById("login-card").classList.remove("hidden");
       document.getElementById("dashboard").classList.add("hidden");
     }
