@@ -1,81 +1,149 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login E-Santri</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Santri</title>
 
-    <!-- Firebase Compat Version (Wajib untuk firebase.auth()) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<!-- ========== CSS ========== -->
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
+  body { background:#f7f9fb; color:#333; padding:20px; }
+  .container { max-width:420px; margin:auto; }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 40px;
-        }
-        input, button {
-            padding: 10px;
-            margin: 5px;
-            width: 250px;
-            font-size: 16px;
-        }
-    </style>
+  /* Header */
+  .header-box { display:flex; align-items:center; gap:15px; padding:15px 20px; border-bottom:1px solid #ccc; }
+  .logo-box { width:70px; height:70px; padding:5px; border:2px solid #2e5e4e; border-radius:12px; display:flex; justify-content:center; align-items:center; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.1); flex-shrink:0; }
+  .logo { width:60px; height:60px; object-fit:contain; }
+  .header-text { display:flex; flex-direction:column; justify-content:center; }
+  .header-text .title { font-size:24px; font-weight:600; color:#2e5e4e; }
+  .header-text .tagline { font-size:14px; color:#666; margin-top:4px; }
+
+  /* Cards */
+  .card { background:#fff; border-radius:14px; padding:20px; margin:18px 0; box-shadow:0 4px 12px rgba(0,0,0,0.08); border-left:5px solid #2e5e4e; }
+  .card.small { text-align:center; padding:12px; font-size:12px; }
+  input, button { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #ddd; background:#fafafa; transition:0.2s ease; }
+  input:focus { border-color:#2e5e4e; background:white; outline:none; }
+
+  /* Buttons */
+  .btn { padding:12px; border:none; border-radius:10px; cursor:pointer; transition:0.2s; }
+  .btn.primary { background:#2e5e4e; color:white; }
+  .btn.primary:hover { background:#234a3d; }
+  .btn.secondary { background:#d9d9d9; }
+  .btn.secondary:hover { background:#bfbfbf; }
+
+  .hidden { display:none; }
+
+  footer small { color:#666; text-align:center; display:block; margin-top:20px; }
+
+  @media(max-width:480px) {
+    .header-box { flex-direction:column; text-align:center; gap:8px; }
+    .logo-box { margin-bottom:5px; }
+  }
+</style>
+
+<!-- Firebase Compat (Auth Version Lama yang Cocok) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
+
 <body>
 
-    <h2>Login E-Santri</h2>
+<header class="header-box">
+  <div class="logo-box">
+    <img src="logo-assunnah.png" class="logo">
+  </div>
+  <div class="header-text">
+    <h1 class="title">E-Santri</h1>
+    <p class="tagline">Berpegang teguh pada Al-Quran dan Hadist</p>
+  </div>
+</header>
 
-    <input type="email" id="email" placeholder="Email"><br>
-    <input type="password" id="password" placeholder="Password"><br>
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Daftar</button>
+<main class="container">
 
-    <p id="message" style="color: red;"></p>
+  <!-- LOGIN CARD -->
+  <section id="login-card" class="card">
+    <h2>Login / Daftar</h2>
 
-    <script>
-        /* Firebase Configuration */
-        const firebaseConfig = {
-            apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
-            authDomain: "e-santri-ed555.firebaseapp.com",
-            projectId: "e-santri-ed555",
-            storageBucket: "e-santri-ed555.appspot.com",
-            messagingSenderId: "588687778472",
-            appId: "1:588687778472:web:11ee425d3c8e5d17d2189d",
-            measurementId: "G-18H1ECWW86"
-        };
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
 
-        // Init Firebase
-        firebase.initializeApp(firebaseConfig);
+    <button class="btn primary" onclick="login()">Login</button>
+    <button class="btn secondary" onclick="register()">Daftar</button>
 
-        function login() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+    <p id="msg" style="color:red; margin-top:10px;"></p>
+  </section>
 
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then(() => {
-                    document.getElementById("message").innerHTML = "Login berhasil!";
-                    window.location.href = "dashboard.html"; // Ubah jika perlu
-                })
-                .catch((error) => {
-                    document.getElementById("message").innerHTML = error.message;
-                });
-        }
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="hidden">
+    <div class="card small">
+      <strong id="user-email"></strong><br>
+      <button class="btn secondary" onclick="logout()">Logout</button>
+    </div>
+  </section>
 
-        function register() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+</main>
 
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(() => {
-                    document.getElementById("message").innerHTML = "Pendaftaran berhasil!";
-                })
-                .catch((error) => {
-                    document.getElementById("message").innerHTML = error.message;
-                });
-        }
-    </script>
+<footer>
+  <small>© 2025 E-Santri | Aplikasi Absensi Santri</small>
+</footer>
+
+<script>
+  /* Firebase Config */
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain: "e-santri-ed555.firebaseapp.com",
+    projectId: "e-santri-ed555",
+    storageBucket: "e-santri-ed555.appspot.com",
+    messagingSenderId: "588687778472",
+    appId: "1:588687778472:web:11ee425d3c8e5d17d2189d"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  const msg = (t) => document.getElementById("msg").innerHTML = t;
+
+  function login(){
+    const email = email.value;
+    const pwd = password.value;
+
+    auth.signInWithEmailAndPassword(email, pwd)
+    .then(()=>{
+      msg("");
+      showDashboard(auth.currentUser.email);
+    })
+    .catch(e => msg(e.message));
+  }
+
+  function register(){
+    const email = email.value;
+    const pwd = password.value;
+
+    auth.createUserWithEmailAndPassword(email, pwd)
+    .then(()=> msg("Akun berhasil dibuat!"))
+    .catch(e => msg(e.message));
+  }
+
+  function logout(){
+    auth.signOut();
+  }
+
+  auth.onAuthStateChanged(user=>{
+    if(user){
+      showDashboard(user.email);
+    } else {
+      document.getElementById("login-card").classList.remove("hidden");
+      document.getElementById("dashboard").classList.add("hidden");
+    }
+  });
+
+  function showDashboard(email){
+    document.getElementById("login-card").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("user-email").innerHTML = email;
+  }
+</script>
 
 </body>
 </html>
