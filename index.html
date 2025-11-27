@@ -22,7 +22,7 @@
       z-index: 10;
     }
     header img { height: 40px; }
-    #menu-btn { font-size: 26px; cursor: pointer; }
+    #menu-btn { font-size: 26px; cursor: pointer; display:none; }
 
     /* LOGIN CARD */
     #auth-section {
@@ -145,8 +145,8 @@
   <!-- POPUP EDIT PROFIL -->
   <div id="edit-popup">
     <h3>Edit Profil</h3>
-    <input id="edit-email" type="email" placeholder="Email baru">
-    <input id="edit-password" type="password" placeholder="Password baru (opsional)">
+    <input id="editEmail" type="email" placeholder="Email baru">
+    <input id="editPassword" type="password" placeholder="Password baru (opsional)">
     <button id="save-edit">Simpan</button>
     <button id="cancel-edit" style="background:#999;">Batal</button>
   </div>
@@ -172,6 +172,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
 
+    // DOM
     const authSection = document.getElementById("auth-section");
     const appSection  = document.getElementById("app-section");
     const userEmailSpan = document.getElementById("user-email");
@@ -187,10 +188,12 @@
     const btnEdit = document.getElementById("btn-edit-profile");
 
     const popup = document.getElementById("edit-popup");
+    const editEmail = document.getElementById("editEmail");
+    const editPassword = document.getElementById("editPassword");
     const saveEdit = document.getElementById("save-edit");
     const cancelEdit = document.getElementById("cancel-edit");
 
-    // Sidebar controls
+    // Sidebar control
     menuBtn.onclick = () => {
       sidebar.classList.add("open");
       overlay.classList.add("show");
@@ -200,51 +203,63 @@
       overlay.classList.remove("show");
     };
 
-    // Login listener
+    // Auth state
     onAuthStateChanged(auth, user => {
       if (user) {
         authSection.classList.add("hidden");
         appSection.classList.remove("hidden");
+
         userEmailSpan.textContent = user.email;
+
+        // tampilkan titik tiga
+        menuBtn.style.display = "block";
+
       } else {
         authSection.classList.remove("hidden");
         appSection.classList.add("hidden");
+
+        menuBtn.style.display = "none";
       }
     });
 
+    // Register
     btnRegister.onclick = async () => {
       try {
         await createUserWithEmailAndPassword(auth, email.value, password.value);
-        alert("Registrasi berhasil.");
+        alert("Registrasi berhasil!");
       } catch (e) { alert(e.message); }
     };
 
+    // Login
     btnLogin.onclick = async () => {
       try {
         await signInWithEmailAndPassword(auth, email.value, password.value);
       } catch (e) { alert(e.message); }
     };
 
+    // Logout
     btnLogout.onclick = () => signOut(auth);
 
-    // Edit Profil
+    // Edit Profil open
     btnEdit.onclick = () => {
       popup.style.display = "block";
-      edit-email.value = auth.currentUser.email;
+      editEmail.value = auth.currentUser.email;
     };
+
     cancelEdit.onclick = () => popup.style.display = "none";
 
+    // Save Edit
     saveEdit.onclick = async () => {
       const user = auth.currentUser;
 
       try {
-        if (edit-email.value.trim() !== "")
-          await updateEmail(user, edit-email.value.trim());
+        if (editEmail.value.trim() !== "")
+          await updateEmail(user, editEmail.value.trim());
 
-        if (edit-password.value.trim() !== "")
-          await updatePassword(user, edit-password.value.trim());
+        if (editPassword.value.trim() !== "")
+          await updatePassword(user, editPassword.value.trim());
 
-        alert("Profil berhasil diubah!");
+        alert("Profil berhasil diperbarui!");
         popup.style.display = "none";
 
       } catch (e) {
