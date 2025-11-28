@@ -44,31 +44,21 @@ const userPhotoEl = document.getElementById("user-photo");
 
 auth.onAuthStateChanged(user => {
   if (user) {
-    authSection.classList.add("hidden");    // sembunyikan login
-    appSection.classList.remove("hidden");  // tampilkan dashboard
-  } else {
-    authSection.classList.remove("hidden"); 
-    appSection.classList.add("hidden");    
-  }
-});
+    // Sembunyikan login / tampilkan dashboard
+    authSection.classList.add("hidden");
+    appSection.classList.remove("hidden");
 
-    // Tampilkan email
+    // Tampilkan info user
     userEmailSpan.textContent = user.email;
-
-    // Tampilkan nama dari akun yang login
     userNameEl.textContent = user.displayName || "Pengguna";
-
-    // Tampilkan foto profil (jika ada)
-    if (user.photoURL) {
-      userPhotoEl.src = user.photoURL;
-    } else {
-      userPhotoEl.src = "assets/default-avatar.png"; // Pastikan ada gambar default
-    }
+    userPhotoEl.src = user.photoURL || "assets/default-avatar.png";
 
   } else {
+    // Sembunyikan dashboard / tampilkan login
     authSection.classList.remove("hidden");
     appSection.classList.add("hidden");
 
+    // Reset info user
     userEmailSpan.textContent = "";
     userNameEl.textContent = "Pengguna";
     userPhotoEl.src = "assets/default-avatar.png";
