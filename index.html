@@ -257,27 +257,87 @@
   /* EDIT PROFIL */
   function openEdit(){document.getElementById("edit-profile-popup").classList.add("show")}
   function closeEdit(){document.getElementById("edit-profile-popup").classList.remove("show")}
+/* FIREBASE */
+firebase.initializeApp({
+  apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+  authDomain:"e-santri-ed555.firebaseapp.com",
+  projectId:"e-santri-ed555"
+});
+const auth = firebase.auth();
 
-  async function saveProfile(){
-    const user=auth.currentUser;
-    if(!user) return alert("Tidak ada user login");
+/* LOGIN */
+function login(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
 
-    const name=document.getElementById("edit-name").value.trim();
-    const email=document.getElementById("edit-email").value.trim();
-    const pass=document.getElementById("edit-pass").value.trim();
+  auth.signInWithEmailAndPassword(email, pass)
+    .catch(e => msg(e.message));
+}
 
-    try{
-      if(name) await user.updateProfile({displayName:name});
-      if(email) await user.updateEmail(email);
-      if(pass) await user.updatePassword(pass);
+function register(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
 
-      alert("Profil berhasil diperbarui!");
-      closeEdit();
-      location.reload();
-    }catch(e){
-      alert("Gagal update: "+e.message);
-    }
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(() => msg("Akun berhasil dibuat, silakan login"))
+    .catch(e => msg(e.message));
+}
+
+function msg(t){ document.getElementById("msg").innerHTML = t }
+function logout(){ auth.signOut() }
+
+/* AUTH LISTENER */
+auth.onAuthStateChanged(user => {
+  if(user){
+    document.getElementById("login-card").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("menu-btn").style.display = "block";
+
+    document.getElementById("sidebar-name").innerHTML = user.displayName || "Pengguna";
+    document.getElementById("sidebar-email").innerHTML = user.email;
+  } else {
+    document.getElementById("login-card").classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("menu-btn").style.display = "none";
   }
+});
+
+function goTo(x){ window.location = x }
+
+/* SIDEBAR */
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+const menuBtn = document.getElementById("menu-btn");
+const closeBtn = document.getElementById("close-btn");
+
+menuBtn.onclick = () => { sidebar.classList.add("open"); overlay.classList.add("show"); }
+closeBtn.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+overlay.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+
+/* EDIT PROFIL */
+function openEdit(){ document.getElementById("edit-profile-popup").classList.add("show"); }
+function closeEdit(){ document.getElementById("edit-profile-popup").classList.remove("show"); }
+
+async function saveProfile(){
+  const user = auth.currentUser;
+  if(!user) return alert("Tidak ada user login");
+
+  const name = document.getElementById("edit-name").value.trim();
+  const email = document.getElementById("edit-email").value.trim();
+  const pass = document.getElementById("edit-pass").value.trim();
+
+  try{
+    if(name) await user.updateProfile({displayName:name});
+    if(email) await user.updateEmail(email);
+    if(pass) await user.updatePassword(pass);
+
+    alert("Profil berhasil diperbarui!");
+    closeEdit();
+    location.reload();
+  }catch(e){
+    alert("Gagal update: " + e.message);
+  }
+}
 </script>
 
 </body>
