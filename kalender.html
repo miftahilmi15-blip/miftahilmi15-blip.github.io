@@ -3,120 +3,159 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalender Nasional Interaktif</title>
+<title>Kalender Interaktif E-Santri</title>
 <style>
-  body {font-family:"Poppins",sans-serif; background:#f7f9fb; margin:0; padding:0;}
-  header {background:#2e5e4e; color:#fff; padding:15px; text-align:center;}
-  h1 {margin:0; font-size:24px;}
-  .calendar-container {max-width:1000px; margin:20px auto; padding:0 15px;}
-  .month-nav {display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
-  .month-nav button {padding:5px 10px; background:#2e5e4e; color:#fff; border:none; border-radius:5px; cursor:pointer;}
-  .month-year {font-weight:600; font-size:18px;}
-  .calendar {display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
-  .day-name {text-align:center; font-weight:600; padding:5px;}
-  .day {background:#fff; border-radius:10px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,.1); min-height:80px; position:relative;}
-  .date {font-weight:600; margin-bottom:5px;}
-  .holiday {background:#f8d7da; color:#721c24;}
-  .today {border:2px solid #2e5e4e;}
+  body{font-family:"Poppins",sans-serif;background:#f7f9fb;color:#333;margin:0;padding:0;}
+  header{background:#2e5e4e;color:#fff;padding:15px;text-align:center;position:sticky;top:0;z-index:100;}
+  header h1{margin:0;font-size:24px;}
+  .calendar-controls{display:flex;justify-content:space-between;margin-top:10px;}
+  .calendar-controls button{padding:6px 12px;border:none;border-radius:6px;background:#2e5e4e;color:#fff;cursor:pointer;}
+  main{max-width:900px;margin:20px auto;padding:0 10px;}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08);}
+  th,td{padding:10px;text-align:center;border:1px solid #ddd;vertical-align:top;height:80px;}
+  th{background:#2e5e4e;color:#fff;}
+  .libur{background:#fdd;}
+  .cuti{background:#ffd;}
+  .event{margin-top:5px;font-size:12px;background:#2e5e4e;color:#fff;padding:2px 4px;border-radius:4px;display:block;}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Kalender Nasional</h1>
+  <h1>Kalender E-Santri</h1>
+  <div class="calendar-controls">
+    <button id="prevMonth">&lt; Bulan Sebelumnya</button>
+    <span id="monthYear"></span>
+    <button id="nextMonth">Bulan Berikut &gt;</button>
+  </div>
 </header>
 
-<main class="calendar-container">
-  <div class="month-nav">
-    <button id="prev-month">&lt;</button>
-    <div class="month-year" id="month-year"></div>
-    <button id="next-month">&gt;</button>
-  </div>
-  <div class="calendar" id="calendar"></div>
+<main>
+  <table id="calendar">
+    <thead>
+      <tr>
+        <th>Minggu</th>
+        <th>Senin</th>
+        <th>Selasa</th>
+        <th>Rabu</th>
+        <th>Kamis</th>
+        <th>Jumat</th>
+        <th>Sabtu</th>
+      </tr>
+    </thead>
+    <tbody id="calendar-body">
+      <!-- Tanggal akan muncul di sini -->
+    </tbody>
+  </table>
 </main>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 <script>
-  const calendarEl = document.getElementById("calendar");
-  const monthYearEl = document.getElementById("month-year");
-  const prevBtn = document.getElementById("prev-month");
-  const nextBtn = document.getElementById("next-month");
-
-  const daysOfWeek = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-  const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-
-  const holidays = {
-    "2025-01-01": "Tahun Baru Masehi",
-    "2025-08-17": "Hari Kemerdekaan",
-    "2025-12-25": "Hari Natal"
+  // =========================
+  // FIREBASE
+  // =========================
+  const firebaseConfig = {
+    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain: "e-santri-ed555.firebaseapp.com",
+    projectId: "e-santri-ed555",
+    storageBucket: "e-santri-ed555.appspot.com",
+    messagingSenderId: "588687778472",
+    appId: "1:588687778472:web:3000ae9b18f1004ed2189d"
   };
 
-  let current = new Date();
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-  function renderCalendar(date){
-    calendarEl.innerHTML = "";
+  // =========================
+  // VARIABLES
+  // =========================
+  const calendarBody = document.getElementById('calendar-body');
+  const monthYearEl = document.getElementById('monthYear');
+  const prevBtn = document.getElementById('prevMonth');
+  const nextBtn = document.getElementById('nextMonth');
 
-    // Nama hari
-    daysOfWeek.forEach(day => {
-      const el = document.createElement("div");
-      el.textContent = day;
-      el.classList.add("day-name");
-      calendarEl.appendChild(el);
-    });
+  let today = new Date();
+  let currentMonth = today.getMonth();
+  let currentYear = today.getFullYear();
 
-    const year = date.getFullYear();
-    const month = date.getMonth();
+  // =========================
+  // CONTOH DATA LIBUR NASIONAL
+  // =========================
+  const libur = [
+    {tanggal:"2025-12-25", nama:"Hari Natal"},
+    {tanggal:"2025-12-01", nama:"Hari Sumpah Pemuda"}
+  ];
+
+  // =========================
+  // RENDER KALENDER
+  // =========================
+  function renderCalendar(month, year){
+    calendarBody.innerHTML = "";
     const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
 
-    monthYearEl.textContent = `${months[month]} ${year}`;
+    monthYearEl.textContent = `${year} - ${month+1}`;
 
-    // Kotak kosong sebelum tanggal 1
-    for(let i=0; i<firstDay; i++){
-      const empty = document.createElement("div");
-      empty.classList.add("day");
-      calendarEl.appendChild(empty);
-    }
+    let date = 1;
+    for(let i=0; i<6; i++){
+      const row = document.createElement('tr');
+      for(let j=0; j<7; j++){
+        const cell = document.createElement('td');
+        if(i===0 && j<firstDay){
+          cell.innerHTML = "";
+        } else if(date > daysInMonth){
+          cell.innerHTML = "";
+        } else {
+          const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(date).padStart(2,'0')}`;
+          cell.innerHTML = `<strong>${date}</strong>`;
 
-    // Tambahkan tanggal
-    for(let day=1; day<=daysInMonth; day++){
-      const dateObj = new Date(year, month, day);
-      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+          // Tambahkan libur
+          const lib = libur.find(l=>l.tanggal===cellDateStr);
+          if(lib){
+            cell.classList.add('libur');
+            const div = document.createElement('div');
+            div.className="event";
+            div.textContent=lib.nama;
+            cell.appendChild(div);
+          }
 
-      const dayEl = document.createElement("div");
-      dayEl.classList.add("day");
+          // Ambil kegiatan dari Firebase
+          db.collection('kegiatan')
+            .where('tanggal','==',cellDateStr)
+            .get()
+            .then(snapshot=>{
+              snapshot.forEach(doc=>{
+                const data = doc.data();
+                const div = document.createElement('div');
+                div.className='event';
+                div.textContent = data.nama + " - " + data.deskripsi;
+                cell.appendChild(div);
+              });
+            });
 
-      if(dateStr === new Date().toISOString().slice(0,10)) dayEl.classList.add("today");
-      if(holidays[dateStr]) dayEl.classList.add("holiday");
-
-      const dateNum = document.createElement("div");
-      dateNum.classList.add("date");
-      dateNum.textContent = day;
-
-      dayEl.appendChild(dateNum);
-
-      if(holidays[dateStr]){
-        const holidayName = document.createElement("div");
-        holidayName.style.fontSize = "12px";
-        holidayName.style.color = "#721c24";
-        holidayName.textContent = holidays[dateStr];
-        dayEl.appendChild(holidayName);
+          date++;
+        }
+        row.appendChild(cell);
       }
-
-      calendarEl.appendChild(dayEl);
+      calendarBody.appendChild(row);
     }
   }
 
-  prevBtn.onclick = () => {
-    current.setMonth(current.getMonth()-1);
-    renderCalendar(current);
+  renderCalendar(currentMonth, currentYear);
+
+  prevBtn.onclick = ()=>{
+    currentMonth--;
+    if(currentMonth<0){currentMonth=11; currentYear--;}
+    renderCalendar(currentMonth, currentYear);
   }
 
-  nextBtn.onclick = () => {
-    current.setMonth(current.getMonth()+1);
-    renderCalendar(current);
+  nextBtn.onclick = ()=>{
+    currentMonth++;
+    if(currentMonth>11){currentMonth=0; currentYear++;}
+    renderCalendar(currentMonth, currentYear);
   }
-
-  renderCalendar(current);
 </script>
 
 </body>
