@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalender E-Santri</title>
 <style>
-  body{font-family:"Poppins",sans-serif;background:#f7f9fb;color:#333;margin:0;padding:0}
-  header{background:#2e5e4e;color:#fff;padding:15px;text-align:center}
-  h1{margin:0;font-size:24px}
-  main{max-width:800px;margin:20px auto;padding:0 15px}
-  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-  th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd}
-  th{background:#2e5e4e;color:#fff}
+  body {font-family: "Poppins", sans-serif; background: #f7f9fb; color: #333; margin:0; padding:0;}
+  header {background: #2e5e4e; color: #fff; padding: 15px; text-align:center;}
+  h1 {margin:0;}
+  .calendar {display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 1000px; margin: 20px auto;}
+  .day {background:#fff; border-radius:10px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,.1); min-height:80px; position:relative;}
+  .date {font-weight:600; margin-bottom:5px;}
+  .kegiatan {font-size:14px; margin-bottom:2px;}
+  .deskripsi {font-size:12px; color:#555;}
+  .today {border:2px solid #2e5e4e;}
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -23,22 +23,13 @@
 </header>
 
 <main>
-  <table>
-    <thead>
-      <tr>
-        <th>Tanggal</th>
-        <th>Kegiatan</th>
-        <th>Waktu</th>
-      </tr>
-    </thead>
-    <tbody id="calendar-body">
-      <!-- Data kalender akan muncul di sini -->
-    </tbody>
-  </table>
+  <div id="calendar" class="calendar"></div>
 </main>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-  // Konfigurasi Firebase
+  // ================= FIREBASE =================
   const firebaseConfig = {
     apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
     authDomain: "e-santri-ed555.firebaseapp.com",
@@ -47,26 +38,56 @@
     messagingSenderId: "588687778472",
     appId: "1:588687778472:web:3000ae9b18f1004ed2189d"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  const tbody = document.getElementById("calendar-body");
+  // ================= BUILD CALENDAR =================
+  const calendarEl = document.getElementById("calendar");
+
+  // Tanggal saat ini
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  // Jumlah hari dalam bulan ini
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   // Ambil data kalender dari Firestore
-  db.collection("kalender").orderBy("tanggal").onSnapshot(snapshot => {
-    tbody.innerHTML = ""; // Kosongkan tabel dulu
-
+  db.collection("kalender").get().then(snapshot => {
+    const events = {};
     snapshot.forEach(doc => {
       const data = doc.data();
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${data.tanggal}</td>
-        <td>${data.kegiatan}</td>
-        <td>${data.waktu}</td>
-      `;
-      tbody.appendChild(tr);
+      events[data.tanggal] = {judul: data.judul, deskripsi: data.deskripsi};
     });
+
+    // Render kalender
+    for(let day = 1; day <= daysInMonth; day++){
+      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const dayEl = document.createElement("div");
+      dayEl.classList.add("day");
+      if(dateStr === today.toISOString().slice(0,10)) dayEl.classList.add("today");
+
+      const tanggalEl = document.createElement("div");
+      tanggalEl.classList.add("date");
+      tanggalEl.textContent = day;
+
+      dayEl.appendChild(tanggalEl);
+
+      if(events[dateStr]){
+        const kegiatanEl = document.createElement("div");
+        kegiatanEl.classList.add("kegiatan");
+        kegiatanEl.textContent = events[dateStr].judul;
+
+        const deskripsiEl = document.createElement("div");
+        deskripsiEl.classList.add("deskripsi");
+        deskripsiEl.textContent = events[dateStr].deskripsi;
+
+        dayEl.appendChild(kegiatanEl);
+        dayEl.appendChild(deskripsiEl);
+      }
+
+      calendarEl.appendChild(dayEl);
+    }
   });
 </script>
 
