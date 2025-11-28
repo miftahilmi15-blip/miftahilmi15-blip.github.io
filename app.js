@@ -1,8 +1,8 @@
 // =========================
 // ELEMENT LOGIN / REGISTER
 // =========================
-const authSection = document.getElementById('auth-section');
-const appSection = document.getElementById('app-section');
+const authSection = document.getElementById('auth-section'); // section login/register
+const appSection = document.getElementById('app-section');   // section dashboard
 const emailInput = document.getElementById('email');
 const passInput = document.getElementById('password');
 const btnLogin = document.getElementById('btn-login');
@@ -10,7 +10,8 @@ const btnRegister = document.getElementById('btn-register');
 const btnLogout = document.getElementById('btn-logout');
 
 const userEmailSpan = document.getElementById('user-email');
-
+const userNameEl = document.getElementById('user-name');
+const userPhotoEl = document.getElementById('user-photo');
 
 // =========================
 // MENU TITIK TIGA (SIDEBAR)
@@ -35,28 +36,26 @@ overlay.onclick = () => {
   overlay.classList.remove("show");
 };
 
-
 // =========================
-// LOGIN LISTENER
+// LOGIN LISTENER (AUTH STATE)
 // =========================
-const userNameEl = document.getElementById("user-name");
-const userPhotoEl = document.getElementById("user-photo");
-
 auth.onAuthStateChanged(user => {
-  if (user) {
-    // Sembunyikan login / tampilkan dashboard
+  if(user){
+    // User login → sembunyikan login/register, tampilkan dashboard
     authSection.classList.add("hidden");
     appSection.classList.remove("hidden");
+    menuBtn.style.display = "block";
 
-    // Tampilkan info user
+    // Tampilkan info user di sidebar
     userEmailSpan.textContent = user.email;
     userNameEl.textContent = user.displayName || "Pengguna";
     userPhotoEl.src = user.photoURL || "assets/default-avatar.png";
 
   } else {
-    // Sembunyikan dashboard / tampilkan login
+    // User logout → tampilkan login/register, sembunyikan dashboard
     authSection.classList.remove("hidden");
     appSection.classList.add("hidden");
+    menuBtn.style.display = "none";
 
     // Reset info user
     userEmailSpan.textContent = "";
@@ -72,17 +71,18 @@ btnRegister.onclick = async () => {
   const email = emailInput.value.trim();
   const pass = passInput.value.trim();
 
-  if (!email || !pass)
-    return alert("Isi email & password untuk register");
+  if(!email || !pass){
+    alert("Isi email & password untuk register");
+    return;
+  }
 
   try {
     await auth.createUserWithEmailAndPassword(email, pass);
     alert("Registrasi berhasil. Silakan login.");
-  } catch (e) {
+  } catch(e){
     alert("Gagal register: " + e.message);
   }
 };
-
 
 // =========================
 // LOGIN
@@ -91,20 +91,25 @@ btnLogin.onclick = async () => {
   const email = emailInput.value.trim();
   const pass = passInput.value.trim();
 
-  if (!email || !pass)
-    return alert("Isi email & password untuk login");
+  if(!email || !pass){
+    alert("Isi email & password untuk login");
+    return;
+  }
 
   try {
     await auth.signInWithEmailAndPassword(email, pass);
-  } catch (e) {
+  } catch(e){
     alert("Login gagal: " + e.message);
   }
 };
-
 
 // =========================
 // LOGOUT
 // =========================
 btnLogout.onclick = async () => {
-  await auth.signOut();
+  try {
+    await auth.signOut();
+  } catch(e){
+    alert("Logout gagal: " + e.message);
+  }
 };
