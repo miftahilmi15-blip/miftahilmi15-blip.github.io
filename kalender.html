@@ -3,17 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kalender Nasional</title>
+<title>Kalender Nasional Interaktif</title>
 <style>
-  body {font-family: "Poppins", sans-serif; background:#f7f9fb; margin:0; padding:0;}
+  body {font-family:"Poppins",sans-serif; background:#f7f9fb; margin:0; padding:0;}
   header {background:#2e5e4e; color:#fff; padding:15px; text-align:center;}
-  h1 {margin:0;}
-  .calendar {display:grid; grid-template-columns:repeat(7,1fr); gap:5px; max-width:1000px; margin:20px auto;}
+  h1 {margin:0; font-size:24px;}
+  .calendar-container {max-width:1000px; margin:20px auto; padding:0 15px;}
+  .month-nav {display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .month-nav button {padding:5px 10px; background:#2e5e4e; color:#fff; border:none; border-radius:5px; cursor:pointer;}
+  .month-year {font-weight:600; font-size:18px;}
+  .calendar {display:grid; grid-template-columns:repeat(7,1fr); gap:5px;}
+  .day-name {text-align:center; font-weight:600; padding:5px;}
   .day {background:#fff; border-radius:10px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,.1); min-height:80px; position:relative;}
   .date {font-weight:600; margin-bottom:5px;}
   .holiday {background:#f8d7da; color:#721c24;}
   .today {border:2px solid #2e5e4e;}
-  .day-name {text-align:center; font-weight:600; padding:5px;}
 </style>
 </head>
 <body>
@@ -22,70 +26,97 @@
   <h1>Kalender Nasional</h1>
 </header>
 
-<main>
+<main class="calendar-container">
+  <div class="month-nav">
+    <button id="prev-month">&lt;</button>
+    <div class="month-year" id="month-year"></div>
+    <button id="next-month">&gt;</button>
+  </div>
   <div class="calendar" id="calendar"></div>
 </main>
 
 <script>
   const calendarEl = document.getElementById("calendar");
+  const monthYearEl = document.getElementById("month-year");
+  const prevBtn = document.getElementById("prev-month");
+  const nextBtn = document.getElementById("next-month");
 
-  // Nama hari
   const daysOfWeek = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-  daysOfWeek.forEach(day => {
-    const el = document.createElement("div");
-    el.textContent = day;
-    el.classList.add("day-name");
-    calendarEl.appendChild(el);
-  });
+  const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth(); // 0-11
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  // Hari libur nasional contoh
   const holidays = {
     "2025-01-01": "Tahun Baru Masehi",
     "2025-08-17": "Hari Kemerdekaan",
     "2025-12-25": "Hari Natal"
   };
 
-  // Tambahkan kotak kosong sebelum tanggal 1 jika bukan hari Minggu
-  for(let i=0; i<firstDay; i++){
-    const empty = document.createElement("div");
-    empty.classList.add("day");
-    calendarEl.appendChild(empty);
-  }
+  let current = new Date();
 
-  // Tambahkan tanggal
-  for(let day=1; day<=daysInMonth; day++){
-    const dateObj = new Date(year, month, day);
-    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    
-    const dayEl = document.createElement("div");
-    dayEl.classList.add("day");
-    if(dateStr === today.toISOString().slice(0,10)) dayEl.classList.add("today");
-    if(holidays[dateStr]) dayEl.classList.add("holiday");
+  function renderCalendar(date){
+    calendarEl.innerHTML = "";
 
-    const dateNum = document.createElement("div");
-    dateNum.classList.add("date");
-    dateNum.textContent = day;
+    // Nama hari
+    daysOfWeek.forEach(day => {
+      const el = document.createElement("div");
+      el.textContent = day;
+      el.classList.add("day-name");
+      calendarEl.appendChild(el);
+    });
 
-    dayEl.appendChild(dateNum);
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // Tampilkan nama hari libur jika ada
-    if(holidays[dateStr]){
-      const holidayName = document.createElement("div");
-      holidayName.style.fontSize = "12px";
-      holidayName.style.color = "#721c24";
-      holidayName.textContent = holidays[dateStr];
-      dayEl.appendChild(holidayName);
+    monthYearEl.textContent = `${months[month]} ${year}`;
+
+    // Kotak kosong sebelum tanggal 1
+    for(let i=0; i<firstDay; i++){
+      const empty = document.createElement("div");
+      empty.classList.add("day");
+      calendarEl.appendChild(empty);
     }
 
-    calendarEl.appendChild(dayEl);
+    // Tambahkan tanggal
+    for(let day=1; day<=daysInMonth; day++){
+      const dateObj = new Date(year, month, day);
+      const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+      const dayEl = document.createElement("div");
+      dayEl.classList.add("day");
+
+      if(dateStr === new Date().toISOString().slice(0,10)) dayEl.classList.add("today");
+      if(holidays[dateStr]) dayEl.classList.add("holiday");
+
+      const dateNum = document.createElement("div");
+      dateNum.classList.add("date");
+      dateNum.textContent = day;
+
+      dayEl.appendChild(dateNum);
+
+      if(holidays[dateStr]){
+        const holidayName = document.createElement("div");
+        holidayName.style.fontSize = "12px";
+        holidayName.style.color = "#721c24";
+        holidayName.textContent = holidays[dateStr];
+        dayEl.appendChild(holidayName);
+      }
+
+      calendarEl.appendChild(dayEl);
+    }
   }
+
+  prevBtn.onclick = () => {
+    current.setMonth(current.getMonth()-1);
+    renderCalendar(current);
+  }
+
+  nextBtn.onclick = () => {
+    current.setMonth(current.getMonth()+1);
+    renderCalendar(current);
+  }
+
+  renderCalendar(current);
 </script>
 
 </body>
