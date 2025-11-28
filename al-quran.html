@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al-Quran E-Santri</title>
+<style>
+  body{font-family:"Poppins",sans-serif;background:#f7f9fb;margin:0;padding:0}
+  header{background:#2e5e4e;color:#fff;padding:15px;text-align:center}
+  h1{margin:0;font-size:24px}
+  main{max-width:800px;margin:20px auto;padding:0 15px}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  th,td{padding:12px;text-align:left;border-bottom:1px solid #ddd}
+  th{background:#2e5e4e;color:#fff}
+  tr:hover{background:#f1f7f5}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Daftar Surah</h1>
+</header>
+
+<main>
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Surah</th>
+        <th>Arti</th>
+      </tr>
+    </thead>
+    <tbody id="surah-list">
+      <!-- Data surah akan muncul di sini -->
+    </tbody>
+  </table>
+</main>
+
+<script>
+  const surah = [
+    {no:1, name:"Al-Fatihah", arti:"Pembukaan"},
+    {no:2, name:"Al-Baqarah", arti:"Sapi Betina"},
+    {no:3, name:"Ali 'Imran", arti:"Keluarga Imran"},
+    {no:4, name:"An-Nisa'", arti:"Perempuan"},
+    {no:5, name:"Al-Ma'idah", arti:"Hidangan"},
+    // Bisa ditambahkan semua surah
+  ];
+
+  const tbody = document.getElementById("surah-list");
+  surah.forEach(s => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${s.no}</td><td>${s.name}</td><td>${s.arti}</td>`;
+    tbody.appendChild(tr);
+  });
+</script>
+
+</body>
+</html>
