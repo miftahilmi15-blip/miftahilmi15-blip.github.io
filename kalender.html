@@ -5,136 +5,112 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalender Interaktif E-Santri</title>
 <style>
-  body{font-family:"Poppins",sans-serif;background:#f7f9fb;color:#333;margin:0;padding:0;}
-  body {
-  font-family: "Poppins", sans-serif;
-  background: #eef3f0;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
+  body{
+    font-family:"Poppins",sans-serif;
+    background:#eef3f0;
+    color:#333;
+    margin:0;
+    padding:0;
+  }
 
-header {
-  background: #2e5e4e;
-  color: #fff;
-  padding: 15px 20px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
+  header {
+    background:#2e5e4e;
+    color:#fff;
+    padding:15px 20px;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+  }
 
-header h1 {
-  font-size: 26px;
-  margin-bottom: 5px;
-  font-weight: 600;
-}
+  header h1 {font-size:26px;margin:0 0 5px;}
 
-#monthYear {
-  font-size: 20px;
-  font-weight: 500;
-  color: #fff;
-  padding: 4px 10px;
-}
+  #monthYear {
+    font-size:18px;
+    font-weight:500;
+    color:#fff;
+  }
 
-.calendar-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 8px;
-}
+  .calendar-controls {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+  }
 
-.calendar-controls button {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 8px;
-  background: #1e4639;
-  color: #fff;
-  cursor: pointer;
-  font-size: 14px;
-  transition: .2s;
-}
+  .calendar-controls button {
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    background:#1e4639;
+    color:#fff;
+    cursor:pointer;
+    font-size:14px;
+    transition:.2s;
+  }
 
-.calendar-controls button:hover {
-  background: #183a2f;
-}
+  main {
+    max-width:950px;
+    margin:20px auto;
+    padding:0 10px;
+  }
 
-main {
-  max-width: 950px;
-  margin: 25px auto;
-  padding: 0 10px;
-}
+  table {
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 4px 16px rgba(0,0,0,.12);
+  }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,.1);
-}
+  th {
+    background:#2e5e4e;
+    color:#fff;
+    padding:12px;
+    font-size:14px;
+    font-weight:600;
+  }
 
-th {
-  background: #2e5e4e;
-  color: #fff;
-  padding: 12px;
-  font-size: 15px;
-}
+  th:nth-child(1) {
+    background:#c53333;
+  }
 
-th:first-child {
-  background: #c53333; /* Minggu header merah */
-}
+  td {
+    border:1px solid #ddd;
+    height:90px;
+    text-align:center;
+    font-size:14px;
+    position:relative;
+    padding:4px;
+  }
 
-td {
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ddd;
-  height: 90px;
-  font-size: 14px;
-  position: relative;
-  transition: .15s;
-}
+  td:hover {
+    background:#e9f6f0;
+  }
 
-td:hover {
-  background: #e8f5f0;
-}
+  td strong {
+    display:block;
+    font-size:16px;
+    margin-bottom:4px;
+  }
 
-td strong {
-  display: block;
-  font-size: 16px;
-  margin-bottom: 4px;
-}
+  td:nth-child(1) strong {color:#d11a1a;} /* Minggu */
+  td:nth-child(7) strong {color:#245442;} /* Sabtu */
 
-/* Minggu = teks merah */
-td:nth-child(1) strong {
-  color: #d11a1a;
-}
+  .libur {background:#ffe1e1 !important;}
+  .cuti  {background:#fff4c3 !important;}
 
-/* Sabtu = hijau gelap tipis */
-td:nth-child(7) strong {
-  color: #245442;
-}
-
-/* LIBUR NASIONAL */
-.libur {
-  background: #ffe0e0 !important;
-}
-
-/* CUTI BERSAMA */
-.cuti {
-  background: #fff5c5 !important;
-}
-
-.event {
-  margin-top: 3px;
-  font-size: 11px;
-  background: #155c46;
-  color: #fff;
-  padding: 2px 4px;
-  border-radius: 6px;
-  display: block;
-}-top:5px;font-size:12px;background:#2e5e4e;color:#fff;padding:2px 4px;border-radius:4px;display:block;}
+  .event {
+    font-size:11px;
+    background:#155c46;
+    color:#fff;
+    padding:2px 4px;
+    border-radius:6px;
+    display:block;
+    margin-top:3px;
+  }
 </style>
 </head>
 <body>
@@ -149,7 +125,7 @@ td:nth-child(7) strong {
 </header>
 
 <main>
-  <table id="calendar">
+  <table>
     <thead>
       <tr>
         <th>Minggu</th>
@@ -161,9 +137,7 @@ td:nth-child(7) strong {
         <th>Sabtu</th>
       </tr>
     </thead>
-    <tbody id="calendar-body">
-      <!-- Tanggal akan muncul di sini -->
-    </tbody>
+    <tbody id="calendar-body"></tbody>
   </table>
 </main>
 
@@ -171,89 +145,69 @@ td:nth-child(7) strong {
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // =========================
-  // FIREBASE
-  // =========================
-  const firebaseConfig = {
-    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
-    authDomain: "e-santri-ed555.firebaseapp.com",
-    projectId: "e-santri-ed555",
-    storageBucket: "e-santri-ed555.appspot.com",
-    messagingSenderId: "588687778472",
-    appId: "1:588687778472:web:3000ae9b18f1004ed2189d"
-  };
+  firebase.initializeApp({
+    apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain:"e-santri-ed555.firebaseapp.com",
+    projectId:"e-santri-ed555",
+    storageBucket:"e-santri-ed555.appspot.com",
+    messagingSenderId:"588687778472",
+    appId:"1:588687778472:web:3000ae9b18f1004ed2189d"
+  });
+  const db=firebase.firestore();
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const calendarBody=document.getElementById("calendar-body");
+  const monthYearEl=document.getElementById("monthYear");
 
-  // =========================
-  // VARIABLES
-  // =========================
-  const calendarBody = document.getElementById('calendar-body');
-  const monthYearEl = document.getElementById('monthYear');
-  const prevBtn = document.getElementById('prevMonth');
-  const nextBtn = document.getElementById('nextMonth');
+  let today=new Date();
+  let currentMonth=today.getMonth();
+  let currentYear=today.getFullYear();
 
-  let today = new Date();
-  let currentMonth = today.getMonth();
-  let currentYear = today.getFullYear();
-
-  // =========================
-  // CONTOH DATA LIBUR NASIONAL
-  // =========================
-  const libur = [
-    {tanggal:"2025-12-25", nama:"Hari Natal"},
-    {tanggal:"2025-12-01", nama:"Hari Sumpah Pemuda"}
+  const tanggalKhusus=[
+    {tanggal:"2025-01-01",nama:"Tahun Baru",tipe:"libur"},
+    {tanggal:"2025-03-31",nama:"Cuti Bersama Idul Fitri",tipe:"cuti"},
+    {tanggal:"2025-04-01",nama:"Cuti Bersama Idul Fitri",tipe:"cuti"},
+    {tanggal:"2025-04-18",nama:"Idul Fitri",tipe:"libur"},
+    {tanggal:"2025-12-25",nama:"Natal",tipe:"libur"}
   ];
 
-  // =========================
-  // RENDER KALENDER
-  // =========================
-  function renderCalendar(month, year){
-    calendarBody.innerHTML = "";
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month+1, 0).getDate();
+  function renderCalendar(month,year){
+    calendarBody.innerHTML="";
+    let firstDay=new Date(year,month,1).getDay(); 
+    // Geser hari agar Minggu tetap kolom pertama
+    const daysInMonth=new Date(year,month+1,0).getDate();
+    monthYearEl.textContent=new Date(year,month).toLocaleDateString("id-ID",{month:"long",year:"numeric"});
 
-    monthYearEl.textContent = `${year} - ${month+1}`;
-
-    let date = 1;
-    for(let i=0; i<6; i++){
-      const row = document.createElement('tr');
-      for(let j=0; j<7; j++){
-        const cell = document.createElement('td');
+    let date=1;
+    for(let i=0;i<6;i++){
+      const row=document.createElement("tr");
+      for(let j=0;j<7;j++){
+        const cell=document.createElement("td");
+        
         if(i===0 && j<firstDay){
-          cell.innerHTML = "";
-        } else if(date > daysInMonth){
-          cell.innerHTML = "";
+          cell.innerHTML="";
+        } else if(date>daysInMonth){
+          cell.innerHTML="";
         } else {
-          const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(date).padStart(2,'0')}`;
-          cell.innerHTML = `<strong>${date}</strong>`;
+          const d=`${year}-${String(month+1).padStart(2,'0')}-${String(date).padStart(2,'0')}`;
+          cell.innerHTML=`<strong>${date}</strong>`;
 
-          // Cek tanggal khusus (libur atau cuti)
-const tkh = tanggalKhusus.find(l => l.tanggal === cellDateStr);
-if (tkh) {
-  // Tambahkan class sesuai tipe ("libur" atau "cuti")
-  cell.classList.add(tkh.tipe);
+          const tkh=tanggalKhusus.find(l=>l.tanggal===d);
+          if(tkh){
+            cell.classList.add(tkh.tipe);
+            const div=document.createElement("div");
+            div.className="event";
+            div.textContent=tkh.nama;
+            cell.appendChild(div);
+          }
 
-  const div = document.createElement('div');
-  div.className = "event";
-  div.textContent = tkh.nama;
-  cell.appendChild(div);
-}
-
-          // Ambil kegiatan dari Firebase
-          db.collection('kegiatan')
-            .where('tanggal','==',cellDateStr)
-            .get()
-            .then(snapshot=>{
-              snapshot.forEach(doc=>{
-                const data = doc.data();
-                const div = document.createElement('div');
-                div.className='event';
-                div.textContent = data.nama + " - " + data.deskripsi;
-                cell.appendChild(div);
-              });
-            });
+          db.collection("kegiatan").where("tanggal","==",d).get()
+          .then(sn=>{sn.forEach(doc=>{
+            const ev=doc.data();
+            const div=document.createElement("div");
+            div.className="event";
+            div.textContent=ev.nama;
+            cell.appendChild(div);
+          })});
 
           date++;
         }
@@ -263,19 +217,19 @@ if (tkh) {
     }
   }
 
-  renderCalendar(currentMonth, currentYear);
+  renderCalendar(currentMonth,currentYear);
 
-  prevBtn.onclick = ()=>{
+  document.getElementById("prevMonth").onclick=()=>{
     currentMonth--;
-    if(currentMonth<0){currentMonth=11; currentYear--;}
-    renderCalendar(currentMonth, currentYear);
-  }
+    if(currentMonth<0){currentMonth=11;currentYear--;}
+    renderCalendar(currentMonth,currentYear);
+  };
 
-  nextBtn.onclick = ()=>{
+  document.getElementById("nextMonth").onclick=()=>{
     currentMonth++;
-    if(currentMonth>11){currentMonth=0; currentYear++;}
-    renderCalendar(currentMonth, currentYear);
-  }
+    if(currentMonth>11){currentMonth=0;currentYear++;}
+    renderCalendar(currentMonth,currentYear);
+  };
 </script>
 
 </body>
