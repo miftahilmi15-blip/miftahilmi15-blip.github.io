@@ -128,7 +128,7 @@
 
 <main class="container">
 
-<div class="card login">
+<div id="login-card" class="card login">
   <h2>Login / Daftar</h2>
 
   <input type="email" id="email" placeholder="Email" required>
@@ -297,7 +297,7 @@ ${pesan}
   const encodedMsg = encodeURIComponent(text);
   const url = `https://wa.me/${adminNumber}?text=${encodedMsg}`;
 
-  window.open(url, "_blank");
+  window.open(url, "_blank"8);
   closeWAReport();
 }
 </script>
