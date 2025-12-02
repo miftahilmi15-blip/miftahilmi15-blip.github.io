@@ -172,7 +172,7 @@ function sendReport(){
 
   const name = user.displayName || "Santri";
   const email = user.email;
-  const adminNumber = "6281234567890"; // GANTI nomor admin!
+  const adminNumber = "6289661946783"; // GANTI nomor admin!
 
   const text = `
 Pengaduan Santri:
