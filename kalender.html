@@ -6,17 +6,135 @@
 <title>Kalender Interaktif E-Santri</title>
 <style>
   body{font-family:"Poppins",sans-serif;background:#f7f9fb;color:#333;margin:0;padding:0;}
-  header{background:#2e5e4e;color:#fff;padding:15px;text-align:center;position:sticky;top:0;z-index:100;}
-  header h1{margin:0;font-size:24px;}
-  .calendar-controls{display:flex;justify-content:space-between;margin-top:10px;}
-  .calendar-controls button{padding:6px 12px;border:none;border-radius:6px;background:#2e5e4e;color:#fff;cursor:pointer;}
-  main{max-width:900px;margin:20px auto;padding:0 10px;}
-  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08);}
-  th,td{padding:10px;text-align:center;border:1px solid #ddd;vertical-align:top;height:80px;}
-  th{background:#2e5e4e;color:#fff;}
-  .libur{background:#fdd;}
-  .cuti{background:#ffd;}
-  .event{margin-top:5px;font-size:12px;background:#2e5e4e;color:#fff;padding:2px 4px;border-radius:4px;display:block;}
+  body {
+  font-family: "Poppins", sans-serif;
+  background: #eef3f0;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #2e5e4e;
+  color: #fff;
+  padding: 15px 20px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header h1 {
+  font-size: 26px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+#monthYear {
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+  padding: 4px 10px;
+}
+
+.calendar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.calendar-controls button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 8px;
+  background: #1e4639;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: .2s;
+}
+
+.calendar-controls button:hover {
+  background: #183a2f;
+}
+
+main {
+  max-width: 950px;
+  margin: 25px auto;
+  padding: 0 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,.1);
+}
+
+th {
+  background: #2e5e4e;
+  color: #fff;
+  padding: 12px;
+  font-size: 15px;
+}
+
+th:first-child {
+  background: #c53333; /* Minggu header merah */
+}
+
+td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+  height: 90px;
+  font-size: 14px;
+  position: relative;
+  transition: .15s;
+}
+
+td:hover {
+  background: #e8f5f0;
+}
+
+td strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+/* Minggu = teks merah */
+td:nth-child(1) strong {
+  color: #d11a1a;
+}
+
+/* Sabtu = hijau gelap tipis */
+td:nth-child(7) strong {
+  color: #245442;
+}
+
+/* LIBUR NASIONAL */
+.libur {
+  background: #ffe0e0 !important;
+}
+
+/* CUTI BERSAMA */
+.cuti {
+  background: #fff5c5 !important;
+}
+
+.event {
+  margin-top: 3px;
+  font-size: 11px;
+  background: #155c46;
+  color: #fff;
+  padding: 2px 4px;
+  border-radius: 6px;
+  display: block;
+}-top:5px;font-size:12px;background:#2e5e4e;color:#fff;padding:2px 4px;border-radius:4px;display:block;}
 </style>
 </head>
 <body>
@@ -111,15 +229,17 @@
           const cellDateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(date).padStart(2,'0')}`;
           cell.innerHTML = `<strong>${date}</strong>`;
 
-          // Tambahkan libur
-          const lib = libur.find(l=>l.tanggal===cellDateStr);
-          if(lib){
-            cell.classList.add('libur');
-            const div = document.createElement('div');
-            div.className="event";
-            div.textContent=lib.nama;
-            cell.appendChild(div);
-          }
+          // Cek tanggal khusus (libur atau cuti)
+const tkh = tanggalKhusus.find(l => l.tanggal === cellDateStr);
+if (tkh) {
+  // Tambahkan class sesuai tipe ("libur" atau "cuti")
+  cell.classList.add(tkh.tipe);
+
+  const div = document.createElement('div');
+  div.className = "event";
+  div.textContent = tkh.nama;
+  cell.appendChild(div);
+}
 
           // Ambil kegiatan dari Firebase
           db.collection('kegiatan')
