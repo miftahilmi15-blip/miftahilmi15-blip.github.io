@@ -266,6 +266,42 @@
       alert("Gagal update: " + e.message);
     }
   }
+ // =========================
+// POPUP WHATSAPP REPORT
+// =========================
+function openWAReport(){
+  document.getElementById("wa-report-popup").style.display = "flex";
+}
+
+function closeWAReport(){
+  document.getElementById("wa-report-popup").style.display = "none";
+}
+
+function sendReport(){
+  const user = auth.currentUser;
+  const pesan = document.getElementById("wa-message").value.trim();
+
+  if(!pesan) return alert("Isi pengaduannya dulu ya!");
+
+  const name = user.displayName || "Santri";
+  const email = user.email;
+  const adminNumber = "6289661946783"; // Ganti nomor admin WA
+
+  const text = `
+Pengaduan Santri:
+Nama: ${name}
+Email: ${email}
+
+Pesan:
+${pesan}
+  `;
+
+  const encodedMsg = encodeURIComponent(text);
+  const url = `https://wa.me/${adminNumber}?text=${encodedMsg}`;
+
+  window.open(url, "_blank");
+  closeWAReport();
+}
 </script>
 
 </body>
