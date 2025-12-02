@@ -254,6 +254,38 @@ body.dark #wa-report-popup .popup-box {
   background: #2e2e2e;
   color: #fff;
 }
+/* ============ LOGIN CARD FIX ============ */
+.card.login {
+  max-width: 350px;
+  margin: 0 auto;
+  padding: 18px 20px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.card.login h2 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.card.login input {
+  font-size: 15px;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.login-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-btn-group .btn {
+  width: 100% !important;
+  font-size: 15px;
+  padding: 12px;
+}
 /* ========== RESPONSIVE ========== */
 @media (max-width:480px) {
   .header-box {
