@@ -80,7 +80,15 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
-
+<div id="wa-report-popup" style="display:none;">
+  <div class="popup-box">
+    <h3>Laporan / Pengaduan</h3>
+    <textarea id="wa-message" placeholder="Tuliskan pengaduan Anda..."
+      style="width:100%;height:100px;padding:10px;border-radius:10px;border:1px solid #ccc;"></textarea>
+    <button class="btn primary" onclick="sendReport()">Kirim ke WhatsApp</button>
+    <button class="btn secondary" onclick="closeWAReport()">Batal</button>
+  </div>
+</div>
 <body>
 
 <!-- TITIK TIGA -->
