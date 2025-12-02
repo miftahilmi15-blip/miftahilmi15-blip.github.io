@@ -156,7 +156,39 @@ async function saveProfile() {
     alert("Gagal update: " + e.message);
   }
 }
+function openWAReport(){
+  document.getElementById("wa-report-popup").style.display = "flex";
+}
 
+function closeWAReport(){
+  document.getElementById("wa-report-popup").style.display = "none";
+}
+
+function sendReport(){
+  const user = auth.currentUser;
+  const pesan = document.getElementById("wa-message").value.trim();
+  
+  if(!pesan) return alert("Isi pengaduannya dulu ya!");
+
+  const name = user.displayName || "Santri";
+  const email = user.email;
+  const adminNumber = "6281234567890"; // GANTI nomor admin!
+
+  const text = `
+Pengaduan Santri:
+Nama: ${name}
+Email: ${email}
+
+Pesan:
+${pesan}
+  `;
+
+  const encodedMsg = encodeURIComponent(text);
+  const url = `https://wa.me/${adminNumber}?text=${encodedMsg}`;
+  
+  window.open(url, "_blank");
+  closeWAReport();
+}
 
 // =========================
 // NAVIGASI DASHBOARD
