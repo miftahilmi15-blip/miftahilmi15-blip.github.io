@@ -13,6 +13,7 @@
     --bg: #f4f7f6;
     --text: #333;
     --muted: #666;
+    --soft: #e0f2f1; /* warna hover menu */
   }
 
   * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
@@ -51,7 +52,21 @@
   .menu-icon { width:45px; height:45px; margin-bottom:8px; }
   .menu-item span { display:block; font-size:11px; font-weight:600; color:#555; }
 
-  /* SIDEBAR - Elegan ala IOU */
+  /* Menu Trigger */
+  .menu-trigger {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1300;
+    background: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    font-size: 18px;
+  }
+
+  /* SIDEBAR */
   .sidebar { 
     position: fixed; 
     top: 0; 
@@ -71,39 +86,38 @@
     box-shadow: -15px 0 35px rgba(0,0,0,0.15); 
   }
 
-  /* Area Profil di Sidebar */
-  .sidebar-user {
+  .sidebar-header {
     text-align: center;
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1px solid #f1f5f9;
   }
-
-  .sidebar-user img {
+  .sidebar-header img {
     width: 80px;
     height: 80px;
-    border-radius: 50%; /* Membuat foto profil bulat */
+    border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--soft);
     margin-bottom: 10px;
   }
+  .sidebar-header .user-name { font-weight:600; }
+  .sidebar-header small { color:#666; }
 
-  /* Navigasi Menu - Solusi agar menu tidak gabung */
   .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* Memberi jarak antar kotak menu */
+    gap: 8px;
+    flex-grow: 1;
   }
 
   .sidebar-nav a {
-    display: block; /* Memaksa satu menu satu baris penuh */
+    display: block;
     padding: 14px 18px;
     text-decoration: none;
     color: #334155;
     font-weight: 500;
     font-size: 15px;
     border-radius: 10px;
-    background: #f8fafb; /* Kotak menu warna abu sangat muda */
+    background: #f8fafb;
     transition: all 0.2s;
   }
 
@@ -113,14 +127,12 @@
     transform: translateX(5px);
   }
 
-  /* Logout warna merah di paling bawah */
   .sidebar-nav a.logout-link {
     color: #c0392b;
     background: rgba(192, 57, 43, 0.05);
-    margin-top: 15px;
+    margin-top: auto;
   }
 
-  /* Overlay dengan efek blur */
   .overlay { 
     display: none; 
     position: fixed; 
@@ -129,16 +141,14 @@
     width: 100%; 
     height: 100%; 
     background: rgba(0,0,0,0.4); 
-    backdrop-filter: blur(4px); /* Efek kaca buram ala IOU */
+    backdrop-filter: blur(4px);
     z-index: 1100; 
   }
   .overlay.show { display: block; }
 
-  /* Hidden class */
   .hidden { display:none; }
 
   footer { text-align:center; padding:20px; color:#999; }
-
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -148,14 +158,13 @@
 <body>
 
 <!-- Menu Trigger -->
-<!-- Menu Trigger -->
 <div class="menu-trigger" id="menu-btn">&#x22EE;</div>
 
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <span id="close-btn" class="close-btn">&times;</span>
-    <img id="user-photo" src="assets/default-avatar.png" class="avatar" alt="Foto Profil">
+    <img id="user-photo" src="assets/default-avatar.png" alt="Foto Profil">
     <div class="user-name" id="sidebar-name">Memuat...</div>
     <small id="sidebar-email"></small>
   </div>
@@ -165,16 +174,16 @@
     <a href="#" onclick="openEdit()">Edit Profil</a>
     <a href="#" onclick="openWAReport()">Pengaduan Santri</a>
     <a href="kalender.html">Kalender</a>
-    <hr>
+
     <a href="#">Tentang Aplikasi</a>
     <a href="#">Kebijakan Privasi</a>
-    <hr>
+
     <a href="#" onclick="logout()" class="logout-link">Logout</a>
   </div>
 </div>
 
-<!-- Overlay -->
 <div class="overlay" id="overlay"></div>
+
 <header class="header-box">
   <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
   <div class="header-text">
@@ -184,52 +193,46 @@
 </header>
 
 <main class="container">
-
-<div id="login-card" class="card login">
-  <h2>Login / Daftar</h2>
-
-  <input type="email" id="email" placeholder="Email" required>
-  
-  <div class="password-wrapper">
-    <input type="password" id="password" placeholder="Password" required>
-    <span class="toggle-pass" onclick="togglePassword()">Tampilkan</span>
-  </div>
-
-  <p id="msg" style="color:red; margin-top:8px;"></p>
-
-  <div class="login-btn-group">
-    <button class="btn primary" onclick="login()">Login</button>
-    <button class="btn" onclick="register()">Daftar Akun Baru</button>
-    <button class="btn google" onclick="loginWithGoogle()">Login dengan Google</button>
-  </div>
-</div>
-
-<section id="dashboard" class="hidden">
-  <div class="menu-grid">
-    <div class="menu-item" onclick="goTo('absensi.html')">
-      <img src="icons/absensi.png" class="menu-icon"><span>Absensi Santri</span>
+  <div id="login-card" class="card login">
+    <h2>Login / Daftar</h2>
+    <input type="email" id="email" placeholder="Email" required>
+    <div class="password-wrapper">
+      <input type="password" id="password" placeholder="Password" required>
+      <span class="toggle-pass" onclick="togglePassword()">Tampilkan</span>
     </div>
-    <div class="menu-item" onclick="goTo('tahfidz.html')">
-      <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
-    </div>
-    <div class="menu-item" onclick="goTo('alquran.html')">
-      <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
-    </div>
-    <div class="menu-item" onclick="goTo('sop.html')">
-      <img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span>
-    </div>
-    <div class="menu-item" onclick="goTo('kalender.html')">
-      <img src="icons/kalender.png" class="menu-icon"><span>Kaldik Yayasan</span>
-    </div>
-    <div class="menu-item" onclick="goTo('izin.html')">
-      <img src="icons/izin.png" class="menu-icon"><span>Perizinan Santri</span>
-    </div>
-    <div class="menu-item" onclick="goTo('ibadah.html')">
-      <img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span>
+    <p id="msg" style="color:red; margin-top:8px;"></p>
+    <div class="login-btn-group">
+      <button class="btn primary" onclick="login()">Login</button>
+      <button class="btn" onclick="register()">Daftar Akun Baru</button>
+      <button class="btn google" onclick="loginWithGoogle()">Login dengan Google</button>
     </div>
   </div>
-</section>
 
+  <section id="dashboard" class="hidden">
+    <div class="menu-grid">
+      <div class="menu-item" onclick="goTo('absensi.html')">
+        <img src="icons/absensi.png" class="menu-icon"><span>Absensi Santri</span>
+      </div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')">
+        <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
+      </div>
+      <div class="menu-item" onclick="goTo('alquran.html')">
+        <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
+      </div>
+      <div class="menu-item" onclick="goTo('sop.html')">
+        <img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span>
+      </div>
+      <div class="menu-item" onclick="goTo('kalender.html')">
+        <img src="icons/kalender.png" class="menu-icon"><span>Kaldik Yayasan</span>
+      </div>
+      <div class="menu-item" onclick="goTo('izin.html')">
+        <img src="icons/izin.png" class="menu-icon"><span>Perizinan Santri</span>
+      </div>
+      <div class="menu-item" onclick="goTo('ibadah.html')">
+        <img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -237,7 +240,6 @@
 </footer>
 
 <script>
-  // Firebase init
   firebase.initializeApp({
     apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
     authDomain:"e-santri-ed555.firebaseapp.com",
@@ -245,7 +247,6 @@
   });
   const auth = firebase.auth();
 
-  // Toggle password
   function togglePassword(){
     const pass = document.getElementById("password");
     const toggle = document.querySelector(".toggle-pass");
@@ -276,7 +277,6 @@
   }
 
   function logout(){ auth.signOut().then(()=>location.reload()); }
-
   function loginWithGoogle(){
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider).catch(e=>msg("Login Google gagal: "+e.message));
@@ -300,7 +300,6 @@
     }
   });
 
-  // Sidebar toggle
   const sidebar=document.getElementById("sidebar");
   const overlay=document.getElementById("overlay");
   const menuBtn=document.getElementById("menu-btn");
@@ -308,24 +307,6 @@
   menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
   closeBtn.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
   overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
-
-  // WhatsApp report
-  function openWAReport(){ 
-    document.getElementById("wa-report-popup").style.display="flex";
-    sidebar.classList.remove("open"); overlay.classList.remove("show");
-  }
-  function closeWAReport(){ document.getElementById("wa-report-popup").style.display="none"; }
-  function sendReport(){
-    const user=auth.currentUser;
-    const pesan=document.getElementById("wa-message").value.trim();
-    if(!pesan) return alert("Isi pengaduannya dulu ya!");
-    const name=user?user.displayName||"Santri":"Santri";
-    const email=user?user.email:"-";
-    const adminNumber="6289661946783";
-    const text=`Pengaduan Santri:\nNama: ${name}\nEmail: ${email}\n\nPesan:\n${pesan}`;
-    window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`,"_blank");
-    closeWAReport();
-  }
 
   function goTo(x){ window.location=x; }
 </script>
