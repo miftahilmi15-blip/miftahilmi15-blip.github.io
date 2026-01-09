@@ -51,14 +51,88 @@
   .menu-icon { width:45px; height:45px; margin-bottom:8px; }
   .menu-item span { display:block; font-size:11px; font-weight:600; color:#555; }
 
-  /* Sidebar */
-  .sidebar { position:fixed; top:0; right:-80%; width:80%; height:100%; background:#fff; transition:.3s; z-index:1200; }
-  .sidebar.open { right:0; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
-  .menu-trigger { position:fixed; top:20px; right:20px; padding:8px 12px; background:#fff; border-radius:8px; cursor:pointer; z-index:1100; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+  /* SIDEBAR - Elegan ala IOU */
+  .sidebar { 
+    position: fixed; 
+    top: 0; 
+    right: -85%; 
+    width: 85%; 
+    height: 100%; 
+    background: #ffffff; 
+    transition: .4s cubic-bezier(0.4, 0, 0.2, 1); 
+    z-index: 1200; 
+    display: flex;
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+  
+  .sidebar.open { 
+    right: 0; 
+    box-shadow: -15px 0 35px rgba(0,0,0,0.15); 
+  }
 
-  /* Overlay */
-  .overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.35); z-index:1100; }
-  .overlay.show { display:block; }
+  /* Area Profil di Sidebar */
+  .sidebar-user {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  .sidebar-user img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%; /* Membuat foto profil bulat */
+    object-fit: cover;
+    border: 3px solid var(--soft);
+    margin-bottom: 10px;
+  }
+
+  /* Navigasi Menu - Solusi agar menu tidak gabung */
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Memberi jarak antar kotak menu */
+  }
+
+  .sidebar-nav a {
+    display: block; /* Memaksa satu menu satu baris penuh */
+    padding: 14px 18px;
+    text-decoration: none;
+    color: #334155;
+    font-weight: 500;
+    font-size: 15px;
+    border-radius: 10px;
+    background: #f8fafb; /* Kotak menu warna abu sangat muda */
+    transition: all 0.2s;
+  }
+
+  .sidebar-nav a:hover {
+    background: var(--soft);
+    color: var(--primary);
+    transform: translateX(5px);
+  }
+
+  /* Logout warna merah di paling bawah */
+  .sidebar-nav a.logout-link {
+    color: #c0392b;
+    background: rgba(192, 57, 43, 0.05);
+    margin-top: 15px;
+  }
+
+  /* Overlay dengan efek blur */
+  .overlay { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.4); 
+    backdrop-filter: blur(4px); /* Efek kaca buram ala IOU */
+    z-index: 1100; 
+  }
+  .overlay.show { display: block; }
 
   /* Hidden class */
   .hidden { display:none; }
