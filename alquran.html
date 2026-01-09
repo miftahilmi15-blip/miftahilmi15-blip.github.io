@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Al-Qur’an E-Santri</title>
 
-<!-- FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
@@ -26,8 +25,6 @@ body{
   background:var(--bg);
   color:var(--text);
 }
-
-/* HEADER */
 header{
   background:var(--primary);
   color:#fff;
@@ -39,89 +36,70 @@ header{
 header h1{margin:0;font-size:20px}
 header button{
   border:none;
-  background:#fff;
-  color:#333;
   padding:6px 10px;
   border-radius:6px;
   cursor:pointer;
 }
 
-/* HERO */
-.hero{
-  padding:40px 20px;
+main{
   max-width:900px;
   margin:auto;
+  padding:20px;
 }
-.hero h2{
-  font-size:28px;
-  margin-bottom:15px;
-}
-.hero p{
-  line-height:1.7;
-}
-.hero .btn{
-  margin-top:15px;
-  display:inline-block;
-  background:var(--primary);
-  color:#fff;
-  padding:10px 18px;
+
+ul{list-style:none;padding:0}
+li{
+  background:var(--card);
+  padding:12px;
+  margin:6px 0;
   border-radius:8px;
-  text-decoration:none;
+  cursor:pointer;
 }
 
-/* FEATURES */
-.features{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
+/* MODAL FULL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:var(--bg);
+  z-index:10;
 }
-.feature{
-  background:var(--card);
-  padding:15px;
-  border-radius:10px;
+.modal-content{
+  height:100%;
+  overflow:auto;
+  padding:20px;
+}
+.close{
+  font-size:22px;
+  cursor:pointer;
 }
 
-/* VIEWER */
-.viewer{
-  max-width:900px;
-  margin:30px auto;
-  padding:20px;
+/* AUDIO */
+.audio-bar{
+  position:sticky;
+  top:0;
   background:var(--card);
-  border-radius:12px;
-}
-.viewer h3{
-  margin-top:0;
-}
-.controls{
+  padding:10px;
   display:flex;
   gap:10px;
-  margin-bottom:15px;
-}
-.controls button{
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
+  z-index:5;
 }
 
 /* MUSHAF */
 .mushaf{
   font-family:'Amiri',serif;
-  font-size:26px;
-  line-height:2.1;
+  font-size:24px;
+  line-height:2.2;
   direction:rtl;
   text-align:justify;
 }
 .bismillah{
   text-align:center;
-  font-size:30px;
+  font-size:28px;
   margin:20px 0;
 }
 .ayah-number{
-  font-size:16px;
+  font-size:15px;
   margin:0 6px;
   cursor:pointer;
 }
@@ -138,11 +116,11 @@ header button{
 
 /* PRINT */
 @media print{
-  header,.controls,.hero,.features{display:none}
+  header,.audio-bar,.close{display:none}
   .mushaf{
     column-count:2;
     column-gap:40px;
-    font-size:24px;
+    font-size:22px;
   }
 }
 </style>
@@ -155,80 +133,93 @@ header button{
   <button onclick="toggleDark()">🌙</button>
 </header>
 
-<section class="hero">
-  <h2>Al-Qur’an (Mushaf, Audio & Terjemahan)</h2>
-  <p>
-    Al-Qur’an E-Santri adalah alat bantu belajar Al-Qur’an untuk semua kalangan,
-    dengan tampilan mushaf Utsmani autentik, audio ayat per ayat,
-    terjemahan, mode malam, dan siap dikembangkan ke tafsir & per kata.
-  </p>
-  <a href="#viewer" class="btn">Mulai Membaca</a>
-</section>
+<main>
+  <ul id="surahList"></ul>
+</main>
 
-<section class="features">
-  <div class="feature">📖 Mushaf Utsmani</div>
-  <div class="feature">🔊 Audio Ayat & Surah</div>
-  <div class="feature">🌙 Mode Malam</div>
-  <div class="feature">🖨 Cetak Rapi</div>
-  <div class="feature">🇮🇩 Terjemahan</div>
-  <div class="feature">📱 Responsif</div>
-</section>
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="modal.style.display='none'">✕</span>
 
-<section id="viewer" class="viewer">
-  <h3>Contoh Tampilan Mushaf</h3>
+    <div class="audio-bar">
+      <button onclick="audio.play()">▶ Play</button>
+      <button onclick="audio.pause()">⏸ Pause</button>
+    </div>
 
-  <div class="controls">
-    <button onclick="audio.play()">▶ Play</button>
-    <button onclick="audio.pause()">⏸ Pause</button>
-    <button onclick="toggleAll()">📘 Terjemahan</button>
+    <h2 id="title"></h2>
+    <div id="content"></div>
   </div>
-
-  <div class="mushaf">
-    <div class="bismillah">
-      ﷽
-    </div>
-
-    <span>
-      الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ
-      <span class="ayah-number" onclick="toggleTr(1)">﴿١﴾</span>
-    </span>
-    <div id="tr-1" class="translation">
-      Segala puji bagi Allah, Tuhan seluruh alam.
-    </div>
-
-    <span>
-      الرَّحْمَٰنِ الرَّحِيمِ
-      <span class="ayah-number" onclick="toggleTr(2)">﴿٢﴾</span>
-    </span>
-    <div id="tr-2" class="translation">
-      Yang Maha Pengasih, Maha Penyayang.
-    </div>
-
-    <span>
-      مَالِكِ يَوْمِ الدِّينِ
-      <span class="ayah-number" onclick="toggleTr(3)">﴿٣﴾</span>
-    </span>
-    <div id="tr-3" class="translation">
-      Pemilik hari pembalasan.
-    </div>
-  </div>
-</section>
+</div>
 
 <script>
-const audio=new Audio('https://cdn.islamic.network/quran/audio/128/ar.alafasy/1.mp3');
+const surahList=document.getElementById('surahList');
+const modal=document.getElementById('modal');
+const content=document.getElementById('content');
+const title=document.getElementById('title');
+const audio=new Audio();
 
 function toggleDark(){
   document.body.classList.toggle('dark');
 }
+
+/* LOAD DAFTAR SURAH 1–114 */
+async function loadSurahList(){
+  const res=await fetch('https://api.alquran.cloud/v1/surah');
+  const js=await res.json();
+  js.data.forEach(s=>{
+    const li=document.createElement('li');
+    li.textContent=`${s.number}. ${s.name} (${s.englishName})`;
+    li.onclick=()=>openSurah(s.number,s.name);
+    surahList.appendChild(li);
+  });
+}
+
+/* OPEN SURAH */
+async function openSurah(no,name){
+  modal.style.display='block';
+  title.innerText=`Surah ${name}`;
+  content.innerHTML='';
+
+  const ar=await fetch(`https://api.alquran.cloud/v1/surah/${no}/quran-uthmani`).then(r=>r.json());
+  const id=await fetch(`https://api.alquran.cloud/v1/surah/${no}/id.indonesian`).then(r=>r.json());
+
+  const mushaf=document.createElement('div');
+  mushaf.className='mushaf';
+
+  if(no!==9){
+    const b=document.createElement('div');
+    b.className='bismillah';
+    b.innerText='﷽';
+    mushaf.appendChild(b);
+  }
+
+  ar.data.ayahs.forEach((a,i)=>{
+    audio.src=`https://cdn.islamic.network/quran/audio/128/ar.alafasy/${a.number}.mp3`;
+
+    const span=document.createElement('span');
+    span.innerHTML=`
+      ${a.text}
+      <span class="ayah-number" onclick="toggleTr(${i})">﴿${a.numberInSurah}﴾</span>
+    `;
+    mushaf.appendChild(span);
+
+    const tr=document.createElement('div');
+    tr.className='translation';
+    tr.id='tr-'+i;
+    tr.innerText=id.data.ayahs[i].text;
+    mushaf.appendChild(tr);
+  });
+
+  content.appendChild(mushaf);
+}
+
 function toggleTr(i){
   const el=document.getElementById('tr-'+i);
   el.style.display=el.style.display==='block'?'none':'block';
 }
-function toggleAll(){
-  document.querySelectorAll('.translation').forEach(t=>{
-    t.style.display=t.style.display==='block'?'none':'block';
-  });
-}
+
+loadSurahList();
 </script>
 
 </body>
