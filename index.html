@@ -6,7 +6,6 @@
 <title>E-Santri</title>
 
 <style>
-  /* Import Font Modern */
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
   :root {
@@ -17,134 +16,55 @@
   }
 
   * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding: 20px;
-  }
-
-  /* Container Utama */
-  .container { max-width: 420px; margin: auto; }
-
-  /* Header ala IOU (Center Aligned) */
-  .header-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 30px 0;
-    border: none;
-  }
-
-  .logo-box {
-    width: 90px;
-    height: 90px;
-    margin-bottom: 15px;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-  }
-
-  .logo { width: 100%; height: 100%; object-fit: contain; }
-
-  .header-text .title {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--primary);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .header-text .tagline { font-size: 13px; color: var(--muted); margin-top: 5px; }
-
-  /* Login Card (Symmetric & Clean) */
-  .card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    border: 1px solid #eef2f1;
-    margin-bottom: 20px;
-  }
-
-  .card.login { border-left: none; text-align: center; }
-  .card.login h2 { font-size: 22px; margin-bottom: 20px; color: #444; }
-
-  /* Input Fields */
-  input {
-    width: 100%;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: 0.3s;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(31, 111, 81, 0.1);
-  }
-
-  /* Buttons (Lebar Penuh ala IOU) */
-  .login-btn-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-  }
-
-  .btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 8px;
-    border: none;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .btn.primary { background: var(--primary); color: #fff; }
-  .btn.primary:hover { background: #16503a; }
+  .container { max-width: 420px; margin:auto; }
   
-  .btn:not(.primary) { 
-    background: #f8f9fa; 
-    color: var(--primary); 
-    border: 1px solid #eee; 
-  }
+  /* Header */
+  .header-box { display:flex; flex-direction:column; align-items:center; text-align:center; padding:30px 0; }
+  .logo-box { width:90px; height:90px; margin-bottom:15px; }
+  .logo { width:100%; height:100%; object-fit:contain; }
+  .header-text .title { font-size:26px; font-weight:700; color: var(--primary); text-transform:uppercase; letter-spacing:1px; }
+  .header-text .tagline { font-size:13px; color: var(--muted); margin-top:5px; }
 
-  /* Grid Menu Dashboard */
-  .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
+  /* Card */
+  .card { background:#fff; border-radius:12px; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.06); border:1px solid #eef2f1; margin-bottom:20px; }
+  .card.login h2 { font-size:22px; margin-bottom:20px; color:#444; text-align:center; }
 
-  .menu-item {
-    background: #fff;
-    padding: 15px 10px;
-    border-radius: 12px;
-    text-align: center;
-    border: 1px solid #f0f0f0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-    transition: 0.2s;
-  }
+  input { width:100%; padding:14px 16px; margin-bottom:12px; border:1px solid #ddd; border-radius:8px; font-size:15px; transition:0.3s; }
+  input:focus { outline:none; border-color: var(--primary); box-shadow:0 0 0 4px rgba(31,111,81,0.1); }
 
-  .menu-item:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
-  .menu-icon { width: 45px; height: 45px; margin-bottom: 8px; }
-  .menu-item span { display: block; font-size: 11px; font-weight: 600; color: #555; }
+  .login-btn-group { display:flex; flex-direction:column; gap:10px; margin-top:10px; }
+  .btn { width:100%; padding:14px; border-radius:8px; border:none; font-weight:600; font-size:15px; cursor:pointer; transition:0.2s; }
+  .btn.primary { background:var(--primary); color:#fff; }
+  .btn.primary:hover { background:#16503a; }
+  .btn:not(.primary) { background:#f8f9fa; color:var(--primary); border:1px solid #eee; }
 
-  /* Sidebar & Utilities */
+  /* Password toggle */
+  .password-wrapper { position:relative; }
+  .toggle-pass { position:absolute; top:50%; right:12px; transform:translateY(-50%); cursor:pointer; color:#888; font-size:12px; }
+
+  /* Grid Dashboard */
+  .menu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .menu-item { background:#fff; padding:15px 10px; border-radius:12px; text-align:center; border:1px solid #f0f0f0; box-shadow:0 4px 10px rgba(0,0,0,0.03); transition:0.2s; }
+  .menu-item:hover { transform:translateY(-3px); box-shadow:0 6px 15px rgba(0,0,0,0.08); }
+  .menu-icon { width:45px; height:45px; margin-bottom:8px; }
+  .menu-item span { display:block; font-size:11px; font-weight:600; color:#555; }
+
+  /* Sidebar */
   .sidebar { position:fixed; top:0; right:-80%; width:80%; height:100%; background:#fff; transition:.3s; z-index:1200; }
   .sidebar.open { right:0; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
-  .menu-trigger { position:fixed; top:20px; right:20px; padding:8px 12px; background:#fff; border-radius:8px; cursor:pointer; z-index:1100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-  
-  footer { text-align: center; padding: 20px; color: #999; }
-  .hidden { display: none; }
+  .menu-trigger { position:fixed; top:20px; right:20px; padding:8px 12px; background:#fff; border-radius:8px; cursor:pointer; z-index:1100; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+
+  /* Overlay */
+  .overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.35); z-index:1100; }
+  .overlay.show { display:block; }
+
+  /* Hidden class */
+  .hidden { display:none; }
+
+  footer { text-align:center; padding:20px; color:#999; }
+
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -163,10 +83,8 @@
   </div>
 </div>
 
-<!-- TITIK TIGA -->
 <div class="menu-trigger" id="menu-btn">&#x22EE;</div>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <span id="close-btn" class="close-btn">&times;</span>
@@ -204,8 +122,14 @@
   <h2>Login / Daftar</h2>
 
   <input type="email" id="email" placeholder="Email" required>
-  <input type="password" id="password" placeholder="Password" required>
+  
+  <div class="password-wrapper">
+    <input type="password" id="password" placeholder="Password" required>
+    <span class="toggle-pass" onclick="togglePassword()">Tampilkan</span>
+  </div>
+
   <p id="msg" style="color:red; margin-top:8px;"></p>
+
   <div class="login-btn-group">
     <button class="btn primary" onclick="login()">Login</button>
     <button class="btn" onclick="register()">Daftar Akun Baru</button>
@@ -213,32 +137,31 @@
   </div>
 </div>
 
-  <!-- DASHBOARD -->
-  <section id="dashboard" class="hidden">
-    <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')">
-        <img src="icons/absensi.png" class="menu-icon"><span>Absensi Santri</span>
-      </div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')">
-        <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
-      </div>
-      <div class="menu-item" onclick="goTo('alquran.html')">
-        <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
-      </div>
-      <div class="menu-item" onclick="goTo('sop.html')">
-        <img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span>
-      </div>
-      <div class="menu-item" onclick="goTo('kalender.html')">
-        <img src="icons/kalender.png" class="menu-icon"><span>Kaldik Yayasan</span>
-      </div>
-      <div class="menu-item" onclick="goTo('izin.html')">
-        <img src="icons/izin.png" class="menu-icon"><span>Perizinan Santri</span>
-      </div>
-      <div class="menu-item" onclick="goTo('ibadah.html')">
-        <img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span>
-      </div>
+<section id="dashboard" class="hidden">
+  <div class="menu-grid">
+    <div class="menu-item" onclick="goTo('absensi.html')">
+      <img src="icons/absensi.png" class="menu-icon"><span>Absensi Santri</span>
     </div>
-  </section>
+    <div class="menu-item" onclick="goTo('tahfidz.html')">
+      <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
+    </div>
+    <div class="menu-item" onclick="goTo('alquran.html')">
+      <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
+    </div>
+    <div class="menu-item" onclick="goTo('sop.html')">
+      <img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span>
+    </div>
+    <div class="menu-item" onclick="goTo('kalender.html')">
+      <img src="icons/kalender.png" class="menu-icon"><span>Kaldik Yayasan</span>
+    </div>
+    <div class="menu-item" onclick="goTo('izin.html')">
+      <img src="icons/izin.png" class="menu-icon"><span>Perizinan Santri</span>
+    </div>
+    <div class="menu-item" onclick="goTo('ibadah.html')">
+      <img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span>
+    </div>
+  </div>
+</section>
 
 </main>
 
@@ -247,98 +170,97 @@
 </footer>
 
 <script>
-  // --- FIREBASE INIT ---
+  // Firebase init
   firebase.initializeApp({
-    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
-    authDomain: "e-santri-ed555.firebaseapp.com",
-    projectId: "e-santri-ed555"
+    apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain:"e-santri-ed555.firebaseapp.com",
+    projectId:"e-santri-ed555"
   });
   const auth = firebase.auth();
 
-  // --- LOGIN / REGISTER ---
-  function login() {
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
-    auth.signInWithEmailAndPassword(email, pass)
-      .catch(e => msg(e.message));
+  // Toggle password
+  function togglePassword(){
+    const pass = document.getElementById("password");
+    const toggle = document.querySelector(".toggle-pass");
+    if(pass.type==="password"){ pass.type="text"; toggle.innerText="Sembunyikan"; }
+    else{ pass.type="password"; toggle.innerText="Tampilkan"; }
   }
 
-  function register() {
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(() => msg("Akun berhasil dibuat, silakan login"))
-      .catch(e => msg(e.message));
+  function msg(t,type="error"){
+    const msgEl = document.getElementById("msg");
+    msgEl.innerText = t;
+    msgEl.style.color = type==="error"?"red":"green";
   }
 
-  function msg(t) { document.getElementById("msg").innerHTML = t; }
-  
-  function logout() { 
-    auth.signOut().then(() => {
-      location.reload();
-    });
+  function login(){
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(email,pass)
+      .then(()=> msg("Login berhasil!","success"))
+      .catch(e=> msg(e.message));
   }
 
-  function loginWithGoogle() {
+  function register(){
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.createUserWithEmailAndPassword(email,pass)
+      .then(()=> msg("Akun berhasil dibuat, silakan login","success"))
+      .catch(e=> msg(e.message));
+  }
+
+  function logout(){ auth.signOut().then(()=>location.reload()); }
+
+  function loginWithGoogle(){
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-      .catch(error => msg("Login Google gagal: " + error.message));
+    auth.signInWithPopup(provider).catch(e=>msg("Login Google gagal: "+e.message));
   }
 
-  // --- AUTH LISTENER ---
-  auth.onAuthStateChanged(user => {
-    const loginCard = document.getElementById("login-card");
-    const dashboard = document.getElementById("dashboard");
-    const menuBtn = document.getElementById("menu-btn");
-
-    if (user) {
+  auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card");
+    const dashboard=document.getElementById("dashboard");
+    const menuBtn=document.getElementById("menu-btn");
+    if(user){
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
-      menuBtn.style.display = "block";
-      document.getElementById("sidebar-name").innerHTML = user.displayName || "Pengguna";
-      document.getElementById("sidebar-email").innerHTML = user.email;
-      document.getElementById("user-photo").src = user.photoURL || "assets/default-avatar.png";
-    } else {
+      menuBtn.style.display="block";
+      document.getElementById("sidebar-name").innerText=user.displayName||"Pengguna";
+      document.getElementById("sidebar-email").innerText=user.email;
+      document.getElementById("user-photo").src=user.photoURL||"assets/default-avatar.png";
+    }else{
       loginCard.classList.remove("hidden");
       dashboard.classList.add("hidden");
-      menuBtn.style.display = "none";
+      menuBtn.style.display="none";
     }
   });
 
-  // --- SIDEBAR ---
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  const menuBtn = document.getElementById("menu-btn");
-  const closeBtn = document.getElementById("close-btn");
+  // Sidebar toggle
+  const sidebar=document.getElementById("sidebar");
+  const overlay=document.getElementById("overlay");
+  const menuBtn=document.getElementById("menu-btn");
+  const closeBtn=document.getElementById("close-btn");
+  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
+  closeBtn.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
 
-  menuBtn.onclick = () => { sidebar.classList.add("open"); overlay.classList.add("show"); }
-  closeBtn.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
-  overlay.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
-
-  // --- WHATSAPP REPORT ---
-  function openWAReport() { 
-    document.getElementById("wa-report-popup").style.display = "flex"; 
-    sidebar.classList.remove("open"); // Tutup sidebar saat popup buka
-    overlay.classList.remove("show");
+  // WhatsApp report
+  function openWAReport(){ 
+    document.getElementById("wa-report-popup").style.display="flex";
+    sidebar.classList.remove("open"); overlay.classList.remove("show");
   }
-  
-  function closeWAReport() { document.getElementById("wa-report-popup").style.display = "none"; }
-
-  function sendReport() {
-    const user = auth.currentUser;
-    const pesan = document.getElementById("wa-message").value.trim();
-    if (!pesan) return alert("Isi pengaduannya dulu ya!");
-
-    const name = user ? (user.displayName || "Santri") : "Santri";
-    const email = user ? user.email : "-";
-    const adminNumber = "6289661946783";
-
-    const text = `Pengaduan Santri:\nNama: ${name}\nEmail: ${email}\n\nPesan:\n${pesan}`;
-    const url = `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
-
-    window.open(url, "_blank");
+  function closeWAReport(){ document.getElementById("wa-report-popup").style.display="none"; }
+  function sendReport(){
+    const user=auth.currentUser;
+    const pesan=document.getElementById("wa-message").value.trim();
+    if(!pesan) return alert("Isi pengaduannya dulu ya!");
+    const name=user?user.displayName||"Santri":"Santri";
+    const email=user?user.email:"-";
+    const adminNumber="6289661946783";
+    const text=`Pengaduan Santri:\nNama: ${name}\nEmail: ${email}\n\nPesan:\n${pesan}`;
+    window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`,"_blank");
     closeWAReport();
   }
+
+  function goTo(x){ window.location=x; }
 </script>
 
 </body>
