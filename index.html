@@ -6,75 +6,145 @@
 <title>E-Santri</title>
 
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;font-family:"Poppins",sans-serif}
+  /* Import Font Modern */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+  :root {
+    --primary: #1f6f51;
+    --bg: #f4f7f6;
+    --text: #333;
+    --muted: #666;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
+
   body {
-    background: linear-gradient(135deg, #dff6f0, #f0f4f8);
-    color: #333;
-    padding: 20px;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
-  }
-  .container { max-width:460px; margin:auto; position: relative; }
-  .container::before {
-    content: "";
-    position: absolute;
-    top:0; left:0; right:0; bottom:0;
-    background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-    opacity: 0.05;
-    pointer-events: none;
-    border-radius: 14px;
-  }
-
-  /* Header */
-  .header-box{display:flex;align-items:center;gap:15px;padding:15px 20px;border-bottom:1px solid #ccc}
-  .logo-box{width:70px;height:70px;padding:5px;border:2px solid #2e5e4e;border-radius:12px;display:flex;justify-content:center;align-items:center;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1)}
-  .logo{width:60px;height:60px;object-fit:contain}
-  .header-text .title{font-size:24px;font-weight:600;color:#2e5e4e}
-  .header-text .tagline{font-size:14px;color:#666;margin-top:4px}
-
-  /* Cards */
-  .card {
-    background: rgba(255,255,255,0.95);
-    border-radius: 14px;
     padding: 20px;
-    margin: 18px 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    border-left:5px solid #2e5e4e;
   }
 
-  /* GRID MENU */
-  .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:10px}
-  .menu-item{background:#fff;padding:15px;border-radius:14px;text-align:center;cursor:pointer;border:1px solid #e0e0e0;box-shadow:0 3px 12px rgba(0,0,0,.1)}
-  .menu-item:hover{transform:translateY(-4px);background:#f1f7f5}
-  .menu-icon{width:50px;height:50px;margin-bottom:8px;object-fit:contain}
+  /* Container Utama */
+  .container { max-width: 420px; margin: auto; }
 
-  /* TOMBOL TITIK 3 */
-  .menu-trigger{
-    position:fixed;top:18px;right:18px;font-size:28px;
-    padding:6px 10px;background:#fff;border-radius:10px;
-    box-shadow:0 3px 10px rgba(0,0,0,.15);cursor:pointer;z-index:1100;
-    display:none;
+  /* Header ala IOU (Center Aligned) */
+  .header-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 30px 0;
+    border: none;
   }
 
-  /* SIDEBAR */
-  .sidebar{position:fixed;top:0;right:-80%;width:80%;height:100%;background:#fff;transition:.3s;z-index:1200;box-shadow:-2px 0 8px rgba(0,0,0,.2)}
-  .sidebar.open{right:0}
-  .sidebar-header{text-align:center;padding:20px}
-  .close-btn{font-size:28px;cursor:pointer;float:right}
-  .avatar{width:80px;height:80px;border-radius:50%}
-  .sidebar-menu a{padding:12px 20px;display:block;border-bottom:1px solid #eee;color:#333;text-decoration:none}
-  .sidebar-menu a:hover{background:#f5f5f5}
+  .logo-box {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 15px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
 
-  /* OVERLAY */
-  .overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.35);z-index:1100}
-  .overlay.show{display:block}
+  .logo { width: 100%; height: 100%; object-fit: contain; }
 
-  /* POPUP EDIT */
-  #edit-profile-popup{position:fixed;top:0;left:0;width:100%;height:100%;display:none;background:rgba(0,0,0,.5);z-index:2000;justify-content:center;align-items:center}
-  #edit-profile-popup.show{display:flex}
-  .popup-box{background:#fff;padding:25px;border-radius:15px;width:85%;max-width:350px;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+  .header-text .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 
-  /* Hidden class */
-  .hidden{display:none;}
+  .header-text .tagline { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+  /* Login Card (Symmetric & Clean) */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid #eef2f1;
+    margin-bottom: 20px;
+  }
+
+  .card.login { border-left: none; text-align: center; }
+  .card.login h2 { font-size: 22px; margin-bottom: 20px; color: #444; }
+
+  /* Input Fields */
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.3s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(31, 111, 81, 0.1);
+  }
+
+  /* Buttons (Lebar Penuh ala IOU) */
+  .login-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .btn.primary { background: var(--primary); color: #fff; }
+  .btn.primary:hover { background: #16503a; }
+  
+  .btn:not(.primary) { 
+    background: #f8f9fa; 
+    color: var(--primary); 
+    border: 1px solid #eee; 
+  }
+
+  /* Grid Menu Dashboard */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .menu-item {
+    background: #fff;
+    padding: 15px 10px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #f0f0f0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    transition: 0.2s;
+  }
+
+  .menu-item:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+  .menu-icon { width: 45px; height: 45px; margin-bottom: 8px; }
+  .menu-item span { display: block; font-size: 11px; font-weight: 600; color: #555; }
+
+  /* Sidebar & Utilities */
+  .sidebar { position:fixed; top:0; right:-80%; width:80%; height:100%; background:#fff; transition:.3s; z-index:1200; }
+  .sidebar.open { right:0; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
+  .menu-trigger { position:fixed; top:20px; right:20px; padding:8px 12px; background:#fff; border-radius:8px; cursor:pointer; z-index:1100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  
+  footer { text-align: center; padding: 20px; color: #999; }
+  .hidden { display: none; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
