@@ -5,11 +5,13 @@ const authSection   = document.getElementById('login-card'); // card login/regis
 const appSection    = document.getElementById('dashboard');  // dashboard setelah login
 const emailInput    = document.getElementById('email');
 const passInput     = document.getElementById('password');
-const btnLogin      = document.querySelector('.btn.primary');   // tombol Login
-const btnRegister   = document.querySelector('.btn.secondary'); // tombol Daftar
-const menuBtn       = document.getElementById('menu-btn');       // tombol titik 3
-const closeBtn      = document.getElementById('close-btn');      // close sidebar
-const overlay       = document.getElementById('overlay');        // overlay sidebar
+const btnLogin      = document.querySelector('.btn.primary');
+const btnRegister   = document.querySelector('.btn.secondary');
+
+const menuBtn       = document.getElementById('menu-btn');
+const closeBtn      = document.getElementById('close-btn');
+const overlay       = document.getElementById('overlay');
+const sidebar       = document.getElementById('sidebar');
 
 const userNameEl    = document.getElementById('sidebar-name');
 const userEmailSpan = document.getElementById('sidebar-email');
@@ -27,9 +29,15 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 
+// =========================
+// AUTH PERSISTENCE
+// =========================
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .catch(e => console.error("Persistence error:", e));
+
 
 // =========================
-// LOGIN FUNCTION
+// AUTH FUNCTIONS
 // =========================
 function login() {
   const email = emailInput.value.trim();
@@ -40,13 +48,9 @@ function login() {
   }
 
   auth.signInWithEmailAndPassword(email, pass)
-      .catch(e => showMsg("Login gagal: " + e.message));
+    .catch(e => showMsg("Login gagal: " + e.message));
 }
 
-
-// =========================
-// REGISTER FUNCTION
-// =========================
 function register() {
   const email = emailInput.value.trim();
   const pass  = passInput.value.trim();
@@ -56,24 +60,24 @@ function register() {
   }
 
   auth.createUserWithEmailAndPassword(email, pass)
-      .then(() => showMsg("Akun berhasil dibuat, silakan login"))
-      .catch(e => showMsg("Gagal register: " + e.message));
+    .then(() => showMsg("Akun berhasil dibuat, silakan login"))
+    .catch(e => showMsg("Gagal register: " + e.message));
+}
+
+function logout() {
+  auth.signOut().then(() => {
+    window.location.href = "index.html";
+  });
 }
 
 
 // =========================
-// SHOW MESSAGE
+// MESSAGE HANDLER
 // =========================
 function showMsg(message) {
-  document.getElementById('msg').textContent = message;
-}
-
-
-// =========================
-// LOGOUT FUNCTION
-// =========================
-function logout() {
-  auth.signOut();
+  const el = document.getElementById('msg');
+  if (!el) return;
+  el.textContent = message;
 }
 
 
@@ -82,23 +86,18 @@ function logout() {
 // =========================
 auth.onAuthStateChanged(user => {
   if (user) {
-    // LOGIN → sembunyikan login, tampilkan dashboard
     authSection.classList.add('hidden');
     appSection.classList.remove('hidden');
     menuBtn.style.display = 'block';
 
-    // tampilkan info user
     userNameEl.textContent    = user.displayName || "Pengguna";
     userEmailSpan.textContent = user.email;
     userPhotoEl.src           = user.photoURL || "assets/default-avatar.png";
-
   } else {
-    // LOGOUT → tampilkan login, sembunyikan dashboard
     authSection.classList.remove('hidden');
     appSection.classList.add('hidden');
     menuBtn.style.display = 'none';
 
-    // reset info user
     userNameEl.textContent    = "Pengguna";
     userEmailSpan.textContent = "";
     userPhotoEl.src           = "assets/default-avatar.png";
@@ -107,26 +106,24 @@ auth.onAuthStateChanged(user => {
 
 
 // =========================
-// SIDEBAR MENU (TITIK 3)
+// SIDEBAR MENU
 // =========================
 menuBtn.onclick = () => {
   sidebar.classList.add('open');
   overlay.classList.add('show');
 };
 
-closeBtn.onclick = () => {
-  sidebar.classList.remove('open');
-  overlay.classList.remove('show');
-};
+closeBtn.onclick = closeSidebar;
+overlay.onclick  = closeSidebar;
 
-overlay.onclick = () => {
+function closeSidebar() {
   sidebar.classList.remove('open');
   overlay.classList.remove('show');
-};
+}
 
 
 // =========================
-// EDIT PROFILE POPUP
+// EDIT PROFILE
 // =========================
 function openEdit() {
   document.getElementById('edit-profile-popup').classList.add('show');
@@ -156,23 +153,27 @@ async function saveProfile() {
     alert("Gagal update: " + e.message);
   }
 }
-function openWAReport(){
+
+
+// =========================
+// WHATSAPP REPORT
+// =========================
+function openWAReport() {
   document.getElementById("wa-report-popup").style.display = "flex";
 }
 
-function closeWAReport(){
+function closeWAReport() {
   document.getElementById("wa-report-popup").style.display = "none";
 }
 
-function sendReport(){
-  const user = auth.currentUser;
+function sendReport() {
+  const user  = auth.currentUser;
   const pesan = document.getElementById("wa-message").value.trim();
-  
-  if(!pesan) return alert("Isi pengaduannya dulu ya!");
+  if (!pesan) return alert("Isi pengaduannya dulu ya!");
 
-  const name = user.displayName || "Santri";
+  const name  = user.displayName || "Santri";
   const email = user.email;
-  const adminNumber = "6289661946783"; // GANTI nomor admin!
+  const adminNumber = "6289661946783";
 
   const text = `
 Pengaduan Santri:
@@ -183,16 +184,26 @@ Pesan:
 ${pesan}
   `;
 
-  const encodedMsg = encodeURIComponent(text);
-  const url = `https://wa.me/${adminNumber}?text=${encodedMsg}`;
-  
-  window.open(url, "_blank");
+  window.open(
+    `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`,
+    "_blank"
+  );
+
   closeWAReport();
 }
 
+
 // =========================
-// NAVIGASI DASHBOARD
+// NAVIGATION
 // =========================
 function goTo(page) {
   window.location.href = page;
 }
+
+
+// =========================
+// GLOBAL ERROR SAFETY
+// =========================
+window.addEventListener("unhandledrejection", e => {
+  console.error("Unhandled error:", e.reason);
+});
