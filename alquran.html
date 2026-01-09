@@ -7,6 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="quran.css">
+
 </head>
 <body>
 
@@ -16,19 +17,20 @@
 </header>
 
 <main>
-  <ul id="surah-list"></ul>
+  <ul id="surahList"></ul>
 </main>
 
-<!-- Modal Fullscreen -->
 <div id="modal" class="modal">
   <div class="modal-content">
-    <span class="close" onclick="modal.style.display='none'">✕</span>
+    <span class="close" onclick="closeModal()">✕</span>
+
     <div class="audio-bar">
       <button onclick="playAudio()">▶ Play</button>
       <button onclick="pauseAudio()">⏸ Pause</button>
     </div>
-    <h2 id="modal-title"></h2>
-    <div id="modal-body"></div>
+
+    <h2 id="surahTitle"></h2>
+    <div id="surahContent"></div>
   </div>
 </div>
 
