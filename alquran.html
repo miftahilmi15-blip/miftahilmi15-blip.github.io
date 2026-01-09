@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Al-Qur’an E-Santri</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<!-- FONT MUSHAF -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Poppins&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --bg:#f7f9fb;
+  --text:#111;
   --card:#ffffff;
-  --text:#1f2937;
-  --primary:#2e5e4e;
 }
 body.dark{
   --bg:#0f172a;
-  --card:#1e293b;
   --text:#e5e7eb;
+  --card:#1e293b;
 }
 body{
   margin:0;
@@ -26,27 +26,24 @@ body{
   color:var(--text);
 }
 header{
-  background:var(--primary);
+  background:#2e5e4e;
   color:#fff;
-  padding:15px 20px;
+  padding:14px;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
-header h1{margin:0;font-size:20px}
-header button{
-  border:none;
+button{
   padding:6px 10px;
+  border:none;
   border-radius:6px;
   cursor:pointer;
 }
-
 main{
   max-width:900px;
   margin:auto;
-  padding:20px;
+  padding:15px;
 }
-
 ul{list-style:none;padding:0}
 li{
   background:var(--card);
@@ -70,8 +67,38 @@ li{
   padding:20px;
 }
 .close{
-  font-size:22px;
+  font-size:20px;
   cursor:pointer;
+}
+
+/* MUSHAF */
+.mushaf{
+  font-family:'Amiri Quran','Amiri',serif;
+  font-size:24px;          /* AMAN: tidak kepotong */
+  line-height:2.2;
+  direction:rtl;
+  text-align:justify;
+  word-break:keep-all;
+}
+.bismillah{
+  text-align:center;
+  font-size:26px;
+  margin:20px 0;
+}
+.ayah-number{
+  font-size:14px;
+  margin:0 6px;
+  cursor:pointer;
+}
+.translation{
+  display:none;
+  background:var(--card);
+  padding:10px;
+  margin:10px 0;
+  border-radius:6px;
+  direction:ltr;
+  font-family:Poppins;
+  font-size:14px;
 }
 
 /* AUDIO */
@@ -80,38 +107,7 @@ li{
   top:0;
   background:var(--card);
   padding:10px;
-  display:flex;
-  gap:10px;
-  z-index:5;
-}
-
-/* MUSHAF */
-.mushaf{
-  font-family:'Amiri',serif;
-  font-size:24px;
-  line-height:2.2;
-  direction:rtl;
-  text-align:justify;
-}
-.bismillah{
-  text-align:center;
-  font-size:28px;
-  margin:20px 0;
-}
-.ayah-number{
-  font-size:15px;
-  margin:0 6px;
-  cursor:pointer;
-}
-.translation{
-  display:none;
-  direction:ltr;
-  font-family:Poppins;
-  font-size:14px;
-  background:#e5efe9;
-  padding:10px;
-  margin:10px 0;
-  border-radius:6px;
+  margin-bottom:10px;
 }
 
 /* PRINT */
@@ -125,11 +121,10 @@ li{
 }
 </style>
 </head>
-
 <body>
 
 <header>
-  <h1>Al-Qur’an E-Santri</h1>
+  <h3>Al-Qur’an E-Santri</h3>
   <button onclick="toggleDark()">🌙</button>
 </header>
 
@@ -143,8 +138,8 @@ li{
     <span class="close" onclick="modal.style.display='none'">✕</span>
 
     <div class="audio-bar">
-      <button onclick="audio.play()">▶ Play</button>
-      <button onclick="audio.pause()">⏸ Pause</button>
+      <button onclick="playAudio()">▶ Play</button>
+      <button onclick="pauseAudio()">⏸ Pause</button>
     </div>
 
     <h2 id="title"></h2>
@@ -158,12 +153,13 @@ const modal=document.getElementById('modal');
 const content=document.getElementById('content');
 const title=document.getElementById('title');
 const audio=new Audio();
+let audioList=[],audioIndex=0;
 
 function toggleDark(){
   document.body.classList.toggle('dark');
 }
 
-/* LOAD DAFTAR SURAH 1–114 */
+/* LOAD 114 SURAH */
 async function loadSurahList(){
   const res=await fetch('https://api.alquran.cloud/v1/surah');
   const js=await res.json();
@@ -175,11 +171,11 @@ async function loadSurahList(){
   });
 }
 
-/* OPEN SURAH */
 async function openSurah(no,name){
   modal.style.display='block';
   title.innerText=`Surah ${name}`;
   content.innerHTML='';
+  audioList=[];audioIndex=0;
 
   const ar=await fetch(`https://api.alquran.cloud/v1/surah/${no}/quran-uthmani`).then(r=>r.json());
   const id=await fetch(`https://api.alquran.cloud/v1/surah/${no}/id.indonesian`).then(r=>r.json());
@@ -187,7 +183,8 @@ async function openSurah(no,name){
   const mushaf=document.createElement('div');
   mushaf.className='mushaf';
 
-  if(no!==9){
+  /* BISMILLAH MANUAL (TIDAK DOBEL) */
+  if(no!==1 && no!==9){
     const b=document.createElement('div');
     b.className='bismillah';
     b.innerText='﷽';
@@ -195,7 +192,10 @@ async function openSurah(no,name){
   }
 
   ar.data.ayahs.forEach((a,i)=>{
-    audio.src=`https://cdn.islamic.network/quran/audio/128/ar.alafasy/${a.number}.mp3`;
+    /* HILANGKAN BISMILLAH DARI API */
+    if(i===0 && a.text.includes('بِسْمِ')) return;
+
+    audioList.push(`https://cdn.islamic.network/quran/audio/128/ar.alafasy/${a.number}.mp3`);
 
     const span=document.createElement('span');
     span.innerHTML=`
@@ -207,15 +207,26 @@ async function openSurah(no,name){
     const tr=document.createElement('div');
     tr.className='translation';
     tr.id='tr-'+i;
-    tr.innerText=id.data.ayahs[i].text;
+    tr.innerText=id.data.ayahs[i]?.text || '';
     mushaf.appendChild(tr);
   });
 
   content.appendChild(mushaf);
+  audio.src=audioList[0];
 }
 
+/* AUDIO CONTROL */
+function playAudio(){
+  audio.play();
+}
+function pauseAudio(){
+  audio.pause();
+}
+
+/* TRANSLATION TOGGLE */
 function toggleTr(i){
   const el=document.getElementById('tr-'+i);
+  if(!el) return;
   el.style.display=el.style.display==='block'?'none':'block';
 }
 
