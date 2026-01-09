@@ -246,12 +246,12 @@
   <small>© 2025 E-Santri</small>
 </footer>
 
-</script>
+<script>
   // --- FIREBASE INIT ---
   firebase.initializeApp({
-    apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
-    authDomain:"e-santri-ed555.firebaseapp.com",
-    projectId:"e-santri-ed555"
+    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain: "e-santri-ed555.firebaseapp.com",
+    projectId: "e-santri-ed555"
   });
   const auth = firebase.auth();
 
@@ -272,39 +272,39 @@
   }
 
   function msg(t) { document.getElementById("msg").innerHTML = t; }
-  function logout() { auth.signOut(); }
-
- 
-// --- LOGIN GOOGLE ---
-function loginWithGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(result => {
-      console.log("Login Google berhasil:", result.user);
-      msg("");
-    })
-    .catch(error => {
-      console.error(error);
-      msg("Login Google gagal: " + error.message);
+  
+  function logout() { 
+    auth.signOut().then(() => {
+      location.reload();
     });
-}
-
-// --- AUTH LISTENER (update sidebar foto profil) ---
-auth.onAuthStateChanged(user => {
-  if(user){
-    document.getElementById("login-card").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-    document.getElementById("menu-btn").style.display = "block";
-    document.getElementById("sidebar-name").innerHTML = user.displayName || "Pengguna";
-    document.getElementById("sidebar-email").innerHTML = user.email;
-    document.getElementById("user-photo").src = user.photoURL || "assets/default-avatar.png";
-  } else {
-    document.getElementById("login-card").classList.remove("hidden");
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("menu-btn").style.display = "none";
-    document.getElementById("user-photo").src = "assets/default-avatar.png";
   }
-});
+
+  function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .catch(error => msg("Login Google gagal: " + error.message));
+  }
+
+  // --- AUTH LISTENER ---
+  auth.onAuthStateChanged(user => {
+    const loginCard = document.getElementById("login-card");
+    const dashboard = document.getElementById("dashboard");
+    const menuBtn = document.getElementById("menu-btn");
+
+    if (user) {
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display = "block";
+      document.getElementById("sidebar-name").innerHTML = user.displayName || "Pengguna";
+      document.getElementById("sidebar-email").innerHTML = user.email;
+      document.getElementById("user-photo").src = user.photoURL || "assets/default-avatar.png";
+    } else {
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      menuBtn.style.display = "none";
+    }
+  });
+
   // --- SIDEBAR ---
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");
@@ -315,66 +315,30 @@ auth.onAuthStateChanged(user => {
   closeBtn.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
   overlay.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
 
-  // --- EDIT PROFIL ---
-  function openEdit() { document.getElementById("edit-profile-popup").classList.add("show"); }
-  function closeEdit() { document.getElementById("edit-profile-popup").classList.remove("show"); }
-
-  async function saveProfile() {
-    const user = auth.currentUser;
-    if (!user) return alert("Tidak ada user login");
-
-    const name = document.getElementById("edit-name").value.trim();
-    const email = document.getElementById("edit-email").value.trim();
-    const pass = document.getElementById("edit-pass").value.trim();
-
-    try {
-      if(name) await user.updateProfile({ displayName: name });
-      if(email) await user.updateEmail(email);
-      if(pass) await user.updatePassword(pass);
-
-      alert("Profil berhasil diperbarui!");
-      closeEdit();
-      location.reload();
-    } catch(e) {
-      alert("Gagal update: " + e.message);
-    }
+  // --- WHATSAPP REPORT ---
+  function openWAReport() { 
+    document.getElementById("wa-report-popup").style.display = "flex"; 
+    sidebar.classList.remove("open"); // Tutup sidebar saat popup buka
+    overlay.classList.remove("show");
   }
- // =========================
-// POPUP WHATSAPP REPORT
-// =========================
-function openWAReport(){
-  document.getElementById("wa-report-popup").style.display = "flex";
-}
+  
+  function closeWAReport() { document.getElementById("wa-report-popup").style.display = "none"; }
 
-function closeWAReport(){
-  document.getElementById("wa-report-popup").style.display = "none";
-}
+  function sendReport() {
+    const user = auth.currentUser;
+    const pesan = document.getElementById("wa-message").value.trim();
+    if (!pesan) return alert("Isi pengaduannya dulu ya!");
 
-function sendReport(){
-  const user = auth.currentUser;
-  const pesan = document.getElementById("wa-message").value.trim();
+    const name = user ? (user.displayName || "Santri") : "Santri";
+    const email = user ? user.email : "-";
+    const adminNumber = "6289661946783";
 
-  if(!pesan) return alert("Isi pengaduannya dulu ya!");
+    const text = `Pengaduan Santri:\nNama: ${name}\nEmail: ${email}\n\nPesan:\n${pesan}`;
+    const url = `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`;
 
-  const name = user.displayName || "Santri";
-  const email = user.email;
-  const adminNumber = "6289661946783"; // Ganti nomor admin WA
-
-  const text = `
-Pengaduan Santri:
-Nama: ${name}
-Email: ${email}
-
-Pesan:
-${pesan}
-  `;
-
-  const encodedMsg = encodeURIComponent(text);
-  const url = `https://wa.me/${adminNumber}?text=${encodedMsg}`;
-
-  window.open(url, "_blank");
-  closeWAReport();
-}
+    window.open(url, "_blank");
+    closeWAReport();
+  }
 </script>
 
 </body>
