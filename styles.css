@@ -22,37 +22,71 @@ body{
 /* container center, mobile first */
 .container{max-width:520px;margin:18px auto;position:relative;padding-bottom:40px}
 
-/* HEADER */
-.header-box{
-  display:flex;align-items:center;gap:18px;padding:18px 20px;border-radius:12px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.7), rgba(255,255,255,0.55));
-  box-shadow:0 6px 18px rgba(29,69,57,0.06); border:1px solid rgba(31,111,81,0.06);
-}
-.logo-box{width:72px;height:72px;padding:6px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--card);box-shadow:0 6px 18px rgba(31,111,81,0.06);border:2px solid var(--primary)}
-.logo{width:60px;height:60px;object-fit:contain}
-.header-text .title{font-size:24px;font-weight:700;color:var(--primary);letter-spacing:0.2px}
-.header-text .tagline{font-size:13px;color:var(--muted);margin-top:4px}
-
-/* CARD base */
-.card{
-  background:var(--card);
-  border-radius:16px;
-  padding:20px;
-  margin:18px 0;
-  box-shadow: 0 10px 30px rgba(18,40,30,0.06);
-  border-left:6px solid var(--primary);
-  transition: transform .25s ease, box-shadow .25s ease, background .25s;
+/* HEADER - Clean & Centered */
+.header-box {
+  display: flex;
+  flex-direction: column; /* Ubah ke kolom agar logo di atas teks */
+  align-items: center;
+  gap: 12px;
+  padding: 30px 20px;
+  background: transparent; /* Hilangkan background gradient box */
+  box-shadow: none;        /* Hilangkan bayangan luar */
+  border: none;
 }
 
-/* LOGIN CARD SPECIFIC */
-.card.login{
-  width:100%;
-  max-width:420px;
-  margin:22px auto;
-  padding:24px;
-  border-radius:16px;
-  position:relative;
-  overflow:visible;
+.logo-box {
+  width: 90px;
+  height: 90px;
+  padding: 0;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  box-shadow: none;        /* Hilangkan bayangan kotak logo */
+  border: none;            /* Hilangkan garis hijau di logo */
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.header-text {
+  text-align: center;
+}
+
+.header-text .title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+}
+
+/* CARD - Symmetric & Professional */
+.card {
+  background: var(--card);
+  border-radius: 12px; /* Lebih kotak profesional */
+  padding: 30px;
+  margin: 18px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Shadow halus */
+  border: 1px solid rgba(0,0,0,0.06); /* Border tipis keliling */
+  border-left: none; /* Hapus garis tebal 6px hijau di kiri */
+  transition: all .25s ease;
+}
+
+.card.login {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center; /* Teks login di tengah */
+}
+
+.card.login h2 {
+  font-size: 24px;
+  color: #333; /* Warna gelap natural */
+  margin-bottom: 20px;
 }
 
 /* headline */
@@ -64,40 +98,60 @@ body{
 /* message */
 #msg{color:#c0392b;font-size:13px;margin:6px 0 8px;min-height:18px}
 
-/* inputs */
-input[type="email"], input[type="password"], input, select, textarea {
-  width:100%;
-  padding:12px 14px;
-  font-size:15px;
-  border-radius:12px;
-  border:1px solid rgba(16,16,16,0.06);
-  background:#fbfffe;
-  margin:8px 0;
-  transition:box-shadow .22s ease, border-color .22s ease, transform .12s;
+/* INPUTS - Modern look */
+input[type="email"], input[type="password"], input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 15px;
+  border-radius: 8px; /* Kurangi kelengkungan */
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  margin: 10px 0;
+  transition: border-color .2s, box-shadow .2s;
 }
 
-input:focus, select:focus, textarea:focus {
-  outline:none;
-  border-color:var(--primary);
-  box-shadow:0 6px 18px rgba(31,111,81,0.12);
-  transform:translateY(-1px);
+input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--soft); /* Efek glow tipis */
+  transform: none; /* Hilangkan efek melayang saat mengetik */
 }
 
-/* buttons */
-.login-btn-group{display:flex;gap:12px;margin-top:12px;flex-direction:row;flex-wrap:wrap}
-.btn{
-  padding:10px 14px;border-radius:12px;border:none;cursor:pointer;font-weight:600;font-size:15px;
-  transition:transform .18s ease, box-shadow .18s ease, opacity .18s;
-  min-width:140px;
+/* BUTTONS - Full Width Focus */
+.login-btn-group {
+  display: flex;
+  flex-direction: column; /* Tombol bertumpuk ke bawah */
+  gap: 12px;
+  margin-top: 15px;
 }
-.btn.primary{
-  background:linear-gradient(180deg,var(--primary),var(--primary-600));
-  color:#fff;box-shadow:0 8px 20px rgba(31,111,81,0.14);
+
+.btn {
+  width: 100%; /* Penuhi lebar card */
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  transition: opacity .2s;
 }
-.btn.secondary{
-  background:transparent;border:2px solid rgba(31,111,81,0.08);color:var(--primary);
+
+.btn.primary {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: none; /* Hapus bayangan tombol agar minimalis */
 }
-.btn:hover{transform:translateY(-3px);opacity:0.98}
+
+.btn.secondary {
+  background: #f1f5f9; /* Abu-abu sangat muda */
+  color: #475569;
+  border: none;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: none; /* Tetap di tempat */
+}
 
 /* MENU GRID */
 .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
