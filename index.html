@@ -147,13 +147,31 @@
 </head>
 <body>
 
-<div id="wa-report-popup" style="display:none;">
-  <div class="popup-box">
-    <h3>Laporan / Pengaduan</h3>
-    <textarea id="wa-message" placeholder="Tuliskan pengaduan Anda..."
-      style="width:100%;height:100px;padding:10px;border-radius:10px;border:1px solid #ccc;"></textarea>
-    <button class="btn primary" onclick="sendReport()">Kirim ke WhatsApp</button>
-    <button class="btn secondary" onclick="closeWAReport()">Batal</button>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span id="close-btn" class="close-btn">&times;</span>
+    <img id="user-photo" src="assets/default-avatar.png" class="avatar" alt="Foto Profil">
+    <div class="user-name" id="sidebar-name">Miftah Ilmi</div>
+    <small id="sidebar-email">miftahilmi15@gmail.com</small>
+  </div>
+
+  <div class="sidebar-menu">
+    <!-- Grup utama -->
+    <a href="index.html">Dashboard</a>
+    <a href="#" onclick="openEdit()">Edit Profil</a>
+    <a href="#" onclick="openWAReport()">Pengaduan Santri</a>
+    <a href="kalender.html">Kalender</a>
+
+    <hr>
+
+    <!-- Grup info -->
+    <a href="#">Tentang Aplikasi</a>
+    <a href="#">Kebijakan Privasi</a>
+
+    <hr>
+
+    <!-- Logout -->
+    <a href="#" onclick="logout()" class="logout-link">Logout</a>
   </div>
 </div>
 
