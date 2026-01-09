@@ -216,23 +216,37 @@
   function msg(t) { document.getElementById("msg").innerHTML = t; }
   function logout() { auth.signOut(); }
 
-  // --- AUTH LISTENER ---
-  auth.onAuthStateChanged(user => {
-    if(user){
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("menu-btn").style.display = "block";
-      document.getElementById("sidebar-name").innerHTML = user.displayName || "Pengguna";
-      document.getElementById("sidebar-email").innerHTML = user.email;
-    } else {
-      document.getElementById("login-card").classList.remove("hidden");
-      document.getElementById("dashboard").classList.add("hidden");
-      document.getElementById("menu-btn").style.display = "none";
-    }
-  });
+ 
+// --- LOGIN GOOGLE ---
+function loginWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then(result => {
+      console.log("Login Google berhasil:", result.user);
+      msg("");
+    })
+    .catch(error => {
+      console.error(error);
+      msg("Login Google gagal: " + error.message);
+    });
+}
 
-  function goTo(x){ window.location = x; }
-
+// --- AUTH LISTENER (update sidebar foto profil) ---
+auth.onAuthStateChanged(user => {
+  if(user){
+    document.getElementById("login-card").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("menu-btn").style.display = "block";
+    document.getElementById("sidebar-name").innerHTML = user.displayName || "Pengguna";
+    document.getElementById("sidebar-email").innerHTML = user.email;
+    document.getElementById("user-photo").src = user.photoURL || "assets/default-avatar.png";
+  } else {
+    document.getElementById("login-card").classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("menu-btn").style.display = "none";
+    document.getElementById("user-photo").src = "assets/default-avatar.png";
+  }
+});
   // --- SIDEBAR ---
   const sidebar = document.getElementById("sidebar");
   const overlay = document.getElementById("overlay");
