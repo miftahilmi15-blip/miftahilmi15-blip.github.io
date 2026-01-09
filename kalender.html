@@ -157,23 +157,39 @@ const nextMonth = document.getElementById('nextMonth');
 
 let currentDate = new Date();
 
-// Contoh data awal event
+// Contoh data awal event dan libur nasional
 let events = [
+  { date: '2026-01-01', title: 'Tahun Baru Masehi' },
   { date: '2026-01-15', title: 'Ujian Tahfidz' },
   { date: '2026-01-20', title: 'Libur Nasional' },
   { date: '2026-02-05', title: 'Pengajian Rutin' },
 ];
 
+// Daftar libur nasional Indonesia 2026 (contoh)
+const holidays = [
+  '2026-01-01', // Tahun Baru Masehi
+  '2026-02-11', // Tahun Baru Imlek
+  '2026-03-03', // Hari Raya Nyepi
+  '2026-03-14', // Isra Mi'raj
+  '2026-05-01', // Hari Buruh
+  '2026-05-13', // Kenaikan Isa Almasih
+  '2026-05-16', // Idul Fitri
+  '2026-12-25', // Natal
+];
+
+// Nama hari
 const dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 
 function renderCalendar(date){
   calendar.innerHTML = '';
 
-  // Nama hari
+  // Header hari
   for(let d=0; d<7; d++){
     const dayNameDiv = document.createElement('div');
     dayNameDiv.className = 'day-name';
     dayNameDiv.innerText = dayNames[d];
+    // Hari Minggu berwarna merah
+    if(d === 0) dayNameDiv.style.color = 'red';
     calendar.appendChild(dayNameDiv);
   }
 
@@ -187,8 +203,7 @@ function renderCalendar(date){
   // Blank days sebelum tanggal 1
   const startDay = firstDay.getDay();
   for(let i=0; i<startDay; i++){
-    const blank = document.createElement('div');
-    calendar.appendChild(blank);
+    calendar.appendChild(document.createElement('div'));
   }
 
   for(let i=1; i<=lastDay.getDate(); i++){
@@ -202,13 +217,20 @@ function renderCalendar(date){
       dayDiv.classList.add('today');
     }
 
-    const event = events.find(e => e.date === dayDate.toISOString().split('T')[0]);
+    // Hari Minggu berwarna merah
+    if(dayDate.getDay() === 0) dayDiv.style.color = 'red';
+
+    // Libur nasional
+    const dateStr = dayDate.toISOString().split('T')[0];
+    if(holidays.includes(dateStr)) dayDiv.style.color = 'red';
+
+    // Event
+    const event = events.find(e => e.date === dateStr);
     if(event){
       dayDiv.classList.add('event');
       dayDiv.setAttribute('data-title', event.title);
     }
 
-    // klik untuk popup
     dayDiv.onclick = () => openPopup(dayDate);
 
     calendar.appendChild(dayDiv);
@@ -219,7 +241,6 @@ function openPopup(date){
   document.getElementById('event-popup').style.display = 'flex';
   const dateStr = date.toISOString().split('T')[0];
   document.getElementById('popup-date').innerText = date.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-
   const event = events.find(e => e.date === dateStr);
   document.getElementById('popup-message').value = event ? event.title : '';
   document.getElementById('popup-message').dataset.date = dateStr;
