@@ -1,66 +1,51 @@
-let surahList = document.getElementById('surahList');
-let modal = document.getElementById('modal');
-let surahTitle = document.getElementById('surahTitle');
-let surahContent = document.getElementById('surahContent');
+// quran.js
+const surahList = document.getElementById('surahList');
+const modal = document.getElementById('modal');
+const surahTitle = document.getElementById('surahTitle');
+const surahContent = document.getElementById('surahContent');
 let audio = new Audio();
-let currentAudioIndex = 0;
-let audioList = [];
+let darkMode = false;
 
-function toggleDark(){
-  document.body.classList.toggle('dark');
+// Contoh data surah (bisa diambil dari API atau JSON)
+const surahs = [
+  { number: 1, name: "Al-Fatihah", ayahs: ["Bismillahirrahmanirrahim","Alhamdulillahi rabbil 'alamin","Ar-Rahmanir-Rahim","Maliki yaumiddin","Iyyaka na'budu wa iyyaka nasta'in","Ihdinas siratal mustaqim","Siratal-ladhina an'amta 'alaihim ghayril maghdubi 'alaihim walad-dallin"] },
+  { number: 2, name: "Al-Baqarah", ayahs: ["Alif Lam Mim","Dzalika alkitabu la rayba fihi hudal lilmuttaqin","Alladhina yu'minuna bil-ghaybi","Wa yuqimuna as-salata","Wa mimma razaqnahum yunfiqun"] },
+  // Tambahkan surah lainnya
+];
+
+// Render daftar surah
+surahs.forEach(surah=>{
+  const li = document.createElement('li');
+  li.innerText = `${surah.number}. ${surah.name}`;
+  li.style.cursor = 'pointer';
+  li.onclick = ()=>openModal(surah);
+  surahList.appendChild(li);
+});
+
+function openModal(surah){
+  surahTitle.innerText = `${surah.number}. ${surah.name}`;
+  surahContent.innerHTML = '';
+  surah.ayahs.forEach((ayah,i)=>{
+    const p = document.createElement('p');
+    p.innerText = `${i+1}. ${ayah}`;
+    surahContent.appendChild(p);
+  });
+
+  // Ganti audio (contoh URL dummy, ganti dengan file MP3 asli)
+  audio.src = `audio/surah${surah.number}.mp3`;
+  modal.style.display = 'flex';
 }
+
 function closeModal(){
   modal.style.display = 'none';
+  audio.pause();
 }
-function playAudio(){
-  if(audioList.length>0){
-    audio.src = audioList[currentAudioIndex];
-    audio.play();
-  }
-}
+
+function playAudio(){ audio.play(); }
 function pauseAudio(){ audio.pause(); }
 
-async function loadSurahList(){
-  const res = await fetch('assets/alquran/quran.json');
-  const data = await res.json();
-  data.surahs.forEach(s => {
-    const li = document.createElement('li');
-    li.textContent = `${s.number}. ${s.name} (${s.englishName})`;
-    li.onclick = ()=>openSurah(s.number);
-    surahList.appendChild(li);
-  });
+function toggleDark(){
+  darkMode = !darkMode;
+  document.body.style.background = darkMode ? '#1a1a1a' : '#f4f7f6';
+  document.body.style.color = darkMode ? '#eee' : '#333';
 }
-async function openSurah(no){
-  const res = await fetch('assets/alquran/quran.json');
-  const data = await res.json();
-  const surah = data.surahs[no-1];
-
-  modal.style.display='block';
-  surahTitle.innerText = `${surah.name} (${surah.englishName})`;
-  surahContent.innerHTML='';
-
-  audioList = [];
-  currentAudioIndex = 0;
-
-  surah.ayahs.forEach((a,i)=>{
-    const span = document.createElement('span');
-    span.className='mushaf';
-    span.innerHTML = `${a.text} <span class="ayah-number" onclick="toggleTranslation(${i})">﴿${a.numberInSurah}﴾</span>`;
-    surahContent.appendChild(span);
-
-    const tr = document.createElement('div');
-    tr.className='translation';
-    tr.id='tr-'+i;
-    tr.innerText = a.translation;
-    surahContent.appendChild(tr);
-
-    audioList.push(`assets/alquran/audio/${a.audio}`);
-  });
-}
-
-function toggleTranslation(i){
-  const el = document.getElementById('tr-'+i);
-  el.style.display = el.style.display==='block'?'none':'block';
-}
-
-loadSurahList();
