@@ -137,18 +137,30 @@ async function saveProfile() {
   const user = auth.currentUser;
   if (!user) return alert("Tidak ada user login");
 
-  const name  = document.getElementById('edit-name').value.trim();
-  const email = document.getElementById('edit-email').value.trim();
-  const pass  = document.getElementById('edit-pass').value.trim();
+  const name        = document.getElementById('edit-name').value.trim();
+  const newEmail    = document.getElementById('edit-email').value.trim();
+  const newPassword = document.getElementById('edit-pass').value.trim();
 
   try {
-    if (name)  await user.updateProfile({ displayName: name });
-    if (email) await user.updateEmail(email);
-    if (pass)  await user.updatePassword(pass);
+    // 🔐 RE-AUTH WAJIB
+    const currentPassword = prompt("Masukkan password lama untuk konfirmasi:");
+    if (!currentPassword) return;
+
+    const credential = firebase.auth.EmailAuthProvider.credential(
+      user.email,
+      currentPassword
+    );
+
+    await user.reauthenticateWithCredential(credential);
+
+    // ✅ UPDATE DATA
+    if (name)        await user.updateProfile({ displayName: name });
+    if (newEmail)    await user.updateEmail(newEmail);
+    if (newPassword) await user.updatePassword(newPassword);
 
     alert("Profil berhasil diperbarui!");
     closeEdit();
-    location.reload();
+
   } catch (e) {
     alert("Gagal update: " + e.message);
   }
