@@ -4,40 +4,131 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Al-Quran E-Santri</title>
-<style>
-body{font-family:"Poppins",sans-serif;background:#f7f9fb;margin:0;padding:0}
-header{background:#2e5e4e;color:#fff;padding:15px;text-align:center}
-h1{margin:0;font-size:24px}
-main{max-width:800px;margin:20px auto;padding:0 15px}
-ul{list-style:none;padding:0}
-li{padding:12px;background:#fff;margin:5px 0;border-radius:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.1)}
-li:hover{background:#f1f7f5}
 
-/* Modal */
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center}
-.modal-content{background:#fff;padding:20px;border-radius:10px;max-width:600px;width:90%;max-height:80%;overflow-y:auto;position:relative}
-.close{position:absolute;top:10px;right:15px;font-size:20px;cursor:pointer;color:#333}
-.ayat{margin:10px 0;padding:10px;background:#e6f2f0;border-radius:5px;line-height:1.5}
-.ayat-arab{font-family:"Scheherazade","Amiri",serif;text-align:right;font-size:18px;margin-bottom:5px}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Amiri&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --primary:#2e5e4e;
+  --bg:#f6f8fa;
+  --card:#ffffff;
+  --soft:#eef5f2;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Poppins",sans-serif;
+  background:var(--bg);
+}
+
+header{
+  background:var(--primary);
+  color:#fff;
+  padding:18px;
+  text-align:center;
+  font-weight:600;
+}
+
+main{
+  max-width:900px;
+  margin:auto;
+  padding:16px;
+}
+
+/* SURAH LIST */
+ul{list-style:none;padding:0;margin:0}
+li{
+  background:var(--card);
+  padding:14px 16px;
+  margin-bottom:10px;
+  border-radius:12px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+  transition:.2s;
+}
+li:hover{
+  background:var(--soft);
+  transform:translateY(-2px);
+}
+
+/* FULLSCREEN MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  display:none;
+  flex-direction:column;
+  z-index:999;
+}
+
+.modal-header{
+  background:var(--primary);
+  color:#fff;
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.modal-body{
+  padding:16px;
+  overflow-y:auto;
+  flex:1;
+}
+
+/* AYAT */
+.ayat{
+  background:var(--soft);
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:12px;
+  cursor:pointer;
+}
+
+.ayat-arab{
+  font-family:"Amiri",serif;
+  font-size:22px;
+  text-align:right;
+  margin-bottom:6px;
+}
+
+.ayat-id{
+  display:none;
+  font-size:14px;
+  color:#333;
+  margin-top:8px;
+  line-height:1.6;
+}
+
+.ayat.show .ayat-id{
+  display:block;
+}
+
+/* CLOSE */
+.close{
+  font-size:22px;
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Al-Quran E-Santri</h1>
+  📖 Al-Quran E-Santri
 </header>
 
 <main>
   <ul id="surah-list"></ul>
 </main>
 
-<!-- Modal -->
+<!-- FULLSCREEN MODAL -->
 <div id="modal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2 id="modal-title"></h2>
-    <div id="modal-body"></div>
+  <div class="modal-header">
+    <span id="modal-title"></span>
+    <span class="close" onclick="closeModal()">✕</span>
   </div>
+  <div id="modal-body" class="modal-body"></div>
 </div>
 
 <script>
@@ -45,39 +136,41 @@ const surahList = document.getElementById('surah-list');
 const modal = document.getElementById('modal');
 const modalTitle = document.getElementById('modal-title');
 const modalBody = document.getElementById('modal-body');
-const closeBtn = document.querySelector('.close');
 
-closeBtn.onclick = () => modal.style.display = 'none';
-window.onclick = e => { if(e.target === modal) modal.style.display = 'none'; }
+function closeModal(){
+  modal.style.display='none';
+}
 
-async function getSurahList() {
+async function getSurahList(){
   const res = await fetch('https://api.alquran.cloud/v1/surah');
   const data = await res.json();
-  data.data.forEach(s => {
-    const li = document.createElement('li');
-    li.textContent = `${s.number}. ${s.englishName} (${s.name}) - ${s.numberOfAyahs} ayat`;
-    li.addEventListener('click', () => showAyat(s.number, s.englishName));
+
+  data.data.forEach(s=>{
+    const li=document.createElement('li');
+    li.innerHTML = `<strong>${s.number}. ${s.englishName}</strong><br>
+                    <small>${s.name} • ${s.numberOfAyahs} ayat</small>`;
+    li.onclick=()=>openSurah(s.number,s.englishName);
     surahList.appendChild(li);
   });
 }
 
-async function showAyat(no, name) {
+async function openSurah(no,name){
+  modal.style.display='flex';
   modalTitle.textContent = `Surah ${name}`;
-  modalBody.innerHTML = 'Loading...';
-  modal.style.display = 'flex';
+  modalBody.innerHTML='Memuat...';
 
-  const res = await fetch(`https://api.alquran.cloud/v1/surah/${no}`);
-  const arRes = await res.json();
-  
-  const resId = await fetch(`https://api.alquran.cloud/v1/surah/${no}/id.indonesian`);
-  const idRes = await resId.json();
+  const ar = await fetch(`https://api.alquran.cloud/v1/surah/${no}`).then(r=>r.json());
+  const id = await fetch(`https://api.alquran.cloud/v1/surah/${no}/id.indonesian`).then(r=>r.json());
 
-  modalBody.innerHTML = '';  
-  arRes.data.ayahs.forEach((ayat, i) => {
-    const div = document.createElement('div');
-    div.className = 'ayat';
-    div.innerHTML = `<div class="ayat-arab">${ayat.text}</div>
-                     <div class="ayat-id">${idRes.data.ayahs[i].text}</div>`;
+  modalBody.innerHTML='';
+  ar.data.ayahs.forEach((a,i)=>{
+    const div=document.createElement('div');
+    div.className='ayat';
+    div.innerHTML=`
+      <div class="ayat-arab">${a.text}</div>
+      <div class="ayat-id">${id.data.ayahs[i].text}</div>
+    `;
+    div.onclick=()=>div.classList.toggle('show');
     modalBody.appendChild(div);
   });
 }
