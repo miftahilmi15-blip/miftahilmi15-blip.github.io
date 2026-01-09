@@ -3,186 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Al-Quran E-Santri</title>
+<title>Al-Qur'an E-Santri</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Amiri&display=swap" rel="stylesheet">
+<!-- Font Mushaf -->
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --primary:#2e5e4e;
-  --bg:#f6f8fa;
-  --card:#ffffff;
-  --soft:#eef5f2;
-}
-
-*{box-sizing:border-box}
 body{
   margin:0;
-  font-family:"Poppins",sans-serif;
-  background:var(--bg);
+  font-family:Poppins,Arial,sans-serif;
+  background:#f6f8f7;
 }
 
 header{
-  background:var(--primary);
+  background:#2e5e4e;
   color:#fff;
-  padding:18px;
+  padding:16px;
   text-align:center;
-  font-weight:600;
 }
 
 main{
   max-width:900px;
   margin:auto;
-  padding:16px;
+  padding:15px;
 }
 
-/* SURAH LIST */
 ul{list-style:none;padding:0;margin:0}
+
 li{
-  background:var(--card);
-  padding:14px 16px;
-  margin-bottom:10px;
-  border-radius:12px;
+  background:#fff;
+  padding:14px;
+  margin-bottom:8px;
+  border-radius:10px;
   cursor:pointer;
-  box-shadow:0 4px 12px rgba(0,0,0,.05);
-  transition:.2s;
-}
-li:hover{
-  background:var(--soft);
-  transform:translateY(-2px);
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
 }
 
-/* FULLSCREEN MODAL */
+li:hover{background:#eef5f3}
+
+/* MODAL FULL */
 .modal{
+  display:none;
   position:fixed;
   inset:0;
   background:#fff;
-  display:none;
-  flex-direction:column;
   z-index:999;
+  overflow-y:auto;
 }
 
 .modal-header{
-  background:var(--primary);
+  position:sticky;
+  top:0;
+  background:#2e5e4e;
   color:#fff;
-  padding:16px;
+  padding:14px;
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
+.close{
+  font-size:24px;
+  cursor:pointer;
+}
+
 .modal-body{
-  padding:16px;
-  overflow-y:auto;
-  flex:1;
+  padding:18px;
 }
 
 /* AYAT */
 .ayat{
-  background:#f3f7f6;
-  padding:18px;
-  border-radius:14px;
-  margin-bottom:16px;
+  margin-bottom:24px;
 }
 
 .ayat-arab{
-  font-family:"Amiri","Scheherazade",serif;
+  font-family:'Amiri',serif;
   font-size:26px;
-  line-height:2.1;
+  line-height:2.2;
   text-align:right;
   direction:rtl;
-  word-spacing:4px;
 }
 
 .ayat-number{
-  display:inline-block;
-  margin:0 6px;
   font-size:18px;
-  color:#2e5e4e;
-  font-weight:600;
+  margin-left:6px;
 }
 
 .ayat-id{
   display:none;
-  margin-top:12px;
-  font-size:15px;
-  line-height:1.7;
-  color:#333;
+  margin-top:8px;
+  background:#eef5f3;
+  padding:10px;
+  border-radius:8px;
+  font-size:14px;
 }
 
-.ayat.show .ayat-id{
-  display:block;
-}
+.ayat.show .ayat-id{display:block}
 
-
-/* CLOSE */
-.close{
-  font-size:22px;
+/* AUDIO */
+.audio-btn{
+  margin-top:8px;
+  background:#2e5e4e;
+  color:#fff;
+  border:none;
+  padding:6px 12px;
+  border-radius:6px;
+  font-size:13px;
   cursor:pointer;
 }
+.audio-btn:hover{background:#23493c}
 </style>
 </head>
+
 <body>
 
 <header>
-  📖 Al-Quran E-Santri
+  <h2>📖 Al-Qur'an E-Santri</h2>
 </header>
 
 <main>
-  <ul id="surah-list"></ul>
+  <ul id="surahList"></ul>
 </main>
 
-<!-- FULLSCREEN MODAL -->
+<!-- MODAL -->
 <div id="modal" class="modal">
   <div class="modal-header">
-    <span id="modal-title"></span>
+    <span id="modalTitle"></span>
     <span class="close" onclick="closeModal()">✕</span>
   </div>
-  <div id="modal-body" class="modal-body"></div>
+  <div id="modalBody" class="modal-body"></div>
 </div>
 
 <script>
-const surahList = document.getElementById('surah-list');
-const modal = document.getElementById('modal');
-const modalTitle = document.getElementById('modal-title');
-const modalBody = document.getElementById('modal-body');
+const surahList=document.getElementById('surahList');
+const modal=document.getElementById('modal');
+const modalTitle=document.getElementById('modalTitle');
+const modalBody=document.getElementById('modalBody');
+let currentAudio=null;
 
-function closeModal(){
-  modal.style.display='none';
-}
-
-async function getSurahList(){
-  const res = await fetch('https://api.alquran.cloud/v1/surah');
-  const data = await res.json();
-
-  data.data.forEach(s=>{
+/* LIST SURAH */
+fetch('https://api.alquran.cloud/v1/surah')
+.then(r=>r.json())
+.then(d=>{
+  d.data.forEach(s=>{
     const li=document.createElement('li');
-    li.innerHTML = `<strong>${s.number}. ${s.englishName}</strong><br>
-                    <small>${s.name} • ${s.numberOfAyahs} ayat</small>`;
+    li.innerText=`${s.number}. ${s.englishName} (${s.name})`;
     li.onclick=()=>openSurah(s.number,s.englishName);
     surahList.appendChild(li);
   });
-}
+});
 
+/* OPEN SURAH */
 async function openSurah(no,name){
-  modal.style.display='flex';
-  modalTitle.textContent = `Surah ${name}`;
+  modal.style.display='block';
+  modalTitle.innerText=`Surah ${name}`;
   modalBody.innerHTML='Memuat...';
 
-  const ar = await fetch(`https://api.alquran.cloud/v1/surah/${no}`).then(r=>r.json());
-  const id = await fetch(`https://api.alquran.cloud/v1/surah/${no}/id.indonesian`).then(r=>r.json());
+  const ar=await fetch(
+    `https://api.alquran.cloud/v1/surah/${no}/quran-uthmani`
+  ).then(r=>r.json());
+
+  const id=await fetch(
+    `https://api.alquran.cloud/v1/surah/${no}/id.indonesian`
+  ).then(r=>r.json());
 
   modalBody.innerHTML='';
-  
+
   ar.data.ayahs.forEach((a,i)=>{
     const div=document.createElement('div');
     div.className='ayat';
+
+    const audioUrl=
+      `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${a.number}.mp3`;
 
     div.innerHTML=`
       <div class="ayat-arab">
         ${a.text}
         <span class="ayat-number">﴿${a.numberInSurah}﴾</span>
       </div>
+
+      <button class="audio-btn"
+        onclick="event.stopPropagation();playAudio('${audioUrl}',this)">
+        ▶ Putar Ayat
+      </button>
+
       <div class="ayat-id">${id.data.ayahs[i].text}</div>
     `;
 
@@ -190,7 +194,28 @@ async function openSurah(no,name){
     modalBody.appendChild(div);
   });
 }
-getSurahList();
+
+/* AUDIO */
+function playAudio(url,btn){
+  if(currentAudio){
+    currentAudio.pause();
+    currentAudio=null;
+    btn.textContent='▶ Putar Ayat';
+    return;
+  }
+  currentAudio=new Audio(url);
+  currentAudio.play();
+  btn.textContent='⏸ Pause';
+  currentAudio.onended=()=>{
+    btn.textContent='▶ Putar Ayat';
+    currentAudio=null;
+  }
+}
+
+function closeModal(){
+  if(currentAudio) currentAudio.pause();
+  modal.style.display='none';
+}
 </script>
 
 </body>
