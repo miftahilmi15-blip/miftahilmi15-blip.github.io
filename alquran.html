@@ -1,40 +1,30 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mushaf E-Santri</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mushaf E-Santri</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="quran.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="quran.css">
 </head>
 
 <body>
 
-<header>
+<header class="header">
   <h1>Mushaf E-Santri</h1>
-  <button onclick="toggleDark()">🌙 Mode Malam</button>
+  <button class="dark-btn" onclick="toggleDark()">🌙</button>
 </header>
 
-<main>
-  <ul id="surahList"></ul>
+<main id="mushaf-container">
+  <img id="mushafPage" src="svg/001.svg" alt="Mushaf Al-Qur'an">
 </main>
 
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="closeModal()">✕</span>
-
-    <div class="audio-bar">
-      <button onclick="playAudio()">▶ Play</button>
-      <button onclick="pauseAudio()">⏸ Pause</button>
-    </div>
-
-    <h2 id="surahTitle"></h2>
-
-    <!-- ⬇️ PENTING -->
-    <div id="surahContent" class="mushaf"></div>
-  </div>
-</div>
+<nav class="nav">
+  <button onclick="prevPage()">◀</button>
+  <span id="pageNumber">1</span>
+  <button onclick="nextPage()">▶</button>
+</nav>
 
 <script src="quran.js"></script>
 </body>
