@@ -4,9 +4,9 @@
 const surahContent = document.getElementById("surahContent");
 const pageNumberEl = document.getElementById("pageNumber");
 
-// Buat array otomatis dari 001 sampai 604
+// Buat array otomatis dari 001 sampai 604 pakai jsDelivr
 const svgUrls = Array.from({length: 604}, (_, i) =>
-  `https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip.github.io/main/svg/${String(i+1).padStart(3,'0')}.svg`
+  `https://cdn.jsdelivr.net/gh/miftahilmi15-blip/miftahilmi15-blip.github.io/svg/${String(i+1).padStart(3,'0')}.svg`
 );
 
 let currentPage = 0;
