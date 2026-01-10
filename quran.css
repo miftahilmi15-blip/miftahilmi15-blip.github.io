@@ -1,111 +1,42 @@
-/* ===============================
-   FONT MUSHAF MADINAH (WAJIB)
-================================ */
-@font-face {
-  font-family: "Uthmani";
-  src: url("fonts/UthmanicHafs1Ver18.woff2") format("woff2");
-  font-weight: normal;
-  font-style: normal;
-}
-
-/* ===============================
-   ROOT & THEME
-================================ */
 :root{
   --bg:#f7f9fb;
   --text:#222;
-  --card:#ffffff;
-  --primary:#2e5e4e;
+  --card:#fff;
 }
-
 body.dark{
   --bg:#0f172a;
   --text:#e5e7eb;
   --card:#1e293b;
 }
-
-/* ===============================
-   BASE
-================================ */
 body{
   margin:0;
   font-family:Poppins,sans-serif;
   background:var(--bg);
   color:var(--text);
 }
-
 header{
-  background:var(--primary);
+  background:#2e5e4e;
   color:#fff;
-  padding:16px;
+  padding:15px;
   text-align:center;
 }
-
-header button{
-  margin-top:8px;
-  padding:6px 12px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-/* ===============================
-   LAYOUT
-================================ */
 main{
   max-width:900px;
   margin:auto;
-  padding:16px;
+  padding:15px;
+  text-align:center;
 }
-
-ul{
-  list-style:none;
-  padding:0;
-  margin:0;
+.mushaf svg{
+  width:100%;
+  height:auto;
 }
-
-li{
-  background:var(--card);
-  padding:14px;
-  margin:8px 0;
-  border-radius:10px;
-  cursor:pointer;
-  transition:.2s;
+.navigation{
+  margin:10px 0;
 }
-
-li:hover{
-  background:#e7f1ee;
-}
-
-/* ===============================
-   MODAL
-================================ */
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:var(--bg);
-  z-index:1000;
-}
-
-.modal-content{
-  height:100%;
-  overflow:auto;
-  padding:20px;
-}
-
-.close{
-  font-size:22px;
-  cursor:pointer;
-  display:inline-block;
-  margin-bottom:10px;
-}
-
-/* ===============================
-   AUDIO BAR
-================================ */
-.audio-bar{
-  position:sticky;
+.navigation button{
+  padding:8px 12px;
+  margin:0 5px;
+}  position:sticky;
   top:0;
   background:var(--card);
   padding:10px;
