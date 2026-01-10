@@ -1,7 +1,7 @@
 const surahContent = document.getElementById("surahContent");
 const pageNumberEl = document.getElementById("pageNumber");
 
-// Generate 001.svg sampai 604.svg
+// Buat array otomatis dari 001 sampai 604
 const svgUrls = Array.from({length: 604}, (_, i) =>
   `https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip/main/svg/${String(i+1).padStart(3,'0')}.svg`
 );
@@ -11,7 +11,7 @@ let currentPage = 0;
 function showPage(page){
   fetch(svgUrls[page])
     .then(res => {
-      if(!res.ok) throw new Error("404 SVG");
+      if(!res.ok) throw new Error(`Gagal load SVG halaman ${page+1}`);
       return res.text();
     })
     .then(svg => {
@@ -42,5 +42,7 @@ function toggleDark(){
   document.body.classList.toggle("dark");
 }
 
-// Tampilkan halaman pertama saat load
-showPage(currentPage);
+// Tunggu sampai DOM siap sebelum show page
+document.addEventListener("DOMContentLoaded", () => {
+  showPage(currentPage);
+});
