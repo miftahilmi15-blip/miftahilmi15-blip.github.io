@@ -40,16 +40,33 @@ auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
 // =========================
 // AUTH FUNCTIONS
 // =========================
-function login() {
+async function login() {
   const email = emailInput.value.trim();
   const pass  = passInput.value.trim();
 
   if (!email || !pass) {
-    return showMsg("Isi email & password untuk login");
+    return showMsg("Isi email & password");
   }
 
-  auth.signInWithEmailAndPassword(email, pass)
-    .catch(e => showMsg("Login gagal: " + e.message));
+  try {
+    // 🔍 CEK PROVIDER AKUN
+    const methods = await auth.fetchSignInMethodsForEmail(email);
+
+    // 🚫 AKUN GOOGLE-ONLY
+    if (methods.includes("google.com") && !methods.includes("password")) {
+      showMsg(
+        "Akun ini terdaftar menggunakan Google.\n" +
+        "Silakan login dengan Google atau reset password."
+      );
+      return;
+    }
+
+    // ✅ LOGIN EMAIL & PASSWORD
+    await auth.signInWithEmailAndPassword(email, pass);
+
+  } catch (e) {
+    showMsg("Login gagal: " + e.message);
+  }
 }
 
 function register() {
