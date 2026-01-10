@@ -1,14 +1,20 @@
+// ==============================
+// Mushaf E-Santri JS
+// ==============================
 const surahContent = document.getElementById("surahContent");
 const pageNumberEl = document.getElementById("pageNumber");
 
-// Array otomatis dari 001 sampai 604, pakai repository GitHub Pages yang benar
+// Buat array otomatis dari 001 sampai 604
 const svgUrls = Array.from({length: 604}, (_, i) =>
   `https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip.github.io/main/svg/${String(i+1).padStart(3,'0')}.svg`
 );
 
 let currentPage = 0;
 
+// Tampilkan halaman tertentu
 function showPage(page){
+  if(page < 0 || page >= svgUrls.length) return;
+
   fetch(svgUrls[page])
     .then(res => {
       if(!res.ok) throw new Error(`Gagal load SVG halaman ${page+1}`);
@@ -24,6 +30,7 @@ function showPage(page){
     });
 }
 
+// Navigasi berikutnya
 function nextPage(){
   if(currentPage < svgUrls.length - 1){
     currentPage++;
@@ -31,6 +38,7 @@ function nextPage(){
   }
 }
 
+// Navigasi sebelumnya
 function prevPage(){
   if(currentPage > 0){
     currentPage--;
@@ -38,11 +46,18 @@ function prevPage(){
   }
 }
 
+// Mode malam
 function toggleDark(){
   document.body.classList.toggle("dark");
 }
 
-// Tunggu sampai DOM siap sebelum show page
+// Tunggu sampai DOM siap sebelum show page pertama
 document.addEventListener("DOMContentLoaded", () => {
   showPage(currentPage);
+
+  // Tambahkan shortcut keyboard (panah kiri/kanan)
+  document.addEventListener("keydown", e => {
+    if(e.key === "ArrowRight") nextPage();
+    if(e.key === "ArrowLeft") prevPage();
+  });
 });
