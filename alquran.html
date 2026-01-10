@@ -1,31 +1,28 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mushaf E-Santri</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="quran.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mushaf E-Santri</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="quran.css">
 </head>
-
 <body>
 
-<header class="header">
+<header>
   <h1>Mushaf E-Santri</h1>
-  <button class="dark-btn" onclick="toggleDark()">🌙</button>
+  <button onclick="toggleDark()">🌙 Mode Malam</button>
 </header>
 
-<main id="mushaf-container">
-  <img id="mushafPage" src="svg/001.svg" alt="Mushaf Al-Qur'an">
+<main>
+  <div id="surahContent" class="mushaf"></div>
+  <div class="navigation">
+    <button onclick="prevPage()">⬅ Sebelumnya</button>
+    <span id="pageNumber">1</span> / 604
+    <button onclick="nextPage()">Berikutnya ➡</button>
+  </div>
 </main>
 
-<nav class="nav">
-  <button onclick="prevPage()">◀</button>
-  <span id="pageNumber">1</span>
-  <button onclick="nextPage()">▶</button>
-</nav>
-
-<script src="quran.js"></script>
+<script src="mushaf.js"></script>
 </body>
 </html>
