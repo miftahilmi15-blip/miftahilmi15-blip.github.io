@@ -1,9 +1,9 @@
 const surahContent = document.getElementById("surahContent");
 const pageNumberEl = document.getElementById("pageNumber");
 
-// Buat array otomatis dari 001 sampai 604
+// Array otomatis dari 001 sampai 604, pakai repository GitHub Pages yang benar
 const svgUrls = Array.from({length: 604}, (_, i) =>
-  `https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip/main/svg/${String(i+1).padStart(3,'0')}.svg`
+  `https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip.github.io/main/svg/${String(i+1).padStart(3,'0')}.svg`
 );
 
 let currentPage = 0;
