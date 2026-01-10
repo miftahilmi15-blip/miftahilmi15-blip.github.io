@@ -45,7 +45,6 @@ function playAudio(){ audio.play(); }
 function pauseAudio(){ audio.pause(); }
 
 function toggleDark(){
-  darkMode = !darkMode;
-  document.body.style.background = darkMode ? '#1a1a1a' : '#f4f7f6';
-  document.body.style.color = darkMode ? '#eee' : '#333';
+  document.body.classList.toggle("dark");
 }
+
