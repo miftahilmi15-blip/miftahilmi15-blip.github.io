@@ -1,12 +1,10 @@
 const surahContent = document.getElementById("surahContent");
 const pageNumberEl = document.getElementById("pageNumber");
 
-const svgUrls = [
-  "https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip/main/sgv/001.svg",
-  "https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip/main/sgv/002.svg",
-  "https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip/main/sgv/003.svg",
-  // ... lanjut sampai 604
-];
+// Generate 001.svg sampai 604.svg
+const svgUrls = Array.from({length: 604}, (_, i) =>
+  `https://raw.githubusercontent.com/miftahilmi15-blip/miftahilmi15-blip/main/svg/${String(i+1).padStart(3,'0')}.svg`
+);
 
 let currentPage = 0;
 
