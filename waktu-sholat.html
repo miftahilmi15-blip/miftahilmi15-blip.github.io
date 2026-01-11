@@ -3,217 +3,192 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Waktu Sholat & Arah Kiblat</title>
-
+<title>Waktu Sholat & Kiblat</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
   :root{
-    --primary:#1f6f51;
-    --bg:#f4f7f6;
+    --green:#5E915E;
+    --green-soft:#E9F5E9;
     --text:#333;
-    --soft:#e0f2f1;
+    --gold:#FFD700;
   }
-
-  body{
-    font-family:'Poppins',sans-serif;
-    background:var(--bg);
-    margin:0;
-    padding:0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-  }
-
+  body{margin:0;font-family:'Poppins',sans-serif;background:#f4f7f4;}
   header{
-    background:var(--primary);
+    text-align:center;
+    padding:20px;
+    background:var(--green);
     color:white;
-    width:100%;
-    text-align:center;
-    padding:20px;
-    font-size:22px;
-    font-weight:600;
   }
-
-  .clock, .countdown{
-    margin:20px 0;
-    font-size:18px;
-  }
-
-  .prayer-times{
-    background:white;
-    padding:20px;
-    border-radius:12px;
+  header h1{margin:5px 0;font-size:24px;}
+  header p{margin:2px 0;font-size:14px;}
+  .hero-card{
+    margin:20px auto;
     max-width:400px;
-    width:90%;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
-    margin-bottom:20px;
-  }
-
-  .prayer-times h3{
+    background:linear-gradient(135deg,#E9F5E9,#fff);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.1);
     text-align:center;
-    margin-bottom:12px;
-    color:var(--primary);
   }
-
-  .prayer-times div{
+  .next-prayer{font-size:18px;font-weight:600;color:var(--green);}
+  .countdown{margin-top:8px;font-size:16px;color:#555;}
+  .quick-btns{display:flex;justify-content:center;gap:20px;margin:20px 0;}
+  .quick-btns button{
+    background:var(--green);
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .prayer-list{max-width:400px;margin:0 auto;}
+  .prayer-item{
     display:flex;
     justify-content:space-between;
-    margin:6px 0;
-    font-weight:500;
+    align-items:center;
+    padding:12px 16px;
+    background:rgba(255,255,255,0.8);
+    border-radius:12px;
+    margin-bottom:10px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.05);
   }
-
-  .kiblat-container{
+  .compass{
     position:relative;
-    width:200px;
-    height:200px;
-    margin-bottom:30px;
-  }
-
-  .kiblat-circle{
-    width:100%;
-    height:100%;
-    border:4px solid var(--primary);
+    margin:30px auto;
+    width:250px;
+    height:250px;
+    border:4px solid var(--gold);
     border-radius:50%;
-    position:relative;
   }
-
-  .kabah-img{
+  .compass img{
+    position:absolute;
     width:40px;
     height:40px;
-    position:absolute;
-    top:0;
+    transform:translate(-50%,-50%);
+    top:50%;
     left:50%;
-    transform:translateX(-50%) rotate(0deg);
-    transform-origin:50% 120%;
-    transition: transform 0.2s linear; /* Halus bergerak */
-  }
-
-  footer{
-    margin:20px;
-    color:#777;
+    transition:transform 0.5s linear;
   }
 </style>
 </head>
 <body>
 
-<header>Waktu Sholat & Arah Kiblat</header>
+<header>
+  <h1 id="clock">--:--:--</h1>
+  <p id="date">Memuat tanggal...</p>
+  <p id="location">Memuat lokasi...</p>
+</header>
 
-<div class="clock" id="time">Memuat waktu...</div>
-<div class="countdown" id="next-prayer">Memuat countdown...</div>
-
-<div class="prayer-times" id="prayers">
-  <h3>Jadwal Sholat</h3>
-  <div><span>Fajr</span><span id="fajr">--:--</span></div>
-  <div><span>Dhuhr</span><span id="dhuhr">--:--</span></div>
-  <div><span>Asr</span><span id="asr">--:--</span></div>
-  <div><span>Maghrib</span><span id="maghrib">--:--</span></div>
-  <div><span>Isha</span><span id="isha">--:--</span></div>
+<div class="hero-card">
+  <div class="next-prayer" id="next-prayer">Sholat berikutnya: --</div>
+  <div class="countdown" id="countdown">--:--:--</div>
 </div>
 
-<div class="kiblat-container">
-  <div class="kiblat-circle">
-    <img src="assets/Ka'bah.png" class="kabah-img" id="kabah">
-  </div>
+<div class="quick-btns">
+  <button onclick="alert('Fitur Masjid')">Masjid</button>
+  <button onclick="alert('Fitur Kiblat')">Kiblat</button>
 </div>
 
-<audio id="adhan-sound" src="assets/adhan.mp3" preload="auto"></audio>
+<div class="prayer-list" id="prayer-list">
+  <!-- Jadwal Sholat -->
+</div>
 
-<footer>© 2025 E-Santri</footer>
+<div class="compass">
+  <img id="kaabah" src="assets/Ka'bah.png" alt="Ka'bah">
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/adhan@4.2.0/dist/adhan.min.js"></script>
 <script>
-const fajrEl=document.getElementById('fajr');
-const dhuhrEl=document.getElementById('dhuhr');
-const asrEl=document.getElementById('asr');
-const maghribEl=document.getElementById('maghrib');
-const ishaEl=document.getElementById('isha');
-const timeEl=document.getElementById('time');
-const countdownEl=document.getElementById('next-prayer');
-const kabahImg=document.getElementById('kabah');
-const adhanAudio=document.getElementById('adhan-sound');
-
-let lastAdhanTime=null;
-
+// JAM & TANGGAL
 function updateClock(){
-  const now=new Date();
-  timeEl.innerText=now.toLocaleTimeString();
+  const now = new Date();
+  const h=String(now.getHours()).padStart(2,'0');
+  const m=String(now.getMinutes()).padStart(2,'0');
+  const s=String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').innerText=`${h}:${m}:${s}`;
+  document.getElementById('date').innerText=now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
 }
 setInterval(updateClock,1000);
 updateClock();
 
+// GET LOCATION
+let userLat=0, userLon=0;
 navigator.geolocation.getCurrentPosition(pos=>{
-  const latitude=pos.coords.latitude;
-  const longitude=pos.coords.longitude;
+  userLat=pos.coords.latitude;
+  userLon=pos.coords.longitude;
+  document.getElementById('location').innerText=`Lat: ${userLat.toFixed(2)}, Lon: ${userLon.toFixed(2)}`;
+  loadPrayerTimes();
+  updateCompass();
+});
 
-  const coordinates=new adhan.Coordinates(latitude,longitude);
-  const params=adhan.CalculationMethod.MuslimWorldLeague();
-  const date=new Date();
-  const prayerTimes=new adhan.PrayerTimes(coordinates,date,params);
+// SHOLAT TIMES USING API
+async function loadPrayerTimes(){
+  if(userLat && userLon){
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0];
+    const res = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${userLat}&longitude=${userLon}&method=2`);
+    const data = await res.json();
+    const timings = data.data.timings;
+    const list = document.getElementById('prayer-list');
+    list.innerHTML='';
+    const prayers=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+    prayers.forEach(p=>{
+      const div=document.createElement('div');
+      div.className='prayer-item';
+      div.innerHTML=`<span>${p}</span><span>${timings[p]}</span>`;
+      list.appendChild(div);
+    });
+    startCountdown(timings);
+  }
+}
 
-  // tampil jadwal
-  fajrEl.innerText=prayerTimes.fajr.toLocaleTimeString();
-  dhuhrEl.innerText=prayerTimes.dhuhr.toLocaleTimeString();
-  asrEl.innerText=prayerTimes.asr.toLocaleTimeString();
-  maghribEl.innerText=prayerTimes.maghrib.toLocaleTimeString();
-  ishaEl.innerText=prayerTimes.isha.toLocaleTimeString();
-
+// COUNTDOWN
+function startCountdown(timings){
   function updateCountdown(){
-    const now=new Date();
-    let nextTime=null;
-    let nextName='';
-    const prayers=[
-      {name:'Fajr',time:prayerTimes.fajr},
-      {name:'Dhuhr',time:prayerTimes.dhuhr},
-      {name:'Asr',time:prayerTimes.asr},
-      {name:'Maghrib',time:prayerTimes.maghrib},
-      {name:'Isha',time:prayerTimes.isha}
-    ];
+    const now = new Date();
+    let nextTime=null, nextName='';
+    const prayers=['Fajr','Dhuhr','Asr','Maghrib','Isha'];
     for(let p of prayers){
-      if(p.time>now){
-        nextTime=p.time;
-        nextName=p.name;
-        break;
-      }
+      const t=timings[p].split(':');
+      const d=new Date();
+      d.setHours(parseInt(t[0]),parseInt(t[1]),0);
+      if(d>now){nextTime=d; nextName=p; break;}
     }
-    if(!nextTime){ nextTime=prayerTimes.fajr; nextName='Fajr'; }
-    const diff=Math.floor((nextTime-now)/1000);
+    if(!nextTime){
+      nextTime=new Date();
+      nextTime.setDate(nextTime.getDate()+1);
+      const t=timings['Fajr'].split(':');
+      nextTime.setHours(parseInt(t[0]),parseInt(t[1]),0);
+      nextName='Fajr';
+    }
+    const diff=(nextTime-now)/1000;
     const h=Math.floor(diff/3600);
     const m=Math.floor((diff%3600)/60);
-    const s=diff%60;
-    countdownEl.innerText=`Menuju ${nextName}: ${h}j ${m}m ${s}s`;
-
-    // Alarm adhan jika waktu sholat tiba
-    if(diff<=0 && (!lastAdhanTime || lastAdhanTime!==nextName)){
-      adhanAudio.play();
-      lastAdhanTime=nextName;
-    }
+    const s=Math.floor(diff%60);
+    document.getElementById('next-prayer').innerText=`Sholat berikutnya: ${nextName}`;
+    document.getElementById('countdown').innerText=`${h}j ${m}m ${s}s`;
   }
   setInterval(updateCountdown,1000);
   updateCountdown();
+}
 
-  // Arah kiblat
-  const kaabaLat=21.4225;
-  const kaabaLng=39.8262;
-
-  function updateKiblat(){
-    const latRad=latitude*Math.PI/180;
-    const lonRad=longitude*Math.PI/180;
-    const kaabaLatRad=kaabaLat*Math.PI/180;
-    const kaabaLonRad=kaabaLng*Math.PI/180;
-
-    const y=Math.sin(kaabaLonRad-lonRad)*Math.cos(kaabaLatRad);
-    const x=Math.cos(latRad)*Math.sin(kaabaLatRad)-Math.sin(latRad)*Math.cos(kaabaLatRad)*Math.cos(kaabaLonRad-lonRad);
-    const angle=Math.atan2(y,x)*180/Math.PI;
-
-    kabahImg.style.transform=`translateX(-50%) rotate(${angle}deg)`;
+// KIBLAT
+function updateCompass(){
+  const kaabah = document.getElementById('kaabah');
+  function moveKaabah(){
+    if(userLat && userLon){
+      // Koordinat Ka'bah
+      const kaabahLat=21.4225;
+      const kaabahLon=39.8262;
+      const y=(kaabahLat-userLat)*5+125; // scaling ke lingkaran
+      const x=(kaabahLon-userLon)*5+125;
+      kaabah.style.top=`${y}px`;
+      kaabah.style.left=`${x}px`;
+    }
   }
-  setInterval(updateKiblat,1000);
-  updateKiblat();
-
-},err=>{
-  alert("Tidak bisa mendapatkan lokasi: "+err.message);
-});
+  setInterval(moveKaabah,1000);
+  moveKaabah();
+}
 </script>
 
 </body>
