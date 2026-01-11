@@ -1,156 +1,197 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Al-Qur'an Digital</title>
+<meta charset="UTF-8">
+<title>Al-Qur'an Digital</title>
 
-  <!-- Font Arab -->
-  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      max-width: 900px;
-      margin: auto;
-      padding: 24px;
-      background: #f8f7f3;
-      color: #1f2937;
-    }
+<style>
+:root{
+  --green:#5E915E;
+  --green-soft:#EAF3EA;
+}
 
-    h1 {
-      text-align: center;
-      color: #064e3b;
-      margin-bottom: 16px;
-    }
+body{
+  margin:0;
+  font-family:system-ui,sans-serif;
+  background:#f4f6f4;
+}
 
-    select, button {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
+/* HEADER */
+header{
+  background:var(--green);
+  color:white;
+  padding:14px;
+  text-align:center;
+  font-size:20px;
+}
 
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+/* INFO BAR */
+.info-bar{
+  background:var(--green-soft);
+  text-align:center;
+  padding:6px;
+  font-size:14px;
+}
 
-    .bismillah {
-      text-align: center;
-      font-family: 'Amiri', serif;
-      font-size: 36px;
-      margin: 30px 0;
-      color: #065f46;
-    }
+/* TOOLBAR */
+.toolbar{
+  padding:12px;
+  text-align:center;
+}
 
-    .ayah {
-      margin-bottom: 28px;
-    }
+select{
+  padding:8px;
+  font-size:16px;
+  width:90%;
+  max-width:400px;
+}
 
-    .arab {
-      font-family: 'Amiri', serif;
-      font-size: 34px;
-      text-align: right;
-      direction: rtl;
-      line-height: 2.2;
-    }
+/* CONTENT */
+#content{
+  background:white;
+  max-width:900px;
+  margin:10px auto;
+  padding:20px;
+}
 
-    .ayah-number {
-      font-size: 20px;
-      margin-right: 6px;
-      color: #065f46;
-    }
+/* BISMILLAH */
+.bismillah{
+  text-align:center;
+  font-family:'Amiri',serif;
+  font-size:36px;
+  margin:24px 0;
+  color:var(--green);
+}
 
-    .arti {
-      margin-top: 6px;
-      color: #374151;
-    }
+/* AYAH */
+.ayah{
+  margin-bottom:28px;
+  cursor:pointer;
+}
 
-    audio {
-      width: 100%;
-      margin-bottom: 20px;
-    }
-  </style>
+.arab{
+  font-family:'Amiri',serif;
+  font-size:34px;
+  text-align:right;
+  direction:rtl;
+  line-height:2.3;
+}
+
+/* Nomor ayat lingkaran */
+.ayah-num{
+  display:inline-block;
+  border:2px solid var(--green);
+  border-radius:50%;
+  width:34px;
+  height:34px;
+  line-height:30px;
+  text-align:center;
+  font-size:18px;
+  margin-right:6px;
+  color:var(--green);
+}
+
+/* TERJEMAH */
+.arti{
+  display:none;
+  margin-top:8px;
+  color:#374151;
+  font-size:15px;
+}
+
+/* FOOTER */
+footer{
+  background:var(--green);
+  color:white;
+  text-align:center;
+  padding:10px;
+  margin-top:20px;
+}
+</style>
 </head>
+
 <body>
 
-<h1>Al-Qur'an Digital</h1>
+<header>Al-Qur'an Digital</header>
+
+<div class="info-bar">
+  Juz: <span id="juz">-</span> |
+  Hizb: <span id="hizb">-</span> |
+  Halaman: <span id="page">-</span>
+</div>
 
 <div class="toolbar">
   <select id="surahSelect"></select>
 </div>
 
-<audio id="audio" controls></audio>
-
 <div id="content"></div>
 
+<footer>Mushaf Digital</footer>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded",()=>{
 
-  const surahSelect = document.getElementById("surahSelect");
-  const content = document.getElementById("content");
-  const audio = document.getElementById("audio");
+const surahSelect=document.getElementById("surahSelect");
+const content=document.getElementById("content");
 
-  // Ambil daftar surah
-  fetch("https://api.quran.gading.dev/surah")
-    .then(res => res.json())
-    .then(data => {
-      surahSelect.innerHTML = "";
-
-      data.data.forEach(surah => {
-        const opt = document.createElement("option");
-        opt.value = surah.number;
-        opt.textContent =
-          surah.number + ". " + surah.name.transliteration.id;
-        surahSelect.appendChild(opt);
-      });
-
-      loadSurah(1);
-    });
-
-  surahSelect.addEventListener("change", function () {
-    loadSurah(this.value);
+fetch("https://api.quran.gading.dev/surah")
+.then(r=>r.json())
+.then(d=>{
+  d.data.forEach(s=>{
+    const o=document.createElement("option");
+    o.value=s.number;
+    o.textContent=s.number+". "+s.name.transliteration.id;
+    surahSelect.appendChild(o);
   });
+  loadSurah(1);
+});
 
-  function loadSurah(no) {
-    content.innerHTML = "Memuat ayat...";
+surahSelect.onchange=()=>loadSurah(surahSelect.value);
 
-    // Audio per surat (Mishary)
-    audio.src =
-      `https://server8.mp3quran.net/afs/${String(no).padStart(3, "0")}.mp3`;
+function arabNumber(n){
+  const a=["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
+  return n.toString().split("").map(x=>a[x]).join("");
+}
 
-    fetch(`https://api.quran.gading.dev/surah/${no}`)
-      .then(res => res.json())
-      .then(data => {
-        content.innerHTML = "";
+function loadSurah(no){
+fetch(`https://api.quran.gading.dev/surah/${no}`)
+.then(r=>r.json())
+.then(d=>{
+  content.innerHTML="";
 
-        // Bismillah (kecuali At-Taubah = 9)
-        if (no != 9) {
-          const bis = document.createElement("div");
-          bis.className = "bismillah";
-          bis.textContent = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
-          content.appendChild(bis);
-        }
-
-        data.data.verses.forEach(v => {
-          const div = document.createElement("div");
-          div.className = "ayah";
-          div.innerHTML = `
-            <div class="arab">
-              ${v.text.arab}
-              <span class="ayah-number">۝${v.number.inSurah}</span>
-            </div>
-            <div class="arti">${v.translation.id}</div>
-          `;
-          content.appendChild(div);
-        });
-      });
+  // basmalah hanya jika bukan Al-Fatihah & At-Taubah
+  if(no!=1 && no!=9){
+    const b=document.createElement("div");
+    b.className="bismillah";
+    b.textContent="بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+    content.appendChild(b);
   }
+
+  d.data.verses.forEach(v=>{
+    const div=document.createElement("div");
+    div.className="ayah";
+    div.innerHTML=`
+      <div class="arab">
+        ${v.text.arab}
+        <span class="ayah-num">${arabNumber(v.number.inSurah)}</span>
+      </div>
+      <div class="arti">${v.translation.id}</div>
+    `;
+    div.onclick=()=>{
+      const a=div.querySelector(".arti");
+      a.style.display=a.style.display==="none"?"block":"none";
+    };
+    content.appendChild(div);
+  });
+});
+}
 
 });
 </script>
 
 </body>
 </html>
+
 
