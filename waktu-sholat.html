@@ -3,126 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Waktu Sholat & Kiblat</title>
+<title>Waktu Sholat & Kiblat - Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-body{
-  font-family:'Poppins',sans-serif;
-  background:#f4f7f6;
-  margin:0;
-  padding:20px;
-  color:#333;
+:root{
+  --primary:#5E915E;
+  --soft:#EAF3EA;
+  --bg-light:#f4f7f6;
+  --bg-dark:#1b1b1b;
+  --text-light:#333;
+  --text-dark:#eee;
 }
-header{text-align:center;margin-bottom:20px;}
-header h1{color:#1f6f51;}
-header p{color:#666;font-size:14px;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{background: var(--bg-light); color: var(--text-light); transition: all 0.3s;}
+body.dark{background: var(--bg-dark); color: var(--text-dark);}
+header{text-align:center;padding:15px;}
+header h1{color:var(--primary); font-size:20px;}
+header p{color:#666;font-size:12px;}
 
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.06);border:1px solid #eef2f1;}
-.card h2{color:#1f6f51;margin-bottom:12px;}
+.card{background:#fff;border-radius:12px;padding:15px;margin:10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);border:1px solid #eef2f1;transition:0.3s;}
+body.dark .card{background:#222;border:1px solid #444;}
 
-.prayer-time{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;font-weight:500;}
-.prayer-time:last-child{border-bottom:none;}
-.prayer-name{color:#333;}
-.prayer-hour{color:#1f6f51;}
-.prayer-time.active{background:#5e915e;color:#fff;border-radius:6px;padding:10px;}
+#prayer-times{display:flex;flex-direction:column;}
+.prayer-time{display:flex;justify-content:space-between;padding:10px;border-radius:6px;margin-bottom:5px;transition:0.3s;}
+.prayer-time.active{background:var(--primary);color:#fff;font-weight:600;}
 
 #qibla-card{display:flex;flex-direction:column;align-items:center;}
-#compass{width:200px;height:200px;border:2px solid #5e915e;border-radius:50%;position:relative;display:flex;justify-content:center;align-items:center;margin-top:10px;}
-#kaabah{width:40px;height:40px;position:absolute;top:50%;transform-origin:center center;transition:transform 0.5s;}
+#compass{width:200px;height:200px;border:2px solid var(--primary);border-radius:50%;position:relative;display:flex;justify-content:center;align-items:center;margin-top:10px;overflow:hidden;}
+#needle{width:3px;height:100px;background:red;position:absolute;top:50%;left:50%;transform-origin:bottom center;transition: transform 0.5s;}
+#kaabah{width:50px;height:50px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition: transform 0.5s;}
+
+.toggle-theme{position:fixed;top:10px;right:10px;background:var(--primary);color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;z-index:1000;font-size:14px;}
 </style>
 </head>
 <body>
 
+<button class="toggle-theme" onclick="toggleTheme()">🌙</button>
+
 <header>
 <h1>Waktu Sholat & Kiblat</h1>
-<p>Jadwal otomatis & arah kiblat real-time</p>
+<p>Real-time & mobile-friendly</p>
 </header>
 
 <div class="card" id="prayer-card">
-  <h2>Jadwal Sholat Hari Ini</h2>
+  <h2>Jadwal Sholat</h2>
   <div id="prayer-times">Memuat jadwal...</div>
 </div>
 
 <div class="card" id="qibla-card">
   <h2>Arah Kiblat</h2>
   <div id="compass">
+    <div id="needle"></div>
     <img id="kaabah" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Kaaba_Masjid_al-Haram.svg" alt="Ka'bah">
   </div>
-  <p id="qibla-angle" style="margin-top:10px;color:#666;">Menghitung arah...</p>
+  <p id="qibla-angle" style="margin-top:5px;color:#666;font-size:12px;">Menghitung arah...</p>
 </div>
 
 <audio id="adhan-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
 <script>
-const timesEl = document.getElementById('prayer-times');
-const adhanAudio = document.getElementById('adhan-audio');
-const kaabah = document.getElementById('kaabah');
-let prayerList = [];
+const timesEl=document.getElementById('prayer-times');
+const adhanAudio=document.getElementById('adhan-audio');
+const kaabah=document.getElementById('kaabah');
+const needle=document.getElementById('needle');
+let prayerList=[];
 
-// ======= MENDAPATKAN LOKASI =======
+function toggleTheme(){document.body.classList.toggle('dark');}
+
 function getLocationAndLoad(){
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      loadPrayerTimes(lat, lon);
-      updateQibla(lat, lon);
-    }, err=>{
-      timesEl.innerHTML="<p>Lokasi tidak tersedia, aktifkan GPS</p>";
-    });
-  }else{
-    timesEl.innerHTML="<p>Browser tidak mendukung geolokasi</p>";
-  }
+      const lat=pos.coords.latitude;
+      const lon=pos.coords.longitude;
+      loadPrayerTimes(lat,lon);
+      initQibla(lat,lon);
+    },()=>timesEl.innerHTML="<p>Aktifkan GPS</p>");
+  }else{timesEl.innerHTML="<p>Browser tidak mendukung GPS</p>";}
 }
 
-// ======= JADWAL SHOLAT =======
-async function loadPrayerTimes(lat, lon){
+async function loadPrayerTimes(lat,lon){
   try{
-    const today = new Date();
-    const timestamp = Math.floor(today.getTime()/1000);
-    const res = await fetch(`https://api.aladhan.com/v1/timings/${timestamp}?latitude=${lat}&longitude=${lon}&method=2`);
-    const data = await res.json();
-    const times = data.data.timings;
-    prayerList = [
-      {name:'Subuh', time: times.Fajr},
-      {name:'Dzuhur', time: times.Dhuhr},
-      {name:'Ashar', time: times.Asr},
-      {name:'Maghrib', time: times.Maghrib},
-      {name:'Isya', time: times.Isha},
+    const today=new Date();
+    const timestamp=Math.floor(today.getTime()/1000);
+    const res=await fetch(`https://api.aladhan.com/v1/timings/${timestamp}?latitude=${lat}&longitude=${lon}&method=2`);
+    const data=await res.json();
+    const times=data.data.timings;
+    prayerList=[
+      {name:'Subuh',time:times.Fajr},
+      {name:'Dzuhur',time:times.Dhuhr},
+      {name:'Ashar',time:times.Asr},
+      {name:'Maghrib',time:times.Maghrib},
+      {name:'Isya',time:times.Isha},
     ];
     renderPrayers();
-  }catch(e){
-    timesEl.innerHTML="<p>Gagal memuat jadwal</p>";
-    console.error(e);
-  }
+  }catch(e){timesEl.innerHTML="<p>Gagal memuat</p>";}
 }
 
 function renderPrayers(){
-  const now = new Date();
-  let html = '';
+  const now=new Date();
+  let html='';
   prayerList.forEach(p=>{
-    const [h,m] = p.time.split(':');
-    const pTime = new Date();
+    const [h,m]=p.time.split(':');
+    const pTime=new Date();
     pTime.setHours(h,m,0,0);
-    const active = now>=pTime && now<new Date(pTime.getTime()+60*60*1000);
-    html += `<div class="prayer-time${active?' active':''}" data-time="${p.time}">
-      <span class="prayer-name">${p.name}</span>
-      <span class="prayer-hour">${p.time}</span>
+    const active=now>=pTime && now<new Date(pTime.getTime()+60*60*1000);
+    html+=`<div class="prayer-time${active?' active':''}">
+      <span>${p.name}</span>
+      <span>${p.time}</span>
     </div>`;
   });
-  timesEl.innerHTML = html;
+  timesEl.innerHTML=html;
 }
 
-// ======= ALARM SHOLAT =======
 function checkPrayerAlarm(){
   setInterval(()=>{
-    const now = new Date();
+    const now=new Date();
     prayerList.forEach(p=>{
-      const [h,m] = p.time.split(":");
-      if(now.getHours()===parseInt(h) && now.getMinutes()===parseInt(m) && now.getSeconds()===0){
+      const [h,m]=p.time.split(":");
+      if(now.getHours()===parseInt(h)&&now.getMinutes()===parseInt(m)&&now.getSeconds()===0){
         adhanAudio.play();
-        if(Notification.permission==="granted") new Notification(`Waktu ${p.name} telah tiba!`);
+        if(Notification.permission==="granted") new Notification(`Waktu ${p.name} tiba!`);
       }
     });
     renderPrayers();
@@ -130,24 +130,32 @@ function checkPrayerAlarm(){
 }
 
 // ======= KIBLAT =======
-function updateQibla(lat1, lon1){
-  const kaabaLat = 21.4225 * Math.PI/180;
-  const kaabaLon = 39.8262 * Math.PI/180;
-  const φ1 = lat1 * Math.PI/180;
-  const λ1 = lon1 * Math.PI/180;
-  const Δλ = kaabaLon - λ1;
-  const x = Math.sin(Δλ);
-  const y = Math.cos(φ1)*Math.tan(kaabaLat) - Math.sin(φ1)*Math.cos(Δλ);
-  const brng = Math.atan2(x,y)*180/Math.PI;
-  const angle = (brng+360)%360;
-  kaabah.style.transform = `rotate(${angle}deg)`;
-  document.getElementById('qibla-angle').innerText=`Arah: ${angle.toFixed(0)}° dari utara`;
+let qiblaAngle=0;
+function initQibla(lat1,lon1){
+  const kaabaLat=21.4225*Math.PI/180;
+  const kaabaLon=39.8262*Math.PI/180;
+  const φ1=lat1*Math.PI/180;
+  const λ1=lon1*Math.PI/180;
+  const Δλ=kaabaLon-λ1;
+  const x=Math.sin(Δλ);
+  const y=Math.cos(φ1)*Math.tan(kaabaLat)-Math.sin(φ1)*Math.cos(Δλ);
+  const brng=Math.atan2(x,y)*180/Math.PI;
+  qiblaAngle=(brng+360)%360;
+  document.getElementById('qibla-angle').innerText=`Arah: ${qiblaAngle.toFixed(0)}° dari utara`;
+  kaabah.style.transform=`rotate(${qiblaAngle}deg)`;
 }
 
-// ======= INIT =======
+if(window.DeviceOrientationEvent){
+  window.addEventListener('deviceorientation',e=>{
+    const alpha=e.alpha;
+    if(alpha!=null) needle.style.transform=`rotate(${qiblaAngle - alpha}deg)`;
+  },true);
+}
+
 getLocationAndLoad();
 checkPrayerAlarm();
 if("Notification" in window) Notification.requestPermission();
 </script>
+
 </body>
 </html>
