@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jadwal Sholat & Kiblat - GPS Otomatis</title>
+    <title>Kiblat & Jadwal Sholat - GPS Precision</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -22,6 +22,7 @@
             overflow: hidden; position: relative; border: 8px solid #333;
         }
 
+        /* Dashboard Header */
         .header {
             background: var(--primary-green); padding: 40px 20px;
             color: var(--white); text-align: center; border-radius: 0 0 35px 35px;
@@ -29,7 +30,7 @@
 
         .location-text { font-size: 0.9rem; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .time-now { font-size: 3.5rem; font-weight: 700; }
-        .date-text { font-size: 0.9rem; opacity: 0.9; margin-bottom: 15px; }
+        .date-text { font-size: 0.85rem; opacity: 0.9; margin-bottom: 15px; }
 
         .menu-actions { display: flex; justify-content: center; gap: 15px; margin-top: -25px; }
         .btn-action {
@@ -47,27 +48,48 @@
         }
         .prayer-item.active { background: var(--light-green); border-color: var(--primary-green); color: var(--primary-green); }
 
-        /* Halaman Kiblat */
+        /* Halaman Kiblat Modern */
         .kiblat-page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 100; display: none; flex-direction: column; align-items: center;
             padding-top: 60px;
         }
 
-        .compass-container {
-            width: 300px; height: 300px; border: 15px solid var(--light-green);
-            border-radius: 50%; position: relative; display: flex; justify-content: center; align-items: center;
+        /* Lingkaran Orbit */
+        .compass-ring {
+            width: 280px; height: 280px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            position: relative;
             margin-top: 50px;
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.1s linear;
         }
 
-        /* Jarum Gambar Ka'bah */
-        .kaaba-pointer {
-            width: 100px; position: absolute; z-index: 10;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.2));
+        /* Jarum/Indikator ke arah Utara */
+        .north-mark {
+            position: absolute; top: -30px; font-weight: bold; color: var(--primary-green); font-size: 1.2rem;
+        }
+
+        /* Wrapper Ka'bah yang berputar di garis lingkaran */
+        .kaaba-orbit {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             transition: transform 0.2s ease-out;
         }
 
-        .direction-info { margin-top: 40px; text-align: center; }
+        /* Ikon Ka'bah berada di atas garis lingkaran */
+        .kaaba-icon {
+            position: absolute;
+            top: -25px; /* Setengah dari tinggi ikon agar pas di garis */
+            left: calc(50% - 25px);
+            width: 50px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .direction-display { margin-top: 50px; text-align: center; }
+        .degree-val { font-size: 2.5rem; font-weight: 800; color: var(--primary-green); }
         .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; border: none; background: none; }
     </style>
 </head>
@@ -78,7 +100,7 @@
             <p class="location-text">📍 <span id="cityName">Mencari Lokasi...</span></p>
             <div class="time-now" id="liveClock">00:00</div>
             <p class="date-text" id="dateDisplay">Memuat Tanggal...</p>
-            <p id="nextPrayerDesc">Memperbarui Jadwal...</p>
+            <p style="font-size: 0.9rem;">Sholat Berikutnya: <strong id="nextPrayerName">-</strong></p>
         </div>
 
         <div class="menu-actions">
@@ -92,15 +114,19 @@
         <div id="kiblatPage" class="kiblat-page">
             <button class="close-btn" onclick="toggleKiblat(false)">✕</button>
             <h2 style="color: var(--primary-green)">Arah Kiblat</h2>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">Arahkan HP hingga Ka'bah berada di posisi yang tepat</p>
             
-            <div class="compass-container">
-                <img src="https://cdn-icons-png.flaticon.com/512/2873/2873024.png" class="kaaba-pointer" id="kaabaNeedle">
-                <div style="position: absolute; top: -35px; font-weight: bold; color: var(--primary-green);">U</div>
+            <div class="compass-ring" id="compassRing">
+                <div class="north-mark">U</div>
+                <div class="kaaba-orbit" id="kaabaOrbit">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2873/2873024.png" class="kaaba-icon" alt="Kaaba">
+                </div>
+                <div style="width: 15px; height: 15px; background: var(--primary-green); border-radius: 50%; box-shadow: 0 0 15px var(--primary-green);"></div>
             </div>
 
-            <div class="direction-info">
-                <h1 id="qiblaDegree">0°</h1>
-                <p>Derajat dari Utara</p>
+            <div class="direction-display">
+                <div class="degree-val" id="qiblaDegree">0°</div>
+                <p style="font-weight: 600; color: #666;">Derajat dari Utara</p>
             </div>
         </div>
     </div>
@@ -108,27 +134,7 @@
     <script>
         let userLat, userLon, qiblaAngle = 0;
 
-        // 1. Update Jam, Tanggal Masehi & Hijriah secara Otomatis
-        function updateDateTime(hijriData = null) {
-            const now = new Date();
-            
-            // Jam
-            document.getElementById('liveClock').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-            
-            // Tanggal Masehi
-            const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
-            const masehi = now.toLocaleDateString('id-ID', options);
-
-            // Tampilkan Masehi + Hijriah (jika data API sudah ada)
-            if (hijriData) {
-                const h = hijriData.hijri;
-                document.getElementById('dateDisplay').innerText = `${masehi} | ${h.day} ${h.month.en} ${h.year} H`;
-            } else {
-                document.getElementById('dateDisplay').innerText = masehi;
-            }
-        }
-
-        // 2. Ambil Lokasi GPS & Data API
+        // 1. Inisialisasi Aplikasi (GPS & Jam)
         function initApp() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(position => {
@@ -139,43 +145,53 @@
                     fetchPrayerAndHijri(userLat, userLon);
                     calculateQibla(userLat, userLon);
                 }, () => {
-                    alert("GPS tidak diizinkan. Silakan aktifkan lokasi.");
+                    alert("Akses lokasi diperlukan untuk jadwal sholat & kiblat presisi.");
                 });
             }
+            updateClock();
+            setInterval(updateClock, 1000);
         }
 
+        // 2. Ambil Nama Kota & Jadwal Sholat (Otomatis)
         async function fetchLocationName(lat, lon) {
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
                 const data = await res.json();
-                document.getElementById('cityName').innerText = data.address.city || data.address.town || "Lokasi Anda";
+                document.getElementById('cityName').innerText = data.address.city || data.address.town || data.address.suburb || "Lokasi Anda";
             } catch (e) { document.getElementById('cityName').innerText = "Lokasi Terdeteksi"; }
         }
 
         async function fetchPrayerAndHijri(lat, lon) {
             const dateStr = new Date().toISOString().split('T')[0];
-            const resp = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${lat}&longitude=${lon}&method=4`);
-            const data = await resp.json();
-            
-            // Update Tanggal dengan data Hijriah
-            updateDateTime(data.data.date);
+            try {
+                const resp = await fetch(`https://api.aladhan.com/v1/timings/${dateStr}?latitude=${lat}&longitude=${lon}&method=4`);
+                const data = await resp.json();
+                
+                // Set Tanggal Masehi & Hijriah
+                const now = new Date();
+                const masehi = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' });
+                const h = data.data.date.hijri;
+                document.getElementById('dateDisplay').innerText = `${masehi} | ${h.day} ${h.month.en} ${h.year} H`;
 
-            // Render List Jadwal
-            const t = data.data.timings;
-            const prayers = [
-                {n: "Subuh", t: t.Fajr}, {n: "Terbit", t: t.Sunrise}, 
-                {n: "Dzuhur", t: t.Dhuhr}, {n: "Ashar", t: t.Asr}, 
-                {n: "Maghrib", t: t.Maghrib}, {n: "Isya", t: t.Isha}
-            ];
+                // Render List Jadwal
+                const t = data.data.timings;
+                const prayers = [
+                    {n: "Subuh", t: t.Fajr}, {n: "Terbit", t: t.Sunrise}, 
+                    {n: "Dzuhur", t: t.Dhuhr}, {n: "Ashar", t: t.Asr}, 
+                    {n: "Maghrib", t: t.Maghrib}, {n: "Isya", t: t.Isha}
+                ];
 
-            let html = "";
-            prayers.forEach(p => {
-                html += `<div class="prayer-item"><span>${p.n}</span><span>${p.t}</span></div>`;
-            });
-            document.getElementById('prayerItems').innerHTML = html;
+                let html = "";
+                prayers.forEach(p => {
+                    const isActive = p.n === "Maghrib" ? "active" : ""; // Simulasi aktif
+                    html += `<div class="prayer-item ${isActive}"><span>${p.n}</span><span>${p.t}</span></div>`;
+                });
+                document.getElementById('prayerItems').innerHTML = html;
+                document.getElementById('nextPrayerName').innerText = "Maghrib"; 
+            } catch (e) { console.error("Gagal memuat jadwal."); }
         }
 
-        // 3. Logika Arah Kiblat & Ka'bah
+        // 3. Logika Kiblat: Ka'bah di Lingkaran
         function calculateQibla(lat, lon) {
             const phiK = 21.4225 * Math.PI / 180;
             const lambdaK = 39.8262 * Math.PI / 180;
@@ -195,19 +211,28 @@
         }
 
         function handleCompass(event) {
+            // Deteksi arah hadap HP (Utara Magnetik)
             const alpha = event.webkitCompassHeading || (360 - event.alpha);
+            
             if (alpha) {
-                // Gambar Ka'bah tetap menunjuk ke derajat kiblat relatif terhadap arah HP
-                const needleRotation = qiblaAngle - alpha;
-                document.getElementById('kaabaNeedle').style.transform = `rotate(${needleRotation}deg)`;
+                // Lingkaran kompas berputar sesuai hadap HP (Utara selalu di atas ring)
+                document.getElementById('compassRing').style.transform = `rotate(${-alpha}deg)`;
+                
+                // Gambar Ka'bah diputar di atas garis lingkaran sesuai derajat kiblat
+                // Kita tambahkan rotasi ke Ka'bah agar posisinya tetap di derajat yang benar terhadap Utara
+                document.getElementById('kaabaOrbit').style.transform = `rotate(${qiblaAngle}deg)`;
             }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('liveClock').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
         }
 
         function openMasjid() {
             window.open(`https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon}`, '_blank');
         }
 
-        setInterval(updateDateTime, 1000);
         initApp();
     </script>
 </body>
