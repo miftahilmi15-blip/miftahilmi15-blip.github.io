@@ -1,34 +1,42 @@
-let currentPage = 1;
-const totalPages = 604;
+document.addEventListener("DOMContentLoaded", function () {
 
-const surahContent = document.getElementById("surahContent");
-const pageNumber = document.getElementById("pageNumber");
+  let currentPage = 1;
+  const totalPages = 604;
 
-// tampilkan halaman
-function renderPage() {
-  surahContent.innerHTML = `
-    <img 
-      src="mushaf/page-${currentPage}.svg" 
-      alt="Halaman ${currentPage}"
-      style="width:100%; max-width:600px;"
-    >
-  `;
-  pageNumber.textContent = currentPage;
-}
+  const surahContent = document.getElementById("surahContent");
+  const pageNumber = document.getElementById("pageNumber");
 
-function nextPage() {
-  if (currentPage < totalPages) {
-    currentPage++;
-    renderPage();
+  function renderPage() {
+    surahContent.innerHTML = `
+      <img 
+        src="mushaf/page-${currentPage}.svg" 
+        alt="Halaman ${currentPage}"
+        style="width:100%; max-width:600px;"
+      >
+    `;
+    pageNumber.textContent = currentPage;
   }
-}
 
-function prevPage() {
-  if (currentPage > 1) {
-    currentPage--;
-    renderPage();
-  }
-}
+  window.nextPage = function () {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderPage();
+    }
+  };
+
+  window.prevPage = function () {
+    if (currentPage > 1) {
+      currentPage--;
+      renderPage();
+    }
+  };
+
+  window.toggleDark = function () {
+    document.body.classList.toggle("dark");
+  };
+
+  renderPage();
+});
 
 function toggleDark() {
   document.body.classList.toggle("dark");
