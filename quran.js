@@ -1,38 +1,38 @@
-const surahContent = document.getElementById("surahContent");
-const pageNumberEl = document.getElementById("pageNumber");
-
 let currentPage = 1;
-const TOTAL = 604;
+const totalPages = 604;
 
-function showPage(page){
+const surahContent = document.getElementById("surahContent");
+const pageNumber = document.getElementById("pageNumber");
+
+// tampilkan halaman
+function renderPage() {
   surahContent.innerHTML = `
-    <object 
-      type="image/svg+xml" 
-      data="svg/${String(page).padStart(3,'0')}.svg" 
-      width="100%">
-    </object>
+    <img 
+      src="mushaf/page-${currentPage}.svg" 
+      alt="Halaman ${currentPage}"
+      style="width:100%; max-width:600px;"
+    >
   `;
-  pageNumberEl.textContent = page;
+  pageNumber.textContent = currentPage;
 }
 
-function nextPage(){
-  if(currentPage < TOTAL){
+function nextPage() {
+  if (currentPage < totalPages) {
     currentPage++;
-    showPage(currentPage);
+    renderPage();
   }
 }
 
-function prevPage(){
-  if(currentPage > 1){
+function prevPage() {
+  if (currentPage > 1) {
     currentPage--;
-    showPage(currentPage);
+    renderPage();
   }
 }
 
-function toggleDark(){
+function toggleDark() {
   document.body.classList.toggle("dark");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  showPage(currentPage);
-});
+// render pertama kali
+renderPage();
