@@ -48,6 +48,14 @@ select{
   max-width:400px;
 }
 
+/* AUDIO */
+audio{
+  width:90%;
+  max-width:400px;
+  display:block;
+  margin:10px auto 20px;
+}
+
 /* CONTENT */
 #content{
   background:white;
@@ -126,6 +134,9 @@ footer{
   <select id="surahSelect"></select>
 </div>
 
+<!-- AUDIO PLAYER -->
+<audio id="audioPlayer" controls></audio>
+
 <div id="content"></div>
 
 <footer>Mushaf Digital</footer>
@@ -135,7 +146,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 const surahSelect=document.getElementById("surahSelect");
 const content=document.getElementById("content");
+const audio=document.getElementById("audioPlayer");
 
+// Ambil daftar surah
 fetch("https://api.quran.gading.dev/surah")
 .then(r=>r.json())
 .then(d=>{
@@ -148,44 +161,53 @@ fetch("https://api.quran.gading.dev/surah")
   loadSurah(1);
 });
 
+// Ganti surah
 surahSelect.onchange=()=>loadSurah(surahSelect.value);
 
+// Angka Arab
 function arabNumber(n){
   const a=["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
   return n.toString().split("").map(x=>a[x]).join("");
 }
 
+// Load surah + audio
 function loadSurah(no){
-fetch(`https://api.quran.gading.dev/surah/${no}`)
-.then(r=>r.json())
-.then(d=>{
-  content.innerHTML="";
 
-  // basmalah hanya jika bukan Al-Fatihah & At-Taubah
-  if(no!=1 && no!=9){
-    const b=document.createElement("div");
-    b.className="bismillah";
-    b.textContent="بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
-    content.appendChild(b);
-  }
+  // 🔊 Audio per surat (Mishary)
+  audio.src = `https://server8.mp3quran.net/afs/${String(no).padStart(3,"0")}.mp3`;
+  audio.load();
 
-  d.data.verses.forEach(v=>{
-    const div=document.createElement("div");
-    div.className="ayah";
-    div.innerHTML=`
-      <div class="arab">
-        ${v.text.arab}
-        <span class="ayah-num">${arabNumber(v.number.inSurah)}</span>
-      </div>
-      <div class="arti">${v.translation.id}</div>
-    `;
-    div.onclick=()=>{
-      const a=div.querySelector(".arti");
-      a.style.display=a.style.display==="none"?"block":"none";
-    };
-    content.appendChild(div);
+  fetch(`https://api.quran.gading.dev/surah/${no}`)
+  .then(r=>r.json())
+  .then(d=>{
+    content.innerHTML="";
+
+    // basmalah hanya jika bukan Al-Fatihah & At-Taubah
+    if(no!=1 && no!=9){
+      const b=document.createElement("div");
+      b.className="bismillah";
+      b.textContent="بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+      content.appendChild(b);
+    }
+
+    d.data.verses.forEach(v=>{
+      const div=document.createElement("div");
+      div.className="ayah";
+      div.innerHTML=`
+        <div class="arab">
+          ${v.text.arab}
+          <span class="ayah-num">${arabNumber(v.number.inSurah)}</span>
+        </div>
+        <div class="arti">${v.translation.id}</div>
+      `;
+      // klik untuk show/hide arti
+      div.onclick=()=>{
+        const a=div.querySelector(".arti");
+        a.style.display=a.style.display==="none"?"block":"none";
+      };
+      content.appendChild(div);
+    });
   });
-});
 }
 
 });
