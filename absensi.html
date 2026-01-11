@@ -1,47 +1,39 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Absensi Santri</title>
-<link rel="stylesheet" href="styles.css">
+<title>Absensi Santri SMP Al-Irsyad</title>
 <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 <style>
-  body { font-family: 'Poppins', sans-serif; background:#f4f7f6; padding:20px; }
-  .container { max-width: 900px; margin:auto; }
-  h2 { text-align:center; margin-bottom:20px; color:#1f6f51; }
-  table { width:100%; border-collapse: collapse; margin-top:20px; }
-  th, td { border:1px solid #ddd; padding:8px; text-align:center; }
-  th { background:#1f6f51; color:#fff; }
-  td[contenteditable="true"] { background:#eaf5ea; cursor:text; }
-  select, input[type=file], button { padding:8px 12px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
-  button { background:#1f6f51; color:#fff; cursor:pointer; }
-  button:hover { background:#16503a; }
+body { font-family:'Poppins', sans-serif; background:#f4f7f6; padding:20px; }
+.container { max-width:1000px; margin:auto; }
+h2 { text-align:center; color:#1f6f51; }
+select, input[type=file], button { padding:8px 12px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
+button { background:#1f6f51; color:#fff; cursor:pointer; }
+button:hover { background:#16503a; }
+table { width:100%; border-collapse: collapse; margin-top:20px; }
+th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+th { background:#1f6f51; color:#fff; }
+td[contenteditable="true"] { background:#eaf5ea; cursor:text; }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Absensi Santri</h2>
+<h2>Absensi Santri SMP Al-Irsyad 2025/2026</h2>
 
-  <input type="file" id="file-input" accept=".xlsx" />
-  <select id="kelas-select">
-    <option value="">Pilih Kelas</option>
-  </select>
-  <button id="export-btn">Simpan ke Excel</button>
+<input type="file" id="file-input" accept=".xlsx"/>
+<select id="kelas-select"><option value="">Pilih Kelas</option></select>
+<button id="export-btn">Simpan ke Excel</button>
 
-  <table id="absensi-table">
-    <thead>
-      <tr>
-        <th>NO</th>
-        <th>NIPD</th>
-        <th>NAMA</th>
-        <th>JK</th>
-        <th>KET</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+<table id="absensi-table">
+<thead>
+<tr><th>NO</th><th>NIPD</th><th>NAMA</th><th>JK</th><th>KET</th></tr>
+</thead>
+<tbody></tbody>
+</table>
 </div>
 
 <script>
@@ -52,18 +44,17 @@ const exportBtn = document.getElementById('export-btn');
 let workbookData = null;
 
 // Load Excel
-fileInput.addEventListener('change', (e) => {
+fileInput.addEventListener('change', e=>{
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = (evt) => {
+  reader.onload = evt => {
     const data = evt.target.result;
     const workbook = XLSX.read(data, { type: 'binary' });
     workbookData = workbook;
 
-    // isi dropdown kelas
     kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>';
-    workbook.SheetNames.forEach(sheet => {
+    workbook.SheetNames.forEach(sheet=>{
       const option = document.createElement('option');
       option.value = sheet;
       option.textContent = sheet;
@@ -73,41 +64,32 @@ fileInput.addEventListener('change', (e) => {
   reader.readAsBinaryString(file);
 });
 
-// Tampilkan data kelas
-kelasSelect.addEventListener('change', (e) => {
+// Tampilkan data per kelas
+kelasSelect.addEventListener('change', e=>{
   const sheetName = e.target.value;
   if(!sheetName || !workbookData) return;
 
   const worksheet = workbookData.Sheets[sheetName];
-  const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+  const jsonData = XLSX.utils.sheet_to_json(worksheet, { header:1 });
+  tableBody.innerHTML='';
 
-  tableBody.innerHTML = '';
-
-  // mulai dari baris ke-3 agar skip header sekolah
+  // mulai dari baris ke-4 untuk skip header
   for(let i=3; i<jsonData.length; i++){
     const row = jsonData[i];
     if(row.length < 5) continue;
     const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${row[0] || ''}</td>
-      <td>${row[1] || ''}</td>
-      <td>${row[2] || ''}</td>
-      <td>${row[3] || ''}</td>
-      <td contenteditable="true">${row[4] || ''}</td>
-    `;
+    tr.innerHTML = `<td>${row[0]||''}</td><td>${row[1]||''}</td><td>${row[2]||''}</td><td>${row[3]||''}</td><td contenteditable="true">${row[4]||''}</td>`;
     tableBody.appendChild(tr);
   }
 });
 
 // Export ke Excel
-exportBtn.addEventListener('click', () => {
+exportBtn.addEventListener('click', ()=>{
   const ws_data = [];
-  // ambil header
   ws_data.push(['NO','NIPD','NAMA','JK','KET']);
-  // ambil isi tabel
-  document.querySelectorAll('#absensi-table tbody tr').forEach(tr => {
-    const row = [];
-    tr.querySelectorAll('td').forEach(td => row.push(td.innerText));
+  document.querySelectorAll('#absensi-table tbody tr').forEach(tr=>{
+    const row=[];
+    tr.querySelectorAll('td').forEach(td=>row.push(td.innerText));
     ws_data.push(row);
   });
   const ws = XLSX.utils.aoa_to_sheet(ws_data);
