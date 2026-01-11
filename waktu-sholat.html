@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BYOND Prayer & Qibla - Stable Version</title>
+    <title>BYOND Prayer & Qibla - Final Stable</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -22,7 +22,6 @@
             overflow: hidden; position: relative; border: 8px solid #333;
         }
 
-        /* Dashboard Header */
         .header {
             background: var(--primary-green); padding: 40px 20px;
             color: white; text-align: center; border-radius: 0 0 35px 35px;
@@ -37,7 +36,7 @@
             display: flex; align-items: center; gap: 8px; font-weight: 600; color: #444; cursor: pointer;
         }
 
-        /* Halaman Kiblat Stabil */
+        /* Tampilan Kiblat Berdasarkan Gambar */
         .kiblat-page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 100; display: none; flex-direction: column; align-items: center;
@@ -54,7 +53,6 @@
         .outer-ring {
             width: 280px; height: 280px; border: 12px solid #F0F4F4; border-radius: 50%;
             position: relative; display: flex; justify-content: center; align-items: center;
-            transition: transform 0.1s linear; /* Transition halus */
         }
         .degree-center { font-size: 3rem; font-weight: 700; color: #000; z-index: 5; }
         
@@ -78,7 +76,7 @@
 
         .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; border: none; background: none; }
         
-        .prayer-list { padding: 25px; overflow-y: auto; height: 400px; }
+        .prayer-list { padding: 25px; overflow-y: auto; }
         .prayer-item {
             display: flex; justify-content: space-between; padding: 18px 20px;
             background: white; border-radius: 18px; margin-bottom: 12px; border: 1px solid #eee;
@@ -92,11 +90,11 @@
     <div class="header">
         <p>📍 <span id="cityName">Mencari Lokasi...</span></p>
         <div class="time-now" id="liveClock">00:00</div>
-        <p class="date-text" id="dateDisplay">Memuat...</p>
+        <p class="date-text" id="dateDisplay">Memuat Tanggal...</p>
     </div>
 
     <div class="menu-actions">
-        <button class="btn-action" onclick="alert('Membuka Peta Masjid...')">🕌 Masjid</button>
+        <button class="btn-action" onclick="openMasjid()">🕌 Masjid</button>
         <button class="btn-action" onclick="toggleKiblat(true)">🧭 Kiblat</button>
     </div>
 
@@ -124,27 +122,39 @@
 </div>
 
 <script>
-    let qiblaAngle = 295;
+    let userLat, userLon, qiblaAngle = 295;
     let currentHeading = 0;
     let lerpHeading = 0;
-    const filterFactor = 0.15; // Faktor kehalusan (0.1 - 0.2 direkomendasikan)
+    const filterFactor = 0.12; 
 
     function init() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
-                fetchData(pos.coords.latitude, pos.coords.longitude);
-                calculateQibla(pos.coords.latitude, pos.coords.longitude);
-            });
+                userLat = pos.coords.latitude;
+                userLon = pos.coords.longitude;
+                fetchData(userLat, userLon);
+                calculateQibla(userLat, userLon);
+            }, () => { alert("Harap aktifkan GPS untuk hasil akurat."); });
         }
         setInterval(updateTime, 1000);
         updateTime();
-        animate(); // Memulai loop animasi untuk smoothing
+        animate(); 
+    }
+
+    // Fungsi Utama Fitur Masjid
+    function openMasjid() {
+        if (userLat && userLon) {
+            const url = `https://www.google.com/maps/search/masjid/@${userLat},${userLon},15z`;
+            window.open(url, '_blank');
+        } else {
+            alert("Sedang mencari posisi GPS Anda. Harap tunggu sebentar.");
+        }
     }
 
     async function fetchData(lat, lon) {
         try {
             const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
-            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
+            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || loc.address.suburb || "Lokasi Anda";
 
             const d = new Date().toISOString().split('T')[0];
             const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
@@ -158,7 +168,7 @@
             document.getElementById('prayerItems').innerHTML = list.map(p => `
                 <div class="prayer-item ${p[0]==='Maghrib'?'active':''}"><span>${p[0]}</span><span>${p[1]}</span></div>
             `).join('');
-        } catch(e) { console.log("Gagal memuat data"); }
+        } catch(e) { console.error("API error"); }
     }
 
     function calculateQibla(lat, lon) {
@@ -174,24 +184,17 @@
     function toggleKiblat(show) {
         document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
         if (show) {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission().then(state => {
-                    if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
-                });
-            } else {
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
+            window.addEventListener('deviceorientation', handleOrientation, true);
         } else {
-            window.removeEventListener('deviceorientation', handleOrientation);
+            window.removeEventListener('deviceorientation', handleOrientation, true);
         }
     }
 
     function handleOrientation(e) {
-        const heading = e.webkitCompassHeading || (360 - e.alpha);
+        let heading = e.webkitCompassHeading || (360 - e.alpha);
         if (heading) currentHeading = heading;
     }
 
-    // Fungsi Animasi (Smoothing Filter)
     function animate() {
         let diff = currentHeading - lerpHeading;
         if (diff > 180) diff -= 360;
@@ -209,7 +212,6 @@
             kaabaOrbit.style.transform = `rotate(${qiblaAngle}deg)`;
             headingDisplay.innerText = Math.round(lerpHeading) + "°";
         }
-
         requestAnimationFrame(animate);
     }
 
