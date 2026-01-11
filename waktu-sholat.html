@@ -1,134 +1,197 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Waktu Sholat</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Waktu Sholat & Kiblat</title>
 <style>
-  body{
-    font-family:'Poppins', sans-serif;
-    background:#f4f7f6;
-    margin:0; padding:0;
-  }
-  header{
-    background:#5E915E;
-    color:white;
-    text-align:center;
-    padding:20px;
-    font-size:20px;
-    font-weight:600;
-  }
-  .container{
-    max-width:500px;
-    margin:20px auto;
-    padding:15px;
-    background:white;
-    border-radius:12px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.05);
-  }
-  h2{
-    text-align:center;
-    margin-bottom:20px;
-    color:#333;
-  }
-  ul{
-    list-style:none;
-    padding:0;
-    margin:0 0 20px 0;
-  }
-  li{
-    padding:10px 12px;
-    border-bottom:1px solid #eee;
-    display:flex;
-    justify-content:space-between;
-    font-weight:500;
-  }
-  .compass-container{
-    text-align:center;
-    margin-top:20px;
-  }
-  .compass{
-    width:200px;
-    height:200px;
-    border:4px solid #5E915E;
-    border-radius:50%;
-    margin:auto;
-    position:relative;
-  }
-  .needle{
-    width:4px;
-    height:100px;
-    background:red;
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform-origin:bottom center;
-    transform:translate(-50%, -100%) rotate(0deg);
-  }
+/* ===== COLORS & FONT ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  --primary: #1f6f51;
+  --soft-bg: #f4f7f6;
+  --text: #333;
+  --muted: #666;
+  --card-bg: #ffffff;
+  --accent: #5e915e;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
+
+body {
+  background: var(--soft-bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+header h1 {
+  color: var(--primary);
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+header p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* CARD */
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  border:1px solid #eef2f1;
+}
+
+.card h2 {
+  color: var(--primary);
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+/* JADWAL SHOLAT */
+.prayer-time {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom:1px solid #eee;
+  font-size:16px;
+  font-weight:500;
+}
+.prayer-time:last-child { border-bottom:none; }
+.prayer-name { color: var(--text); }
+.prayer-hour { color: var(--primary); font-weight:600; }
+
+/* KIBLAT CARD */
+#qibla-card {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-top:20px;
+}
+#compass {
+  width:180px;
+  height:180px;
+  border:2px solid var(--accent);
+  border-radius:50%;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+#needle {
+  width:4px;
+  height:80px;
+  background:red;
+  position:absolute;
+  top:50%;
+  transform-origin:bottom center;
+  transform:rotate(0deg);
+  border-radius:2px;
+}
+
+/* LOADING */
+.loading {
+  text-align:center;
+  font-size:14px;
+  color:var(--muted);
+  margin-top:10px;
+}
+
+/* RESPONSIVE */
+@media(max-width:400px){
+  body{ padding:12px; }
+  .card{ padding:16px; }
+  #compass{ width:150px; height:150px; }
+  #needle{ height:65px; }
+}
 </style>
 </head>
 <body>
 
-<header>Waktu Sholat</header>
+<header>
+  <h1>Waktu Sholat</h1>
+  <p>Termasuk arah kiblat</p>
+</header>
 
-<div class="container">
+<div id="prayer-card" class="card">
   <h2>Jadwal Sholat Hari Ini</h2>
-  <ul id="jadwal">
-    <li>Subuh <span id="subuh">--:--</span></li>
-    <li>Dzuhur <span id="dzuhur">--:--</span></li>
-    <li>Ashar <span id="ashar">--:--</span></li>
-    <li>Maghrib <span id="maghrib">--:--</span></li>
-    <li>Isya <span id="isya">--:--</span></li>
-  </ul>
+  <div id="prayer-times" class="loading">Memuat jadwal...</div>
+</div>
 
-  <div class="compass-container">
-    <h2>Arah Kiblat</h2>
-    <div class="compass">
-      <div class="needle" id="needle"></div>
-    </div>
-    <p id="angleText">--° dari utara</p>
+<div id="qibla-card" class="card">
+  <h2>Arah Kiblat</h2>
+  <div id="compass">
+    <div id="needle"></div>
   </div>
+  <p id="qibla-angle" style="margin-top:10px; color:var(--muted)">Menghitung arah...</p>
 </div>
 
 <script>
-  // API Jadwal Sholat (Contoh kota: Jakarta)
-  const kota = "Jakarta";
+// ====== JADWAL SHOLAT ======
+async function loadPrayerTimes() {
+  const timesEl = document.getElementById('prayer-times');
+  try {
+    const city = "Jakarta";
+    const country = "Indonesia";
+    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`);
+    const data = await res.json();
+    const times = data.data.timings;
 
-  fetch(`https://api.pray.zone/v2/times/today.json?city=${kota}`)
-  .then(r=>r.json())
-  .then(d=>{
-    const times = d.results.datetime[0].times;
-    document.getElementById("subuh").innerText = times.Fajr;
-    document.getElementById("dzuhur").innerText = times.Dhuhr;
-    document.getElementById("ashar").innerText = times.Asr;
-    document.getElementById("maghrib").innerText = times.Maghrib;
-    document.getElementById("isya").innerText = times.Isha;
-  });
+    const html = `
+      <div class="prayer-time"><span class="prayer-name">Subuh</span><span class="prayer-hour">${times.Fajr}</span></div>
+      <div class="prayer-time"><span class="prayer-name">Dzuhur</span><span class="prayer-hour">${times.Dhuhr}</span></div>
+      <div class="prayer-time"><span class="prayer-name">Ashar</span><span class="prayer-hour">${times.Asr}</span></div>
+      <div class="prayer-time"><span class="prayer-name">Maghrib</span><span class="prayer-hour">${times.Maghrib}</span></div>
+      <div class="prayer-time"><span class="prayer-name">Isya</span><span class="prayer-hour">${times.Isha}</span></div>
+    `;
+    timesEl.innerHTML = html;
+  } catch(e){
+    timesEl.innerHTML = "<p class='loading'>Gagal memuat jadwal sholat.</p>";
+    console.error(e);
+  }
+}
+loadPrayerTimes();
 
-  // Arah Kiblat (menggunakan geolocation)
+// ====== KIBLAT ======
+function calculateQibla(lat1, lon1){
+  const kaabaLat = 21.4225 * Math.PI/180;
+  const kaabaLon = 39.8262 * Math.PI/180;
+  const φ1 = lat1 * Math.PI/180;
+  const λ1 = lon1 * Math.PI/180;
+  const Δλ = kaabaLon - λ1;
+  const x = Math.sin(Δλ);
+  const y = Math.cos(φ1)*Math.tan(kaabaLat) - Math.sin(φ1)*Math.cos(Δλ);
+  const brng = Math.atan2(x,y) * 180/Math.PI;
+  return (brng+360)%360;
+}
+
+function updateCompass() {
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
       const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-
-      // Arah Ka'bah
-      const kaabaLat = 21.4225;
-      const kaabaLng = 39.8262;
-
-      const y = Math.sin(kaabaLng-lng) * Math.cos(kaabaLat);
-      const x = Math.cos(lat)*Math.sin(kaabaLat) -
-                Math.sin(lat)*Math.cos(kaabaLat)*Math.cos(kaabaLng-lng);
-      const angle = (Math.atan2(y, x) * 180/Math.PI + 360) % 360;
-
-      const needle = document.getElementById("needle");
-      needle.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
-      document.getElementById("angleText").innerText = Math.round(angle)+"° dari utara";
+      const lon = pos.coords.longitude;
+      const angle = calculateQibla(lat, lon);
+      document.getElementById('needle').style.transform = `rotate(${angle}deg)`;
+      document.getElementById('qibla-angle').innerText = `Arah: ${angle.toFixed(0)}° dari utara`;
+    }, err=>{
+      document.getElementById('qibla-angle').innerText = "Lokasi tidak tersedia";
     });
   } else {
-    document.getElementById("angleText").innerText = "Geolocation tidak didukung";
+    document.getElementById('qibla-angle').innerText = "Browser tidak mendukung geolokasi";
   }
+}
+updateCompass();
 </script>
 
 </body>
 </html>
+
