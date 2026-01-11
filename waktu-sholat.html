@@ -1,56 +1,43 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Waktu Sholat & Kiblat</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-:root{
-  --primary:#1f6f51;
-  --accent:#5e915e;
-  --bg:#f4f7f6;
-  --text:#333;
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:#f4f7f6;
+  margin:0;
+  padding:20px;
+  color:#333;
 }
-body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);margin:0;padding:20px;}
 header{text-align:center;margin-bottom:20px;}
-header h1{color:var(--primary);}
+header h1{color:#1f6f51;}
 header p{color:#666;font-size:14px;}
 
 .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.06);border:1px solid #eef2f1;}
-.card h2{color:var(--primary);margin-bottom:12px;}
-
-#city-select{width:100%;padding:10px;margin-bottom:15px;border-radius:8px;border:1px solid #ddd;}
+.card h2{color:#1f6f51;margin-bottom:12px;}
 
 .prayer-time{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;font-weight:500;}
 .prayer-time:last-child{border-bottom:none;}
-.prayer-name{color:var(--text);}
-.prayer-hour{color:var(--primary);}
-.prayer-time.active{background:var(--accent);color:#fff;border-radius:6px;padding:10px;}
+.prayer-name{color:#333;}
+.prayer-hour{color:#1f6f51;}
+.prayer-time.active{background:#5e915e;color:#fff;border-radius:6px;padding:10px;}
 
 #qibla-card{display:flex;flex-direction:column;align-items:center;}
-#compass{width:180px;height:180px;border:2px solid var(--accent);border-radius:50%;position:relative;display:flex;justify-content:center;align-items:center;margin-top:10px;}
-#needle{width:4px;height:80px;background:red;position:absolute;top:50%;transform-origin:bottom center;border-radius:2px;}
+#compass{width:200px;height:200px;border:2px solid #5e915e;border-radius:50%;position:relative;display:flex;justify-content:center;align-items:center;margin-top:10px;}
+#kaabah{width:40px;height:40px;position:absolute;top:50%;transform-origin:center center;transition:transform 0.5s;}
 </style>
 </head>
 <body>
 
 <header>
 <h1>Waktu Sholat & Kiblat</h1>
-<p>Pilih kota untuk jadwal tepat + arah kiblat</p>
+<p>Jadwal otomatis & arah kiblat real-time</p>
 </header>
-
-<div class="card">
-  <h2>Pilih Kota</h2>
-  <select id="city-select">
-    <option value="Jakarta">Jakarta</option>
-    <option value="Bandung">Bandung</option>
-    <option value="Surabaya">Surabaya</option>
-    <option value="Yogyakarta">Yogyakarta</option>
-    <option value="Medan">Medan</option>
-    <!-- bisa tambah seluruh kota Indonesia -->
-  </select>
-</div>
 
 <div class="card" id="prayer-card">
   <h2>Jadwal Sholat Hari Ini</h2>
@@ -59,22 +46,42 @@ header p{color:#666;font-size:14px;}
 
 <div class="card" id="qibla-card">
   <h2>Arah Kiblat</h2>
-  <div id="compass"><div id="needle"></div></div>
+  <div id="compass">
+    <img id="kaabah" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Kaaba_Masjid_al-Haram.svg" alt="Ka'bah">
+  </div>
   <p id="qibla-angle" style="margin-top:10px;color:#666;">Menghitung arah...</p>
 </div>
 
 <audio id="adhan-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
 <script>
-let prayerList = [];
 const timesEl = document.getElementById('prayer-times');
-const citySelect = document.getElementById('city-select');
 const adhanAudio = document.getElementById('adhan-audio');
+const kaabah = document.getElementById('kaabah');
+let prayerList = [];
 
-// ======= LOAD PRAYER TIMES =======
-async function loadPrayerTimes(city){
+// ======= MENDAPATKAN LOKASI =======
+function getLocationAndLoad(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      loadPrayerTimes(lat, lon);
+      updateQibla(lat, lon);
+    }, err=>{
+      timesEl.innerHTML="<p>Lokasi tidak tersedia, aktifkan GPS</p>";
+    });
+  }else{
+    timesEl.innerHTML="<p>Browser tidak mendukung geolokasi</p>";
+  }
+}
+
+// ======= JADWAL SHOLAT =======
+async function loadPrayerTimes(lat, lon){
   try{
-    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=Indonesia&method=2`);
+    const today = new Date();
+    const timestamp = Math.floor(today.getTime()/1000);
+    const res = await fetch(`https://api.aladhan.com/v1/timings/${timestamp}?latitude=${lat}&longitude=${lon}&method=2`);
     const data = await res.json();
     const times = data.data.timings;
     prayerList = [
@@ -86,25 +93,28 @@ async function loadPrayerTimes(city){
     ];
     renderPrayers();
   }catch(e){
-    timesEl.innerHTML = "<p>Gagal memuat jadwal sholat</p>";
+    timesEl.innerHTML="<p>Gagal memuat jadwal</p>";
     console.error(e);
   }
 }
 
 function renderPrayers(){
-  let html = '';
   const now = new Date();
+  let html = '';
   prayerList.forEach(p=>{
+    const [h,m] = p.time.split(':');
     const pTime = new Date();
-    const [h,m] = p.time.split(":");
     pTime.setHours(h,m,0,0);
-    const active = now >= pTime && now < new Date(pTime.getTime()+60*60*1000);
-    html += `<div class="prayer-time${active?' active':''}" data-time="${p.time}"><span class="prayer-name">${p.name}</span><span class="prayer-hour">${p.time}</span></div>`;
+    const active = now>=pTime && now<new Date(pTime.getTime()+60*60*1000);
+    html += `<div class="prayer-time${active?' active':''}" data-time="${p.time}">
+      <span class="prayer-name">${p.name}</span>
+      <span class="prayer-hour">${p.time}</span>
+    </div>`;
   });
   timesEl.innerHTML = html;
 }
 
-// ======= ALARM =======
+// ======= ALARM SHOLAT =======
 function checkPrayerAlarm(){
   setInterval(()=>{
     const now = new Date();
@@ -120,7 +130,7 @@ function checkPrayerAlarm(){
 }
 
 // ======= KIBLAT =======
-function calculateQibla(lat1, lon1){
+function updateQibla(lat1, lon1){
   const kaabaLat = 21.4225 * Math.PI/180;
   const kaabaLon = 39.8262 * Math.PI/180;
   const φ1 = lat1 * Math.PI/180;
@@ -129,36 +139,15 @@ function calculateQibla(lat1, lon1){
   const x = Math.sin(Δλ);
   const y = Math.cos(φ1)*Math.tan(kaabaLat) - Math.sin(φ1)*Math.cos(Δλ);
   const brng = Math.atan2(x,y)*180/Math.PI;
-  return (brng+360)%360;
-}
-
-function updateCompass(){
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(pos=>{
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      const angle = calculateQibla(lat, lon);
-      document.getElementById('needle').style.transform=`rotate(${angle}deg)`;
-      document.getElementById('qibla-angle').innerText=`Arah: ${angle.toFixed(0)}° dari utara`;
-    }, err=>{
-      document.getElementById('qibla-angle').innerText="Lokasi tidak tersedia";
-    });
-  }else{
-    document.getElementById('qibla-angle').innerText="Browser tidak mendukung geolokasi";
-  }
+  const angle = (brng+360)%360;
+  kaabah.style.transform = `rotate(${angle}deg)`;
+  document.getElementById('qibla-angle').innerText=`Arah: ${angle.toFixed(0)}° dari utara`;
 }
 
 // ======= INIT =======
-citySelect.onchange=()=>{ loadPrayerTimes(citySelect.value); };
-loadPrayerTimes(citySelect.value);
+getLocationAndLoad();
 checkPrayerAlarm();
-updateCompass();
-
-// ======= NOTIFIKASI =======
-if("Notification" in window){
-  Notification.requestPermission();
-}
+if("Notification" in window) Notification.requestPermission();
 </script>
 </body>
 </html>
-
