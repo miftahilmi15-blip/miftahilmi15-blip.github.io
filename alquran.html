@@ -1,38 +1,25 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mushaf E-Santri</title>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="quran.css">
+<meta charset="UTF-8">
+<title>Qur'an Digital</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
 <header>
-  <h1>Mushaf E-Santri</h1>
-  <button onclick="toggleDark()">🌙 Mode Malam</button>
+  <h2>📖 Qur'an Digital</h2>
+  <select id="surahSelect"></select>
 </header>
 
-<main>
-  <div id="surahContent" class="mushaf">
-    <!-- Halaman SVG akan muncul di sini -->
-  </div>
+<div id="content"></div>
 
-  <div class="navigation">
-    <button onclick="prevPage()">⬅ Sebelumnya</button>
-    <span id="pageNumber">1</span> / 604
-    <button onclick="nextPage()">Berikutnya ➡</button>
-  </div>
-</main>
-
-<script src="mushaf.js"></script>
-<script>
-  // Pastikan tombol bisa memanggil fungsi JS
-  window.nextPage = nextPage;
-  window.prevPage = prevPage;
-  window.toggleDark = toggleDark;
-</script>
+<script src="js/app.js"></script>
+</body>
+</html>
 
 </body>
 </html>
