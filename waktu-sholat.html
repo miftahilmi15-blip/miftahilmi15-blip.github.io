@@ -3,176 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Waktu Sholat & Kiblat Real-Time</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<title>Waktu Sholat & Kiblat</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
+:root {
+  --primary:#5E915E;  /* hijau asparagus */
+  --primary-soft:#EAF3EA;
+  --text:#333;
+  --bg:#f4f7f6;
+}
 body{
+  margin:0; padding:0;
   font-family:'Poppins',sans-serif;
-  background:#f4f7f6;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin:0;
+  background:var(--bg);
+  display:flex; flex-direction:column; align-items:center;
+}
+header{
+  width:100%;
+  background:var(--primary);
+  color:#fff;
+  text-align:center;
+  padding:20px;
+  font-size:22px;
+  font-weight:600;
+  font-family:'Amiri',serif;
+}
+main{
+  max-width:400px;
+  width:100%;
   padding:20px;
 }
-h1{color:#1f6f51; margin-bottom:10px;}
 .card{
   background:white;
   border-radius:12px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.1);
   padding:20px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.1);
-  max-width:400px;
-  width:100%;
   margin-bottom:20px;
 }
-.time-row{
+.card h2{
+  text-align:center;
+  margin-bottom:15px;
+  color:var(--primary);
+}
+.prayer-time{
   display:flex;
   justify-content:space-between;
-  padding:8px 0;
-  border-bottom:1px solid #e0e0e0;
-  font-size:16px;
-  transition:0.3s;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+  font-weight:600;
 }
-.time-row:last-child{border:none;}
-.time-now{background:#e0f2e9; font-weight:600; border-radius:6px; padding:2px 6px;}
-#next-prayer{margin-top:10px; font-size:14px; color:#555; text-align:center;}
-#compass-container{
-  position:relative;
-  width:250px; height:250px;
-  border:3px solid #1f6f51;
-  border-radius:50%;
-  background:radial-gradient(circle,#eaf3ea 70%,#f4f7f6 100%);
-  margin:20px;
-}
-#kaabah{
-  position:absolute;
-  width:40px; height:40px;
-  top:50%; left:50%;
-  transform-origin:0 -100px;
-  transition: transform 0.5s linear;
-}
-#qibla-angle{
-  margin-top:10px;
-  color:#666;
-  font-size:14px;
+.qibla-card{
   text-align:center;
+  padding:20px;
 }
-select{
-  width:90%;
+canvas{
+  width:100%;
   max-width:300px;
-  padding:8px;
-  margin-bottom:12px;
+  height:300px;
 }
 </style>
 </head>
 <body>
 
-<h1>Waktu Sholat</h1>
-<div class="card">
-  <select id="method-select">
-    <option value="2">Muslim World League (MWL)</option>
-    <option value="1">University of Islamic Sciences, Karachi</option>
-    <option value="3">Egyptian General Authority</option>
-    <option value="4">Umm Al-Qura, Makkah</option>
-  </select>
-  <div class="time-row"><span>Subuh</span><span id="subuh">--:--</span></div>
-  <div class="time-row"><span>Dzuhur</span><span id="dzuhur">--:--</span></div>
-  <div class="time-row"><span>Ashar</span><span id="ashar">--:--</span></div>
-  <div class="time-row"><span>Maghrib</span><span id="maghrib">--:--</span></div>
-  <div class="time-row"><span>Isya</span><span id="isya">--:--</span></div>
-  <div id="next-prayer">Menghitung waktu sholat berikutnya...</div>
-</div>
+<header>Waktu Sholat & Kiblat</header>
 
-<h1>Arah Kiblat</h1>
-<div id="compass-container">
-  <img id="kaabah" src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Kaaba_Masjid_al-Haram.svg" alt="Ka'bah">
-</div>
-<p id="qibla-angle">Menghitung arah kiblat...</p>
+<main>
+  <div class="card">
+    <h2>Jadwal Sholat Hari Ini</h2>
+    <div id="sholatTimes">Memuat...</div>
+  </div>
 
-<audio id="adhan-audio" src="https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3" preload="auto"></audio>
+  <div class="card qibla-card">
+    <h2>Arah Kiblat</h2>
+    <canvas id="qiblaCanvas"></canvas>
+  </div>
+</main>
 
 <script>
-const prayerIds = {Fajr:'subuh', Dhuhr:'dzuhur', Asr:'ashar', Maghrib:'maghrib', Isha:'isya'};
-let timings = {};
-let currentMethod = 2;
+const sholatTimesEl = document.getElementById("sholatTimes");
+const canvas = document.getElementById("qiblaCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width=300; canvas.height=300;
 
-document.getElementById('method-select').onchange=(e)=>{
-  currentMethod=parseInt(e.target.value);
-  if(window.lat && window.lon) updateSholat(window.lat,window.lon);
+let lat, lon;
+
+// Fungsi menampilkan jadwal sholat
+function showTimes(times){
+  sholatTimesEl.innerHTML = "";
+  const keys = ["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+  keys.forEach(k=>{
+    const div = document.createElement("div");
+    div.className="prayer-time";
+    div.innerHTML=`<span>${k}</span><span>${times[k]}</span>`;
+    sholatTimesEl.appendChild(div);
+  });
 }
 
-// Format waktu
-function formatTime(time){return time.padStart(5,'0');}
-
-// Update Kiblat
-function updateQibla(lat, lon){
-  const latRad = lat*Math.PI/180;
-  const lonRad = lon*Math.PI/180;
-  const kaabaLat = 21.4225*Math.PI/180;
-  const kaabaLon = 39.8262*Math.PI/180;
-  const y = Math.sin(kaabaLon-lonRad)*Math.cos(kaabaLat);
-  const x = Math.cos(latRad)*Math.sin(kaabaLat)-Math.sin(latRad)*Math.cos(kaabaLat)*Math.cos(kaabaLon-lonRad);
-  const brng = Math.atan2(y,x)*(180/Math.PI);
-  const angle = (brng+360)%360;
-  const kaabah = document.getElementById('kaabah');
-  kaabah.style.transform = `rotate(${angle}deg) translateX(100px) rotate(${-angle}deg)`;
-  document.getElementById('qibla-angle').innerText = `Arah kiblat: ${angle.toFixed(1)}°`;
-}
-
-// Update Waktu Sholat
-function updateSholat(lat, lon){
-  window.lat = lat; window.lon = lon;
-  fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=${currentMethod}`)
-  .then(r=>r.json())
-  .then(d=>{
-    timings=d.data.timings;
-    for(const key in prayerIds){
-      document.getElementById(prayerIds[key]).innerText=timings[key];
+// Notifikasi adzan
+function checkAdzan(times){
+  const now=new Date();
+  const keys=["Fajr","Dhuhr","Asr","Maghrib","Isha"];
+  keys.forEach(k=>{
+    const [h,m]=times[k].split(":").map(Number);
+    if(now.getHours()===h && now.getMinutes()===m && now.getSeconds()===0){
+      new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-01.mp3').play();
+      alert(`Waktu Sholat ${k} telah tiba!`);
     }
   });
 }
 
-// Hitung waktu sholat berikutnya
-function nextPrayerCountdown(){
-  if(!timings.Fajr) return;
-  const now = new Date();
-  const prayers = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
-  let next=null;
-  for(const p of prayers){
-    const [h,m] = timings[p].split(':').map(Number);
-    let prTime = new Date();
-    prTime.setHours(h); prTime.setMinutes(m); prTime.setSeconds(0);
-    if(prTime>now){ next=p; break; }
+// Mendapatkan lokasi user
+function init(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      lat=pos.coords.latitude;
+      lon=pos.coords.longitude;
+      fetchTimes();
+      drawQibla();
+      setInterval(fetchTimes,60000);
+      setInterval(()=>checkAdzan(window.times),1000);
+    },err=>{
+      sholatTimesEl.innerHTML="Lokasi tidak ditemukan.";
+    });
+  }else{
+    sholatTimesEl.innerHTML="Browser tidak mendukung geolokasi.";
   }
-  if(!next) next='Fajr'; // jika sudah lewat Isya, berikutnya subuh besok
-  const [h,m] = timings[next].split(':').map(Number);
-  let prTime = new Date();
-  prTime.setHours(h); prTime.setMinutes(m); prTime.setSeconds(0);
-  if(next==='Fajr' && now>prTime){ prTime.setDate(prTime.getDate()+1); }
-  const diff = prTime-now;
-  const hDiff = Math.floor(diff/1000/3600);
-  const mDiff = Math.floor(diff/1000/60)%60;
-  const sDiff = Math.floor(diff/1000)%60;
-  document.getElementById('next-prayer').innerText=`Waktu ${next} tinggal ${hDiff}j ${mDiff}m ${sDiff}s`;
-  // Cek adzan
-  const el = document.getElementById(prayerIds[next]).parentNode;
-  if(hDiff===0 && mDiff===0 && sDiff<60){
-    el.classList.add('time-now');
-    document.getElementById('adhan-audio').play();
-  } else el.classList.remove('time-now');
 }
 
-// Ambil lokasi dan update
-navigator.geolocation.getCurrentPosition(pos=>{
-  const lat = pos.coords.latitude;
-  const lon = pos.coords.longitude;
-  updateQibla(lat, lon);
-  updateSholat(lat, lon);
-  setInterval(()=>updateQibla(lat, lon),1000); // kiblat real-time
-  setInterval(nextPrayerCountdown,1000);
-}, err=>{
-  alert('Gagal mendapatkan lokasi. Aktifkan GPS atau izinkan lokasi.');
-});
+// Ambil jadwal sholat dari API
+function fetchTimes(){
+  fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}`)
+  .then(r=>r.json())
+  .then(data=>{
+    const times = data.data.timings;
+    window.times=times;
+    showTimes(times);
+  });
+}
+
+// Fungsi arah kiblat
+function drawQibla(){
+  if(!lat || !lon) return;
+  const kaabah={lat:21.4225, lon:39.8262};
+  const φ1=lat*Math.PI/180;
+  const λ1=lon*Math.PI/180;
+  const φ2=kaabah.lat*Math.PI/180;
+  const λ2=kaabah.lon*Math.PI/180;
+  const y=Math.sin(λ2-λ1)*Math.cos(φ2);
+  const x=Math.cos(φ1)*Math.sin(φ2)-Math.sin(φ1)*Math.cos(φ2)*Math.cos(λ2-λ1);
+  const brng=Math.atan2(y,x);
+  let angle=brng*180/Math.PI;
+  if(angle<0) angle+=360;
+
+  // Animasi gambar Ka'bah bergerak ke arah kiblat
+  let current=0;
+  function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    // Lingkaran
+    ctx.beginPath();
+    ctx.arc(150,150,140,0,2*Math.PI);
+    ctx.strokeStyle="#ccc";
+    ctx.lineWidth=4;
+    ctx.stroke();
+    // Gambar Ka'bah
+    const r=120;
+    const rad = current*Math.PI/180;
+    const xPos = 150 + r*Math.cos(rad);
+    const yPos = 150 + r*Math.sin(rad);
+    const img=new Image();
+    img.src="https://upload.wikimedia.org/wikipedia/commons/e/e1/Kaaba_Masjid_al-Haram.jpg";
+    img.onload=()=>{ ctx.drawImage(img,xPos-20,yPos-20,40,40); };
+    current += (angle-current)/10;
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+init();
 </script>
 
 </body>
