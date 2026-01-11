@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BYOND Prayer & Qibla</title>
+    <title>BYOND Prayer & Qibla - Stable Version</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -30,7 +30,6 @@
         .time-now { font-size: 3.5rem; font-weight: 700; }
         .date-text { font-size: 0.85rem; opacity: 0.9; }
 
-        /* Menu Actions */
         .menu-actions { display: flex; justify-content: center; gap: 15px; margin-top: -25px; }
         .btn-action {
             background: white; padding: 12px 25px; border-radius: 25px;
@@ -38,31 +37,30 @@
             display: flex; align-items: center; gap: 8px; font-weight: 600; color: #444; cursor: pointer;
         }
 
-        /* Halaman Kiblat sesuai Gambar */
+        /* Halaman Kiblat Stabil */
         .kiblat-page {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 100; display: none; flex-direction: column; align-items: center;
             padding: 60px 20px 20px;
         }
-        .qibla-header { text-align: left; width: 100%; margin-bottom: 30px; }
+        .qibla-header { text-align: left; width: 100%; margin-bottom: 20px; }
         .qibla-header h2 { font-size: 1.5rem; color: #000; }
         .qibla-header p { font-size: 0.85rem; color: #888; margin-top: 10px; line-height: 1.4; }
 
-        /* Kompas Visual */
         .compass-wrap {
             position: relative; width: 300px; height: 300px;
-            display: flex; justify-content: center; align-items: center; margin-top: 40px;
+            display: flex; justify-content: center; align-items: center; margin-top: 30px;
         }
         .outer-ring {
             width: 280px; height: 280px; border: 12px solid #F0F4F4; border-radius: 50%;
             position: relative; display: flex; justify-content: center; align-items: center;
+            transition: transform 0.1s linear; /* Transition halus */
         }
-        .degree-center { font-size: 2.5rem; font-weight: 700; color: #000; z-index: 5; }
+        .degree-center { font-size: 3rem; font-weight: 700; color: #000; z-index: 5; }
         
-        /* Ka'bah di Lingkaran */
         .kaaba-orbit {
             position: absolute; width: 100%; height: 100%;
-            transition: transform 0.2s ease-out; z-index: 10;
+            z-index: 10;
         }
         .kaaba-box {
             position: absolute; top: -15px; left: calc(50% - 20px);
@@ -70,7 +68,7 @@
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
             box-shadow: 0 4px 10px rgba(255,184,0,0.4);
         }
-        .kaaba-box img { width: 22px; filter: brightness(0); } /* Ikon Ka'bah Hitam */
+        .kaaba-box img { width: 22px; filter: brightness(0); }
 
         .pointer-up {
             position: absolute; top: 15px; width: 0; height: 0;
@@ -80,7 +78,7 @@
 
         .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; border: none; background: none; }
         
-        .prayer-list { padding: 25px; }
+        .prayer-list { padding: 25px; overflow-y: auto; height: 400px; }
         .prayer-item {
             display: flex; justify-content: space-between; padding: 18px 20px;
             background: white; border-radius: 18px; margin-bottom: 12px; border: 1px solid #eee;
@@ -98,7 +96,7 @@
     </div>
 
     <div class="menu-actions">
-        <button class="btn-action" onclick="window.open('https://www.google.com/maps/search/masjid+terdekat/@$?q=masjid+terdekat')">🕌 Masjid</button>
+        <button class="btn-action" onclick="alert('Membuka Peta Masjid...')">🕌 Masjid</button>
         <button class="btn-action" onclick="toggleKiblat(true)">🧭 Kiblat</button>
     </div>
 
@@ -108,13 +106,13 @@
         <button class="close-btn" onclick="toggleKiblat(false)">✕</button>
         <div class="qibla-header">
             <h2>Arah Kiblat</h2>
-            <p>Pastikan angka kompas pada <span id="targetDeg">...</span> derajat, untuk arah kiblat lokasi Anda.</p>
+            <p>Pastikan angka kompas pada <span id="targetDeg" style="font-weight: bold; color: var(--primary-green);">...</span> derajat untuk lokasi Anda.</p>
         </div>
 
         <div class="compass-wrap">
             <div class="pointer-up"></div>
             <div class="outer-ring" id="compassRing">
-                <div class="degree-center" id="currentHeading">0°</div>
+                <div class="degree-center" id="currentHeadingDisplay">0°</div>
                 <div class="kaaba-orbit" id="kaabaOrbit">
                     <div class="kaaba-box">
                         <img src="https://cdn-icons-png.flaticon.com/512/2873/2873024.png" alt="Kaaba">
@@ -126,38 +124,41 @@
 </div>
 
 <script>
-    let qiblaAngle = 295; // Default Indonesia
+    let qiblaAngle = 295;
+    let currentHeading = 0;
+    let lerpHeading = 0;
+    const filterFactor = 0.15; // Faktor kehalusan (0.1 - 0.2 direkomendasikan)
 
     function init() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
-                const {latitude, longitude} = pos.coords;
-                fetchData(latitude, longitude);
-                calculateQibla(latitude, longitude);
+                fetchData(pos.coords.latitude, pos.coords.longitude);
+                calculateQibla(pos.coords.latitude, pos.coords.longitude);
             });
         }
-        updateTime();
         setInterval(updateTime, 1000);
+        updateTime();
+        animate(); // Memulai loop animasi untuk smoothing
     }
 
     async function fetchData(lat, lon) {
-        // Lokasi
-        const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
-        document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
+        try {
+            const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
+            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
 
-        // Jadwal & Hijriah
-        const d = new Date().toISOString().split('T')[0];
-        const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
-        
-        const h = pray.data.date.hijri;
-        const m = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
-        document.getElementById('dateDisplay').innerText = `${m} | ${h.day} ${h.month.en} ${h.year} H`;
+            const d = new Date().toISOString().split('T')[0];
+            const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
+            
+            const h = pray.data.date.hijri;
+            const m = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
+            document.getElementById('dateDisplay').innerText = `${m} | ${h.day} ${h.month.en} ${h.year} H`;
 
-        const t = pray.data.timings;
-        const list = [["Subuh", t.Fajr], ["Terbit", t.Sunrise], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
-        document.getElementById('prayerItems').innerHTML = list.map(p => `
-            <div class="prayer-item ${p[0]==='Maghrib'?'active':''}"><span>${p[0]}</span><span>${p[1]}</span></div>
-        `).join('');
+            const t = pray.data.timings;
+            const list = [["Subuh", t.Fajr], ["Terbit", t.Sunrise], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
+            document.getElementById('prayerItems').innerHTML = list.map(p => `
+                <div class="prayer-item ${p[0]==='Maghrib'?'active':''}"><span>${p[0]}</span><span>${p[1]}</span></div>
+            `).join('');
+        } catch(e) { console.log("Gagal memuat data"); }
     }
 
     function calculateQibla(lat, lon) {
@@ -172,16 +173,44 @@
 
     function toggleKiblat(show) {
         document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
-        if (show && window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', e => {
-                const heading = e.webkitCompassHeading || (360 - e.alpha);
-                if (heading) {
-                    document.getElementById('currentHeading').innerText = Math.round(heading) + "°";
-                    document.getElementById('compassRing').style.transform = `rotate(${-heading}deg)`;
-                    document.getElementById('kaabaOrbit').style.transform = `rotate(${qiblaAngle}deg)`;
-                }
-            }, true);
+        if (show) {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(state => {
+                    if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+                });
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        } else {
+            window.removeEventListener('deviceorientation', handleOrientation);
         }
+    }
+
+    function handleOrientation(e) {
+        const heading = e.webkitCompassHeading || (360 - e.alpha);
+        if (heading) currentHeading = heading;
+    }
+
+    // Fungsi Animasi (Smoothing Filter)
+    function animate() {
+        let diff = currentHeading - lerpHeading;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+
+        lerpHeading += diff * filterFactor;
+        lerpHeading = (lerpHeading + 360) % 360;
+
+        const compassRing = document.getElementById('compassRing');
+        const kaabaOrbit = document.getElementById('kaabaOrbit');
+        const headingDisplay = document.getElementById('currentHeadingDisplay');
+
+        if (compassRing && kaabaOrbit) {
+            compassRing.style.transform = `rotate(${-lerpHeading}deg)`;
+            kaabaOrbit.style.transform = `rotate(${qiblaAngle}deg)`;
+            headingDisplay.innerText = Math.round(lerpHeading) + "°";
+        }
+
+        requestAnimationFrame(animate);
     }
 
     function updateTime() {
