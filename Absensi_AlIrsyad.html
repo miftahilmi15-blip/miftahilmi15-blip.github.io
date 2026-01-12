@@ -66,36 +66,42 @@
                 </tr>
             </thead>
             <tbody>
-                <tr><td colspan="2" style="padding:40px; color:#94a3b8;">Silakan pilih kelas...</td></tr>
+                <tr><td colspan="2" style="padding:40px; text-align:center; color:#94a3b8;">Silakan pilih kelas...</td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // URL Web App Anda sudah terpasang di bawah ini
     const URL_SERVER = "https://script.google.com/macros/s/AKfycbzKvoq9uf-5Fq5qc9ri40HJ1TRtdNsG52sl9VIfZzN_3ZVB5r_3KFt8mUu83Jo305j3/exec";
 
     document.getElementById('tgl-skrg').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
     const loader = document.getElementById('loading');
 
-    // Ambil data siswa saat kelas dipilih
     document.getElementById('pilih-kelas').addEventListener('change', async (e) => {
         const kelas = e.target.value;
         if (!kelas) return;
         loader.style.display = 'flex';
         try {
-            const respon = await fetch(`${URL_SERVER}?kelas=${kelas}`);
+            const respon = await fetch(URL_SERVER + "?kelas=" + kelas);
             const data = await respon.json();
+            if(data.error) {
+                alert(data.error);
+                return;
+            }
             tampilkanSiswa(data);
         } catch (err) {
-            alert("Gagal memuat data. Pastikan nama Sheet di Google Sheets sesuai dengan nama kelas.");
+            alert("Gagal memuat data. Pastikan nama tab di Spreadsheet sudah Anda ganti menjadi: " + kelas);
         } finally { loader.style.display = 'none'; }
     });
 
     function tampilkanSiswa(data) {
         const tbody = document.querySelector('#tabel-absen tbody');
         tbody.innerHTML = '';
+        if(data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="2" style="padding:20px;">Data siswa kosong.</td></tr>';
+            return;
+        }
         data.forEach(s => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -114,7 +120,10 @@
     }
 
     function setAbsen(btn, status) {
-        btn.parentElement.querySelectorAll('.btn-status').forEach(b => b.className = 'btn-status');
+        btn.parentElement.querySelectorAll('.btn-status').forEach(b => {
+            b.className = 'btn-status';
+            b.removeAttribute('data-pilihan');
+        });
         const kls = { 'H': 'h-active', 'S': 's-active', 'I': 'i-active', 'A': 'a-active' };
         btn.classList.add(kls[status]);
         btn.setAttribute('data-pilihan', status);
@@ -124,6 +133,7 @@
         const kelas = document.getElementById('pilih-kelas').value;
         const baris = document.querySelectorAll('#tabel-absen tbody tr');
         const dataFinal = [];
+        
         baris.forEach(tr => {
             const statusPilih = tr.querySelector('.btn-status[data-pilihan]');
             if (statusPilih) {
@@ -136,14 +146,18 @@
             }
         });
 
-        if (dataFinal.length === 0) { return alert("Pilih status absen dulu!"); }
+        if (dataFinal.length === 0) return alert("Pilih status absen minimal satu siswa!");
+        
         loader.style.display = 'flex';
         try {
             await fetch(URL_SERVER, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataFinal) });
-            alert("✅ Data Berhasil Disimpan ke Google Sheets!");
+            alert("✅ Berhasil! Data sudah masuk ke tab 'Database'");
             location.reload();
-        } catch (err) { alert("Gagal mengirim data."); }
-        finally { loader.style.display = 'none'; }
+        } catch (err) { 
+            alert("Gagal mengirim data."); 
+        } finally { 
+            loader.style.display = 'none'; 
+        }
     }
 </script>
 </body>
