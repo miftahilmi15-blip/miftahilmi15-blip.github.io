@@ -3,57 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absensi Digital - SMP Al-Irsyad</title>
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <title>Sistem Absensi Cloud - SMP Al-Irsyad</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --h: #22c55e; --s: #eab308; --i: #3b82f6; --a: #ef4444; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f4f7f6; padding: 20px; color: #334155; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        header { text-align: center; margin-bottom: 25px; }
-        .toolbar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f8fafc; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #e2e8f0; align-items: end; }
-        select, button { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; font-weight: 600; cursor: pointer; }
-        .btn-sync { background: #3b82f6; color: white; border: none; }
-        .btn-save { background: var(--primary); color: white; border: none; }
+        :root {
+            --primary: #1f6f51;
+            --secondary: #16503a;
+            --bg: #f0f4f8;
+            --white: #ffffff;
+            --h: #22c55e; --s: #eab308; --i: #3b82f6; --a: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: #334155; padding: 15px; }
+        
+        .container { max-width: 900px; margin: auto; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        
+        header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; }
+        h2 { color: var(--primary); font-size: 1.5rem; letter-spacing: -0.5px; }
+        #date-display { font-weight: 600; color: #64748b; font-size: 0.9rem; margin-top: 5px; }
+
+        #loading-overlay { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.8); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8fafc; padding: 20px; border-radius: 15px; border: 1px solid #e2e8f0; }
+        
+        select, .btn-submit { width: 100%; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; outline: none; border: 1.5px solid #cbd5e1; }
+        select { background: white; cursor: pointer; }
+        .btn-submit { background: var(--primary); color: white; border: none; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { filter: brightness(0.9); transform: translateY(-2px); }
+
         .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-card { padding: 10px; border-radius: 10px; color: white; text-align: center; font-size: 0.8rem; }
-        .table-wraper { overflow-x: auto; }
+        .stat-card { padding: 10px; border-radius: 12px; color: white; text-align: center; font-weight: bold; font-size: 0.8rem; }
+
+        .table-wraper { overflow-x: auto; border-radius: 15px; border: 1px solid #e2e8f0; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { background: #f1f5f9; padding: 15px; font-size: 0.7rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
-        td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        th { background: #f8fafc; padding: 15px; font-size: 0.75rem; color: #64748b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+
         .status-btn-group { display: flex; justify-content: center; gap: 5px; }
-        .btn-st { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; color: #94a3b8; }
-        .btn-st.active-h { background: var(--h); color: white; border-color: var(--h); }
-        .btn-st.active-s { background: var(--s); color: white; border-color: var(--s); }
-        .btn-st.active-i { background: var(--i); color: white; border-color: var(--i); }
-        .btn-st.active-a { background: var(--a); color: white; border-color: var(--a); }
+        .btn-st { width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid #eee; background: white; cursor: pointer; font-weight: bold; color: #94a3b8; transition: 0.2s; }
+        
+        .active-h { background: var(--h) !important; color: white !important; border-color: var(--h) !important; box-shadow: 0 4px 10px rgba(34,197,94,0.3); }
+        .active-s { background: var(--s) !important; color: white !important; border-color: var(--s) !important; box-shadow: 0 4px 10px rgba(234,179,8,0.3); }
+        .active-i { background: var(--i) !important; color: white !important; border-color: var(--i) !important; box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
+        .active-a { background: var(--a) !important; color: white !important; border-color: var(--a) !important; box-shadow: 0 4px 10px rgba(239,68,68,0.3); }
     </style>
 </head>
 <body>
 
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <p style="margin-top:15px; font-weight:bold; color:var(--primary)" id="loading-text">Menghubungkan ke Cloud...</p>
+</div>
+
 <div class="container">
     <header>
-        <h2 style="color: var(--primary)">ABSENSI SMP AL-IRSYAD</h2>
-        <p id="current-date" style="font-weight: 600; color: #64748b;"></p>
+        <h2>ABSENSI DIGITAL SMP AL-IRSYAD</h2>
+        <p id="date-display"></p>
     </header>
-
-    <div class="toolbar">
-        <div>
-            <label style="font-size: 0.7rem; font-weight: bold;">1. DATABASE</label>
-            <button onclick="document.getElementById('manual-file').click()" class="btn-sync">🔄 Muat santri.xlsx</button>
-            <input type="file" id="manual-file" style="display:none" accept=".xlsx">
-        </div>
-        <div>
-            <label style="font-size: 0.7rem; font-weight: bold;">2. PILIH KELAS</label>
-            <select id="kelas-select">
-                <option value="">-- Unggah File Dulu --</option>
-            </select>
-        </div>
-        <div>
-            <label style="font-size: 0.7rem; font-weight: bold;">3. HASIL</label>
-            <button id="export-btn" class="btn-save">💾 Export Rekap</button>
-        </div>
-    </div>
 
     <div class="stats">
         <div class="stat-card" style="background: var(--h)">Hadir: <span id="count-h">0</span></div>
@@ -62,92 +74,77 @@
         <div class="stat-card" style="background: var(--a)">Alpha: <span id="count-a">0</span></div>
     </div>
 
+    <div class="toolbar">
+        <div>
+            <label style="font-size:0.7rem; font-weight:bold; display:block; margin-bottom:5px">PILIH KELAS</label>
+            <select id="kelas-select">
+                <option value="">-- Pilih --</option>
+                <option value="7A">Kelas 7A</option>
+                <option value="7B">Kelas 7B</option>
+                <option value="7C">Kelas 7C</option>
+                <option value="7D">Kelas 7D</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size:0.7rem; font-weight:bold; display:block; margin-bottom:5px">AKSI</label>
+            <button class="btn-submit" onclick="kirimKeCloud()">🚀 Simpan Ke Database</button>
+        </div>
+    </div>
+
     <div class="table-wraper">
         <table id="absensi-table">
             <thead>
                 <tr>
-                    <th>NO</th>
-                    <th>NIPD</th>
-                    <th>NAMA SANTRI</th>
-                    <th>JK</th>
-                    <th>STATUS</th>
+                    <th width="100">NIPD</th>
+                    <th style="text-align: left;">NAMA SANTRI</th>
+                    <th width="60">JK</th>
+                    <th width="200">KETERANGAN</th>
                 </tr>
             </thead>
             <tbody>
-                <tr><td colspan="5" style="padding:40px; color:#999;">Gunakan tombol "Muat santri.xlsx" di atas</td></tr>
+                <tr><td colspan="4" style="padding:40px; color:#94a3b8;">Silakan pilih kelas...</td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    let allStudentsData = {}; // Objek untuk menyimpan data 7A, 7B, 7C, 7D
-    const kelasSelect = document.getElementById('kelas-select');
-    const tableBody = document.querySelector('#absensi-table tbody');
+    // MASUKKAN URL WEB APP GOOGLE ANDA DI SINI
+    const SCRIPT_URL = "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA";
 
-    document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    document.getElementById('date-display').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    // Handle File Upload Manual (Karena file Anda kompleks)
-    document.getElementById('manual-file').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-            const data = new Uint8Array(evt.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            
-            // Ambil sheet pertama (DATA SISWA)
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const raw = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+    const loader = document.getElementById('loading-overlay');
+    const loadText = document.getElementById('loading-text');
 
-            // PEMETAAN KOLOM (Berdasarkan file Anda)
-            // 7A: Kolom A-E | 7B: Kolom H-L | 7C: Kolom O-S | 7D: Kolom V-Z
-            const config = {
-                "7A": { start: 0 },
-                "7B": { start: 7 },
-                "7C": { start: 14 },
-                "7D": { start: 21 }
-            };
+    // 1. Ambil Data Santri Berdasarkan Kelas dari Google Sheets
+    document.getElementById('kelas-select').addEventListener('change', async (e) => {
+        const kelas = e.target.value;
+        if (!kelas) return;
 
-            allStudentsData = {};
-            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+        loader.style.display = 'flex';
+        loadText.textContent = "Mengambil data santri " + kelas + "...";
 
-            Object.keys(config).forEach(kls => {
-                const col = config[kls].start;
-                allStudentsData[kls] = [];
-                
-                // Mulai baris ke-6 (index 5)
-                for (let i = 5; i < raw.length; i++) {
-                    const row = raw[i];
-                    if (row && row[col + 3]) { // Jika ada nama di kolom NAMA
-                        allStudentsData[kls].push({
-                            no: row[col],
-                            nipd: row[col + 1],
-                            nama: row[col + 3],
-                            jk: row[col + 4]
-                        });
-                    }
-                }
-                if (allStudentsData[kls].length > 0) {
-                    kelasSelect.add(new Option("Kelas " + kls, kls));
-                }
-            });
-            alert("Berhasil memproses data santri menyamping.");
-        };
-        reader.readAsArrayBuffer(file);
+        try {
+            const res = await fetch(`${SCRIPT_URL}?kelas=${kelas}`);
+            const students = await res.json();
+            renderTable(students);
+        } catch (err) {
+            alert("Gagal mengambil data. Pastikan Apps Script sudah di-Deploy sebagai 'Anyone'.");
+        } finally {
+            loader.style.display = 'none';
+        }
     });
 
-    kelasSelect.addEventListener('change', (e) => {
-        const kls = e.target.value;
-        if (!kls) return;
-
-        tableBody.innerHTML = '';
-        allStudentsData[kls].forEach(s => {
+    function renderTable(data) {
+        const tbody = document.querySelector('#absensi-table tbody');
+        tbody.innerHTML = '';
+        data.forEach(s => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${s.no || '-'}</td>
-                <td>${s.nipd || '-'}</td>
-                <td style="text-align:left; font-weight:bold;">${s.nama}</td>
-                <td>${s.jk || '-'}</td>
+                <td>${s.nipd}</td>
+                <td style="text-align:left; font-weight:600;">${s.nama}</td>
+                <td>${s.jk}</td>
                 <td>
                     <div class="status-btn-group">
                         <button class="btn-st" onclick="setStatus(this, 'H')">H</button>
@@ -157,22 +154,25 @@
                     </div>
                 </td>
             `;
-            tableBody.appendChild(tr);
+            tbody.appendChild(tr);
         });
         resetStats();
-    });
+    }
 
     function setStatus(btn, code) {
         btn.parentElement.querySelectorAll('.btn-st').forEach(b => b.className = 'btn-st');
         const cls = { 'H': 'active-h', 'S': 'active-s', 'I': 'active-i', 'A': 'active-a' };
         btn.classList.add(cls[code]);
         btn.setAttribute('data-selected', code);
+        if (navigator.vibrate) navigator.vibrate(20);
         updateStats();
     }
 
     function updateStats() {
         const counts = { 'H': 0, 'S': 0, 'I': 0, 'A': 0 };
-        document.querySelectorAll('.btn-st[data-selected]').forEach(btn => counts[btn.getAttribute('data-selected')]++);
+        document.querySelectorAll('.btn-st[data-selected]').forEach(btn => {
+            counts[btn.getAttribute('data-selected')]++;
+        });
         document.getElementById('count-h').textContent = counts['H'];
         document.getElementById('count-s').textContent = counts['S'];
         document.getElementById('count-i').textContent = counts['I'];
@@ -183,22 +183,42 @@
         ['h','s','i','a'].forEach(k => document.getElementById('count-'+k).textContent = '0');
     }
 
-    document.getElementById('export-btn').addEventListener('click', () => {
+    // 2. Kirim Data Absen ke Sheet "Database"
+    async function kirimKeCloud() {
         const rows = document.querySelectorAll('#absensi-table tbody tr');
-        if (rows.length < 1 || !kelasSelect.value) return alert("Pilih kelas dulu!");
+        const payload = [];
+        const kelas = document.getElementById('kelas-select').value;
 
-        const data = [['REKAP ABSENSI'], ['Kelas:', kelasSelect.value], [], ['NO', 'NIPD', 'NAMA', 'JK', 'KET']];
         rows.forEach(tr => {
-            const cells = tr.querySelectorAll('td');
-            const sel = tr.querySelector('.btn-st[data-selected]');
-            data.push([cells[0].innerText, cells[1].innerText, cells[2].innerText, cells[3].innerText, sel ? sel.getAttribute('data-selected') : '-']);
+            const status = tr.querySelector('.btn-st[data-selected]');
+            if (status) {
+                payload.push({
+                    kelas: kelas,
+                    nipd: tr.cells[0].innerText,
+                    nama: tr.cells[1].innerText,
+                    status: status.getAttribute('data-selected')
+                });
+            }
         });
 
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Rekap");
-        XLSX.writeFile(wb, `Absensi_${kelasSelect.value}.xlsx`);
-    });
+        if (payload.length === 0) return alert("Absensi belum diisi!");
+
+        loader.style.display = 'flex';
+        loadText.textContent = "Menyimpan ke Cloud Database...";
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(payload)
+            });
+            alert("✅ BERHASIL! Data absen telah tersimpan permanen di Google Sheets.");
+        } catch (e) {
+            alert("Gagal mengirim data.");
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
 </script>
 </body>
 </html>
