@@ -12,98 +12,67 @@
             --sakit: #eab308; 
             --izin: #3b82f6; 
             --alpha: #ef4444; 
-            --soft: rgba(31, 111, 81, 0.1);
+            --bg: #f3fbf7;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { 
-            background: #f3fbf7; 
-            padding: 15px; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh;
-            background-image: radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.1) 0px, transparent 50%);
-        }
+        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+        
         .wadah { 
             width: 100%; 
-            max-width: 420px; 
+            max-width: 450px; 
             background: white; 
             padding: 25px; 
             border-radius: 24px; 
-            box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08); 
+            box-shadow: 0 15px 35px rgba(0, 71, 49, 0.1); 
             align-self: flex-start; 
         }
-        header { text-align: center; margin-bottom: 20px; }
-        h2 { color: var(--primary); font-size: 20px; font-weight: 700; margin-bottom: 5px; }
-        #tgl-skrg { font-size: 12px; color: #636e72; font-weight: 500; }
-        
-        .form-grup { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-        select { 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            border: 1px solid rgba(0,0,0,0.08); 
-            background: #f8fafb; 
-            font-weight: 600; 
-            outline: none;
-            color: var(--primary);
-            appearance: none;
-        }
-        
-        .btn-simpan { 
-            background: linear-gradient(135deg, var(--primary), #16503a); 
-            color: white; 
-            border: none; 
-            padding: 15px; 
-            border-radius: 12px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            box-shadow: 0 8px 20px rgba(31, 111, 81, 0.3);
-            transition: 0.3s;
-        }
-        .btn-simpan:hover { opacity: 0.9; }
-        .btn-simpan:active { transform: scale(0.98); }
 
-        .area-tabel { margin-top: 10px; border-radius: 15px; overflow: hidden; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th { background: #f8fafb; padding: 12px; font-size: 11px; color: #636e72; text-transform: uppercase; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
-        
+        header { text-align: center; margin-bottom: 25px; }
+        header h1 { color: var(--primary); font-size: 24px; font-weight: 700; }
+        header p { font-size: 13px; color: #666; }
+
+        .form-grup { margin-bottom: 20px; }
+        select { 
+            width: 100%; padding: 14px; border-radius: 12px; 
+            border: 1.5px solid #eee; background: #f9f9f9; 
+            font-weight: 600; color: var(--primary); outline: none;
+        }
+
+        .area-tabel { border-radius: 15px; overflow: hidden; border: 1px solid #eee; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafb; padding: 12px; font-size: 11px; color: #888; text-transform: uppercase; text-align: left; }
+        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+
         .btn-status { 
-            width: 34px; height: 34px; border-radius: 8px; border: 1px solid #eee; 
-            background: white; cursor: pointer; font-weight: bold; color: #94a3b8; 
-            margin-right: 2px; transition: 0.2s; 
+            width: 36px; height: 36px; border-radius: 8px; border: 1.5px solid #eee; 
+            background: white; cursor: pointer; font-weight: bold; color: #ccc; 
+            transition: 0.2s; margin-left: 2px;
         }
-        
-        .h-active { background: var(--hadir) !important; color: white !important; border-color: var(--hadir); }
-        .s-active { background: var(--sakit) !important; color: white !important; border-color: var(--sakit); }
-        .i-active { background: var(--izin) !important; color: white !important; border-color: var(--izin); }
-        .a-active { background: var(--alpha) !important; color: white !important; border-color: var(--alpha); }
-        
+
+        /* Warna Aktif */
+        .h-on { background: var(--hadir)!important; color: white!important; border-color: var(--hadir); }
+        .s-on { background: var(--sakit)!important; color: white!important; border-color: var(--sakit); }
+        .i-on { background: var(--izin)!important; color: white!important; border-color: var(--izin); }
+        .a-on { background: var(--alpha)!important; color: white!important; border-color: var(--alpha); }
+
+        .btn-kirim { 
+            width: 100%; background: var(--primary); color: white; border: none; 
+            padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(31, 111, 81, 0.2); transition: 0.3s;
+        }
+        .btn-kirim:active { transform: scale(0.98); }
+
         #loading { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(255,255,255,0.9); z-index: 99; 
-            justify-content: center; align-items: center; flex-direction: column;
+            display: none; text-align: center; font-weight: 700; color: var(--primary); 
+            padding: 10px; margin-bottom: 10px; font-size: 14px;
         }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid var(--soft);
-            border-top: 4px solid var(--primary); border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: 10px;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .back-btn { display: inline-block; margin-bottom: 15px; text-decoration: none; color: var(--primary); font-size: 13px; font-weight: 700; }
     </style>
 </head>
 <body>
 
-<div id="loading">
-    <div class="spinner"></div>
-    <div style="color: var(--primary); font-weight: 700;">Memproses Data...</div>
-</div>
-
 <div class="wadah">
-    <a href="index.html" class="back-btn">← DASHBOARD</a>
     <header>
-        <h2>ABSENSI SANTRI</h2>
+        <h1>E-SANTRI</h1>
         <p id="tgl-skrg"></p>
     </header>
 
@@ -113,14 +82,22 @@
             <option value="7A">Kelas 7A</option>
             <option value="7B">Kelas 7B</option>
             <option value="7C">Kelas 7C</option>
+            <option value="7D">Kelas 7D</option>
             <option value="8A">Kelas 8A</option>
+            <option value="8B">Kelas 8B</option>
+            <option value="8C">Kelas 8C</option>
+            <option value="8D">Kelas 8D</option>
             <option value="9A">Kelas 9A</option>
+            <option value="9B">Kelas 9B</option>
+            <option value="9C">Kelas 9C</option>
+            <option value="9D">Kelas 9D</option>
         </select>
-        <button class="btn-simpan" onclick="kirimData()">SIMPAN ABSENSI</button>
     </div>
 
+    <div id="loading">Memproses data...</div>
+
     <div class="area-tabel">
-        <table id="tabel-absen">
+        <table>
             <thead>
                 <tr>
                     <th>Nama Santri</th>
@@ -128,35 +105,35 @@
                 </tr>
             </thead>
             <tbody id="isi-tabel">
-                <tr><td colspan="2" style="padding:40px; text-align:center; color:#999; font-size: 12px;">Silakan pilih kelas...</td></tr>
+                <tr><td colspan="2" style="text-align:center; color:#999; padding: 30px;">Pilih kelas untuk memulai</td></tr>
             </tbody>
         </table>
     </div>
+
+    <button class="btn-kirim" onclick="kirimAbsen()">SIMPAN DATA ABSENSI</button>
 </div>
 
 <script>
-    // URL Web App Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFnuvsTjP5RjVgwi471MTr6X3t7tbqSVh1lgK5ppx6fvIMxlY_Z3jdyU6wZuyATbelkQ/exec";
 
-    // Menampilkan Tanggal Hari Ini
+    // Set Tanggal
     document.getElementById('tgl-skrg').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-    
-    const loader = document.getElementById('loading');
 
-    // 1. FUNGSI AMBIL DATA (Sesuai Kolom A=NIPD, B=Nama)
-    document.getElementById('pilih-kelas').addEventListener('change', async (e) => {
-        const kelas = e.target.value;
-        if (!kelas) return;
+    // 1. Ambil Data Santri saat Pilih Kelas
+    document.getElementById('pilih-kelas').onchange = async function() {
+        const kls = this.value;
+        if(!kls) return;
         
-        loader.style.display = 'flex';
+        document.getElementById('loading').style.display = 'block';
         const tbody = document.getElementById('isi-tabel');
-        
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Mengambil data...</td></tr>';
+
         try {
-            const respon = await fetch(`${SCRIPT_URL}?kelas=${kelas}`);
-            const data = await respon.json();
-            
+            const response = await fetch(`${SCRIPT_URL}?kelas=${kls}`);
+            const data = await response.json();
+
             if(data.error) {
-                alert("Error: " + data.error);
+                alert("Gagal: " + data.error);
                 return;
             }
 
@@ -166,76 +143,68 @@
                 tr.setAttribute('data-nipd', s.nipd);
                 tr.setAttribute('data-nama', s.nama);
                 tr.innerHTML = `
-                    <td>
-                        <div style="font-weight:600; color:#2d3436">${s.nama}</div>
-                        <div style="font-size:10px; color:#999">${s.nipd}</div>
-                    </td>
-                    <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-status" onclick="pilihStatus(this,'H')">H</button>
-                        <button class="btn-status" onclick="pilihStatus(this,'S')">S</button>
-                        <button class="btn-status" onclick="pilihStatus(this,'I')">I</button>
-                        <button class="btn-status" onclick="pilihStatus(this,'A')">A</button>
+                    <td><div style="font-weight:600">${s.nama}</div><div style="font-size:10px; color:#999">${s.nipd}</div></td>
+                    <td style="text-align:right; white-space:nowrap;">
+                        <button class="btn-status" onclick="pilih(this,'H')">H</button>
+                        <button class="btn-status" onclick="pilih(this,'S')">S</button>
+                        <button class="btn-status" onclick="pilih(this,'I')">I</button>
+                        <button class="btn-status" onclick="pilih(this,'A')">A</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-        } catch (err) {
-            alert("Gagal memuat data! Periksa koneksi atau nama Sheet.");
+        } catch (e) {
+            alert("Terjadi kesalahan koneksi!");
         } finally {
-            loader.style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
         }
-    });
+    };
 
-    // 2. FUNGSI TOMBOL H/S/I/A
-    function pilihStatus(btn, status) {
-        // Reset warna tombol di baris yang sama
-        const baris = btn.parentElement;
-        baris.querySelectorAll('.btn-status').forEach(b => {
+    // 2. Fungsi Klik Tombol Status
+    function pilih(btn, status) {
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.btn-status').forEach(b => {
             b.className = 'btn-status';
-            b.removeAttribute('data-pilih');
+            b.removeAttribute('data-aktif');
         });
-        
-        // Aktifkan tombol yang diklik
-        const warna = { 'H': 'h-active', 'S': 's-active', 'I': 'i-active', 'A': 'a-active' };
+        const warna = { 'H': 'h-on', 'S': 's-on', 'I': 'i-on', 'A': 'a-on' };
         btn.classList.add(warna[status]);
-        btn.setAttribute('data-pilih', status);
+        btn.setAttribute('data-aktif', status);
     }
 
-    // 3. FUNGSI KIRIM KE DATABASE (POST)
-    async function kirimData() {
-        const kelas = document.getElementById('pilih-kelas').value;
-        if (!kelas) return alert("Pilih kelas dulu!");
+    // 3. Fungsi Kirim Data ke Google Sheets
+    async function kirimAbsen() {
+        const kls = document.getElementById('pilih-kelas').value;
+        const rows = document.querySelectorAll('#isi-tabel tr');
+        let rekap = [];
 
-        const barisData = document.querySelectorAll('#isi-tabel tr');
-        const dataFinal = [];
-
-        barisData.forEach(tr => {
-            const btnAktif = tr.querySelector('.btn-status[data-pilih]');
-            if (btnAktif) {
-                dataFinal.push({
-                    kelas: kelas,
+        rows.forEach(tr => {
+            const status = tr.querySelector('[data-aktif]');
+            if(status) {
+                rekap.push({
+                    kelas: kls,
                     nipd: tr.getAttribute('data-nipd'),
                     nama: tr.getAttribute('data-nama'),
-                    status: btnAktif.getAttribute('data-pilih')
+                    status: status.getAttribute('data-aktif')
                 });
             }
         });
 
-        if (dataFinal.length === 0) return alert("Pilih minimal satu kehadiran santri!");
+        if(rekap.length === 0) return alert("Isi minimal satu absen santri!");
 
-        loader.style.display = 'flex';
+        document.getElementById('loading').style.display = 'block';
         try {
             await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                body: JSON.stringify(dataFinal)
+                body: JSON.stringify(rekap)
             });
-            alert("✅ Alhamdulillah! Absensi " + kelas + " berhasil disimpan.");
+            alert("✅ Alhamdulillah, Absensi Berhasil Disimpan!");
             location.reload();
-        } catch (err) {
-            alert("Gagal menyimpan. Coba lagi.");
+        } catch (e) {
+            alert("Gagal mengirim data!");
         } finally {
-            loader.style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
         }
     }
 </script>
