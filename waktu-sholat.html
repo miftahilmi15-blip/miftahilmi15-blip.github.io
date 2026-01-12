@@ -568,128 +568,211 @@ let userLat, userLon, qiblaAngle = 295;
             // 3. Perbaikan Kalender (Hijriah Otomatis 2026)
             const m = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
             const optionsHijri = { day:'numeric', month:'long', year:'numeric' };
-            const hijriFormatted = new Intl.DateTimeFormat('id-TN-u-ca-islamic-uma', optionsHijri).format(new Date());
-            
-            document.getElementById('dateDisplay').innerText = `${m} | ${hijriFormatted} H`;
-
-            renderPrayerList();
-        } catch(e) { 
-            console.error("Data error", e); 
-            document.getElementById('cityName').innerText = "Gagal memuat data";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waktu Sholat & Kiblat Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1f6f51;
+            --bg: #f4f7f6;
+            --aktif: #22c55e;
+            --putih: #ffffff;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: #333; padding: 20px; display: flex; justify-content: center; }
+
+        .container { width: 100%; max-width: 400px; }
+
+        /* Header & Waktu */
+        .card-header { 
+            background: var(--primary); color: white; padding: 25px; 
+            border-radius: 20px; text-align: center; margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2);
+        }
+        #jam-digital { font-size: 3rem; font-weight: 700; }
+        #tgl-display { font-size: 0.85rem; opacity: 0.9; margin-top: 5px; }
+
+        /* Kompas & Kiblat */
+        .card-kiblat { 
+            background: var(--putih); padding: 20px; border-radius: 20px; 
+            text-align: center; margin-bottom: 20px; position: relative;
+        }
+        .compass-ring {
+            width: 200px; height: 200px; border: 8px solid #eee; border-radius: 50%;
+            margin: 20px auto; position: relative; transition: transform 0.1s ease-out;
+        }
+        .kaaba-icon {
+            position: absolute; top: -15px; left: calc(50% - 20px);
+            width: 40px; height: 40px; background: #ffb800;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(255,184,0,0.4);
+        }
+        .kaaba-icon img { width: 22px; }
+        .panah-utara {
+            position: absolute; top: 10px; width: 0; height: 0;
+            border-left: 8px solid transparent; border-right: 8px solid transparent;
+            border-bottom: 12px solid #ef4444; z-index: 5;
+        }
+
+        /* Daftar Sholat */
+        .prayer-list { display: flex; flex-direction: column; gap: 10px; }
+        .prayer-item {
+            background: var(--putih); padding: 18px 20px; border-radius: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid #eee; transition: 0.3s;
+        }
+        .prayer-item.active {
+            background: #f0fdf4; border-color: var(--aktif);
+            color: var(--aktif); font-weight: 700; transform: scale(1.02);
+        }
+        .prayer-item span:last-child { font-size: 1.1rem; }
+
+        #btn-kiblat {
+            background: var(--primary); color: white; border: none;
+            padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card-header">
+        <p>📍 <span id="lokasi">Mencari Lokasi...</span></p>
+        <div id="jam-digital">00:00</div>
+        <div id="tgl-display">Memuat Kalender...</div>
+    </div>
+
+    <div class="card-kiblat">
+        <p style="font-weight: 600; font-size: 0.9rem;">Arah Kiblat: <span id="target-deg">...</span>°</p>
+        <div class="compass-ring" id="ring">
+            <div class="panah-utara"></div>
+            <div id="orbit-kaabah" style="position: absolute; width: 100%; height: 100%;">
+                <div class="kaaba-icon">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2873/2873024.png" alt="K">
+                </div>
+            </div>
+            <div style="position:absolute; top:45%; width:100%; font-weight:700; font-size:1.5rem;" id="derajat-sekarang">0°</div>
+        </div>
+        <button id="btn-kiblat" onclick="mulaiKompas()">Aktifkan Kompas</button>
+    </div>
+
+    <div class="prayer-list" id="daftar-sholat">
+        </div>
+</div>
+
+<script>
+    let qiblaAngle = 295; 
+    let currentHeading = 0;
+    let prayerTimesData = {};
+
+    // 1. Inisialisasi Lokasi & Data
+    function init() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                fetchData(lat, lon);
+                calcQibla(lat, lon);
+            }, () => {
+                fetchData(-6.2000, 106.8166); // Default Jakarta
+            });
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+        setInterval(updateActiveStatus, 30000);
     }
 
-    function renderPrayerList() {
-        if (!prayerTimesData.Fajr) return;
+    // 2. Ambil Jadwal & Update Kalender (Sempurna 2026)
+    async function fetchData(lat, lon) {
+        try {
+            const date = new Date();
+            const d = date.toISOString().split('T')[0];
+            
+            // Kota
+            const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
+            document.getElementById('lokasi').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
+
+            // Kalender Hijriah & Masehi
+            const masehi = date.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+            const hijri = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma', {day:'numeric', month:'long', year:'numeric'}).format(date);
+            document.getElementById('tgl-display').innerText = `${masehi} | ${hijri} H`;
+
+            // Jadwal Sholat
+            const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
+            prayerTimesData = pray.data.timings;
+            renderSholat();
+        } catch(e) { console.error("Error API"); }
+    }
+
+    function renderSholat() {
         const t = prayerTimesData;
-        // List waktu sholat utama
-        const list = [
-            ["Subuh", t.Fajr], 
-            ["Terbit", t.Sunrise], 
-            ["Dzuhur", t.Dhuhr], 
-            ["Ashar", t.Asr], 
-            ["Maghrib", t.Maghrib], 
-            ["Isya", t.Isha]
-        ];
-        
-        document.getElementById('prayerItems').innerHTML = list.map((p, index) => {
-            return `<div class="prayer-item" id="pray-${index}" data-time="${p[1]}">
-                        <span>${p[0]}</span>
-                        <span>${p[1]}</span>
-                    </div>`;
-        }).join('');
-        
-        updateActivePrayer(); // Jalankan indikator segera setelah render
+        const list = [["Subuh", t.Fajr], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
+        const container = document.getElementById('daftar-sholat');
+        container.innerHTML = list.map((p, i) => `
+            <div class="prayer-item" id="pray-${i}" data-time="${p[1]}">
+                <span>${p[0]}</span>
+                <span>${p[1]}</span>
+            </div>
+        `).join('');
+        updateActiveStatus();
     }
 
-    // LOGIKA INDIKATOR HIJAU (FIXED)
-    function updateActivePrayer() {
+    // 3. Logika Indikator Hijau (Aktif)
+    function updateActiveStatus() {
         const items = document.querySelectorAll('.prayer-item');
-        if (items.length === 0) return;
-
         const now = new Date();
-        const currentTime = (now.getHours() * 60) + now.getMinutes();
+        const curMin = now.getHours() * 60 + now.getMinutes();
+        let idxAktif = -1;
 
-        let currentActiveIndex = -1;
-
-        items.forEach((item, index) => {
-            const timeStr = item.getAttribute('data-time');
-            const [h, m] = timeStr.split(':').map(Number);
-            const prayerMinutes = (h * 60) + m;
-
-            // Jika waktu sekarang sudah melewati waktu sholat ini
-            if (currentTime >= prayerMinutes) {
-                currentActiveIndex = index;
-            }
+        items.forEach((item, i) => {
+            const [h, m] = item.getAttribute('data-time').split(':').map(Number);
+            if (curMin >= (h * 60 + m)) idxAktif = i;
         });
 
-        // Hapus status active lama
         items.forEach(el => el.classList.remove('active'));
-        
-        // Tandai yang terbaru (Warna Hijau)
-        if (currentActiveIndex !== -1) {
-            items[currentActiveIndex].classList.add('active');
-            // Auto scroll ke item yang aktif agar terlihat
-            items[currentActiveIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        if (idxAktif !== -1) items[idxAktif].classList.add('active');
     }
 
-    function calculateQibla(lat, lon) {
+    // 4. Logika Kompas & Kiblat
+    function calcQibla(lat, lon) {
         const phiK = 21.4225 * Math.PI / 180;
         const lamK = 39.8262 * Math.PI / 180;
         const phi = lat * Math.PI / 180;
         const lam = lon * Math.PI / 180;
         let q = Math.atan2(Math.sin(lamK-lam), Math.cos(phi)*Math.tan(phiK)-Math.sin(phi)*Math.cos(lamK-lam));
         qiblaAngle = (q * 180 / Math.PI + 360) % 360;
-        document.getElementById('targetDeg').innerText = Math.round(qiblaAngle) + "°";
+        document.getElementById('target-deg').innerText = Math.round(qiblaAngle);
+        document.getElementById('orbit-kaabah').style.transform = `rotate(${qiblaAngle}deg)`;
     }
 
-    function toggleKiblat(show) {
-        document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
-        if (show && typeof DeviceOrientationEvent !== 'undefined') {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission().then(state => {
-                    if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
-                });
-            } else {
-                window.addEventListener('deviceorientation', handleOrientation);
-            }
+    function mulaiKompas() {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission().then(state => {
+                if (state === 'granted') window.addEventListener('deviceorientation', handleCompass, true);
+            });
         } else {
-            window.removeEventListener('deviceorientation', handleOrientation);
+            window.addEventListener('deviceorientation', handleCompass, true);
         }
+        document.getElementById('btn-kiblat').style.display = 'none';
     }
 
-    function handleOrientation(e) {
-        // Mendukung Android (alpha) dan iOS (webkitCompassHeading)
+    function handleCompass(e) {
         let heading = e.webkitCompassHeading || (360 - e.alpha);
-        if (heading) currentHeading = heading;
-    }
-
-    function animate() {
-        let diff = currentHeading - lerpHeading;
-        if (diff > 180) diff -= 360;
-        if (diff < -180) diff += 360;
-
-        lerpHeading += diff * filterFactor;
-        lerpHeading = (lerpHeading + 360) % 360;
-
-        const ring = document.getElementById('compassRing');
-        const orbit = document.getElementById('kaabaOrbit');
-        if (ring) {
-            ring.style.transform = `rotate(${-lerpHeading}deg)`;
-            orbit.style.transform = `rotate(${qiblaAngle}deg)`;
-            document.getElementById('currentHeadingDisplay').innerText = Math.round(lerpHeading) + "°";
+        if (heading) {
+            currentHeading = heading;
+            document.getElementById('ring').style.transform = `rotate(${-currentHeading}deg)`;
+            document.getElementById('derajat-sekarang').innerText = Math.round(currentHeading) + "°";
         }
-        requestAnimationFrame(animate);
     }
 
-    function updateTime() {
+    function updateClock() {
         const n = new Date();
-        document.getElementById('liveClock').innerText = n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0');
-    }
-
-    function openMasjid() {
-        if (userLat) window.open(`https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon},15z`, '_blank');
+        document.getElementById('jam-digital').innerText = n.getHours().toString().padStart(2,'0') + ":" + n.getMinutes().toString().padStart(2,'0');
     }
 
     init();
