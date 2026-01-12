@@ -1,139 +1,285 @@
-let workbookData = null;
-const kelasSelect = document.getElementById('kelas-select');
-const tableBody = document.querySelector('#absensi-table tbody');
-
-document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-// 1. FUNGSI UTAMA: Membaca SEMUA Sheet dari santri.xlsx
-async function loadSantriData() {
-    const loadingMsg = document.getElementById('loading-msg');
-    loadingMsg.style.display = 'block';
-    
-    try {
-        // Tambahkan random parameter agar tidak terkena Cache browser
-        const response = await fetch('santri.xlsx?v=' + Math.random());
-        
-        if (!response.ok) {
-            throw new Error("File tidak terbaca otomatis");
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi Digital - SMP Al-Irsyad</title>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1f6f51;
+            --secondary: #16503a;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --h: #22c55e; --s: #eab308; --i: #3b82f6; --a: #ef4444;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: #334155; padding: 20px; }
         
-        const data = await response.arrayBuffer();
-        prosesWorkbook(data);
-        console.log("Database berhasil dimuat otomatis.");
+        .container { max-width: 1100px; margin: auto; background: var(--white); padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
         
-    } catch (err) {
-        console.warn("Gagal muat otomatis (CORS/File Not Found). Silakan gunakan tombol manual.");
-        // Jika gagal otomatis, kita sediakan input manual sebagai cadangan di konsol
-        let inputManual = document.createElement('input');
-        inputManual.type = 'file';
-        inputManual.accept = '.xlsx';
-        inputManual.style.display = 'none';
-        inputManual.onchange = (e) => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = (evt) => prosesWorkbook(evt.target.result);
-            reader.readAsArrayBuffer(file);
-        };
-        // Trigger manual jika otomatis gagal
-        alert("Browser memblokir akses file otomatis. Silakan pilih file 'santri.xlsx' secara manual melalui jendela yang akan muncul.");
-        inputManual.click();
-    } finally {
-        loadingMsg.style.display = 'none';
+        header { text-align: center; margin-bottom: 30px; }
+        h2 { color: var(--primary); font-size: 1.8rem; letter-spacing: -0.5px; }
+        .info-date { font-weight: 600; color: #64748b; margin-top: 5px; }
+
+        /* Toolbar Section */
+        .toolbar { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; background: #f8fafc; padding: 25px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #e2e8f0; align-items: end; }
+        
+        label { font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 8px; display: block; }
+        
+        select, .btn-action { width: 100%; border: 1.5px solid #cbd5e1; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; outline: none; transition: 0.3s; }
+        select { background: white; cursor: pointer; color: #1e293b; }
+        select:focus { border-color: var(--primary); ring: 2px var(--light-green); }
+
+        .btn-action { border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-sync { background: #3b82f6; }
+        .btn-save { background: var(--primary); }
+        .btn-action:hover { filter: brightness(0.9); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        /* Stats Cards */
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { padding: 15px; border-radius: 15px; color: white; text-align: center; }
+        .stat-card h4 { font-size: 0.75rem; text-transform: uppercase; opacity: 0.9; margin-bottom: 5px; }
+        .stat-card span { font-size: 1.5rem; font-weight: 800; }
+
+        /* Table Style */
+        .table-wraper { overflow-x: auto; border-radius: 16px; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; background: white; }
+        th { background: #f8fafc; color: #64748b; padding: 18px; font-size: 0.75rem; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; text-align: center; }
+        td { padding: 15px; text-align: center; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #fbfcfd; }
+
+        /* Status Buttons */
+        .status-btn-group { display: flex; justify-content: center; gap: 8px; }
+        .btn-st { width: 42px; height: 42px; border-radius: 12px; border: 2px solid #e2e8f0; background: white; cursor: pointer; font-weight: bold; transition: 0.2s; color: #94a3b8; font-size: 1rem; }
+        
+        .btn-st.active-h { background: var(--h); color: white; border-color: var(--h); box-shadow: 0 4px 12px rgba(34,197,94,0.3); }
+        .btn-st.active-s { background: var(--s); color: white; border-color: var(--s); box-shadow: 0 4px 12px rgba(234,179,8,0.3); }
+        .btn-st.active-i { background: var(--i); color: white; border-color: var(--i); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+        .btn-st.active-a { background: var(--a); color: white; border-color: var(--a); box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+
+        #loading-msg { font-weight: bold; color: var(--primary); text-align: center; display: none; margin-bottom: 15px; padding: 10px; background: #e9f5e9; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>SMP AL-IRSYAD DIGITAL ATTENDANCE</h2>
+        <p class="info-date" id="current-date">Senin, 12 Januari 2026</p>
+    </header>
+
+    <div id="loading-msg">⏳ Memproses Database Santri...</div>
+
+    <div class="toolbar">
+        <div>
+            <label>1. DATABASE (santri.xlsx)</label>
+            <button onclick="triggerFileSelect()" class="btn-action btn-sync" id="sync-btn">🔄 Refresh Data Santri</button>
+            <input type="file" id="manual-file" style="display:none" accept=".xlsx">
+        </div>
+        <div>
+            <label>2. PILIH KELAS</label>
+            <select id="kelas-select">
+                <option value="">-- Menunggu Data --</option>
+            </select>
+        </div>
+        <div>
+            <label>3. SIMPAN LAPORAN</label>
+            <button id="export-btn" class="btn-action btn-save">💾 Export Rekap (.xlsx)</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card" style="background: var(--h)"><h4>Hadir</h4><span id="count-h">0</span></div>
+        <div class="stat-card" style="background: var(--s)"><h4>Sakit</h4><span id="count-s">0</span></div>
+        <div class="stat-card" style="background: var(--i)"><h4>Izin</h4><span id="count-i">0</span></div>
+        <div class="stat-card" style="background: var(--a)"><h4>Alpha</h4><span id="count-a">0</span></div>
+    </div>
+
+    <div class="table-wraper">
+        <table id="absensi-table">
+            <thead>
+                <tr>
+                    <th width="60">NO</th>
+                    <th width="120">NIPD</th>
+                    <th>NAMA LENGKAP SANTRI</th>
+                    <th width="80">JK</th>
+                    <th width="250">KETERANGAN ABSEN</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5" style="padding:60px; color:#94a3b8; font-style:italic;">
+                        Data santri belum dimuat. Pastikan file santri.xlsx ada di folder yang sama atau klik Refresh Data.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let workbookData = null;
+    const kelasSelect = document.getElementById('kelas-select');
+    const tableBody = document.querySelector('#absensi-table tbody');
+    const syncBtn = document.getElementById('sync-btn');
+    const manualFileInput = document.getElementById('manual-file');
+
+    // Set Tanggal Hari Ini
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    // --- FUNGSI LOAD DATA ---
+    async function autoLoadSantri() {
+        document.getElementById('loading-msg').style.display = 'block';
+        try {
+            const response = await fetch('santri.xlsx?v=' + Math.random());
+            if (!response.ok) throw new Error("CORS_OR_NOT_FOUND");
+            
+            const data = await response.arrayBuffer();
+            prosesWorkbook(data);
+        } catch (err) {
+            console.warn("Auto-load gagal, menunggu input manual.");
+            document.getElementById('loading-msg').style.display = 'none';
+        }
     }
-}
 
-// 2. Fungsi memproses data Workbook (Mendeteksi Semua Kelas)
-function prosesWorkbook(data) {
-    const workbook = XLSX.read(data, { type: 'array' });
-    workbookData = workbook;
-
-    // Kosongkan dropdown
-    kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
-    
-    // Ambil SEMUA sheet tanpa terkecuali
-    if (workbook.SheetNames.length === 0) {
-        alert("File Excel kosong atau tidak memiliki Sheet!");
-        return;
+    function triggerFileSelect() {
+        manualFileInput.click();
     }
 
-    workbook.SheetNames.forEach(name => {
-        const opt = document.createElement('option');
-        opt.value = name;
-        opt.textContent = "Kelas " + name; // Menambahkan kata 'Kelas' agar rapi
-        kelasSelect.appendChild(opt);
+    manualFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => prosesWorkbook(evt.target.result);
+        reader.readAsArrayBuffer(file);
     });
 
-    alert("Berhasil memuat " + workbook.SheetNames.length + " Kelas.");
-}
+    function prosesWorkbook(data) {
+        document.getElementById('loading-msg').style.display = 'block';
+        try {
+            const workbook = XLSX.read(data, { type: 'array' });
+            workbookData = workbook;
 
-// 3. Render Santri saat Kelas dipilih
-kelasSelect.addEventListener('change', e => {
-    const sheetName = e.target.value;
-    if (!sheetName) return;
+            // Reset dan Isi Kelas (Semua Sheet)
+            kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+            workbook.SheetNames.forEach(sheetName => {
+                const opt = new Option("Kelas " + sheetName, sheetName);
+                kelasSelect.add(opt);
+            });
 
-    const sheet = workbookData.Sheets[sheetName];
-    // Pastikan membaca dari baris yang benar (Header di baris 1-3, data mulai baris 4)
-    const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-    
-    tableBody.innerHTML = '';
-    
-    // Looping data santri mulai dari index 3 (Baris 4 di Excel)
-    let jmlSantri = 0;
-    for (let i = 3; i < data.length; i++) {
-        const row = data[i];
-        if (!row || !row[2]) continue; // Lewati jika baris kosong atau Nama tidak ada
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${row[0] || (i - 2)}</td>
-            <td>${row[1] || '-'}</td>
-            <td style="text-align:left; font-weight:600;">${row[2]}</td>
-            <td>${row[3] || '-'}</td>
-            <td>
-                <div class="status-btn-group">
-                    <button class="btn-st" onclick="setStatus(this, 'H')">H</button>
-                    <button class="btn-st" onclick="setStatus(this, 'S')">S</button>
-                    <button class="btn-st" onclick="setStatus(this, 'I')">I</button>
-                    <button class="btn-st" onclick="setStatus(this, 'A')">A</button>
-                </div>
-            </td>
-        `;
-        tableBody.appendChild(tr);
-        jmlSantri++;
+            alert("✅ Berhasil! Terdeteksi " + workbook.SheetNames.length + " Kelas dari santri.xlsx");
+        } catch (e) {
+            alert("❌ Gagal membaca format Excel.");
+        }
+        document.getElementById('loading-msg').style.display = 'none';
     }
-    
-    if(jmlSantri === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="padding:20px;">Tidak ada data santri di sheet ini (Pastikan data mulai di Baris 4)</td></tr>';
-    }
-    
-    resetStats();
-});
 
-// Fungsi pembantu lainnya tetap sama...
-function setStatus(btn, code) {
-    const group = btn.parentElement;
-    group.querySelectorAll('.btn-st').forEach(b => b.className = 'btn-st');
-    const cls = { 'H': 'active-h', 'S': 'active-s', 'I': 'active-i', 'A': 'active-a' };
-    btn.classList.add(cls[code]);
-    btn.setAttribute('data-selected', code);
-    if (navigator.vibrate) navigator.vibrate(20);
-    updateStats();
-}
+    // --- RENDER TABEL ---
+    kelasSelect.addEventListener('change', (e) => {
+        const sheetName = e.target.value;
+        if (!sheetName) return;
 
-function updateStats() {
-    const counts = { 'H': 0, 'S': 0, 'I': 0, 'A': 0 };
-    document.querySelectorAll('.btn-st[data-selected]').forEach(btn => {
-        counts[btn.getAttribute('data-selected')]++;
+        const sheet = workbookData.Sheets[sheetName];
+        // Konversi sheet ke array (header: 1 untuk baris raw)
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        
+        tableBody.innerHTML = '';
+        
+        // Mulai dari baris ke-4 (Index 3)
+        let rowCount = 0;
+        for (let i = 3; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            if (!row || !row[2]) continue; // Skip baris tanpa nama
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row[0] || (rowCount + 1)}</td>
+                <td>${row[1] || '-'}</td>
+                <td style="text-align:left; font-weight:600;">${row[2]}</td>
+                <td>${row[3] || '-'}</td>
+                <td>
+                    <div class="status-btn-group">
+                        <button class="btn-st" onclick="setStatus(this, 'H')">H</button>
+                        <button class="btn-st" onclick="setStatus(this, 'S')">S</button>
+                        <button class="btn-st" onclick="setStatus(this, 'I')">I</button>
+                        <button class="btn-st" onclick="setStatus(this, 'A')">A</button>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+            rowCount++;
+        }
+        resetStats();
     });
-    document.getElementById('count-h').textContent = counts['H'];
-    document.getElementById('count-s').textContent = counts['S'];
-    document.getElementById('count-i').textContent = counts['I'];
-    document.getElementById('count-a').textContent = counts['A'];
-}
 
-function resetStats() {
-    ['h','s','i','a'].forEach(k => document.getElementById(`count-${k}`).textContent = '0');
-}
+    // --- LOGIKA STATUS & STATISTIK ---
+    function setStatus(btn, code) {
+        const group = btn.parentElement;
+        group.querySelectorAll('.btn-st').forEach(b => b.className = 'btn-st');
+        
+        const colors = { 'H': 'active-h', 'S': 'active-s', 'I': 'active-i', 'A': 'active-a' };
+        btn.classList.add(colors[code]);
+        btn.setAttribute('data-selected', code);
+        
+        if (navigator.vibrate) navigator.vibrate(25); // Feedback getar
+        updateStats();
+    }
 
-// Jalankan otomatis saat web dibuka
-window.onload = loadSantriData;
+    function updateStats() {
+        const counts = { 'H': 0, 'S': 0, 'I': 0, 'A': 0 };
+        document.querySelectorAll('.btn-st[data-selected]').forEach(btn => {
+            counts[btn.getAttribute('data-selected')]++;
+        });
+        
+        document.getElementById('count-h').textContent = counts['H'];
+        document.getElementById('count-s').textContent = counts['S'];
+        document.getElementById('count-i').textContent = counts['I'];
+        document.getElementById('count-a').textContent = counts['A'];
+    }
+
+    function resetStats() {
+        ['h','s','i','a'].forEach(k => document.getElementById('count-'+k).textContent = '0');
+    }
+
+    // --- EXPORT REKAP ---
+    document.getElementById('export-btn').addEventListener('click', () => {
+        const rows = document.querySelectorAll('#absensi-table tbody tr');
+        if (rows.length < 1 || !kelasSelect.value) return alert("Pilih kelas dan isi absen dulu!");
+
+        const exportData = [
+            ['REKAP ABSENSI SANTRI SMP AL-IRSYAD'],
+            ['Kelas:', kelasSelect.value],
+            ['Tanggal:', document.getElementById('current-date').textContent],
+            [],
+            ['NO', 'NIPD', 'NAMA SANTRI', 'JK', 'STATUS']
+        ];
+        
+        rows.forEach(tr => {
+            const cells = tr.querySelectorAll('td');
+            if (cells.length < 5) return;
+            const selected = tr.querySelector('.btn-st[data-selected]');
+            exportData.push([
+                cells[0].innerText,
+                cells[1].innerText,
+                cells[2].innerText,
+                cells[3].innerText,
+                selected ? selected.getAttribute('data-selected') : '-'
+            ]);
+        });
+
+        const ws = XLSX.utils.aoa_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Rekap_Absen");
+        XLSX.writeFile(wb, `Absensi_${kelasSelect.value}_${new Date().toISOString().slice(0,10)}.xlsx`);
+    });
+
+    // Jalankan auto-load saat startup
+    window.onload = autoLoadSantri;
+</script>
+
+</body>
+</html>
