@@ -10,6 +10,7 @@
 
   :root {
     --primary: #1f6f51;      /* hijau tua */
+    --primary-hover: #16503a;
     --accent: #d4b96a;      /* gold */
     --bg: #f3fbf7;      
     --card: #ffffff;
@@ -17,78 +18,91 @@
     --soft: rgba(31, 111, 81, 0.08);
   }
 
+  /* ========== BASE ========== */
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-
   body {
     background: linear-gradient(135deg, var(--bg), #eaf6f1);
     color: #123;
     padding: 20px;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
-
-  .container { max-width: 450px; margin: 0 auto; }
+  .container { max-width: 420px; margin: 0 auto; padding-bottom: 40px; }
 
   /* ========== HEADER ========== */
-  .header-box { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 30px 20px; }
-  .logo-box { width: 90px; height: 90px; }
+  .header-box { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 30px 0; }
+  .logo-box { width: 90px; height: 90px; margin-bottom: 15px; }
   .logo { width: 100%; height: 100%; object-fit: contain; }
   .header-text .title { font-size: 26px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+  .header-text .tagline { font-size: 13px; color: var(--muted); margin-top: 5px; }
 
-  /* ========== CARD SIMETRIS ========== */
+  /* ========== CARD SIMETRIS (MEWAH) ========== */
   .card {
     background: var(--card);
     border-radius: 12px;
     padding: 30px;
-    margin: 18px 0;
+    margin-bottom: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0,0,0,0.08); 
-    text-align: center;
+    border: 1px solid rgba(0,0,0,0.08); /* Garis simetris halus */
+    transition: all .25s ease;
   }
+  .card.login h2 { font-size: 24px; color: var(--primary); font-weight: 700; text-align: center; margin-bottom: 5px; }
+  .card.login p.welcome-txt { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 20px; }
 
+  /* ========== INPUTS & BUTTONS ========== */
   input {
-    width: 100%; padding: 14px 16px; font-size: 15px; border-radius: 8px;
-    border: 1px solid #d1d5db; background: #ffffff; margin: 10px 0; outline: none;
+    width: 100%; padding: 14px 16px; margin-bottom: 12px; border-radius: 8px;
+    border: 1px solid #ddd; background: #ffffff; font-size: 15px; transition: 0.3s;
   }
+  input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--soft); }
 
-  .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 15px; transition: 0.3s; margin-top: 10px; }
+  .password-wrapper { position: relative; }
+  .toggle-pass { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); cursor: pointer; color: var(--muted); font-size: 11px; font-weight: 600; }
+
+  .login-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; text-align: center; }
   .btn.primary { background: var(--primary); color: #fff; }
-  .btn.secondary { background: #f1f5f9; color: #475569; }
+  .btn.primary:hover { background: var(--primary-hover); }
+  .btn:not(.primary) { background: #f8fafb; color: var(--primary); border: 1px solid #eee; }
 
-  /* ========== MENU TITIK TIGA (TRIGGER) ========== */
+  /* ========== DASHBOARD GRID ========== */
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .menu-item { background: #fff; padding: 15px 10px; border-radius: 12px; text-align: center; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.2s; cursor: pointer; }
+  .menu-item:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .menu-icon { width: 45px; height: 45px; margin-bottom: 8px; }
+  .menu-item span { display: block; font-size: 11px; font-weight: 600; color: #555; }
+
+  /* ========== MENU TRIGGER (TITIK TIGA) ========== */
   .menu-trigger {
     position: fixed; top: 20px; right: 20px; z-index: 1300;
-    background: #fff; color: var(--primary); width: 42px; height: 42px;
+    background: #fff; color: var(--primary); width: 40px; height: 40px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    font-size: 24px; font-weight: bold; border: 1px solid #eee;
+    font-size: 22px; border: 1px solid #eee;
   }
 
-  /* ========== SIDEBAR (ISI MENU ANDA) ========== */
-  .sidebar {
-    position: fixed; top: 0; right: -85%; width: 85%; height: 100%;
-    background: #fff; transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1200; padding: 40px 20px; overflow-y: auto;
+  /* ========== SIDEBAR ========== */
+  .sidebar { 
+    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
+    background: #fff; transition: .4s cubic-bezier(0.4, 0, 0.2, 1); 
+    z-index: 1200; display: flex; flex-direction: column; padding: 40px 20px;
   }
-  .sidebar.open { right: 0; box-shadow: -15px 0 35px rgba(0,0,0,0.1); }
+  .sidebar.open { right: 0; box-shadow: -15px 0 35px rgba(0,0,0,0.15); }
 
-  .sidebar-header { text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9; }
-  .sidebar-header img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--soft); margin-bottom: 10px; }
-  
-  /* Daftar Menu di dalam Sidebar */
-  .menu-list { display: flex; flex-direction: column; gap: 8px; }
-  .menu-link {
-    display: flex; align-items: center; gap: 15px;
-    padding: 14px 18px; text-decoration: none; color: #334155;
-    font-weight: 600; font-size: 14px; border-radius: 10px;
-    background: #f8fafb; transition: 0.2s; border: 1px solid transparent;
-  }
-  .menu-link:hover { background: var(--soft); color: var(--primary); border-color: var(--primary); }
-  .menu-link img { width: 24px; height: 24px; }
+  .sidebar-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9; }
+  .sidebar-header img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--soft); margin-bottom: 10px; object-fit: cover; }
+  .sidebar-header .user-name { font-weight: 700; color: var(--primary); }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+  .sidebar-nav a { display: block; padding: 14px 18px; text-decoration: none; color: #334155; font-weight: 600; font-size: 15px; border-radius: 10px; background: #f8fafb; transition: 0.2s; }
+  .sidebar-nav a:hover { background: var(--soft); color: var(--primary); transform: translateX(5px); }
+  .sidebar-nav a.logout-link { color: #c0392b; background: rgba(192, 57, 43, 0.05); margin-top: auto; }
 
   .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
-  
+
   .hidden { display:none !important; }
+  footer { text-align:center; padding:20px; color:#999; font-size: 11px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -101,23 +115,17 @@
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <img id="user-photo" src="assets/default-avatar.png">
-    <div id="sidebar-name" style="font-weight:700; color:var(--primary);">Memuat...</div>
-    <small id="sidebar-email" style="color:var(--muted);"></small>
+    <div class="user-name" id="sidebar-name">Memuat...</div>
+    <small id="sidebar-email"></small>
   </div>
 
-  <div class="menu-list">
-    <a href="#" class="menu-link" onclick="goTo('absensi.html')"><img src="icons/absensi.png"> Absensi Santri</a>
-    <a href="#" class="menu-link" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png"> Progres Tahfidz</a>
-    <a href="#" class="menu-link" onclick="goTo('alquran.html')"><img src="icons/alquran.png"> Al-Quran Digital</a>
-    <a href="#" class="menu-link" onclick="goTo('izin.html')"><img src="icons/izin.png"> Perizinan</a>
-    <a href="#" class="menu-link" onclick="goTo('kalender.html')"><img src="icons/kalender.png"> Kalender Akademik</a>
-    <a href="#" class="menu-link" onclick="goTo('sop.html')"><img src="icons/sop.png"> SOP Pesantren</a>
-    
-    <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-    
-    <a href="#" class="menu-link" onclick="alert('Buka Edit Profil')">👤 Edit Profil</a>
-    <a href="#" class="menu-link" onclick="alert('Buka Pengaduan')">📩 Pengaduan</a>
-    <a href="#" class="menu-link" onclick="logout()" style="color: #c0392b; background: #fff5f5;">🚪 Keluar Akun</a>
+  <div class="sidebar-nav">
+    <a href="index.html">🏠 Dashboard</a>
+    <a href="#" onclick="alert('Buka Edit Profil')">👤 Edit Profil</a>
+    <a href="pengaduan.html">📩 Pengaduan Santri</a>
+    <a href="kalender.html">📅 Kalender</a>
+    <a href="waktu-sholat.html">🕌 Waktu Sholat</a>
+    <a href="#" onclick="logout()" class="logout-link">🚪 Logout</a>
   </div>
 </div>
 
@@ -127,73 +135,129 @@
   <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
   <div class="header-text">
     <h1 class="title">E-Santri</h1>
-    <p class="tagline">Exclusive Digital Hub</p>
+    <p class="tagline">Berpegang teguh pada Al-Quran dan Hadist</p>
   </div>
 </header>
 
 <main class="container">
-  <div id="login-card" class="card">
-    <h2 style="color:var(--primary); margin-bottom:20px;">Masuk</h2>
-    <input type="email" id="email" placeholder="Email Santri">
-    <input type="password" id="password" placeholder="Password">
-    <p id="msg"></p>
-    <button class="btn primary" onclick="login()">LOGIN</button>
-    <button class="btn secondary" onclick="register()">DAFTAR</button>
-  </div>
-
-  <div id="dashboard" class="hidden">
-    <div class="card">
-      <h2 style="color:var(--primary);">Ahlan wa Sahlan!</h2>
-      <p style="color:var(--muted); margin-top:10px;">Silakan klik titik tiga di pojok kanan atas untuk mengakses menu santri.</p>
+  <div id="login-card" class="card login">
+    <h2>Ahlan wa Sahlan!</h2>
+    <p class="welcome-txt">Silakan masuk ke akun santri Anda</p>
+    <input type="email" id="email" placeholder="Email" required>
+    <div class="password-wrapper">
+      <input type="password" id="password" placeholder="Password" required>
+      <span class="toggle-pass" onclick="togglePassword()">Tampilkan</span>
+    </div>
+    <p id="msg" style="text-align:center; font-size:12px; margin-bottom:10px;"></p>
+    <div class="login-btn-group">
+      <button class="btn primary" onclick="login()">Login</button>
+      <button class="btn" onclick="register()">Daftar Akun Baru</button>
+      <button class="btn" onclick="loginWithGoogle()">Login dengan Google</button>
     </div>
   </div>
+
+  <section id="dashboard" class="hidden">
+    <div class="card" style="padding:15px; margin-bottom:15px; text-align:center;">
+        <h3 id="welcome-msg" style="color:var(--primary);">Selamat Datang</h3>
+    </div>
+    <div class="menu-grid">
+      <div class="menu-item" onclick="goTo('absensi.html')">
+        <img src="icons/absensi.png" class="menu-icon"><span>Absensi Santri</span>
+      </div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')">
+        <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
+      </div>
+      <div class="menu-item" onclick="goTo('alquran.html')">
+        <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
+      </div>
+      <div class="menu-item" onclick="goTo('sop.html')">
+        <img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span>
+      </div>
+      <div class="menu-item" onclick="goTo('kalender.html')">
+        <img src="icons/kalender.png" class="menu-icon"><span>Kaldik Yayasan</span>
+      </div>
+      <div class="menu-item" onclick="goTo('izin.html')">
+        <img src="icons/izin.png" class="menu-icon"><span>Perizinan Santri</span>
+      </div>
+      <div class="menu-item" onclick="goTo('ibadah.html')">
+        <img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer>
+  <small>© 2025 E-Santri Premium</small>
+</footer>
 
 <script>
   firebase.initializeApp({
-    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
-    authDomain: "e-santri-ed555.firebaseapp.com",
-    projectId: "e-santri-ed555"
+    apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain:"e-santri-ed555.firebaseapp.com",
+    projectId:"e-santri-ed555"
   });
   const auth = firebase.auth();
 
-  // Logic Login & Register
-  function login() {
-    const e = document.getElementById("email").value;
-    const p = document.getElementById("password").value;
-    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+  function togglePassword(){
+    const pass = document.getElementById("password");
+    const toggle = document.querySelector(".toggle-pass");
+    if(pass.type==="password"){ pass.type="text"; toggle.innerText="Sembunyikan"; }
+    else{ pass.type="password"; toggle.innerText="Tampilkan"; }
   }
 
-  function register() {
-    const e = document.getElementById("email").value;
-    const p = document.getElementById("password").value;
-    auth.createUserWithEmailAndPassword(e, p).then(() => alert("Sukses!")).catch(err => alert(err.message));
+  function msg(t,type="error"){
+    const msgEl = document.getElementById("msg");
+    msgEl.innerText = t;
+    msgEl.style.color = type==="error"?"red":"green";
   }
 
-  function logout() { auth.signOut().then(() => location.reload()); }
+  function login(){
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(email,pass)
+      .catch(e=> msg(e.message));
+  }
 
-  // Auth Listener
-  auth.onAuthStateChanged(user => {
-    if(user) {
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("menu-btn").style.display = "flex";
-      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
-      document.getElementById("sidebar-email").innerText = user.email;
-    } else {
-      document.getElementById("login-card").classList.remove("hidden");
-      document.getElementById("dashboard").classList.add("hidden");
-      document.getElementById("menu-btn").style.display = "none";
+  function register(){
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.createUserWithEmailAndPassword(email,pass)
+      .then(()=> msg("Akun berhasil dibuat!","success"))
+      .catch(e=> msg(e.message));
+  }
+
+  function logout(){ auth.signOut().then(()=>location.reload()); }
+  function loginWithGoogle(){
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(e=>msg(e.message));
+  }
+
+  auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card");
+    const dashboard=document.getElementById("dashboard");
+    const menuBtn=document.getElementById("menu-btn");
+    if(user){
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display="flex";
+      document.getElementById("sidebar-name").innerText=user.displayName||"Santri";
+      document.getElementById("sidebar-email").innerText=user.email;
+      document.getElementById("user-photo").src=user.photoURL||"assets/default-avatar.png";
+      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
+    }else{
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      menuBtn.style.display="none";
     }
   });
 
-  // Sidebar Interaction
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  document.getElementById("menu-btn").onclick = () => { sidebar.classList.add("open"); overlay.classList.add("show"); }
-  overlay.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+  const sidebar=document.getElementById("sidebar");
+  const overlay=document.getElementById("overlay");
+  const menuBtn=document.getElementById("menu-btn");
+  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
+  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
 
-  function goTo(url) { window.location.href = url; }
+  function goTo(x){ window.location=x; }
 </script>
 
 </body>
