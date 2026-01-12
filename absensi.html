@@ -8,7 +8,7 @@
     <style>
         :root { 
             --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; 
-            --izin: #3b82v6; --alpha: #ef4444; --bg: #f0f7f4;
+            --izin: #3b82f6; --alpha: #ef4444; --bg: #f0f7f4;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
@@ -20,15 +20,13 @@
 
         header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 15px; }
         header h1 { color: var(--primary); font-size: 24px; font-weight: 800; }
-        header p { font-size: 12px; color: #777; font-weight: 500; }
+        header p { font-size: 12px; color: #777; }
 
         .form-grup { margin-bottom: 20px; }
-        label { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 5px; display: block; }
         select { 
             width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; 
-            background: #f9f9f9; font-weight: 600; color: #333; outline: none; transition: 0.3s;
+            background: #f9f9f9; font-weight: 600; color: #333; outline: none;
         }
-        select:focus { border-color: var(--primary); }
 
         .area-tabel { border-radius: 15px; overflow: hidden; border: 1px solid #eee; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; }
@@ -38,22 +36,18 @@
         .btn-status { 
             width: 35px; height: 35px; border-radius: 10px; border: 1.5px solid #eee; 
             background: white; cursor: pointer; font-weight: 800; color: #ddd; 
-            transition: 0.2s; margin-left: 2px; font-size: 12px;
+            transition: 0.2s; margin-left: 2px;
         }
 
-        /* Warna Tombol Aktif */
-        .h-on { background: var(--hadir)!important; color: white!important; border-color: var(--hadir); box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
-        .s-on { background: var(--sakit)!important; color: white!important; border-color: var(--sakit); box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3); }
-        .i-on { background: #3b82f6!important; color: white!important; border-color: #3b82f6; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
-        .a-on { background: var(--alpha)!important; color: white!important; border-color: var(--alpha); box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+        .h-on { background: var(--hadir)!important; color: white!important; border-color: var(--hadir); }
+        .s-on { background: var(--sakit)!important; color: white!important; border-color: var(--sakit); }
+        .i-on { background: var(--izin)!important; color: white!important; border-color: var(--izin); }
+        .a-on { background: var(--alpha)!important; color: white!important; border-color: var(--alpha); }
 
         .btn-kirim { 
             width: 100%; background: var(--primary); color: white; border: none; 
             padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer;
-            box-shadow: 0 8px 20px rgba(31, 111, 81, 0.2); transition: 0.3s; font-size: 15px;
         }
-        .btn-kirim:hover { background: #16503a; }
-        .btn-kirim:active { transform: scale(0.96); }
 
         #loading { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -64,7 +58,7 @@
 </head>
 <body>
 
-<div id="loading">Memproses...</div>
+<div id="loading">Memuat Data Santri...</div>
 
 <div class="wadah">
     <header>
@@ -73,9 +67,8 @@
     </header>
 
     <div class="form-grup">
-        <label>PILIH KELAS</label>
         <select id="pilih-kelas">
-            <option value="">-- Pilih --</option>
+            <option value="">-- Pilih Kelas --</option>
             <option value="7A">Kelas 7A</option>
             <option value="7B">Kelas 7B</option>
             <option value="7C">Kelas 7C</option>
@@ -96,11 +89,11 @@
             <thead>
                 <tr>
                     <th>Santri</th>
-                    <th style="text-align: center;">Status</th>
+                    <th style="text-align: center;">H S I A</th>
                 </tr>
             </thead>
             <tbody id="isi-tabel">
-                <tr><td colspan="2" style="text-align:center; color:#999; padding: 40px;">Pilih kelas untuk memuat data...</td></tr>
+                <tr><td colspan="2" style="text-align:center; color:#999; padding: 30px;">Silakan pilih kelas...</td></tr>
             </tbody>
         </table>
     </div>
@@ -109,53 +102,54 @@
 </div>
 
 <script>
-    // GANTI URL INI JIKA ANDA MELAKUKAN DEPLOY ULANG
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFnuvsTjP5RjVgwi471MTr6X3t7tbqSVh1lgK5ppx6fvIMxlY_Z3jdyU6wZuyATbelkQ/exec";
 
     document.getElementById('tgl-skrg').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    const loader = document.getElementById('loading');
-
-    // 1. Fungsi Ambil Data Santri
-    document.getElementById('pilih-kelas').onchange = async function() {
+    // 1. Ambil Data via JSONP (Anti-Blokir)
+    document.getElementById('pilih-kelas').onchange = function() {
         const kls = this.value;
         if(!kls) return;
         
-        loader.style.display = 'flex';
-        try {
-            const response = await fetch(`${SCRIPT_URL}?kelas=${kls}`);
-            const data = await response.json();
+        document.getElementById('loading').style.display = 'flex';
+        
+        const oldScript = document.getElementById('jsonp');
+        if(oldScript) oldScript.remove();
 
-            const tbody = document.getElementById('isi-tabel');
-            tbody.innerHTML = '';
-
-            if(data.error) {
-                tbody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:red;">${data.error}</td></tr>`;
-            } else {
-                data.forEach(s => {
-                    const tr = document.createElement('tr');
-                    tr.setAttribute('data-nipd', s.nipd);
-                    tr.setAttribute('data-nama', s.nama);
-                    tr.innerHTML = `
-                        <td><div style="font-weight:700; color:#333;">${s.nama}</div><div style="font-size:10px; color:#999;">${s.nipd}</div></td>
-                        <td style="text-align:right; white-space:nowrap;">
-                            <button class="btn-status" onclick="pilih(this,'H')">H</button>
-                            <button class="btn-status" onclick="pilih(this,'S')">S</button>
-                            <button class="btn-status" onclick="pilih(this,'I')">I</button>
-                            <button class="btn-status" onclick="pilih(this,'A')">A</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-        } catch (e) {
-            alert("Kesalahan Koneksi! Pastikan sudah Deploy sebagai 'Anyone'.");
-        } finally {
-            loader.style.display = 'none';
-        }
+        const script = document.createElement('script');
+        script.id = 'jsonp';
+        script.src = `${SCRIPT_URL}?kelas=${kls}&callback=handleResponse`;
+        document.body.appendChild(script);
     };
 
-    // 2. Logika Pilih Tombol
+    // 2. Menangani hasil dari Google Sheets
+    function handleResponse(data) {
+        document.getElementById('loading').style.display = 'none';
+        const tbody = document.getElementById('isi-tabel');
+        tbody.innerHTML = '';
+
+        if(data.error) {
+            alert("Error: " + data.error);
+            return;
+        }
+
+        data.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-nipd', s.nipd);
+            tr.setAttribute('data-nama', s.nama);
+            tr.innerHTML = `
+                <td><div style="font-weight:700;">${s.nama}</div><div style="font-size:10px; color:#999;">${s.nipd}</div></td>
+                <td style="text-align:right; white-space:nowrap;">
+                    <button class="btn-status" onclick="pilih(this,'H')">H</button>
+                    <button class="btn-status" onclick="pilih(this,'S')">S</button>
+                    <button class="btn-status" onclick="pilih(this,'I')">I</button>
+                    <button class="btn-status" onclick="pilih(this,'A')">A</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
     function pilih(btn, status) {
         const parent = btn.parentElement;
         parent.querySelectorAll('.btn-status').forEach(b => {
@@ -167,7 +161,6 @@
         btn.setAttribute('data-aktif', status);
     }
 
-    // 3. Simpan ke Google Sheets
     async function kirimAbsen() {
         const kls = document.getElementById('pilih-kelas').value;
         const rows = document.querySelectorAll('#isi-tabel tr');
@@ -185,21 +178,23 @@
             }
         });
 
-        if(rekap.length === 0) return alert("Belum ada santri yang di-absen!");
+        if(rekap.length === 0) return alert("Pilih absen dulu!");
 
-        loader.style.display = 'flex';
+        document.getElementById('loading').innerText = "Mengirim ke Database...";
+        document.getElementById('loading').style.display = 'flex';
+        
         try {
             await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(rekap)
             });
-            alert("✅ Data Berhasil Terkirim ke Database!");
+            alert("✅ Absensi Berhasil Disimpan!");
             location.reload();
         } catch (e) {
             alert("Gagal mengirim data.");
         } finally {
-            loader.style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
         }
     }
 </script>
