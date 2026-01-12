@@ -126,7 +126,7 @@
 <script>
     let userLat, userLon, qiblaAngle = 295;
     let currentHeading = 0, lerpHeading = 0;
-    const filterFactor = 0.1; 
+    const filterFactor = 0.15; // Lebih responsif
     let prayerTimesData = {};
 
     function init() {
@@ -137,54 +137,48 @@
                 fetchData(userLat, userLon);
                 calculateQibla(userLat, userLon);
             }, () => { 
-                // Fallback jika GPS dimatikan (Jakarta)
-                fetchData(-6.2000, 106.8166);
+                fetchData(-6.2000, 106.8166); // Default Jakarta
                 calculateQibla(-6.2000, 106.8166);
             });
         }
         updateTime();
         setInterval(updateTime, 1000);
-        setInterval(updateActivePrayer, 30000); // Cek setiap 30 detik
+        setInterval(updateActivePrayer, 30000); 
         animate(); 
     }
 
     async function fetchData(lat, lon) {
         try {
-            // 1. Ambil Nama Kota
             const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
-            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || loc.address.village || "Lokasi Anda";
+            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
 
-            // 2. Ambil Jadwal Sholat
-            const d = new Date().toISOString().split('T')[0];
+            // Format Tanggal Masehi
+            const now = new Date();
+            const masehi = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+            // PERBAIKAN TOTAL HIJRIAH: Pakai Intl dengan penyesuaian khusus
+            const hijriFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma-nu-latn', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            const hijriParts = hijriFormatter.format(now);
+            
+            // Tampilkan: Senin, 12 Jan 2026 | 23 Rajab 1447 H
+            document.getElementById('dateDisplay').innerText = `${masehi} | ${hijriParts} H`;
+
+            const d = now.toISOString().split('T')[0];
             const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
             prayerTimesData = pray.data.timings;
 
-            // 3. Perbaikan Kalender (Hijriah Otomatis 2026)
-            const m = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
-            const optionsHijri = { day:'numeric', month:'long', year:'numeric' };
-            const hijriFormatted = new Intl.DateTimeFormat('id-TN-u-ca-islamic-uma', optionsHijri).format(new Date());
-            
-            document.getElementById('dateDisplay').innerText = `${m} | ${hijriFormatted} H`;
-
             renderPrayerList();
-        } catch(e) { 
-            console.error("Data error", e); 
-            document.getElementById('cityName').innerText = "Gagal memuat data";
-        }
+        } catch(e) { console.error("Error data:", e); }
     }
 
     function renderPrayerList() {
         if (!prayerTimesData.Fajr) return;
         const t = prayerTimesData;
-        // List waktu sholat utama
-        const list = [
-            ["Subuh", t.Fajr], 
-            ["Terbit", t.Sunrise], 
-            ["Dzuhur", t.Dhuhr], 
-            ["Ashar", t.Asr], 
-            ["Maghrib", t.Maghrib], 
-            ["Isya", t.Isha]
-        ];
+        const list = [["Subuh", t.Fajr], ["Terbit", t.Sunrise], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
         
         document.getElementById('prayerItems').innerHTML = list.map((p, index) => {
             return `<div class="prayer-item" id="pray-${index}" data-time="${p[1]}">
@@ -192,42 +186,25 @@
                         <span>${p[1]}</span>
                     </div>`;
         }).join('');
-        
-        updateActivePrayer(); // Jalankan indikator segera setelah render
+        updateActivePrayer();
     }
 
-    // LOGIKA INDIKATOR HIJAU (FIXED)
     function updateActivePrayer() {
         const items = document.querySelectorAll('.prayer-item');
-        if (items.length === 0) return;
-
         const now = new Date();
         const currentTime = (now.getHours() * 60) + now.getMinutes();
-
-        let currentActiveIndex = -1;
+        let activeIndex = -1;
 
         items.forEach((item, index) => {
-            const timeStr = item.getAttribute('data-time');
-            const [h, m] = timeStr.split(':').map(Number);
-            const prayerMinutes = (h * 60) + m;
-
-            // Jika waktu sekarang sudah melewati waktu sholat ini
-            if (currentTime >= prayerMinutes) {
-                currentActiveIndex = index;
-            }
+            const [h, m] = item.getAttribute('data-time').split(':').map(Number);
+            if (currentTime >= (h * 60 + m)) activeIndex = index;
         });
 
-        // Hapus status active lama
         items.forEach(el => el.classList.remove('active'));
-        
-        // Tandai yang terbaru (Warna Hijau)
-        if (currentActiveIndex !== -1) {
-            items[currentActiveIndex].classList.add('active');
-            // Auto scroll ke item yang aktif agar terlihat
-            items[currentActiveIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        if (activeIndex !== -1) items[activeIndex].classList.add('active');
     }
 
+    // PERBAIKAN LOGIKA KIBLAT
     function calculateQibla(lat, lon) {
         const phiK = 21.4225 * Math.PI / 180;
         const lamK = 39.8262 * Math.PI / 180;
@@ -238,39 +215,47 @@
         document.getElementById('targetDeg').innerText = Math.round(qiblaAngle) + "°";
     }
 
+    function handleOrientation(e) {
+        // Gabungan deteksi iOS dan Android
+        let heading = 0;
+        if (e.webkitCompassHeading) {
+            heading = e.webkitCompassHeading; // iOS
+        } else if (e.alpha !== null) {
+            heading = 360 - e.alpha; // Android
+        }
+        currentHeading = heading;
+    }
+
     function toggleKiblat(show) {
         document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
-        if (show && typeof DeviceOrientationEvent !== 'undefined') {
+        if (show) {
             if (typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission().then(state => {
-                    if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+                    if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation, true);
                 });
             } else {
-                window.addEventListener('deviceorientation', handleOrientation);
+                window.addEventListener('deviceorientation', handleOrientation, true);
             }
         } else {
             window.removeEventListener('deviceorientation', handleOrientation);
         }
     }
 
-    function handleOrientation(e) {
-        // Mendukung Android (alpha) dan iOS (webkitCompassHeading)
-        let heading = e.webkitCompassHeading || (360 - e.alpha);
-        if (heading) currentHeading = heading;
-    }
-
     function animate() {
+        // Smoothing rotasi agar tidak patah-patah
         let diff = currentHeading - lerpHeading;
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
-
         lerpHeading += diff * filterFactor;
         lerpHeading = (lerpHeading + 360) % 360;
 
         const ring = document.getElementById('compassRing');
         const orbit = document.getElementById('kaabaOrbit');
+        
         if (ring) {
+            // Ring kompas berputar mengikuti arah HP
             ring.style.transform = `rotate(${-lerpHeading}deg)`;
+            // Kaabah tetap menunjuk ke derajat qiblaAngle terhadap North
             orbit.style.transform = `rotate(${qiblaAngle}deg)`;
             document.getElementById('currentHeadingDisplay').innerText = Math.round(lerpHeading) + "°";
         }
@@ -280,10 +265,6 @@
     function updateTime() {
         const n = new Date();
         document.getElementById('liveClock').innerText = n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0');
-    }
-
-    function openMasjid() {
-        if (userLat) window.open(`https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon},15z`, '_blank');
     }
 
     init();
