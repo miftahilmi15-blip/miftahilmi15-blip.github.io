@@ -1,220 +1,231 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Al-Qur'an Digital Elegan</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Qur'an Digital Slide Mode</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper: #fdfbf2;
+            --quran-green: #2e5a2e;
+            --gold: #c5a059;
+        }
 
-<style>
-:root {
-  --quran-green: #4a7c4a;
-  --bg-paper: #fcfbf7;
-  --text-color: #2d3436;
-  --border-gold: #c5a059;
-}
+        body {
+            margin: 0;
+            background-color: #1a1a1a;
+            font-family: 'Amiri', serif;
+            overflow: hidden; /* Mencegah scroll vertikal utama */
+        }
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #e0e6e0;
-  color: var(--text-color);
-}
+        /* Container Swiper */
+        .swiper {
+            width: 100%;
+            height: 100vh;
+        }
 
-/* HEADER STYLE */
-header {
-  background: var(--quran-green);
-  color: white;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
+        .swiper-slide {
+            background-color: var(--paper);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 15px solid #fff; /* Frame putih seperti kertas */
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.05);
+        }
 
-.info-bar {
-  background: #fff;
-  border-bottom: 2px solid var(--border-gold);
-  text-align: center;
-  padding: 8px;
-  font-weight: bold;
-  font-size: 14px;
-}
+        /* Header Halaman */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            font-family: sans-serif;
+            font-size: 14px;
+            color: var(--quran-green);
+        }
 
-/* MUSHAF CONTAINER */
-#mushaf-container {
-  max-width: 600px;
-  margin: 20px auto;
-  background: var(--bg-paper);
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  border: 1px solid #d1d1d1;
-  min-height: 80vh;
-}
+        /* Konten Ayat */
+        .page-content {
+            direction: rtl;
+            text-align: justify;
+            font-size: clamp(22px, 5vw, 32px);
+            line-height: 2.2;
+            color: #000;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
 
-.surah-header {
-  text-align: center;
-  border: 2px solid var(--border-gold);
-  margin-bottom: 30px;
-  padding: 10px;
-  background: #fff;
-}
+        /* Nomor Ayat Ornamen */
+        .ayah-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            font-size: 14px;
+            font-family: sans-serif;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
 
-.surah-name {
-  font-family: 'Amiri', serif;
-  font-size: 28px;
-  color: var(--quran-green);
-  margin: 0;
-}
+        /* Footer Halaman */
+        .page-footer {
+            text-align: center;
+            border-top: 1px solid var(--gold);
+            padding-top: 10px;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
 
-.bismillah {
-  text-align: center;
-  font-family: 'Amiri', serif;
-  font-size: 32px;
-  margin: 20px 0 30px;
-  color: #000;
-}
+        /* Navigasi */
+        .nav-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            background: rgba(255,255,255,0.9);
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+        }
 
-/* TAJWID STYLE (SIMULASI) */
-/* Agar teks mengalir seperti koran/buku */
-.page-content {
-  direction: rtl;
-  text-align: justify;
-  line-height: 2.5;
-  font-family: 'Amiri', serif;
-  font-size: 28px;
-  word-spacing: 5px;
-}
+        input { width: 50px; text-align: center; }
 
-/* NOMOR AYAT DALAM TEKS */
-.ayah-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 35px;
-  height: 35px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
-  background-size: contain;
-  background-repeat: no-repeat;
-  font-size: 14px;
-  font-family: sans-serif;
-  margin: 0 5px;
-  vertical-align: middle;
-  color: #444;
-  font-weight: bold;
-}
-
-/* CONTROLS */
-.controls {
-  position: sticky;
-  bottom: 0;
-  background: white;
-  padding: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-}
-
-select {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid var(--border-gold);
-}
-
-@media (max-width: 600px) {
-  #mushaf-container { margin: 0; padding: 20px; border-radius: 0; }
-  .page-content { font-size: 24px; }
-}
-</style>
+        .bismillah {
+            display: block;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 15px 0;
+            color: var(--quran-green);
+        }
+    </style>
 </head>
 <body>
 
-<header>
-  <div style="font-size: 0.8em; opacity: 0.8;">Al-Qur'anul Karim</div>
-  <div id="currentSurahName">Memuat...</div>
-</header>
-
-<div class="info-bar" id="metaInfo">
-  Juz -- | Hizb -- | Halaman --
+<div class="swiper">
+    <div class="swiper-wrapper" id="mainWrapper">
+        <div class="swiper-slide"><p style="text-align:center; margin-top:50vh;">Memuat Al-Qur'an...</p></div>
+    </div>
 </div>
 
-<div id="mushaf-container">
-  <div id="surahHeaderArea"></div>
-  <div id="bismillahArea"></div>
-  <div id="quranText" class="page-content"></div>
+<div class="nav-box">
+    <span>Ke Halaman:</span>
+    <input type="number" id="pageInput" min="1" max="604" value="1">
+    <button onclick="goToPage()">Pindah</button>
 </div>
 
-<div class="controls">
-  <select id="surahSelect"></select>
-  <audio id="audioPlayer" controls></audio>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <script>
-const surahSelect = document.getElementById("surahSelect");
-const quranText = document.getElementById("quranText");
-const audio = document.getElementById("audioPlayer");
+    const wrapper = document.getElementById('mainWrapper');
+    let swiper;
 
-// Load Daftar Surah
-fetch("https://api.quran.gading.dev/surah")
-  .then(r => r.json())
-  .then(d => {
-    d.data.forEach(s => {
-      const o = document.createElement("option");
-      o.value = s.number;
-      o.textContent = `${s.number}. ${s.name.transliteration.id}`;
-      surahSelect.appendChild(o);
-    });
-    loadSurah(67); // Default Al-Mulk sesuai screenshot Anda
-    surahSelect.value = 67;
-  });
+    // Fungsi konversi angka Arab
+    function toArab(n) {
+        return n.toString().split('').map(d => "٠١٢٣٤٥٦٧٨٩"[d]).join('');
+    }
 
-surahSelect.onchange = () => loadSurah(surahSelect.value);
+    // Fungsi ambil data per halaman
+    async function fetchPage(pageNumber) {
+        try {
+            const response = await fetch(`https://api.quran.gading.dev/juz/${Math.ceil(pageNumber/20)}`); // Simulasi, API gading dev lebih mudah via Surah
+            // Catatan: API gading.dev tidak mendukung lsg per halaman mushaf. 
+            // Sebagai alternatif yang stabil, kita gunakan API khusus halaman (Kemenag/Global):
+            const res = await fetch(`https://api.alquran.cloud/v1/page/${pageNumber}/quran-uthmani`);
+            const data = await res.json();
+            return data.data;
+        } catch (e) { return null; }
+    }
 
-function arabNumber(n) {
-  const a = ["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
-  return n.toString().split("").map(x => a[x]).join("");
-}
+    async function initQuran() {
+        wrapper.innerHTML = '';
+        
+        // Kita load 3 halaman awal dulu untuk performa (Lazy Loading)
+        for (let i = 1; i <= 10; i++) {
+            await appendPage(i);
+        }
 
-function loadSurah(no) {
-  quranText.innerHTML = "Memuat...";
-  
-  // Audio
-  audio.src = `https://server8.mp3quran.net/afs/${String(no).padStart(3,"0")}.mp3`;
+        // Inisialisasi Swiper
+        swiper = new Swiper('.swiper', {
+            direction: 'horizontal',
+            loop: false,
+            // Efek membalik buku
+            effect: 'creative',
+            creativeEffect: {
+                prev: { shadow: true, translate: [0, 0, -400] },
+                next: { translate: ['100%', 0, 0] },
+            },
+            on: {
+                slideChange: function () {
+                    const currentPage = this.activeIndex + 1;
+                    document.getElementById('pageInput').value = currentPage;
+                    // Load halaman berikutnya secara otomatis jika belum ada
+                    if (this.activeIndex > this.slides.length - 3) {
+                        loadMorePages(this.slides.length + 1);
+                    }
+                }
+            }
+        });
+    }
 
-  fetch(`https://api.quran.gading.dev/surah/${no}`)
-    .then(r => r.json())
-    .then(d => {
-      const data = d.data;
-      document.getElementById("currentSurahName").textContent = data.name.transliteration.id;
-      document.getElementById("metaInfo").textContent = `Juz ${data.verses[0].meta.juz} | Surah Ke-${data.number} | ${data.numberOfVerses} Ayat`;
+    async function appendPage(pageNum) {
+        const pageData = await fetchPage(pageNum);
+        if(!pageData) return;
 
-      // Render Header Surah
-      document.getElementById("surahHeaderArea").innerHTML = `
-        <div class="surah-header">
-          <div class="surah-name">${data.name.short}</div>
-          <div style="font-size:12px; color:gray">${data.name.translation.id}</div>
-        </div>
-      `;
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+        
+        let contentHtml = '';
+        pageData.ayahs.forEach((ayah, index) => {
+            // Jika ayat pertama di surat (kecuali fatihah/taubah) dan ini ayat ke-1, munculkan bismillah
+            if(ayah.numberInSurah === 1 && ayah.surah.number !== 1 && ayah.surah.number !== 9) {
+                contentHtml += `<span class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>`;
+            }
+            
+            // Hilangkan bismillah duplikat di awal teks jika ada
+            let text = ayah.text;
+            if(ayah.numberInSurah === 1 && ayah.surah.number !== 1) {
+                text = text.replace("بِسْمِ ٱللَّهِ ٱلرَّحمَٰنِ ٱلرَّحِيمِ", "");
+            }
 
-      // Render Bismillah
-      if(no != 1 && no != 9) {
-        document.getElementById("bismillahArea").innerHTML = `<div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
-      } else {
-        document.getElementById("bismillahArea").innerHTML = "";
-      }
+            contentHtml += `${text} <span class="ayah-num">${toArab(ayah.numberInSurah)}</span> `;
+        });
 
-      // Render Ayat (Inline/Flowing)
-      let fullContent = "";
-      data.verses.forEach(v => {
-        // Membersihkan teks arab dari bismillah jika ada di awal ayat (kecuali Al-Fatihah)
-        let text = v.text.arab;
-        fullContent += `${text} <span class="ayah-num">${arabNumber(v.number.inSurah)}</span> `;
-      });
-      
-      quranText.innerHTML = fullContent;
-    });
-}
+        slide.innerHTML = `
+            <div class="page-header">
+                <span>Surah: ${pageData.ayahs[0].surah.englishName}</span>
+                <span>Juz: ${pageData.ayahs[0].juz}</span>
+            </div>
+            <div class="page-content">${contentHtml}</div>
+            <div class="page-footer">${pageNum}</div>
+        `;
+        wrapper.appendChild(slide);
+    }
+
+    async function loadMorePages(start) {
+        for(let i=start; i < start+5; i++) {
+            if(i <= 604) await appendPage(i);
+        }
+        swiper.update();
+    }
+
+    function goToPage() {
+        const p = document.getElementById('pageInput').value;
+        // Logic untuk lompat halaman (memerlukan loading data tengah)
+        alert("Fitur lompat halaman memerlukan load data sekuensial. Slide untuk membaca halaman selanjutnya.");
+    }
+
+    initQuran();
 </script>
 
 </body>
