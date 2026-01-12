@@ -3,216 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Al-Irsyad: Absensi & Waktu Sholat</title>
+    <title>BYOND Prayer & Qibla - Smart Indicator</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --hijau-utama: #1f6f51; 
-            --hijau-terang: #22c55e; 
-            --merah: #ef4444;
-            --bg: #f8fafc;
+        :root {
+            --primary-green: #5E915E;
+            --light-green: #E9F5E9;
+            --accent-gold: #FFB800;
+            --bg-white: #ffffff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: #334155; padding: 15px; }
+        body { background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
 
-        /* HEADER & ISLAMI SECTION */
-        .grid-header { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px; margin-bottom: 20px; }
-        .card { background: white; padding: 15px; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-
-        /* WAKTU SHOLAT */
-        .sholat-item { 
-            display: flex; justify-content: space-between; padding: 8px 10px; 
-            margin: 4px 0; border-radius: 8px; font-size: 13px; font-weight: 600;
-            border: 1px solid #f1f5f9; transition: 0.3s;
-        }
-        .aktif { 
-            background: #ecfdf5; color: var(--hijau-terang); 
-            border: 1px solid var(--hijau-terang); box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+        .phone-container {
+            width: 375px; height: 780px; background: var(--bg-white);
+            border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            overflow: hidden; position: relative; border: 8px solid #333;
         }
 
-        /* KOMPAS */
-        .compass-box { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .compass { 
-            width: 70px; height: 70px; border: 3px solid var(--hijau-utama); 
-            border-radius: 50%; margin: 10px 0; position: relative; 
+        .header {
+            background: var(--primary-green); padding: 40px 20px;
+            color: white; text-align: center; border-radius: 0 0 35px 35px;
         }
-        .needle { 
-            width: 3px; height: 35px; background: var(--merah); 
-            position: absolute; left: 50%; bottom: 50%; 
-            transform-origin: bottom; transform: translateX(-50%) rotate(0deg); 
-            transition: transform 0.5s ease-out;
+        .time-now { font-size: 3.5rem; font-weight: 700; }
+        .date-text { font-size: 0.85rem; opacity: 0.9; }
+
+        .menu-actions { display: flex; justify-content: center; gap: 15px; margin-top: -25px; }
+        .btn-action {
+            background: white; padding: 12px 25px; border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none;
+            display: flex; align-items: center; gap: 8px; font-weight: 600; color: #444; cursor: pointer;
         }
 
-        /* ABSENSI SECTION */
-        .absensi-card { background: white; border-radius: 18px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .pilih-box { display: flex; gap: 10px; margin-bottom: 15px; }
-        select { flex: 1; padding: 12px; border-radius: 10px; border: 1.5px solid #e2e8f0; outline: none; font-weight: bold; }
-        .btn-kirim { background: var(--hijau-utama); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        /* Kiblat Page */
+        .kiblat-page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 100; display: none; flex-direction: column; align-items: center;
+            padding: 60px 20px 20px;
+        }
+        .qibla-header { text-align: left; width: 100%; margin-bottom: 20px; }
+        .qibla-header h2 { font-size: 1.5rem; color: #000; }
+        .qibla-header p { font-size: 0.85rem; color: #888; margin-top: 10px; line-height: 1.4; }
 
-        .table-container { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; min-width: 400px; }
-        th { text-align: left; padding: 12px; font-size: 11px; color: #94a3b8; text-transform: uppercase; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .compass-wrap {
+            position: relative; width: 300px; height: 300px;
+            display: flex; justify-content: center; align-items: center; margin-top: 30px;
+        }
+        .outer-ring {
+            width: 280px; height: 280px; border: 12px solid #F0F4F4; border-radius: 50%;
+            position: relative; display: flex; justify-content: center; align-items: center;
+        }
+        .degree-center { font-size: 3rem; font-weight: 700; color: #000; z-index: 5; }
+        
+        .kaaba-orbit { position: absolute; width: 100%; height: 100%; z-index: 10; }
+        .kaaba-box {
+            position: absolute; top: -15px; left: calc(50% - 20px);
+            width: 40px; height: 40px; background: var(--accent-gold);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(255,184,0,0.4);
+        }
+        .kaaba-box img { width: 22px; filter: brightness(0); }
+        .pointer-up {
+            position: absolute; top: 15px; width: 0; height: 0;
+            border-left: 10px solid transparent; border-right: 10px solid transparent;
+            border-bottom: 15px solid var(--accent-gold); z-index: 10;
+        }
 
-        .status-group { display: flex; gap: 4px; }
-        .btn-st { width: 34px; height: 34px; border: 1.5px solid #eee; background: white; border-radius: 8px; font-weight: bold; cursor: pointer; color: #94a3b8; }
-        .h-aktif { background: var(--hijau-terang) !important; color: white !important; border-color: var(--hijau-terang); }
-        .s-aktif { background: #eab308 !important; color: white !important; border-color: #eab308; }
-        .i-aktif { background: #3b82f6 !important; color: white !important; border-color: #3b82f6; }
-        .a-aktif { background: var(--merah) !important; color: white !important; border-color: var(--merah); }
-
-        #loading { display: none; text-align: center; font-size: 12px; color: var(--hijau-utama); margin-bottom: 10px; font-weight: bold; }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; border: none; background: none; }
+        
+        .prayer-list { padding: 25px; overflow-y: auto; }
+        .prayer-item {
+            display: flex; justify-content: space-between; padding: 18px 20px;
+            background: white; border-radius: 18px; margin-bottom: 12px; border: 1px solid #eee; transition: 0.3s;
+        }
+        /* Style untuk sholat yang sedang aktif */
+        .prayer-item.active { 
+            background: var(--light-green); 
+            border-color: var(--primary-green); 
+            color: var(--primary-green); 
+            font-weight: 700;
+            transform: scale(1.02);
+        }
     </style>
 </head>
 <body>
 
-<div class="grid-header">
-    <div class="card">
-        <div id="hijri-display" style="font-size: 11px; font-weight: 700; color: var(--hijau-utama); margin-bottom: 8px;">Memuat Kalender...</div>
-        <div id="sholat-list">
-            <div class="sholat-item" id="item-subuh">Subuh <span id="wkt-subuh">04:32</span></div>
-            <div class="sholat-item" id="item-dzuhur">Dzuhur <span id="wkt-dzuhur">12:10</span></div>
-            <div class="sholat-item" id="item-ashar">Ashar <span id="wkt-ashar">15:30</span></div>
-            <div class="sholat-item" id="item-maghrib">Maghrib <span id="wkt-maghrib">18:19</span></div>
-            <div class="sholat-item" id="item-isya">Isya <span id="wkt-isya">19:35</span></div>
+<div class="phone-container">
+    <div class="header">
+        <p>📍 <span id="cityName">Mencari Lokasi...</span></p>
+        <div class="time-now" id="liveClock">00:00</div>
+        <p class="date-text" id="dateDisplay">Memuat Tanggal...</p>
+    </div>
+
+    <div class="menu-actions">
+        <button class="btn-action" onclick="openMasjid()">Masjid</button>
+        <button class="btn-action" onclick="toggleKiblat(true)">Kiblat</button>
+    </div>
+
+    <div class="prayer-list" id="prayerItems"></div>
+
+    <div id="kiblatPage" class="kiblat-page">
+        <button class="close-btn" onclick="toggleKiblat(false)">✕</button>
+        <div class="qibla-header">
+            <h2>Arah Kiblat</h2>
+            <p>Pastikan angka kompas pada <span id="targetDeg" style="font-weight: bold; color: var(--primary-green);">...</span> derajat.</p>
         </div>
-    </div>
-    <div class="card compass-box">
-        <span style="font-size: 10px; font-weight: 800;">QIBLAT</span>
-        <div class="compass"><div class="needle" id="needle"></div></div>
-        <span id="degree" style="font-size: 10px; font-weight: 600;">0°</span>
-    </div>
-</div>
-
-<div class="absensi-card">
-    <div id="loading">Sedang memproses...</div>
-    <div class="pilih-box">
-        <select id="pilih-kelas">
-            <option value="">-- Pilih Kelas --</option>
-            <optgroup label="Kelas 7"><option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option></optgroup>
-            <optgroup label="Kelas 8"><option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option></optgroup>
-            <optgroup label="Kelas 9"><option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option></optgroup>
-        </select>
-        <button class="btn-kirim" onclick="kirimSemua()">SIMPAN</button>
-    </div>
-
-    <div class="table-container">
-        <table id="tabel-siswa">
-            <thead><tr><th>Nama Santri</th><th style="text-align:center">Status</th></tr></thead>
-            <tbody><tr><td colspan="2" style="text-align:center; color:#94a3b8; padding:20px;">Pilih kelas untuk absen</td></tr></tbody>
-        </table>
+        <div class="compass-wrap">
+            <div class="pointer-up"></div>
+            <div class="outer-ring" id="compassRing">
+                <div class="degree-center" id="currentHeadingDisplay">0°</div>
+                <div class="kaaba-orbit" id="kaabaOrbit">
+                    <div class="kaaba-box">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2873/2873024.png" alt="Kaaba">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    const URL_SERVER = "https://script.google.com/macros/s/AKfycbywL4XBIzx0kXjBH9oDJTIEHh494-V6IivNN585bSGLdXXJPwgF98GOvA47ezT3Suoj/exec";
+    let userLat, userLon, qiblaAngle = 295;
+    let currentHeading = 0, lerpHeading = 0;
+    const filterFactor = 0.1; 
+    let prayerTimesData = {};
 
-    // 1. UPDATE KALENDER HIJRIAH
-    const displayHijri = () => {
-        const date = new Date();
-        const formatted = new Intl.DateTimeFormat('id-TN-u-ca-islamic-uma', { day:'numeric', month:'long', year:'numeric' }).format(date);
-        document.getElementById('hijri-display').innerText = formatted.toUpperCase();
-    };
-
-    // 2. UPDATE INDIKATOR WARNA HIJAU SHOLAT
-    const updateSholatStatus = () => {
-        const now = new Date();
-        const timeNow = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-        
-        const times = {
-            subuh: document.getElementById('wkt-subuh').innerText,
-            dzuhur: document.getElementById('wkt-dzuhur').innerText,
-            ashar: document.getElementById('wkt-ashar').innerText,
-            maghrib: document.getElementById('wkt-maghrib').innerText,
-            isya: document.getElementById('wkt-isya').innerText
-        };
-
-        document.querySelectorAll('.sholat-item').forEach(el => el.classList.remove('aktif'));
-
-        if (timeNow >= times.subuh && timeNow < times.dzuhur) document.getElementById('item-subuh').classList.add('aktif');
-        else if (timeNow >= times.dzuhur && timeNow < times.ashar) document.getElementById('item-dzuhur').classList.add('aktif');
-        else if (timeNow >= times.ashar && timeNow < times.maghrib) document.getElementById('item-ashar').classList.add('aktif');
-        else if (timeNow >= times.maghrib && timeNow < times.isya) document.getElementById('item-maghrib').classList.add('aktif');
-        else document.getElementById('item-isya').classList.add('aktif');
-    };
-
-    // 3. KOMPAS SENSOR
-    window.addEventListener('deviceorientation', (e) => {
-        if (e.alpha !== null) {
-            document.getElementById('needle').style.transform = `translateX(-50%) rotate(${-e.alpha}deg)`;
-            document.getElementById('degree').innerText = Math.round(e.alpha) + "°";
+    function init() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                userLat = pos.coords.latitude;
+                userLon = pos.coords.longitude;
+                fetchData(userLat, userLon);
+                calculateQibla(userLat, userLon);
+            }, () => { alert("Akses GPS diperlukan."); });
         }
-    }, true);
+        updateTime();
+        setInterval(updateTime, 1000);
+        setInterval(updateActivePrayer, 60000); // Cek indikator sholat setiap menit
+        animate(); 
+    }
 
-    // 4. LOGIKA ABSENSI
-    document.getElementById('pilih-kelas').addEventListener('change', async (e) => {
-        const kelas = e.target.value;
-        if(!kelas) return;
-        document.getElementById('loading').style.display = 'block';
+    async function fetchData(lat, lon) {
+        try {
+            const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
+            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
+
+            const d = new Date().toISOString().split('T')[0];
+            const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
+            
+            prayerTimesData = pray.data.timings;
+            const h = pray.data.date.hijri;
+            const m = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
+            document.getElementById('dateDisplay').innerText = `${m} | ${h.day} ${h.month.en} ${h.year} H`;
+
+            renderPrayerList();
+        } catch(e) { console.error("Data error"); }
+    }
+
+    function renderPrayerList() {
+        const t = prayerTimesData;
+        const list = [["Subuh", t.Fajr], ["Terbit", t.Sunrise], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
         
-        try {
-            const res = await fetch(`${URL_SERVER}?kelas=${kelas}`);
-            const data = await res.json();
-            const tbody = document.querySelector('#tabel-siswa tbody');
-            tbody.innerHTML = '';
-            data.forEach(s => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight:600;">${s.nama}</td>
-                    <td class="status-group">
-                        <button class="btn-st" onclick="pick(this,'H')">H</button>
-                        <button class="btn-st" onclick="pick(this,'S')">S</button>
-                        <button class="btn-st" onclick="pick(this,'I')">I</button>
-                        <button class="btn-st" onclick="pick(this,'A')">A</button>
-                    </td>`;
-                tr.setAttribute('data-nama', s.nama);
-                tr.setAttribute('data-nipd', s.nipd);
-                tbody.appendChild(tr);
-            });
-        } catch (e) { alert("Gagal ambil data."); }
-        document.getElementById('loading').style.display = 'none';
-    });
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
 
-    function pick(btn, st) {
-        btn.parentElement.querySelectorAll('.btn-st').forEach(b => b.className = 'btn-st');
-        const color = {'H':'h-aktif', 'S':'s-aktif', 'I':'i-aktif', 'A':'a-aktif'};
-        btn.classList.add(color[st]);
-        btn.setAttribute('data-res', st);
+        document.getElementById('prayerItems').innerHTML = list.map((p, index) => {
+            return `<div class="prayer-item" id="pray-${index}"><span>${p[0]}</span><span>${p[1]}</span></div>`;
+        }).join('');
+        
+        updateActivePrayer();
     }
 
-    async function kirimSemua() {
-        const kelas = document.getElementById('pilih-kelas').value;
-        const rows = document.querySelectorAll('#tabel-siswa tbody tr');
-        const payload = [];
+    // LOGIKA INDIKATOR OTOMATIS
+    function updateActivePrayer() {
+        if (!prayerTimesData.Fajr) return;
 
-        rows.forEach(tr => {
-            const res = tr.querySelector('.btn-st[data-res]');
-            if(res) {
-                payload.push({
-                    kelas: kelas,
-                    nipd: tr.getAttribute('data-nipd'),
-                    nama: tr.getAttribute('data-nama'),
-                    status: res.getAttribute('data-res')
-                });
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+
+        const times = [
+            { name: "Subuh", time: prayerTimesData.Fajr },
+            { name: "Terbit", time: prayerTimesData.Sunrise },
+            { name: "Dzuhur", time: prayerTimesData.Dhuhr },
+            { name: "Ashar", time: prayerTimesData.Asr },
+            { name: "Maghrib", time: prayerTimesData.Maghrib },
+            { name: "Isya", time: prayerTimesData.Isha }
+        ];
+
+        let activeIndex = -1;
+
+        // Cari sholat yang saat ini sedang berlangsung
+        for (let i = 0; i < times.length; i++) {
+            const [h, m] = times[i].time.split(':').map(Number);
+            const prayerMinutes = h * 60 + m;
+
+            if (currentTime >= prayerMinutes) {
+                activeIndex = i;
             }
-        });
+        }
 
-        if(payload.length === 0) return alert("Pilih absen dulu!");
-        document.getElementById('loading').style.display = 'block';
-
-        try {
-            await fetch(URL_SERVER, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Absen " + kelas + " Berhasil Disimpan!");
-            location.reload();
-        } catch (e) { alert("Gagal kirim."); }
-        document.getElementById('loading').style.display = 'none';
+        // Hapus semua class active
+        document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
+        
+        // Tambahkan ke yang paling sesuai
+        if (activeIndex !== -1) {
+            const activeEl = document.getElementById(`pray-${activeIndex}`);
+            if (activeEl) activeEl.classList.add('active');
+        }
     }
 
-    // Inisialisasi
-    displayHijri();
-    updateSholatStatus();
-    setInterval(updateSholatStatus, 30000); // Cek setiap 30 detik
+    function calculateQibla(lat, lon) {
+        const phiK = 21.4225 * Math.PI / 180;
+        const lamK = 39.8262 * Math.PI / 180;
+        const phi = lat * Math.PI / 180;
+        const lam = lon * Math.PI / 180;
+        let q = Math.atan2(Math.sin(lamK-lam), Math.cos(phi)*Math.tan(phiK)-Math.sin(phi)*Math.cos(lamK-lam));
+        qiblaAngle = (q * 180 / Math.PI + 360) % 360;
+        document.getElementById('targetDeg').innerText = Math.round(qiblaAngle);
+    }
+
+    function toggleKiblat(show) {
+        document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
+        if (show) {
+            // Gunakan absolute orientation untuk akurasi lebih tinggi
+            if (window.DeviceOrientationEvent) {
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission().then(state => {
+                        if (state === 'granted') window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+                    });
+                } else {
+                    window.addEventListener('deviceorientationabsolute', handleOrientation, true) || 
+                    window.addEventListener('deviceorientation', handleOrientation, true);
+                }
+            }
+        } else {
+            window.removeEventListener('deviceorientationabsolute', handleOrientation);
+            window.removeEventListener('deviceorientation', handleOrientation);
+        }
+    }
+
+    function handleOrientation(e) {
+        // Prioritaskan webkitCompassHeading untuk iOS, alpha untuk Android
+        let heading = e.webkitCompassHeading || (360 - e.alpha);
+        if (heading) currentHeading = heading;
+    }
+
+    function animate() {
+        let diff = currentHeading - lerpHeading;
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+
+        lerpHeading += diff * filterFactor;
+        lerpHeading = (lerpHeading + 360) % 360;
+
+        const ring = document.getElementById('compassRing');
+        const orbit = document.getElementById('kaabaOrbit');
+        if (ring) {
+            ring.style.transform = `rotate(${-lerpHeading}deg)`;
+            orbit.style.transform = `rotate(${qiblaAngle}deg)`;
+            document.getElementById('currentHeadingDisplay').innerText = Math.round(lerpHeading) + "°";
+        }
+        requestAnimationFrame(animate);
+    }
+
+    function updateTime() {
+        const n = new Date();
+        document.getElementById('liveClock').innerText = n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0');
+    }
+
+    function openMasjid() {
+        if (userLat) window.open(`http://googleusercontent.com/maps.google.com/3{userLat},${userLon},15z`, '_blank');
+    }
+
+    init();
 </script>
 </body>
 </html>
