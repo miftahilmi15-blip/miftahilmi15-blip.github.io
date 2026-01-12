@@ -1,27 +1,6 @@
-
-// =========================
-// ELEMENTS
-// =========================
-const authSection   = document.getElementById('login-card'); // card login/register
-const appSection    = document.getElementById('dashboard');  // dashboard setelah login
-const emailInput    = document.getElementById('email');
-const passInput     = document.getElementById('password');
-const btnLogin      = document.querySelector('.btn.primary');
-const btnRegister   = document.querySelector('.btn.secondary');
-
-const menuBtn       = document.getElementById('menu-btn');
-const closeBtn      = document.getElementById('close-btn');
-const overlay       = document.getElementById('overlay');
-const sidebar       = document.getElementById('sidebar');
-
-const userNameEl    = document.getElementById('sidebar-name');
-const userEmailSpan = document.getElementById('sidebar-email');
-const userPhotoEl   = document.getElementById('user-photo');
-
-
-// =========================
-// FIREBASE INITIALIZE
-// =========================
+// ==========================================
+// 1. KONFIGURASI & INISIALISASI FIREBASE
+// ==========================================
 firebase.initializeApp({
   apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
   authDomain: "e-santri-ed555.firebaseapp.com",
@@ -29,211 +8,135 @@ firebase.initializeApp({
 });
 
 const auth = firebase.auth();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
-// =========================
-// AUTH PERSISTENCE
-// =========================
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .catch(e => console.error("Persistence error:", e));
+// ==========================================
+// 2. ELEMENT SELECTORS (Disesuaikan dengan UI Mewah)
+// ==========================================
+const elements = {
+  authCard:    document.getElementById('login-card'),
+  dashboard:   document.getElementById('dashboard'),
+  email:       document.getElementById('email'),
+  pass:        document.getElementById('password'),
+  msg:         document.getElementById('msg'),
+  menuBtn:     document.getElementById('menu-btn'),
+  sidebar:     document.getElementById('sidebar'),
+  overlay:     document.getElementById('overlay'),
+  userName:    document.getElementById('sidebar-name'),
+  userEmail:   document.getElementById('sidebar-email'),
+  userPhoto:   document.getElementById('user-photo')
+};
 
-
-// =========================
-// AUTH FUNCTIONS
-// =========================
+// ==========================================
+// 3. FUNGSI OTENTIKASI (Login, Register, Google)
+// ==========================================
 async function login() {
-  const email = emailInput.value.trim();
-  const pass  = passInput.value.trim();
+  const email = elements.email.value.trim();
+  const pass  = elements.pass.value.trim();
 
-  if (!email || !pass) {
-    return showMsg("Isi email & password");
-  }
+  if (!email || !pass) return showMsg("Silakan lengkapi email dan password.", "warning");
 
   try {
-    // 🔍 CEK PROVIDER AKUN
     const methods = await auth.fetchSignInMethodsForEmail(email);
-
-    // 🚫 AKUN GOOGLE-ONLY
+    
     if (methods.includes("google.com") && !methods.includes("password")) {
-      showMsg(
-        "Akun ini terdaftar menggunakan Google.\n" +
-        "Silakan login dengan Google atau reset password."
-      );
-      return;
+      return showMsg("Gunakan tombol 'Login Google' untuk akun ini.", "info");
     }
 
-    // ✅ LOGIN EMAIL & PASSWORD
     await auth.signInWithEmailAndPassword(email, pass);
-
+    showMsg("Berhasil masuk!", "success");
   } catch (e) {
-    showMsg("Login gagal: " + e.message);
+    showMsg("Login Gagal: " + e.message, "error");
+  }
+}
+
+async function loginWithGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+    showMsg("Berhasil masuk dengan Google!", "success");
+  } catch (e) {
+    showMsg("Gagal login Google: " + e.message, "error");
   }
 }
 
 function register() {
-  const email = emailInput.value.trim();
-  const pass  = passInput.value.trim();
+  const email = elements.email.value.trim();
+  const pass  = elements.pass.value.trim();
 
-  if (!email || !pass) {
-    return showMsg("Isi email & password untuk register");
-  }
+  if (pass.length < 6) return showMsg("Password minimal 6 karakter.", "warning");
 
   auth.createUserWithEmailAndPassword(email, pass)
-    .then(() => showMsg("Akun berhasil dibuat, silakan login"))
-    .catch(e => showMsg("Gagal register: " + e.message));
+    .then(() => showMsg("Akun dibuat! Silakan masuk.", "success"))
+    .catch(e => showMsg(e.message, "error"));
 }
 
 function logout() {
-  auth.signOut().then(() => {
-    window.location.href = "index.html";
-  });
+  auth.signOut().then(() => window.location.reload());
 }
 
-
-// =========================
-// MESSAGE HANDLER
-// =========================
-function showMsg(message) {
-  const el = document.getElementById('msg');
-  if (!el) return;
-  el.textContent = message;
+// ==========================================
+// 4. UI HANDLERS (Sidebar & Popups)
+// ==========================================
+function showMsg(text, type) {
+  if (!elements.msg) return;
+  elements.msg.textContent = text;
+  elements.msg.style.color = type === "success" ? "#0f4c3a" : "#e74c3c";
+  // Hilangkan pesan setelah 4 detik
+  setTimeout(() => elements.msg.textContent = "", 4000);
 }
 
-
-// =========================
-// AUTH STATE LISTENER
-// =========================
+// State Listener: Otomatis ganti tampilan saat login/logout
 auth.onAuthStateChanged(user => {
   if (user) {
-    authSection.classList.add('hidden');
-    appSection.classList.remove('hidden');
-    menuBtn.style.display = 'block';
-
-    userNameEl.textContent    = user.displayName || "Pengguna";
-    userEmailSpan.textContent = user.email;
-    userPhotoEl.src           = user.photoURL || "assets/default-avatar.png";
+    elements.authCard.classList.add('hidden');
+    elements.dashboard.classList.remove('hidden');
+    elements.menuBtn.style.display = 'flex';
+    
+    // Update data sidebar
+    elements.userName.textContent  = user.displayName || "Santri";
+    elements.userEmail.textContent = user.email;
+    elements.userPhoto.src         = user.photoURL || "assets/default-avatar.png";
   } else {
-    authSection.classList.remove('hidden');
-    appSection.classList.add('hidden');
-    menuBtn.style.display = 'none';
-
-    userNameEl.textContent    = "Pengguna";
-    userEmailSpan.textContent = "";
-    userPhotoEl.src           = "assets/default-avatar.png";
+    elements.authCard.classList.remove('hidden');
+    elements.dashboard.classList.add('hidden');
+    elements.menuBtn.style.display = 'none';
   }
 });
 
-
-// =========================
-// SIDEBAR MENU
-// =========================
-menuBtn.onclick = () => {
-  sidebar.classList.add('open');
-  overlay.classList.add('show');
+// Sidebar Controls
+elements.menuBtn.onclick = () => {
+  elements.sidebar.classList.add('open');
+  elements.overlay.classList.add('show');
 };
 
-closeBtn.onclick = closeSidebar;
-overlay.onclick  = closeSidebar;
+const closeSidebar = () => {
+  elements.sidebar.classList.remove('open');
+  elements.overlay.classList.remove('show');
+};
 
-function closeSidebar() {
-  sidebar.classList.remove('open');
-  overlay.classList.remove('show');
-}
+elements.overlay.onclick = closeSidebar;
 
-
-// =========================
-// EDIT PROFILE
-// =========================
-function openEdit() {
-  document.getElementById('edit-profile-popup').classList.add('show');
-}
-
-function closeEdit() {
-  document.getElementById('edit-profile-popup').classList.remove('show');
-}
-
-async function saveProfile() {
-  const user = auth.currentUser;
-  if (!user) return alert("Tidak ada user login");
-
-  const name        = document.getElementById('edit-name').value.trim();
-  const newEmail    = document.getElementById('edit-email').value.trim();
-  const newPassword = document.getElementById('edit-pass').value.trim();
-
-  try {
-    // 🔐 RE-AUTH WAJIB
-    const currentPassword = prompt("Masukkan password lama untuk konfirmasi:");
-    if (!currentPassword) return;
-
-    const credential = firebase.auth.EmailAuthProvider.credential(
-      user.email,
-      currentPassword
-    );
-
-    await user.reauthenticateWithCredential(credential);
-
-    // ✅ UPDATE DATA
-    if (name)        await user.updateProfile({ displayName: name });
-    if (newEmail)    await user.updateEmail(newEmail);
-    if (newPassword) await user.updatePassword(newPassword);
-
-    alert("Profil berhasil diperbarui!");
-    closeEdit();
-
-  } catch (e) {
-    alert("Gagal update: " + e.message);
-  }
-}
-
-
-// =========================
-// WHATSAPP REPORT
-// =========================
-function openWAReport() {
-  document.getElementById("wa-report-popup").style.display = "flex";
-}
-
-function closeWAReport() {
-  document.getElementById("wa-report-popup").style.display = "none";
-}
-
+// ==========================================
+// 5. FITUR PENDUKUNG (WA Report & Navigation)
+// ==========================================
 function sendReport() {
-  const user  = auth.currentUser;
-  const pesan = document.getElementById("wa-message").value.trim();
-  if (!pesan) return alert("Isi pengaduannya dulu ya!");
+  const user = auth.currentUser;
+  const pesan = prompt("Tuliskan pengaduan/pesan Anda:");
+  
+  if (!pesan) return;
 
-  const name  = user.displayName || "Santri";
-  const email = user.email;
   const adminNumber = "6289661946783";
-
-  const text = `
-Pengaduan Santri:
-Nama: ${name}
-Email: ${email}
-
-Pesan:
-${pesan}
-  `;
-
-  window.open(
-    `https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`,
-    "_blank"
-  );
-
-  closeWAReport();
+  const text = `*PENGADUAN E-SANTRI*\n\nNama: ${user.displayName || 'Santri'}\nEmail: ${user.email}\n\nPesan:\n${pesan}`;
+  
+  window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`, "_blank");
 }
 
-
-// =========================
-// NAVIGATION
-// =========================
 function goTo(page) {
-  window.location.href = page;
+  // Animasi transisi keluar (opsional)
+  document.body.style.opacity = '0';
+  setTimeout(() => window.location.href = page, 300);
 }
 
-
-// =========================
-// GLOBAL ERROR SAFETY
-// =========================
-window.addEventListener("unhandledrejection", e => {
-  console.error("Unhandled error:", e.reason);
-});
+// Global Error Catching
+window.addEventListener("unhandledrejection", e => console.error("Error:", e.reason));
