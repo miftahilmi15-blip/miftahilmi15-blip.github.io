@@ -35,6 +35,7 @@
         header { text-align: center; margin-bottom: 20px; }
         h2 { color: var(--primary); font-size: 20px; font-weight: 700; margin-bottom: 5px; }
         #tgl-skrg { font-size: 12px; color: #636e72; font-weight: 500; }
+        
         .form-grup { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
         select { 
             width: 100%; 
@@ -45,7 +46,9 @@
             font-weight: 600; 
             outline: none;
             color: var(--primary);
+            appearance: none;
         }
+        
         .btn-simpan { 
             background: linear-gradient(135deg, var(--primary), #16503a); 
             color: white; 
@@ -57,23 +60,20 @@
             box-shadow: 0 8px 20px rgba(31, 111, 81, 0.3);
             transition: 0.3s;
         }
+        .btn-simpan:hover { opacity: 0.9; }
         .btn-simpan:active { transform: scale(0.98); }
+
         .area-tabel { margin-top: 10px; border-radius: 15px; overflow: hidden; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; background: white; }
         th { background: #f8fafb; padding: 12px; font-size: 11px; color: #636e72; text-transform: uppercase; text-align: left; }
         td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        
         .btn-status { 
-            width: 34px; 
-            height: 34px; 
-            border-radius: 8px; 
-            border: 1px solid #eee; 
-            background: white; 
-            cursor: pointer; 
-            font-weight: bold; 
-            color: #94a3b8; 
-            margin-right: 2px; 
-            transition: 0.2s; 
+            width: 34px; height: 34px; border-radius: 8px; border: 1px solid #eee; 
+            background: white; cursor: pointer; font-weight: bold; color: #94a3b8; 
+            margin-right: 2px; transition: 0.2s; 
         }
+        
         .h-active { background: var(--hadir) !important; color: white !important; border-color: var(--hadir); }
         .s-active { background: var(--sakit) !important; color: white !important; border-color: var(--sakit); }
         .i-active { background: var(--izin) !important; color: white !important; border-color: var(--izin); }
@@ -97,7 +97,7 @@
 
 <div id="loading">
     <div class="spinner"></div>
-    <div style="color: var(--primary); font-weight: 700;">Mohon Tunggu...</div>
+    <div style="color: var(--primary); font-weight: 700;">Memproses Data...</div>
 </div>
 
 <div class="wadah">
@@ -113,17 +113,10 @@
             <option value="7A">Kelas 7A</option>
             <option value="7B">Kelas 7B</option>
             <option value="7C">Kelas 7C</option>
-            <option value="7D">Kelas 7D</option>
             <option value="8A">Kelas 8A</option>
-            <option value="8B">Kelas 8B</option>
-            <option value="8C">Kelas 8C</option>
-            <option value="8D">Kelas 8D</option>
             <option value="9A">Kelas 9A</option>
-            <option value="9B">Kelas 9B</option>
-            <option value="9C">Kelas 9C</option>
-            <option value="9D">Kelas 9D</option>
         </select>
-        <button class="btn-simpan" onclick="kirimData()">SIMPAN KE DATABASE</button>
+        <button class="btn-simpan" onclick="kirimData()">SIMPAN ABSENSI</button>
     </div>
 
     <div class="area-tabel">
@@ -134,25 +127,30 @@
                     <th style="text-align: center;">H S I A</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr><td colspan="2" style="padding:40px; text-align:center; color:#999; font-size: 12px;">Pilih kelas untuk memuat data santri...</td></tr>
+            <tbody id="isi-tabel">
+                <tr><td colspan="2" style="padding:40px; text-align:center; color:#999; font-size: 12px;">Silakan pilih kelas...</td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // MENGGUNAKAN URL TERBARU ANDA
+    // URL Web App Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFnuvsTjP5RjVgwi471MTr6X3t7tbqSVh1lgK5ppx6fvIMxlY_Z3jdyU6wZuyATbelkQ/exec";
 
+    // Menampilkan Tanggal Hari Ini
     document.getElementById('tgl-skrg').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    
     const loader = document.getElementById('loading');
 
-    // FUNGSI AMBIL DATA SISWA
+    // 1. FUNGSI AMBIL DATA (Sesuai Kolom A=NIPD, B=Nama)
     document.getElementById('pilih-kelas').addEventListener('change', async (e) => {
         const kelas = e.target.value;
         if (!kelas) return;
+        
         loader.style.display = 'flex';
+        const tbody = document.getElementById('isi-tabel');
+        
         try {
             const respon = await fetch(`${SCRIPT_URL}?kelas=${kelas}`);
             const data = await respon.json();
@@ -162,74 +160,82 @@
                 return;
             }
 
-            const tbody = document.querySelector('#tabel-absen tbody');
             tbody.innerHTML = '';
-            
             data.forEach(s => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><b style="color:#2d3436">${s.nama}</b><br><small style="color:#999">${s.nipd}</small></td>
-                    <td style="text-align:center; white-space:nowrap;">
-                        <button class="btn-status" onclick="setAbsen(this,'H')">H</button>
-                        <button class="btn-status" onclick="setAbsen(this,'S')">S</button>
-                        <button class="btn-status" onclick="setAbsen(this,'I')">I</button>
-                        <button class="btn-status" onclick="setAbsen(this,'A')">A</button>
-                    </td>
-                `;
                 tr.setAttribute('data-nipd', s.nipd);
                 tr.setAttribute('data-nama', s.nama);
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:600; color:#2d3436">${s.nama}</div>
+                        <div style="font-size:10px; color:#999">${s.nipd}</div>
+                    </td>
+                    <td style="text-align:center; white-space:nowrap;">
+                        <button class="btn-status" onclick="pilihStatus(this,'H')">H</button>
+                        <button class="btn-status" onclick="pilihStatus(this,'S')">S</button>
+                        <button class="btn-status" onclick="pilihStatus(this,'I')">I</button>
+                        <button class="btn-status" onclick="pilihStatus(this,'A')">A</button>
+                    </td>
+                `;
                 tbody.appendChild(tr);
             });
         } catch (err) {
-            alert("Gagal memuat data. Pastikan tab di Google Sheets bernama '" + kelas + "' dan sudah di-Deploy sebagai 'Anyone'.");
-        } finally { loader.style.display = 'none'; }
+            alert("Gagal memuat data! Periksa koneksi atau nama Sheet.");
+        } finally {
+            loader.style.display = 'none';
+        }
     });
 
-    function setAbsen(btn, status) {
-        btn.parentElement.querySelectorAll('.btn-status').forEach(b => {
+    // 2. FUNGSI TOMBOL H/S/I/A
+    function pilihStatus(btn, status) {
+        // Reset warna tombol di baris yang sama
+        const baris = btn.parentElement;
+        baris.querySelectorAll('.btn-status').forEach(b => {
             b.className = 'btn-status';
-            b.removeAttribute('data-pilihan');
+            b.removeAttribute('data-pilih');
         });
-        const kls = { 'H': 'h-active', 'S': 's-active', 'I': 'i-active', 'A': 'a-active' };
-        btn.classList.add(kls[status]);
-        btn.setAttribute('data-pilihan', status);
+        
+        // Aktifkan tombol yang diklik
+        const warna = { 'H': 'h-active', 'S': 's-active', 'I': 'i-active', 'A': 'a-active' };
+        btn.classList.add(warna[status]);
+        btn.setAttribute('data-pilih', status);
     }
 
+    // 3. FUNGSI KIRIM KE DATABASE (POST)
     async function kirimData() {
         const kelas = document.getElementById('pilih-kelas').value;
-        if (!kelas) return alert("Pilih kelas terlebih dahulu!");
+        if (!kelas) return alert("Pilih kelas dulu!");
 
-        const baris = document.querySelectorAll('#tabel-absen tbody tr');
+        const barisData = document.querySelectorAll('#isi-tabel tr');
         const dataFinal = [];
-        
-        baris.forEach(tr => {
-            const statusPilih = tr.querySelector('.btn-status[data-pilihan]');
-            if (statusPilih) {
+
+        barisData.forEach(tr => {
+            const btnAktif = tr.querySelector('.btn-status[data-pilih]');
+            if (btnAktif) {
                 dataFinal.push({
                     kelas: kelas,
                     nipd: tr.getAttribute('data-nipd'),
                     nama: tr.getAttribute('data-nama'),
-                    status: statusPilih.getAttribute('data-pilihan')
+                    status: btnAktif.getAttribute('data-pilih')
                 });
             }
         });
 
-        if (dataFinal.length === 0) return alert("Isi minimal satu absen santri!");
-        
+        if (dataFinal.length === 0) return alert("Pilih minimal satu kehadiran santri!");
+
         loader.style.display = 'flex';
         try {
-            // Menggunakan POST untuk mengirim data
-            await fetch(SCRIPT_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify(dataFinal) 
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(dataFinal)
             });
-            alert("✅ Alhamdulillah! Absensi " + kelas + " berhasil disimpan ke Database.");
-            window.location.reload();
-        } catch (err) { 
-            alert("Gagal menyimpan data ke server."); 
-        } finally { 
-            loader.style.display = 'none'; 
+            alert("✅ Alhamdulillah! Absensi " + kelas + " berhasil disimpan.");
+            location.reload();
+        } catch (err) {
+            alert("Gagal menyimpan. Coba lagi.");
+        } finally {
+            loader.style.display = 'none';
         }
     }
 </script>
