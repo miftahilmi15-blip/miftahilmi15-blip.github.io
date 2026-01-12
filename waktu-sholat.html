@@ -377,6 +377,209 @@
             if (currentTime >= prayerMinutes) {
                 activeIndex = i;
             }
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYOND Prayer & Qibla - Smart Indicator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #5E915E;
+            --light-green: #E9F5E9;
+            --accent-gold: #FFB800;
+            --bg-white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+        .phone-container {
+            width: 375px; height: 780px; background: var(--bg-white);
+            border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            overflow: hidden; position: relative; border: 8px solid #333;
+        }
+
+        .header {
+            background: var(--primary-green); padding: 40px 20px;
+            color: white; text-align: center; border-radius: 0 0 35px 35px;
+        }
+        .time-now { font-size: 3.5rem; font-weight: 700; }
+        .date-text { font-size: 0.85rem; opacity: 0.9; }
+
+        .menu-actions { display: flex; justify-content: center; gap: 15px; margin-top: -25px; }
+        .btn-action {
+            background: white; padding: 12px 25px; border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none;
+            display: flex; align-items: center; gap: 8px; font-weight: 600; color: #444; cursor: pointer;
+        }
+
+        /* Kiblat Page */
+        .kiblat-page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 100; display: none; flex-direction: column; align-items: center;
+            padding: 60px 20px 20px;
+        }
+        .qibla-header { text-align: left; width: 100%; margin-bottom: 20px; }
+        .qibla-header h2 { font-size: 1.5rem; color: #000; }
+        .qibla-header p { font-size: 0.85rem; color: #888; margin-top: 10px; line-height: 1.4; }
+
+        .compass-wrap {
+            position: relative; width: 300px; height: 300px;
+            display: flex; justify-content: center; align-items: center; margin-top: 30px;
+        }
+        .outer-ring {
+            width: 280px; height: 280px; border: 12px solid #F0F4F4; border-radius: 50%;
+            position: relative; display: flex; justify-content: center; align-items: center;
+        }
+        .degree-center { font-size: 3rem; font-weight: 700; color: #000; z-index: 5; }
+        
+        .kaaba-orbit { position: absolute; width: 100%; height: 100%; z-index: 10; }
+        .kaaba-box {
+            position: absolute; top: -15px; left: calc(50% - 20px);
+            width: 40px; height: 40px; background: var(--accent-gold);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(255,184,0,0.4);
+        }
+        .kaaba-box img { width: 22px; filter: brightness(0); }
+        .pointer-up {
+            position: absolute; top: 15px; width: 0; height: 0;
+            border-left: 10px solid transparent; border-right: 10px solid transparent;
+            border-bottom: 15px solid var(--accent-gold); z-index: 10;
+        }
+
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; border: none; background: none; }
+        
+        .prayer-list { padding: 25px; overflow-y: auto; }
+        .prayer-item {
+            display: flex; justify-content: space-between; padding: 18px 20px;
+            background: white; border-radius: 18px; margin-bottom: 12px; border: 1px solid #eee; transition: 0.3s;
+        }
+        /* Style untuk sholat yang sedang aktif */
+        .prayer-item.active { 
+            background: var(--light-green); 
+            border-color: var(--primary-green); 
+            color: var(--primary-green); 
+            font-weight: 700;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="header">
+        <p>📍 <span id="cityName">Mencari Lokasi...</span></p>
+        <div class="time-now" id="liveClock">00:00</div>
+        <p class="date-text" id="dateDisplay">Memuat Tanggal...</p>
+    </div>
+
+    <div class="menu-actions">
+        <button class="btn-action" onclick="openMasjid()">Masjid</button>
+        <button class="btn-action" onclick="toggleKiblat(true)">Kiblat</button>
+    </div>
+
+    <div class="prayer-list" id="prayerItems"></div>
+
+    <div id="kiblatPage" class="kiblat-page">
+        <button class="close-btn" onclick="toggleKiblat(false)">✕</button>
+        <div class="qibla-header">
+            <h2>Arah Kiblat</h2>
+            <p>Pastikan angka kompas pada <span id="targetDeg" style="font-weight: bold; color: var(--primary-green);">...</span> derajat.</p>
+        </div>
+        <div class="compass-wrap">
+            <div class="pointer-up"></div>
+            <div class="outer-ring" id="compassRing">
+                <div class="degree-center" id="currentHeadingDisplay">0°</div>
+                <div class="kaaba-orbit" id="kaabaOrbit">
+                    <div class="kaaba-box">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2873/2873024.png" alt="Kaaba">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let userLat, userLon, qiblaAngle = 295;
+    let currentHeading = 0, lerpHeading = 0;
+    const filterFactor = 0.1; 
+    let prayerTimesData = {};
+
+    function init() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                userLat = pos.coords.latitude;
+                userLon = pos.coords.longitude;
+                fetchData(userLat, userLon);
+                calculateQibla(userLat, userLon);
+            }, () => { alert("Akses GPS diperlukan."); });
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+        setInterval(updateActivePrayer, 60000); // Cek indikator sholat setiap menit
+        animate(); 
+    }
+
+    async function fetchData(lat, lon) {
+        try {
+            const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
+            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
+
+            const d = new Date().toISOString().split('T')[0];
+            const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
+            
+            prayerTimesData = pray.data.timings;
+            const h = pray.data.date.hijri;
+            const m = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
+            document.getElementById('dateDisplay').innerText = `${m} | ${h.day} ${h.month.en} ${h.year} H`;
+
+            renderPrayerList();
+        } catch(e) { console.error("Data error"); }
+    }
+
+    function renderPrayerList() {
+        const t = prayerTimesData;
+        const list = [["Subuh", t.Fajr], ["Terbit", t.Sunrise], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
+        
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+
+        document.getElementById('prayerItems').innerHTML = list.map((p, index) => {
+            return `<div class="prayer-item" id="pray-${index}"><span>${p[0]}</span><span>${p[1]}</span></div>`;
+        }).join('');
+        
+        updateActivePrayer();
+    }
+
+    // LOGIKA INDIKATOR OTOMATIS
+    function updateActivePrayer() {
+        if (!prayerTimesData.Fajr) return;
+
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+
+        const times = [
+            { name: "Subuh", time: prayerTimesData.Fajr },
+            { name: "Terbit", time: prayerTimesData.Sunrise },
+            { name: "Dzuhur", time: prayerTimesData.Dhuhr },
+            { name: "Ashar", time: prayerTimesData.Asr },
+            { name: "Maghrib", time: prayerTimesData.Maghrib },
+            { name: "Isya", time: prayerTimesData.Isha }
+        ];
+
+        let activeIndex = -1;
+
+        // Cari sholat yang saat ini sedang berlangsung
+        for (let i = 0; i < times.length; i++) {
+            const [h, m] = times[i].time.split(':').map(Number);
+            const prayerMinutes = h * 60 + m;
+
+            if (currentTime >= prayerMinutes) {
+                activeIndex = i;
+            }
         }
 
         // Hapus semua class active
