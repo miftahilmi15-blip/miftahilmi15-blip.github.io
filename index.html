@@ -10,7 +10,6 @@
 
   :root {
     --primary: #1f6f51;      /* hijau tua */
-    --primary-600: #19523f;
     --accent: #d4b96a;      /* gold */
     --bg: #f3fbf7;      
     --card: #ffffff;
@@ -18,7 +17,6 @@
     --soft: rgba(31, 111, 81, 0.08);
   }
 
-  /* ========== BASE ========== */
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
 
   body {
@@ -26,200 +24,9 @@
     color: #123;
     padding: 20px;
     min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
   }
 
-  .container { max-width: 450px; margin: 0 auto; padding-bottom: 40px; }
-
-  /* ========== HEADER (Logo Tengah) ========== */
-  .header-box { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 30px 20px; }
-  .logo-box { width: 90px; height: 90px; }
-  .logo { width: 100%; height: 100%; object-fit: contain; }
-  .header-text .title { font-size: 26px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-  .header-text .tagline { font-size: 13px; color: var(--muted); margin-top: 5px; }
-
-  /* ========== CARD (Simetris & Bersih) ========== */
-  .card {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 30px;
-    margin: 18px 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0,0,0,0.08); 
-    transition: all .25s ease;
-  }
-  .card.login h2 { font-size: 22px; color: var(--primary); font-weight: 800; margin-bottom: 20px; text-align: center; }
-
-  /* ========== INPUTS & BUTTONS ========== */
-  input {
-    width: 100%; padding: 14px 16px; font-size: 15px; border-radius: 8px;
-    border: 1px solid #d1d5db; background: #ffffff; margin: 10px 0; transition: all .2s;
-  }
-  input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--soft); }
-
-  .password-wrapper { position: relative; }
-  .toggle-pass { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); cursor: pointer; color: var(--muted); font-size: 12px; font-weight: 600; }
-
-  .login-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
-  .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 15px; transition: 0.3s; }
-  .btn.primary { background: var(--primary); color: #fff; }
-  .btn:not(.primary) { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-
-  /* ========== DASHBOARD & SIDEBAR ========== */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { background: #fff; padding: 15px 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(0,0,0,0.05); transition: 0.2s; cursor: pointer; }
-  .menu-item:hover { transform: translateY(-3px); border-color: var(--accent); }
-  .menu-icon { width: 35px; height: 35px; margin-bottom: 8px; }
-  .menu-item span { display: block; font-size: 10px; font-weight: 700; color: var(--primary); }
-
-  .menu-trigger { position: fixed; top: 20px; right: 20px; z-index: 1300; background: var(--primary); color: white; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; }
-  .sidebar { position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: #fff; transition: .4s; z-index: 1200; padding: 40px 20px; }
-  .sidebar.open { right: 0; box-shadow: -15px 0 35px rgba(0,0,0,0.1); }
-  .sidebar-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9; }
-  .sidebar-header img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--soft); margin-bottom: 10px; }
-  .sidebar-nav a { display: block; padding: 14px; text-decoration: none; color: #334155; font-weight: 600; font-size: 14px; border-radius: 10px; margin-bottom: 8px; background: #f8fafb; }
-
-  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1100; }
-  .overlay.show { display: block; }
-  .hidden { display:none !important; }
-  footer { text-align:center; padding:30px; color: var(--muted); font-size: 11px; }
-</style>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-</head>
-<body>
-
-<div class="menu-trigger" id="menu-btn" style="display:none;">☰</div>
-
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <img id="user-photo" src="assets/default-avatar.png">
-    <div class="user-name" id="sidebar-name" style="font-weight:700;">Memuat...</div>
-    <small id="sidebar-email"></small>
-  </div>
-  <div class="sidebar-nav">
-    <a href="index.html">🏠 Dashboard</a>
-    <a href="#" onclick="logout()" style="color: #c0392b; margin-top: 20px;">🚪 Logout</a>
-  </div>
-</div>
-
-<div class="overlay" id="overlay"></div>
-
-<header class="header-box">
-  <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
-  <div class="header-text">
-    <h1 class="title">E-Santri</h1>
-    <p class="tagline">Exclusive Digital Hub</p>
-  </div>
-</header>
-
-<main class="container">
-  <div id="login-card" class="card login">
-    <h2>Masuk Akun</h2>
-    <input type="email" id="email" placeholder="Email Santri">
-    <div class="password-wrapper">
-      <input type="password" id="password" placeholder="Password">
-      <span class="toggle-pass" onclick="togglePassword()">LIHAT</span>
-    </div>
-    <p id="msg" style="text-align:center; margin-top:10px; font-size:12px;"></p>
-    <div class="login-btn-group">
-      <button class="btn primary" onclick="login()">LOGIN</button>
-      <button class="btn" onclick="register()">DAFTAR</button>
-      <button class="btn" onclick="loginWithGoogle()">Google Login</button>
-    </div>
-  </div>
-
-  <section id="dashboard" class="hidden">
-    <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
-      <div class="menu-item" onclick="goTo('kalender.html')"><img src="icons/kalender.png" class="menu-icon"><span>Kalender</span></div>
-      <div class="menu-item" onclick="goTo('sop.html')"><img src="icons/sop.png" class="menu-icon"><span>SOP</span></div>
-    </div>
-  </section>
-</main>
-
-<footer>© 2025 E-SANTRI PREMIUM</footer>
-
-<script>
-  // INITIALIZE FIREBASE
-  firebase.initializeApp({
-    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
-    authDomain: "e-santri-ed555.firebaseapp.com",
-    projectId: "e-santri-ed555"
-  });
-  const auth = firebase.auth();
-
-  // LOGIN FUNCTION
-  function login() {
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
-    const msg = document.getElementById("msg");
-
-    if(!email || !pass) { msg.innerText = "Isi email & password!"; msg.style.color = "red"; return; }
-
-    auth.signInWithEmailAndPassword(email, pass)
-      .catch(e => { msg.innerText = "Gagal: " + e.message; msg.style.color = "red"; });
-  }
-
-  // REGISTER FUNCTION
-  function register() {
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
-    const msg = document.getElementById("msg");
-
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(() => { msg.innerText = "Berhasil! Silakan Login."; msg.style.color = "green"; })
-      .catch(e => { msg.innerText = e.message; msg.style.color = "red"; });
-  }
-
-  function loginWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(e => alert(e.message));
-  }
-
-  function logout() { auth.signOut().then(() => location.reload()); }
-
-  function togglePassword(){
-    const pass = document.getElementById("password");
-    pass.type = pass.type === "password" ? "text" : "password";
-  }
-
-  // AUTH STATE
-  auth.onAuthStateChanged(user => {
-    const loginCard = document.getElementById("login-card");
-    const dashboard = document.getElementById("dashboard");
-    const menuBtn = document.getElementById("menu-btn");
-
-    if(user) {
-      loginCard.classList.add("hidden");
-<!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Premium Edition</title>
-
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
-  :root {
-    --primary: #1f6f51;
-    --primary-600: #19523f;
-    --accent: #d4b96a;      
-    --bg: #f3fbf7;      
-    --card: #ffffff;
-    --muted: #6b6b6b;
-    --soft: rgba(31, 111, 81, 0.08);
-  }
-
-  /* ========== BASE & LAYOUT ========== */
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  body { background: linear-gradient(135deg, var(--bg), #eaf6f1); color: #123; padding: 20px; min-height: 100vh; -webkit-font-smoothing: antialiased; }
-  .container { max-width: 450px; margin: 0 auto; padding-bottom: 40px; }
+  .container { max-width: 450px; margin: 0 auto; }
 
   /* ========== HEADER ========== */
   .header-box { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 30px 20px; }
@@ -229,45 +36,59 @@
 
   /* ========== CARD SIMETRIS ========== */
   .card {
-    background: var(--card); border-radius: 12px; padding: 30px; margin: 18px 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0,0,0,0.08); 
-    transition: all .25s ease;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 18px 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0,0,0,0.08); 
+    text-align: center;
   }
-  .card h2 { font-size: 22px; color: var(--primary); font-weight: 800; margin-bottom: 20px; text-align: center; }
 
-  /* ========== INPUTS & BTN ========== */
-  input, textarea {
+  input {
     width: 100%; padding: 14px 16px; font-size: 15px; border-radius: 8px;
-    border: 1px solid #d1d5db; background: #ffffff; margin: 10px 0; transition: all .2s;
+    border: 1px solid #d1d5db; background: #ffffff; margin: 10px 0; outline: none;
   }
-  input:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--soft); }
-  
-  .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 15px; transition: 0.3s; text-align: center; }
+
+  .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 15px; transition: 0.3s; margin-top: 10px; }
   .btn.primary { background: var(--primary); color: #fff; }
-  .btn.secondary { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-  .login-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+  .btn.secondary { background: #f1f5f9; color: #475569; }
 
-  /* ========== DASHBOARD GRID ========== */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { background: #fff; padding: 15px 5px; border-radius: 12px; text-align: center; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
-  .menu-item:hover { transform: translateY(-3px); border-color: var(--accent); }
-  .menu-icon { width: 35px; height: 35px; margin-bottom: 8px; }
-  .menu-item span { display: block; font-size: 10px; font-weight: 700; color: var(--primary); }
+  /* ========== MENU TITIK TIGA (TRIGGER) ========== */
+  .menu-trigger {
+    position: fixed; top: 20px; right: 20px; z-index: 1300;
+    background: #fff; color: var(--primary); width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-size: 24px; font-weight: bold; border: 1px solid #eee;
+  }
 
-  /* ========== SIDEBAR & POPUP ========== */
-  .menu-trigger { position: fixed; top: 20px; right: 20px; z-index: 1000; background: #fff; color: var(--primary); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 24px; border: 1px solid #eee; }
-  
-  .sidebar { position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: #fff; transition: .4s; z-index: 1200; padding: 40px 20px; }
+  /* ========== SIDEBAR (ISI MENU ANDA) ========== */
+  .sidebar {
+    position: fixed; top: 0; right: -85%; width: 85%; height: 100%;
+    background: #fff; transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1200; padding: 40px 20px; overflow-y: auto;
+  }
   .sidebar.open { right: 0; box-shadow: -15px 0 35px rgba(0,0,0,0.1); }
-  
-  .popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
-  .popup.show { display: flex; }
-  .popup-content { background: #fff; width: 100%; max-width: 400px; padding: 25px; border-radius: 15px; position: relative; }
 
-  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1100; }
+  .sidebar-header { text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9; }
+  .sidebar-header img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--soft); margin-bottom: 10px; }
+  
+  /* Daftar Menu di dalam Sidebar */
+  .menu-list { display: flex; flex-direction: column; gap: 8px; }
+  .menu-link {
+    display: flex; align-items: center; gap: 15px;
+    padding: 14px 18px; text-decoration: none; color: #334155;
+    font-weight: 600; font-size: 14px; border-radius: 10px;
+    background: #f8fafb; transition: 0.2s; border: 1px solid transparent;
+  }
+  .menu-link:hover { background: var(--soft); color: var(--primary); border-color: var(--primary); }
+  .menu-link img { width: 24px; height: 24px; }
+
+  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
+  
   .hidden { display:none !important; }
-  footer { text-align:center; padding:30px; color: var(--muted); font-size: 11px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -278,40 +99,25 @@
 <div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
 
 <div class="sidebar" id="sidebar">
-  <div style="text-align:center; margin-bottom:30px;">
-    <img id="user-photo" src="assets/default-avatar.png" style="width:75px; height:75px; border-radius:50%; border:3px solid var(--soft); object-fit:cover;">
-    <div id="sidebar-name" style="font-weight:700; color:var(--primary); margin-top:10px;">User</div>
+  <div class="sidebar-header">
+    <img id="user-photo" src="assets/default-avatar.png">
+    <div id="sidebar-name" style="font-weight:700; color:var(--primary);">Memuat...</div>
     <small id="sidebar-email" style="color:var(--muted);"></small>
   </div>
-  <nav style="display:flex; flex-direction:column; gap:10px;">
-    <button class="btn secondary" style="text-align:left;" onclick="closeSidebar()">🏠 Dashboard</button>
-    <button class="btn secondary" style="text-align:left;" onclick="openEdit()">👤 Edit Profil</button>
-    <button class="btn secondary" style="text-align:left;" onclick="openWAReport()">📩 Pengaduan (WA)</button>
-    <button class="btn primary" style="margin-top:20px; background:#c0392b;" onclick="logout()">🚪 Keluar</button>
-  </nav>
-</div>
 
-<div id="edit-profile-popup" class="popup">
-  <div class="popup-content">
-    <h3 style="margin-bottom:15px; color:var(--primary);">Edit Profil</h3>
-    <input type="text" id="edit-name" placeholder="Nama Baru">
-    <input type="email" id="edit-email" placeholder="Email Baru">
-    <input type="password" id="edit-pass" placeholder="Password Baru">
-    <div style="display:flex; gap:10px; margin-top:10px;">
-      <button class="btn primary" onclick="saveProfile()">Simpan</button>
-      <button class="btn secondary" onclick="closeEdit()">Batal</button>
-    </div>
-  </div>
-</div>
-
-<div id="wa-report-popup" class="popup">
-  <div class="popup-content">
-    <h3 style="margin-bottom:15px; color:var(--primary);">Pengaduan Santri</h3>
-    <textarea id="wa-message" rows="4" placeholder="Tuliskan pengaduan Anda..."></textarea>
-    <div style="display:flex; gap:10px; margin-top:10px;">
-      <button class="btn primary" onclick="sendReport()">Kirim ke WA</button>
-      <button class="btn secondary" onclick="closeWAReport()">Batal</button>
-    </div>
+  <div class="menu-list">
+    <a href="#" class="menu-link" onclick="goTo('absensi.html')"><img src="icons/absensi.png"> Absensi Santri</a>
+    <a href="#" class="menu-link" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png"> Progres Tahfidz</a>
+    <a href="#" class="menu-link" onclick="goTo('alquran.html')"><img src="icons/alquran.png"> Al-Quran Digital</a>
+    <a href="#" class="menu-link" onclick="goTo('izin.html')"><img src="icons/izin.png"> Perizinan</a>
+    <a href="#" class="menu-link" onclick="goTo('kalender.html')"><img src="icons/kalender.png"> Kalender Akademik</a>
+    <a href="#" class="menu-link" onclick="goTo('sop.html')"><img src="icons/sop.png"> SOP Pesantren</a>
+    
+    <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+    
+    <a href="#" class="menu-link" onclick="alert('Buka Edit Profil')">👤 Edit Profil</a>
+    <a href="#" class="menu-link" onclick="alert('Buka Pengaduan')">📩 Pengaduan</a>
+    <a href="#" class="menu-link" onclick="logout()" style="color: #c0392b; background: #fff5f5;">🚪 Keluar Akun</a>
   </div>
 </div>
 
@@ -327,29 +133,21 @@
 
 <main class="container">
   <div id="login-card" class="card">
-    <h2>Masuk Akun</h2>
+    <h2 style="color:var(--primary); margin-bottom:20px;">Masuk</h2>
     <input type="email" id="email" placeholder="Email Santri">
     <input type="password" id="password" placeholder="Password">
-    <p id="msg" style="text-align:center; font-size:12px; min-height:18px;"></p>
-    <div class="login-btn-group">
-      <button class="btn primary" onclick="login()">LOGIN</button>
-      <button class="btn secondary" onclick="register()">DAFTAR AKUN</button>
-    </div>
+    <p id="msg"></p>
+    <button class="btn primary" onclick="login()">LOGIN</button>
+    <button class="btn secondary" onclick="register()">DAFTAR</button>
   </div>
 
-  <section id="dashboard" class="hidden">
-    <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Perizinan</span></div>
-      <div class="menu-item" onclick="goTo('kalender.html')"><img src="icons/kalender.png" class="menu-icon"><span>Kalender</span></div>
-      <div class="menu-item" onclick="goTo('sop.html')"><img src="icons/sop.png" class="menu-icon"><span>SOP</span></div>
+  <div id="dashboard" class="hidden">
+    <div class="card">
+      <h2 style="color:var(--primary);">Ahlan wa Sahlan!</h2>
+      <p style="color:var(--muted); margin-top:10px;">Silakan klik titik tiga di pojok kanan atas untuk mengakses menu santri.</p>
     </div>
-  </section>
+  </div>
 </main>
-
-<footer>© 2025 E-SANTRI PREMIUM</footer>
 
 <script>
   firebase.initializeApp({
@@ -359,94 +157,44 @@
   });
   const auth = firebase.auth();
 
-  // AUTH FUNCTIONS
-  async function login() {
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    const msg = document.getElementById("msg");
-    if(!email || !pass) return (msg.innerText="Isi email & pass!");
-    try {
-      const methods = await auth.fetchSignInMethodsForEmail(email);
-      if (methods.includes("google.com") && !methods.includes("password")) {
-        alert("Akun ini terdaftar via Google."); return;
-      }
-      await auth.signInWithEmailAndPassword(email, pass);
-    } catch (e) { msg.innerText = e.message; msg.style.color="red"; }
+  // Logic Login & Register
+  function login() {
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
   }
 
   function register() {
-    const email = document.getElementById("email").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(() => alert("Berhasil! Silakan Login."))
-      .catch(e => alert(e.message));
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    auth.createUserWithEmailAndPassword(e, p).then(() => alert("Sukses!")).catch(err => alert(err.message));
   }
 
   function logout() { auth.signOut().then(() => location.reload()); }
 
-  // SIDEBAR & POPUP UI
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  const menuBtn = document.getElementById("menu-btn");
-
-  menuBtn.onclick = () => { sidebar.classList.add("open"); overlay.classList.add("show"); }
-  overlay.onclick = closeSidebar;
-  function closeSidebar() { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
-
-  function openEdit() { closeSidebar(); document.getElementById('edit-profile-popup').classList.add('show'); }
-  function closeEdit() { document.getElementById('edit-profile-popup').classList.remove('show'); }
-  
-  function openWAReport() { closeSidebar(); document.getElementById("wa-report-popup").classList.add('show'); }
-  function closeWAReport() { document.getElementById("wa-report-popup").classList.remove('show'); }
-
-  // EDIT PROFILE LOGIC (FROM YOUR ORIGINAL JS)
-  async function saveProfile() {
-    const user = auth.currentUser;
-    const name = document.getElementById('edit-name').value;
-    const newEmail = document.getElementById('edit-email').value;
-    const newPass = document.getElementById('edit-pass').value;
-
-    const currentPassword = prompt("Masukkan password lama untuk konfirmasi:");
-    if (!currentPassword) return;
-
-    try {
-      const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
-      await user.reauthenticateWithCredential(credential);
-      if (name) await user.updateProfile({ displayName: name });
-      if (newEmail) await user.updateEmail(newEmail);
-      if (newPass) await user.updatePassword(newPass);
-      alert("Update Berhasil!");
-      location.reload();
-    } catch (e) { alert("Gagal: " + e.message); }
-  }
-
-  // WA REPORT LOGIC (FROM YOUR ORIGINAL JS)
-  function sendReport() {
-    const user = auth.currentUser;
-    const pesan = document.getElementById("wa-message").value;
-    if (!pesan) return alert("Isi pesan!");
-    const text = `Pengaduan Santri:\nNama: ${user.displayName||'Santri'}\nEmail: ${user.email}\n\nPesan: ${pesan}`;
-    window.open(`https://wa.me/6289661946783?text=${encodeURIComponent(text)}`, "_blank");
-    closeWAReport();
-  }
-
-  // STATE LISTENER
+  // Auth Listener
   auth.onAuthStateChanged(user => {
     if(user) {
       document.getElementById("login-card").classList.add("hidden");
       document.getElementById("dashboard").classList.remove("hidden");
-      menuBtn.style.display = "flex";
+      document.getElementById("menu-btn").style.display = "flex";
       document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
       document.getElementById("sidebar-email").innerText = user.email;
-      document.getElementById("user-photo").src = user.photoURL || "assets/default-avatar.png";
     } else {
       document.getElementById("login-card").classList.remove("hidden");
       document.getElementById("dashboard").classList.add("hidden");
-      menuBtn.style.display = "none";
+      document.getElementById("menu-btn").style.display = "none";
     }
   });
 
-  function goTo(x) { window.location.href = x; }
+  // Sidebar Interaction
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  document.getElementById("menu-btn").onclick = () => { sidebar.classList.add("open"); overlay.classList.add("show"); }
+  overlay.onclick = () => { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+
+  function goTo(url) { window.location.href = url; }
 </script>
+
 </body>
 </html>
