@@ -201,42 +201,338 @@
         </div>
         <div class="menu-item" onclick="goTo('tahfidz.html')">
           <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
-        </div>
-        <div class="menu-item" onclick="goTo('alquran.html')">
-          <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
-        </div>
-        <div class="menu-item" onclick="goTo('izin.html')">
-          <img src="icons/izin.png" class="menu-icon"><span>Perizinan</span>
-        </div>
-      </div>
-    </section>
-  </main>
-</div>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Santri | Premium</title>
 
-<footer>
-  © 2025 E-SANTRI PREMIUM • KOTA CIREBON
-</footer>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+  :root {
+    --primary: #1f6f51;      /* hijau tua */
+    --primary-600: #19523f;
+    --accent: #d4b96a;      /* gold */
+    --bg: #f3fbf7;      
+    --card: #ffffff;
+    --muted: #6b6b6b;
+    --soft: rgba(31, 111, 81, 0.08);
+  }
+
+  /* ========== BASE ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+
+  body {
+    background: linear-gradient(135deg, var(--bg), #eaf6f1);
+    color: #123;
+    padding: 20px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 450px; 
+    margin: 0 auto;
+    padding-bottom: 40px;
+  }
+
+  /* ========== HEADER (Logo Tengah) ========== */
+  .header-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    padding: 30px 20px;
+  }
+
+  .logo-box { width: 90px; height: 90px; }
+  .logo { width: 100%; height: 100%; object-fit: contain; }
+
+  .header-text .title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .header-text .tagline {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  /* ========== CARD (Simetris & Bersih) ========== */
+  .card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 18px 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0,0,0,0.08); 
+    transition: all .25s ease;
+  }
+
+  .card.login h2 {
+    font-size: 22px;
+    color: var(--primary);
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* ========== INPUTS ========== */
+  input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    margin: 10px 0;
+    transition: all .2s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--soft);
+  }
+
+  .password-wrapper { position: relative; }
+  .toggle-pass {
+    position: absolute; top: 50%; right: 12px;
+    transform: translateY(-50%); cursor: pointer;
+    color: var(--muted); font-size: 12px; font-weight: 600;
+  }
+
+  /* ========== BUTTONS (Full Width) ========== */
+  .login-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .btn.primary { background: var(--primary); color: #fff; }
+  .btn.primary:hover { background: var(--primary-600); }
+  
+  .btn:not(.primary) {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* ========== DASHBOARD GRID ========== */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .menu-item {
+    background: #fff;
+    padding: 15px 10px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    transition: 0.2s;
+    cursor: pointer;
+  }
+
+  .menu-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+  }
+
+  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
+  .menu-item span { display: block; font-size: 11px; font-weight: 700; color: var(--primary); }
+
+  /* ========== SIDEBAR & MENU TRIGGER ========== */
+  .menu-trigger {
+    position: fixed; top: 20px; right: 20px; z-index: 1300;
+    background: var(--primary); color: white;
+    width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .sidebar { 
+    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
+    background: #fff; transition: .4s cubic-bezier(0.4, 0, 0.2, 1); 
+    z-index: 1200; display: flex; flex-direction: column; padding: 40px 20px;
+  }
+  
+  .sidebar.open { right: 0; box-shadow: -15px 0 35px rgba(0,0,0,0.1); }
+
+  .sidebar-header {
+    text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9;
+  }
+  .sidebar-header img {
+    width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+    margin-bottom: 10px; border: 3px solid var(--soft);
+  }
+  .sidebar-header .user-name { font-weight: 700; color: var(--primary); font-size: 18px; }
+
+  .sidebar-nav a {
+    display: block; padding: 14px 18px; text-decoration: none;
+    color: #334155; font-weight: 600; font-size: 14px;
+    border-radius: 10px; margin-bottom: 8px; background: #f8fafb; transition: 0.2s;
+  }
+
+  .sidebar-nav a:hover { background: var(--soft); color: var(--primary); transform: translateX(5px); }
+
+  .overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 1100; 
+  }
+  .overlay.show { display: block; }
+
+  .hidden { display:none !important; }
+  footer { text-align:center; padding:30px; color: var(--muted); font-size: 12px; font-weight: 600; }
+</style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<div class="menu-trigger" id="menu-btn" style="display:none;">☰</div>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img id="user-photo" src="assets/default-avatar.png">
+    <div class="user-name" id="sidebar-name">Memuat...</div>
+    <small id="sidebar-email"></small>
+  </div>
+  <div class="sidebar-nav">
+    <a href="index.html">🏠 Dashboard</a>
+    <a href="#" onclick="openEdit()">👤 Edit Profil</a>
+    <a href="pengaduan.html">📩 Pengaduan Santri</a>
+    <a href="kalender.html">📅 Kalender</a>
+    <a href="waktu-sholat.html">🕌 Waktu Sholat</a>
+    <a href="#" onclick="logout()" style="color: #c0392b; margin-top: 20px; background: rgba(192, 57, 43, 0.05);">🚪 Logout</a>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<header class="header-box">
+  <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
+  <div class="header-text">
+    <h1 class="title">E-Santri</h1>
+    <p class="tagline">Berpegang teguh pada Al-Quran dan Hadist</p>
+  </div>
+</header>
+
+<main class="container">
+  <div id="login-card" class="card login">
+    <h2>Masuk Akun</h2>
+    <input type="email" id="email" placeholder="Email Santri" required>
+    <div class="password-wrapper">
+      <input type="password" id="password" placeholder="Password" required>
+      <span class="toggle-pass" onclick="togglePassword()">LIHAT</span>
+    </div>
+    <p id="msg" style="text-align:center; margin-top:10px; font-size:13px;"></p>
+    <div class="login-btn-group">
+      <button class="btn primary" onclick="login()">LOGIN</button>
+      <button class="btn" onclick="register()">DAFTAR AKUN</button>
+      <button class="btn" onclick="loginWithGoogle()" style="display:flex; align-items:center; justify-content:center; gap:10px;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google
+      </button>
+    </div>
+  </div>
+
+  <section id="dashboard" class="hidden">
+    <div class="menu-grid">
+      <div class="menu-item" onclick="goTo('absensi.html')">
+        <img src="icons/absensi.png" class="menu-icon"><span>Absensi</span>
+      </div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')">
+        <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
+      </div>
+      <div class="menu-item" onclick="goTo('alquran.html')">
+        <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
+      </div>
+      <div class="menu-item" onclick="goTo('sop.html')">
+        <img src="icons/sop.png" class="menu-icon"><span>SOP</span>
+      </div>
+      <div class="menu-item" onclick="goTo('kalender.html')">
+        <img src="icons/kalender.png" class="menu-icon"><span>Kalender</span>
+      </div>
+      <div class="menu-item" onclick="goTo('izin.html')">
+        <img src="icons/izin.png" class="menu-icon"><span>Izin</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <small>© 2025 E-SANTRI PREMIUM</small>
+</footer>
 
 <script>
-  // ... (Gunakan script Firebase Anda yang sebelumnya di sini) ...
-  // Tambahkan sedikit logic UI untuk sidebar
-  const sidebar = document.getElementById("sidebar");
-  const menuBtn = document.getElementById("menu-btn");
-  const overlay = document.getElementById("overlay");
+  // Hubungkan kembali Firebase Anda
+  firebase.initializeApp({
+    apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain: "e-santri-ed555.firebaseapp.com",
+    projectId: "e-santri-ed555"
+  });
+  const auth = firebase.auth();
 
-  menuBtn.onclick = () => {
-    sidebar.classList.toggle("open");
-    overlay.classList.toggle("show");
+  // Fungsi-fungsi dasar UI
+  function togglePassword(){
+    const pass = document.getElementById("password");
+    const btn = document.querySelector(".toggle-pass");
+    if(pass.type==="password"){ pass.type="text"; btn.innerText="TUTUP"; }
+    else{ pass.type="password"; btn.innerText="LIHAT"; }
   }
 
-  // Sembunyikan sidebar saat klik overlay
-  overlay.onclick = () => {
-    sidebar.classList.remove("open");
-    overlay.classList.remove("show");
-  }
+  // State Listener
+  auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card");
+    const dashboard=document.getElementById("dashboard");
+    const menuBtn=document.getElementById("menu-btn");
+    if(user){
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display="flex";
+      document.getElementById("sidebar-name").innerText=user.displayName||"Santri";
+      document.getElementById("sidebar-email").innerText=user.email;
+      document.getElementById("user-photo").src=user.photoURL||"assets/default-avatar.png";
+    }else{
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      menuBtn.style.display="none";
+    }
+  });
+
+  // Sidebar Logic
+  const sidebar=document.getElementById("sidebar");
+  const overlay=document.getElementById("overlay");
+  const menuBtn=document.getElementById("menu-btn");
+  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
+  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+
+  // Fungsi Navigasi
+  function goTo(x){ window.location=x; }
+  function logout(){ auth.signOut().then(()=>location.reload()); }
+  function login(){ /* Gunakan fungsi login Anda sebelumnya */ }
+  function register(){ /* Gunakan fungsi register Anda sebelumnya */ }
 </script>
 
 </body>
