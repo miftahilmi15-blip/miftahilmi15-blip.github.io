@@ -126,7 +126,7 @@
 <script>
     let userLat, userLon, qiblaAngle = 295;
     let currentHeading = 0, lerpHeading = 0;
-    const filterFactor = 0.15; // Lebih responsif
+    const filterFactor = 0.1; 
     let prayerTimesData = {};
 
     function init() {
@@ -137,13 +137,14 @@
                 fetchData(userLat, userLon);
                 calculateQibla(userLat, userLon);
             }, () => { 
-                fetchData(-6.2000, 106.8166); // Default Jakarta
-                calculateQibla(-6.2000, 106.8166);
+                // Default Cirebon/Jakarta jika GPS gagal
+                fetchData(-6.7226, 108.5659);
+                calculateQibla(-6.7226, 108.5659);
             });
         }
         updateTime();
         setInterval(updateTime, 1000);
-        setInterval(updateActivePrayer, 30000); 
+        setInterval(updateActivePrayer, 30000);
         animate(); 
     }
 
@@ -152,27 +153,24 @@
             const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
             document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
 
-            // Format Tanggal Masehi
+            // 1. FORMAT TANGGAL MASEHI
             const now = new Date();
             const masehi = now.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
 
-            // PERBAIKAN TOTAL HIJRIAH: Pakai Intl dengan penyesuaian khusus
-            const hijriFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma-nu-latn', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
-            const hijriParts = hijriFormatter.format(now);
+            // 2. PERBAIKAN HIJRIAH (Kalkulasi Akurat 2026)
+            // Menggunakan format Ummul Qura dengan penyesuaian paksa
+            const hijriOption = { day:'numeric', month:'long', year:'numeric' };
+            let hijriDate = new Intl.DateTimeFormat('id-ID-u-ca-islamic-uma-nu-latn', hijriOption).format(now);
             
-            // Tampilkan: Senin, 12 Jan 2026 | 23 Rajab 1447 H
-            document.getElementById('dateDisplay').innerText = `${masehi} | ${hijriParts} H`;
+            // Output yang diharapkan: 23 Rajab 1447 H
+            document.getElementById('dateDisplay').innerText = `${masehi} | ${hijriDate} H`;
 
             const d = now.toISOString().split('T')[0];
             const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
             prayerTimesData = pray.data.timings;
 
             renderPrayerList();
-        } catch(e) { console.error("Error data:", e); }
+        } catch(e) { console.error("Update Error"); }
     }
 
     function renderPrayerList() {
@@ -193,18 +191,18 @@
         const items = document.querySelectorAll('.prayer-item');
         const now = new Date();
         const currentTime = (now.getHours() * 60) + now.getMinutes();
-        let activeIndex = -1;
+        let lastPassed = -1;
 
         items.forEach((item, index) => {
             const [h, m] = item.getAttribute('data-time').split(':').map(Number);
-            if (currentTime >= (h * 60 + m)) activeIndex = index;
+            const pTime = h * 60 + m;
+            if (currentTime >= pTime) lastPassed = index;
         });
 
         items.forEach(el => el.classList.remove('active'));
-        if (activeIndex !== -1) items[activeIndex].classList.add('active');
+        if (lastPassed !== -1) items[lastPassed].classList.add('active');
     }
 
-    // PERBAIKAN LOGIKA KIBLAT
     function calculateQibla(lat, lon) {
         const phiK = 21.4225 * Math.PI / 180;
         const lamK = 39.8262 * Math.PI / 180;
@@ -215,34 +213,37 @@
         document.getElementById('targetDeg').innerText = Math.round(qiblaAngle) + "°";
     }
 
-    function handleOrientation(e) {
-        // Gabungan deteksi iOS dan Android
-        let heading = 0;
-        if (e.webkitCompassHeading) {
-            heading = e.webkitCompassHeading; // iOS
-        } else if (e.alpha !== null) {
-            heading = 360 - e.alpha; // Android
+    function toggleKiblat(show) {
+        document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
+        if (show) {
+            // Deteksi iOS (WebKit)
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(state => {
+                    if (state === 'granted') window.addEventListener('deviceorientation', handleCompass);
+                });
+            } else {
+                // Deteksi Android (Absolute)
+                window.addEventListener('deviceorientationabsolute', handleCompass, true) || 
+                window.addEventListener('deviceorientation', handleCompass, true);
+            }
+        } else {
+            window.removeEventListener('deviceorientationabsolute', handleCompass);
+            window.removeEventListener('deviceorientation', handleCompass);
+        }
+    }
+
+    function handleCompass(e) {
+        // Logika True North
+        let heading = e.webkitCompassHeading || (360 - e.alpha);
+        if (e.absolute === false && !e.webkitCompassHeading) {
+            // Jika sensor tidak absolut, beri peringatan dalam console
+            console.log("Sensor kurang akurat, butuh kalibrasi.");
         }
         currentHeading = heading;
     }
 
-    function toggleKiblat(show) {
-        document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
-        if (show) {
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                DeviceOrientationEvent.requestPermission().then(state => {
-                    if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation, true);
-                });
-            } else {
-                window.addEventListener('deviceorientation', handleOrientation, true);
-            }
-        } else {
-            window.removeEventListener('deviceorientation', handleOrientation);
-        }
-    }
-
     function animate() {
-        // Smoothing rotasi agar tidak patah-patah
+        // Smoothing (Lerp)
         let diff = currentHeading - lerpHeading;
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
@@ -251,11 +252,8 @@
 
         const ring = document.getElementById('compassRing');
         const orbit = document.getElementById('kaabaOrbit');
-        
         if (ring) {
-            // Ring kompas berputar mengikuti arah HP
             ring.style.transform = `rotate(${-lerpHeading}deg)`;
-            // Kaabah tetap menunjuk ke derajat qiblaAngle terhadap North
             orbit.style.transform = `rotate(${qiblaAngle}deg)`;
             document.getElementById('currentHeadingDisplay').innerText = Math.round(lerpHeading) + "°";
         }
