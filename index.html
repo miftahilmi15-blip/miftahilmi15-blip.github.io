@@ -9,9 +9,9 @@
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
   :root {
-    --primary: #1f6f51;      /* hijau tua */
+    --primary: #1f6f51;
     --primary-hover: #16503a;
-    --accent: #d4b96a;      /* gold */
+    --accent: #d4b96a;      
     --bg: #f3fbf7;      
     --card: #ffffff;
     --muted: #6b6b6b;
@@ -36,21 +36,21 @@
   .header-text .title { font-size: 26px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
   .header-text .tagline { font-size: 13px; color: var(--muted); margin-top: 5px; }
 
-  /* ========== CARD SIMETRIS (MEWAH) ========== */
+  /* ========== CARD SIMETRIS ========== */
   .card {
     background: var(--card);
     border-radius: 12px;
     padding: 30px;
     margin-bottom: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0,0,0,0.08); /* Garis simetris halus */
+    border: 1px solid rgba(0,0,0,0.08);
     transition: all .25s ease;
   }
   .card.login h2 { font-size: 24px; color: var(--primary); font-weight: 700; text-align: center; margin-bottom: 5px; }
   .card.login p.welcome-txt { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 20px; }
 
   /* ========== INPUTS & BUTTONS ========== */
-  input {
+  input[type="email"], input[type="password"] {
     width: 100%; padding: 14px 16px; margin-bottom: 12px; border-radius: 8px;
     border: 1px solid #ddd; background: #ffffff; font-size: 15px; transition: 0.3s;
   }
@@ -58,6 +58,13 @@
 
   .password-wrapper { position: relative; }
   .toggle-pass { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); cursor: pointer; color: var(--muted); font-size: 11px; font-weight: 600; }
+
+  /* Style Checkbox Simpan Password */
+  .remember-me {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 15px; 
+    font-size: 13px; color: var(--muted); cursor: pointer;
+  }
+  .remember-me input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
 
   .login-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
   .btn { width: 100%; padding: 14px; border-radius: 8px; border: none; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; text-align: center; }
@@ -72,7 +79,7 @@
   .menu-icon { width: 45px; height: 45px; margin-bottom: 8px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 600; color: #555; }
 
-  /* ========== MENU TRIGGER (TITIK TIGA) ========== */
+  /* ========== MENU TRIGGER ========== */
   .menu-trigger {
     position: fixed; top: 20px; right: 20px; z-index: 1300;
     background: #fff; color: var(--primary); width: 40px; height: 40px;
@@ -143,12 +150,20 @@
   <div id="login-card" class="card login">
     <h2>Ahlan wa Sahlan!</h2>
     <p class="welcome-txt">Silakan masuk ke akun santri Anda</p>
+    
     <input type="email" id="email" placeholder="Email" required>
+    
     <div class="password-wrapper">
       <input type="password" id="password" placeholder="Password" required>
       <span class="toggle-pass" onclick="togglePassword()">Tampilkan</span>
     </div>
+
+    <label class="remember-me">
+      <input type="checkbox" id="remember-checkbox"> Simpan Password
+    </label>
+
     <p id="msg" style="text-align:center; font-size:12px; margin-bottom:10px;"></p>
+    
     <div class="login-btn-group">
       <button class="btn primary" onclick="login()">Login</button>
       <button class="btn" onclick="register()">Daftar Akun Baru</button>
@@ -161,27 +176,13 @@
         <h3 id="welcome-msg" style="color:var(--primary);">Selamat Datang</h3>
     </div>
     <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')">
-        <img src="icons/absensi.png" class="menu-icon"><span>Absensi Santri</span>
-      </div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')">
-        <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
-      </div>
-      <div class="menu-item" onclick="goTo('alquran.html')">
-        <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
-      </div>
-      <div class="menu-item" onclick="goTo('sop.html')">
-        <img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span>
-      </div>
-      <div class="menu-item" onclick="goTo('kalender.html')">
-        <img src="icons/kalender.png" class="menu-icon"><span>Kaldik Yayasan</span>
-      </div>
-      <div class="menu-item" onclick="goTo('izin.html')">
-        <img src="icons/izin.png" class="menu-icon"><span>Perizinan Santri</span>
-      </div>
-      <div class="menu-item" onclick="goTo('ibadah.html')">
-        <img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span>
-      </div>
+      <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi Santri</span></div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="goTo('sop.html')"><img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span></div>
+      <div class="menu-item" onclick="goTo('kalender.html')"><img src="icons/kalender.png" class="menu-icon"><span>Kaldik Yayasan</span></div>
+      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Perizinan Santri</span></div>
+      <div class="menu-item" onclick="goTo('ibadah.html')"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
     </div>
   </section>
 </main>
@@ -197,6 +198,17 @@
     projectId:"e-santri-ed555"
   });
   const auth = firebase.auth();
+
+  // FUNGSI LOAD DATA TERSIMPAN (MEMORIZE)
+  window.onload = () => {
+    const savedEmail = localStorage.getItem("e_santri_email");
+    const savedPass = localStorage.getItem("e_santri_pass");
+    if (savedEmail && savedPass) {
+      document.getElementById("email").value = savedEmail;
+      document.getElementById("password").value = savedPass;
+      document.getElementById("remember-checkbox").checked = true;
+    }
+  };
 
   function togglePassword(){
     const pass = document.getElementById("password");
@@ -214,7 +226,19 @@
   function login(){
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
+    const remember = document.getElementById("remember-checkbox").checked;
+
     auth.signInWithEmailAndPassword(email,pass)
+      .then(() => {
+        // Logika Simpan ke LocalStorage
+        if (remember) {
+          localStorage.setItem("e_santri_email", email);
+          localStorage.setItem("e_santri_pass", pass);
+        } else {
+          localStorage.removeItem("e_santri_email");
+          localStorage.removeItem("e_santri_pass");
+        }
+      })
       .catch(e=> msg(e.message));
   }
 
