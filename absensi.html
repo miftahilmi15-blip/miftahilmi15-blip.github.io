@@ -1,39 +1,95 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Absensi Santri SMP Al-Irsyad</title>
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-<style>
-body { font-family:'Poppins', sans-serif; background:#f4f7f6; padding:20px; }
-.container { max-width:1000px; margin:auto; }
-h2 { text-align:center; color:#1f6f51; }
-select, input[type=file], button { padding:8px 12px; margin:5px 0; border-radius:5px; border:1px solid #ccc; }
-button { background:#1f6f51; color:#fff; cursor:pointer; }
-button:hover { background:#16503a; }
-table { width:100%; border-collapse: collapse; margin-top:20px; }
-th, td { border:1px solid #ddd; padding:8px; text-align:center; }
-th { background:#1f6f51; color:#fff; }
-td[contenteditable="true"] { background:#eaf5ea; cursor:text; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Absensi Digital - SMP Al-Irsyad</title>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1f6f51;
+            --secondary: #16503a;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --h: #22c55e; --s: #eab308; --i: #3b82f6; --a: #ef4444;
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: #334155; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        header { text-align: center; margin-bottom: 30px; }
+        h2 { color: var(--primary); margin-bottom: 5px; }
+        .info-date { font-weight: 600; color: #64748b; }
+
+        .toolbar { display: flex; flex-wrap: wrap; gap: 15px; background: #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 25px; align-items: center; }
+        
+        .stats { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-card { flex: 1; padding: 15px; border-radius: 12px; color: white; text-align: center; min-width: 120px; }
+        
+        input[type=file], select { border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; outline: none; }
+        button { border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-save:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+        th { background: #f8fafc; color: #475569; padding: 15px; text-transform: uppercase; font-size: 0.75rem; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px 15px; text-align: center; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        tr:hover { background: #f8fafc; }
+
+        /* Tombol Status */
+        .status-btn-group { display: flex; justify-content: center; gap: 5px; }
+        .btn-st { width: 35px; height: 35px; border-radius: 8px; border: 2px solid #e2e8f0; background: white; cursor: pointer; font-weight: bold; transition: 0.2s; color: #94a3b8; }
+        
+        .btn-st.active-h { background: var(--h); color: white; border-color: var(--h); }
+        .btn-st.active-s { background: var(--s); color: white; border-color: var(--s); }
+        .btn-st.active-i { background: var(--i); color: white; border-color: var(--i); }
+        .btn-st.active-a { background: var(--a); color: white; border-color: var(--a); }
+    </style>
 </head>
 <body>
 
 <div class="container">
-<h2>Absensi Santri SMP Al-Irsyad 2025/2026</h2>
+    <header>
+        <h2>SMP AL-IRSYAD DIGITAL ATTENDANCE</h2>
+        <p class="info-date" id="current-date"></p>
+    </header>
 
-<input type="file" id="file-input" accept=".xlsx"/>
-<select id="kelas-select"><option value="">Pilih Kelas</option></select>
-<button id="export-btn">Simpan ke Excel</button>
+    <div class="toolbar">
+        <div style="display:flex; flex-direction:column;">
+            <label style="font-size:0.75rem; font-weight:bold; margin-bottom:5px;">Import Database Excel</label>
+            <input type="file" id="file-input" accept=".xlsx"/>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+            <label style="font-size:0.75rem; font-weight:bold; margin-bottom:5px;">Pilih Kelas</label>
+            <select id="kelas-select"><option value="">Pilih Kelas</option></select>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:10px; align-items: flex-end;">
+            <button id="export-btn" class="btn-save">💾 Simpan ke Excel</button>
+        </div>
+    </div>
 
-<table id="absensi-table">
-<thead>
-<tr><th>NO</th><th>NIPD</th><th>NAMA</th><th>JK</th><th>KET</th></tr>
-</thead>
-<tbody></tbody>
-</table>
+    <div class="stats">
+        <div class="stat-card" style="background: var(--h)">Hadir: <span id="count-h">0</span></div>
+        <div class="stat-card" style="background: var(--s)">Sakit: <span id="count-s">0</span></div>
+        <div class="stat-card" style="background: var(--i)">Izin: <span id="count-i">0</span></div>
+        <div class="stat-card" style="background: var(--a)">Alpha: <span id="count-a">0</span></div>
+    </div>
+
+    <table id="absensi-table">
+        <thead>
+            <tr>
+                <th width="50">NO</th>
+                <th width="120">NIPD</th>
+                <th>NAMA SANTRI</th>
+                <th width="80">JK</th>
+                <th width="200">KETERANGAN (KLIK STATUS)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="5" style="padding:40px; color:#94a3b8;">Silakan upload file Excel dan pilih kelas...</td></tr>
+        </tbody>
+    </table>
 </div>
 
 <script>
@@ -41,61 +97,113 @@ const fileInput = document.getElementById('file-input');
 const kelasSelect = document.getElementById('kelas-select');
 const tableBody = document.querySelector('#absensi-table tbody');
 const exportBtn = document.getElementById('export-btn');
+
+document.getElementById('current-date').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
 let workbookData = null;
 
 // Load Excel
-fileInput.addEventListener('change', e=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = evt => {
-    const data = evt.target.result;
-    const workbook = XLSX.read(data, { type: 'binary' });
-    workbookData = workbook;
-
-    kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>';
-    workbook.SheetNames.forEach(sheet=>{
-      const option = document.createElement('option');
-      option.value = sheet;
-      option.textContent = sheet;
-      kelasSelect.appendChild(option);
-    });
-  };
-  reader.readAsBinaryString(file);
+fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = evt => {
+        const workbook = XLSX.read(evt.target.result, { type: 'binary' });
+        workbookData = workbook;
+        kelasSelect.innerHTML = '<option value="">Pilih Kelas</option>';
+        workbook.SheetNames.forEach(sheet => {
+            const option = new Option(sheet, sheet);
+            kelasSelect.add(option);
+        });
+    };
+    reader.readAsBinaryString(file);
 });
 
 // Tampilkan data per kelas
-kelasSelect.addEventListener('change', e=>{
-  const sheetName = e.target.value;
-  if(!sheetName || !workbookData) return;
+kelasSelect.addEventListener('change', e => {
+    const sheetName = e.target.value;
+    if (!sheetName) return;
 
-  const worksheet = workbookData.Sheets[sheetName];
-  const jsonData = XLSX.utils.sheet_to_json(worksheet, { header:1 });
-  tableBody.innerHTML='';
+    const worksheet = workbookData.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    tableBody.innerHTML = '';
 
-  // mulai dari baris ke-4 untuk skip header
-  for(let i=3; i<jsonData.length; i++){
-    const row = jsonData[i];
-    if(row.length < 5) continue;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${row[0]||''}</td><td>${row[1]||''}</td><td>${row[2]||''}</td><td>${row[3]||''}</td><td contenteditable="true">${row[4]||''}</td>`;
-    tableBody.appendChild(tr);
-  }
+    // Loop data mulai baris ke-4 (i=3)
+    for (let i = 3; i < jsonData.length; i++) {
+        const row = jsonData[i];
+        if (!row[2]) continue; // Skip jika nama kosong
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${row[0] || i-2}</td>
+            <td>${row[1] || '-'}</td>
+            <td style="text-align:left; font-weight:600;">${row[2]}</td>
+            <td>${row[3] || '-'}</td>
+            <td>
+                <div class="status-btn-group" data-nipd="${row[1]}">
+                    <button class="btn-st" onclick="setStatus(this, 'H')">H</button>
+                    <button class="btn-st" onclick="setStatus(this, 'S')">S</button>
+                    <button class="btn-st" onclick="setStatus(this, 'I')">I</button>
+                    <button class="btn-st" onclick="setStatus(this, 'A')">A</button>
+                </div>
+            </td>
+        `;
+        tableBody.appendChild(tr);
+    }
+    updateStats();
 });
 
-// Export ke Excel
-exportBtn.addEventListener('click', ()=>{
-  const ws_data = [];
-  ws_data.push(['NO','NIPD','NAMA','JK','KET']);
-  document.querySelectorAll('#absensi-table tbody tr').forEach(tr=>{
-    const row=[];
-    tr.querySelectorAll('td').forEach(td=>row.push(td.innerText));
-    ws_data.push(row);
-  });
-  const ws = XLSX.utils.aoa_to_sheet(ws_data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Absensi');
-  XLSX.writeFile(wb, 'absensi_santri.xlsx');
+// Fungsi Set Status
+function setStatus(btn, code) {
+    const group = btn.parentElement;
+    group.querySelectorAll('.btn-st').forEach(b => b.className = 'btn-st'); // Reset
+    
+    const colors = { 'H': 'active-h', 'S': 'active-s', 'I': 'active-i', 'A': 'active-a' };
+    btn.classList.add(colors[code]);
+    btn.setAttribute('data-selected', code);
+    
+    updateStats();
+}
+
+// Update Statistik Otomatis
+function updateStats() {
+    const counts = { 'H': 0, 'S': 0, 'I': 0, 'A': 0 };
+    document.querySelectorAll('.btn-st[data-selected]').forEach(btn => {
+        counts[btn.getAttribute('data-selected')]++;
+    });
+    
+    document.getElementById('count-h').textContent = counts['H'];
+    document.getElementById('count-s').textContent = counts['S'];
+    document.getElementById('count-i').textContent = counts['I'];
+    document.getElementById('count-a').textContent = counts['A'];
+}
+
+// Export dengan Validasi
+exportBtn.addEventListener('click', () => {
+    const rows = document.querySelectorAll('#absensi-table tbody tr');
+    if(rows.length < 2 && rows[0].innerText.includes("Silakan")) return alert("Data kosong!");
+
+    const exportData = [['NO', 'NIPD', 'NAMA SANTRI', 'JK', 'KETERANGAN']];
+    
+    rows.forEach(tr => {
+        const cells = tr.querySelectorAll('td');
+        const selectedBtn = tr.querySelector('.btn-st[data-selected]');
+        const ket = selectedBtn ? selectedBtn.getAttribute('data-selected') : '-';
+        
+        exportData.push([
+            cells[0].innerText,
+            cells[1].innerText,
+            cells[2].innerText,
+            cells[3].innerText,
+            ket
+        ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Absensi_" + kelasSelect.value);
+    
+    const fileName = `Absensi_${kelasSelect.value}_${new Date().toLocaleDateString('id-ID')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
 });
 </script>
 
