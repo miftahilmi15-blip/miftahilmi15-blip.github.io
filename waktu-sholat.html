@@ -136,80 +136,95 @@
                 userLon = pos.coords.longitude;
                 fetchData(userLat, userLon);
                 calculateQibla(userLat, userLon);
-            }, () => { alert("Akses GPS diperlukan."); });
+            }, () => { 
+                // Fallback jika GPS dimatikan (Jakarta)
+                fetchData(-6.2000, 106.8166);
+                calculateQibla(-6.2000, 106.8166);
+            });
         }
         updateTime();
         setInterval(updateTime, 1000);
-        setInterval(updateActivePrayer, 60000); // Cek indikator sholat setiap menit
+        setInterval(updateActivePrayer, 30000); // Cek setiap 30 detik
         animate(); 
     }
 
     async function fetchData(lat, lon) {
         try {
+            // 1. Ambil Nama Kota
             const loc = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json());
-            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || "Lokasi Anda";
+            document.getElementById('cityName').innerText = loc.address.city || loc.address.town || loc.address.village || "Lokasi Anda";
 
+            // 2. Ambil Jadwal Sholat
             const d = new Date().toISOString().split('T')[0];
             const pray = await fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json());
-            
             prayerTimesData = pray.data.timings;
-            const h = pray.data.date.hijri;
+
+            // 3. Perbaikan Kalender (Hijriah Otomatis 2026)
             const m = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'short', year:'numeric'});
-            document.getElementById('dateDisplay').innerText = `${m} | ${h.day} ${h.month.en} ${h.year} H`;
+            const optionsHijri = { day:'numeric', month:'long', year:'numeric' };
+            const hijriFormatted = new Intl.DateTimeFormat('id-TN-u-ca-islamic-uma', optionsHijri).format(new Date());
+            
+            document.getElementById('dateDisplay').innerText = `${m} | ${hijriFormatted} H`;
 
             renderPrayerList();
-        } catch(e) { console.error("Data error"); }
+        } catch(e) { 
+            console.error("Data error", e); 
+            document.getElementById('cityName').innerText = "Gagal memuat data";
+        }
     }
 
     function renderPrayerList() {
+        if (!prayerTimesData.Fajr) return;
         const t = prayerTimesData;
-        const list = [["Subuh", t.Fajr], ["Terbit", t.Sunrise], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
+        // List waktu sholat utama
+        const list = [
+            ["Subuh", t.Fajr], 
+            ["Terbit", t.Sunrise], 
+            ["Dzuhur", t.Dhuhr], 
+            ["Ashar", t.Asr], 
+            ["Maghrib", t.Maghrib], 
+            ["Isya", t.Isha]
+        ];
         
-        const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes();
-
         document.getElementById('prayerItems').innerHTML = list.map((p, index) => {
-            return `<div class="prayer-item" id="pray-${index}"><span>${p[0]}</span><span>${p[1]}</span></div>`;
+            return `<div class="prayer-item" id="pray-${index}" data-time="${p[1]}">
+                        <span>${p[0]}</span>
+                        <span>${p[1]}</span>
+                    </div>`;
         }).join('');
         
-        updateActivePrayer();
+        updateActivePrayer(); // Jalankan indikator segera setelah render
     }
 
-    // LOGIKA INDIKATOR OTOMATIS
+    // LOGIKA INDIKATOR HIJAU (FIXED)
     function updateActivePrayer() {
-        if (!prayerTimesData.Fajr) return;
+        const items = document.querySelectorAll('.prayer-item');
+        if (items.length === 0) return;
 
         const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes();
+        const currentTime = (now.getHours() * 60) + now.getMinutes();
 
-        const times = [
-            { name: "Subuh", time: prayerTimesData.Fajr },
-            { name: "Terbit", time: prayerTimesData.Sunrise },
-            { name: "Dzuhur", time: prayerTimesData.Dhuhr },
-            { name: "Ashar", time: prayerTimesData.Asr },
-            { name: "Maghrib", time: prayerTimesData.Maghrib },
-            { name: "Isya", time: prayerTimesData.Isha }
-        ];
+        let currentActiveIndex = -1;
 
-        let activeIndex = -1;
+        items.forEach((item, index) => {
+            const timeStr = item.getAttribute('data-time');
+            const [h, m] = timeStr.split(':').map(Number);
+            const prayerMinutes = (h * 60) + m;
 
-        // Cari sholat yang saat ini sedang berlangsung
-        for (let i = 0; i < times.length; i++) {
-            const [h, m] = times[i].time.split(':').map(Number);
-            const prayerMinutes = h * 60 + m;
-
+            // Jika waktu sekarang sudah melewati waktu sholat ini
             if (currentTime >= prayerMinutes) {
-                activeIndex = i;
+                currentActiveIndex = index;
             }
-        }
+        });
 
-        // Hapus semua class active
-        document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
+        // Hapus status active lama
+        items.forEach(el => el.classList.remove('active'));
         
-        // Tambahkan ke yang paling sesuai
-        if (activeIndex !== -1) {
-            const activeEl = document.getElementById(`pray-${activeIndex}`);
-            if (activeEl) activeEl.classList.add('active');
+        // Tandai yang terbaru (Warna Hijau)
+        if (currentActiveIndex !== -1) {
+            items[currentActiveIndex].classList.add('active');
+            // Auto scroll ke item yang aktif agar terlihat
+            items[currentActiveIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     }
 
@@ -220,31 +235,26 @@
         const lam = lon * Math.PI / 180;
         let q = Math.atan2(Math.sin(lamK-lam), Math.cos(phi)*Math.tan(phiK)-Math.sin(phi)*Math.cos(lamK-lam));
         qiblaAngle = (q * 180 / Math.PI + 360) % 360;
-        document.getElementById('targetDeg').innerText = Math.round(qiblaAngle);
+        document.getElementById('targetDeg').innerText = Math.round(qiblaAngle) + "°";
     }
 
     function toggleKiblat(show) {
         document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
-        if (show) {
-            // Gunakan absolute orientation untuk akurasi lebih tinggi
-            if (window.DeviceOrientationEvent) {
-                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                    DeviceOrientationEvent.requestPermission().then(state => {
-                        if (state === 'granted') window.addEventListener('deviceorientationabsolute', handleOrientation, true);
-                    });
-                } else {
-                    window.addEventListener('deviceorientationabsolute', handleOrientation, true) || 
-                    window.addEventListener('deviceorientation', handleOrientation, true);
-                }
+        if (show && typeof DeviceOrientationEvent !== 'undefined') {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(state => {
+                    if (state === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+                });
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
             }
         } else {
-            window.removeEventListener('deviceorientationabsolute', handleOrientation);
             window.removeEventListener('deviceorientation', handleOrientation);
         }
     }
 
     function handleOrientation(e) {
-        // Prioritaskan webkitCompassHeading untuk iOS, alpha untuk Android
+        // Mendukung Android (alpha) dan iOS (webkitCompassHeading)
         let heading = e.webkitCompassHeading || (360 - e.alpha);
         if (heading) currentHeading = heading;
     }
@@ -273,7 +283,7 @@
     }
 
     function openMasjid() {
-        if (userLat) window.open(`http://googleusercontent.com/maps.google.com/3{userLat},${userLon},15z`, '_blank');
+        if (userLat) window.open(`https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon},15z`, '_blank');
     }
 
     init();
