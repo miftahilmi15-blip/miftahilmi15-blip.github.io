@@ -56,7 +56,7 @@
             width: 280px; height: 280px; border: 12px solid #F0F4F4; border-radius: 50%;
             position: relative; display: flex; justify-content: center; align-items: center;
         }
-        .degree-center { font-size: 3rem; font-weight: 700; color: #000; z-index: 5; }
+        .degree-center { font-size: 3rem; font-weight: 700; color: #000; z-index: 5; transition: color 0.3s; }
         
         .kaaba-orbit { position: absolute; width: 100%; height: 100%; z-index: 10; transition: transform 0.1s; }
         .kaaba-box {
@@ -82,15 +82,13 @@
         .prayer-item span:first-child { font-weight: 600; font-size: 1rem; color: #444; }
         .prayer-item span:last-child { font-weight: 700; color: #888; }
 
-        /* Style untuk sholat yang sedang aktif */
         .prayer-item.active { 
             background: var(--light-green); 
             border-color: var(--primary-green); 
             transform: scale(1.03);
             box-shadow: 0 4px 15px rgba(94, 145, 94, 0.15);
         }
-        .prayer-item.active span:first-child { color: var(--primary-green); }
-        .prayer-item.active span:last-child { color: var(--primary-green); }
+        .prayer-item.active span { color: var(--primary-green) !important; }
 
         .sensor-btn {
             background: var(--primary-green); color: white; border: none;
@@ -132,7 +130,7 @@
         </div>
         <button class="sensor-btn" id="sensorBtn" onclick="requestSensor()">Aktifkan Sensor</button>
         <p style="font-size: 0.7rem; color: #999; margin-top: 15px; text-align: center; padding: 0 20px;">
-            Letakkan HP di permukaan datar dan jauhkan dari benda logam/magnet.
+            Gerakkan HP membentuk angka 8 jika arah kompas tidak akurat.
         </p>
     </div>
 </div>
@@ -140,7 +138,7 @@
 <script>
     let userLat, userLon, qiblaAngle = 295;
     let currentHeading = 0, lerpHeading = 0;
-    const filterFactor = 0.1; 
+    const filterFactor = 0.2; // Nilai lebih tinggi = lebih responsif
     let prayerTimesData = {};
 
     function init() {
@@ -152,6 +150,7 @@
                 calculateQibla(userLat, userLon);
             }, () => { 
                 fetchData(-6.2000, 106.8166); // Default Jakarta
+                calculateQibla(-6.2000, 106.8166);
             });
         }
         updateTime();
@@ -164,33 +163,22 @@
         try {
             const dateObj = new Date();
             const d = dateObj.toISOString().split('T')[0];
-            
             const [locRes, prayRes] = await Promise.all([
                 fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json()),
                 fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json())
             ]);
-
             document.getElementById('cityName').innerText = locRes.address.city || locRes.address.town || "Lokasi Anda";
-            
-            // Tampilan Tanggal Masehi (Hijriah Dihapus sesuai permintaan)
-            document.getElementById('dateDisplay').innerText = dateObj.toLocaleDateString('id-ID', {
-                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-            });
-
+            document.getElementById('dateDisplay').innerText = dateObj.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
             prayerTimesData = prayRes.data.timings;
             renderPrayerList();
-        } catch(e) { console.error("Error loading data"); }
+        } catch(e) { console.error("Error data"); }
     }
 
     function renderPrayerList() {
         if(!prayerTimesData.Fajr) return;
         const t = prayerTimesData;
         const list = [["Subuh", t.Fajr], ["Dzuhur", t.Dhuhr], ["Ashar", t.Asr], ["Maghrib", t.Maghrib], ["Isya", t.Isha]];
-        
-        document.getElementById('prayerItems').innerHTML = list.map((p, index) => {
-            return `<div class="prayer-item" id="pray-${index}"><span>${p[0]}</span><span>${p[1]}</span></div>`;
-        }).join('');
-        
+        document.getElementById('prayerItems').innerHTML = list.map((p, i) => `<div class="prayer-item" id="pray-${i}"><span>${p[0]}</span><span>${p[1]}</span></div>`).join('');
         updateActivePrayer();
     }
 
@@ -198,33 +186,19 @@
         if (!prayerTimesData.Fajr) return;
         const now = new Date();
         const curMin = now.getHours() * 60 + now.getMinutes();
-
-        const times = [
-            { t: prayerTimesData.Fajr },
-            { t: prayerTimesData.Dhuhr },
-            { t: prayerTimesData.Asr },
-            { t: prayerTimesData.Maghrib },
-            { t: prayerTimesData.Isha }
-        ];
-
+        const times = [prayerTimesData.Fajr, prayerTimesData.Dhuhr, prayerTimesData.Asr, prayerTimesData.Maghrib, prayerTimesData.Isha];
         let activeIdx = -1;
-        times.forEach((item, i) => {
-            const [h, m] = item.t.split(':').map(Number);
+        times.forEach((t, i) => {
+            const [h, m] = t.split(':').map(Number);
             if (curMin >= (h * 60 + m)) activeIdx = i;
         });
-
         document.querySelectorAll('.prayer-item').forEach(el => el.classList.remove('active'));
-        if (activeIdx !== -1) {
-            const el = document.getElementById(`pray-${activeIdx}`);
-            if (el) el.classList.add('active');
-        }
+        if (activeIdx !== -1) document.getElementById(`pray-${activeIdx}`).classList.add('active');
     }
 
     function calculateQibla(lat, lon) {
-        const phiK = 21.4225 * Math.PI / 180;
-        const lamK = 39.8262 * Math.PI / 180;
-        const phi = lat * Math.PI / 180;
-        const lam = lon * Math.PI / 180;
+        const phiK = 21.4225 * Math.PI / 180; const lamK = 39.8262 * Math.PI / 180;
+        const phi = lat * Math.PI / 180; const lam = lon * Math.PI / 180;
         let q = Math.atan2(Math.sin(lamK-lam), Math.cos(phi)*Math.tan(phiK)-Math.sin(phi)*Math.cos(lamK-lam));
         qiblaAngle = (q * 180 / Math.PI + 360) % 360;
         document.getElementById('targetDeg').innerText = Math.round(qiblaAngle);
@@ -233,39 +207,50 @@
 
     function toggleKiblat(show) {
         document.getElementById('kiblatPage').style.display = show ? 'flex' : 'none';
+        if(!show) {
+            window.removeEventListener('deviceorientationabsolute', handleOrientation);
+            window.removeEventListener('deviceorientation', handleOrientation);
+        }
     }
 
     function requestSensor() {
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-            DeviceOrientationEvent.requestPermission().then(state => {
-                if (state === 'granted') {
-                    window.addEventListener('deviceorientation', handleOrientation, true);
-                    document.getElementById('sensorBtn').style.display = 'none';
-                }
-            });
+            DeviceOrientationEvent.requestPermission().then(state => { if (state === 'granted') startCompass(); });
+        } else { startCompass(); }
+    }
+
+    function startCompass() {
+        if ('ondeviceorientationabsolute' in window) {
+            window.addEventListener('deviceorientationabsolute', handleOrientation, true);
         } else {
             window.addEventListener('deviceorientation', handleOrientation, true);
-            document.getElementById('sensorBtn').style.display = 'none';
         }
+        document.getElementById('sensorBtn').style.display = 'none';
     }
 
     function handleOrientation(e) {
         let heading = e.webkitCompassHeading || (360 - e.alpha);
-        if (heading) currentHeading = heading;
+        if (heading !== undefined) currentHeading = heading;
     }
 
     function animate() {
         let diff = currentHeading - lerpHeading;
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
-
         lerpHeading += diff * filterFactor;
         lerpHeading = (lerpHeading + 360) % 360;
 
         const ring = document.getElementById('compassRing');
+        const orbit = document.getElementById('kaabaOrbit');
+        const display = document.getElementById('currentHeadingDisplay');
+        
         if (ring) {
             ring.style.transform = `rotate(${-lerpHeading}deg)`;
-            document.getElementById('currentHeadingDisplay').innerText = Math.round(lerpHeading) + "°";
+            orbit.style.transform = `rotate(${qiblaAngle}deg)`;
+            display.innerText = Math.round(lerpHeading) + "°";
+            
+            const diffQibla = Math.abs(lerpHeading - qiblaAngle);
+            display.style.color = (diffQibla < 2 || diffQibla > 358) ? "var(--primary-green)" : "#000";
         }
         requestAnimationFrame(animate);
     }
@@ -275,14 +260,8 @@
         document.getElementById('liveClock').innerText = n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0');
     }
 
-    // PERBAIKAN URL MASJID
     function openMasjid() {
-        if (userLat && userLon) {
-            const url = `https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon},15z`;
-            window.open(url, '_blank');
-        } else {
-            alert("Sedang menentukan lokasi Anda...");
-        }
+        if (userLat) window.open(`https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon},15z`, '_blank');
     }
 
     init();
