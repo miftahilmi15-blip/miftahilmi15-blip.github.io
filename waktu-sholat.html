@@ -90,98 +90,6 @@
         }
         .prayer-item.active span { color: var(--primary-green) !important; }
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BYOND Prayer & Qibla - Smart Indicator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-green: #5E915E;
-            --light-green: #E9F5E9;
-            --accent-gold: #FFB800;
-            --bg-white: #ffffff;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-
-        .phone-container {
-            width: 375px; height: 780px; background: var(--bg-white);
-            border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            overflow: hidden; position: relative; border: 8px solid #333;
-        }
-
-        .header {
-            background: var(--primary-green); padding: 50px 20px 40px;
-            color: white; text-align: center; border-radius: 0 0 35px 35px;
-        }
-        .time-now { font-size: 3.5rem; font-weight: 700; line-height: 1; }
-        .date-text { font-size: 1rem; opacity: 0.9; margin-top: 10px; font-weight: 500; }
-
-        .menu-actions { display: flex; justify-content: center; gap: 15px; margin-top: -25px; }
-        .btn-action {
-            background: white; padding: 12px 25px; border-radius: 25px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1); border: none;
-            display: flex; align-items: center; gap: 8px; font-weight: 700; color: #444; cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-action:active { transform: scale(0.95); }
-
-        /* Kiblat Page */
-        .kiblat-page {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 100; display: none; flex-direction: column; align-items: center;
-            padding: 60px 20px 20px;
-        }
-        .qibla-header { text-align: center; width: 100%; margin-bottom: 20px; }
-        .qibla-header h2 { font-size: 1.5rem; color: #000; }
-        .qibla-header p { font-size: 0.9rem; color: #666; margin-top: 10px; }
-
-        .compass-wrap {
-            position: relative; width: 300px; height: 300px;
-            display: flex; justify-content: center; align-items: center; margin-top: 20px;
-        }
-        .outer-ring {
-            width: 280px; height: 280px; border: 12px solid #F0F4F4; border-radius: 50%;
-            position: relative; display: flex; justify-content: center; align-items: center;
-        }
-        .degree-center { font-size: 3rem; font-weight: 700; color: #000; z-index: 5; transition: color 0.3s; }
-        
-        .kaaba-orbit { position: absolute; width: 100%; height: 100%; z-index: 10; transition: transform 0.1s; }
-        .kaaba-box {
-            position: absolute; top: -20px; left: calc(50% - 25px);
-            width: 50px; height: 50px; background: var(--accent-gold);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 4px 15px rgba(255,184,0,0.5); font-size: 1.5rem;
-        }
-        .pointer-up {
-            position: absolute; top: 10px; width: 0; height: 0;
-            border-left: 10px solid transparent; border-right: 10px solid transparent;
-            border-bottom: 20px solid #EF4444; z-index: 10;
-        }
-
-        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.8rem; cursor: pointer; border: none; background: none; color: #333; }
-        
-        .prayer-list { padding: 30px 20px; height: 450px; overflow-y: auto; }
-        .prayer-item {
-            display: flex; justify-content: space-between; padding: 20px;
-            background: white; border-radius: 20px; margin-bottom: 12px; 
-            border: 1px solid #f0f0f0; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .prayer-item span:first-child { font-weight: 600; font-size: 1rem; color: #444; }
-        .prayer-item span:last-child { font-weight: 700; color: #888; }
-
-        .prayer-item.active { 
-            background: var(--light-green); 
-            border-color: var(--primary-green); 
-            transform: scale(1.03);
-            box-shadow: 0 4px 15px rgba(94, 145, 94, 0.15);
-        }
-        .prayer-item.active span { color: var(--primary-green) !important; }
-
         .sensor-btn {
             background: var(--primary-green); color: white; border: none;
             padding: 12px 30px; border-radius: 20px; margin-top: 20px;
@@ -237,6 +145,13 @@
     let adzanPlayedStatus = { Fajr: false, Dhuhr: false, Asr: false, Maghrib: false, Isha: false };
 
     function init() {
+        // --- PENDAFTARAN SERVICE WORKER ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Service Worker Active"))
+                .catch(err => console.log("Service Worker Failed", err));
+        }
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 userLat = pos.coords.latitude;
@@ -249,14 +164,13 @@
             });
         }
         
-        // Izin Notifikasi
         if ("Notification" in window) {
             Notification.requestPermission();
         }
 
         updateTime();
         setInterval(updateTime, 1000);
-        setInterval(updateActivePrayer, 30000); // Cek waktu sholat & adzan tiap 30 detik
+        setInterval(updateActivePrayer, 30000); 
         animate(); 
     }
 
@@ -283,19 +197,14 @@
         updateActivePrayer();
     }
 
-    // --- FITUR ADZAN OTOMATIS ---
     function triggerAdzan(sholatName) {
         const audio = document.getElementById('adzanAudio');
-        
-        // Munculkan Notifikasi
         if (Notification.permission === "granted") {
             new Notification(`Waktu Sholat ${sholatName}`, {
                 body: `Memasuki waktu sholat ${sholatName}. Klik untuk buka aplikasi.`,
                 icon: 'https://cdn-icons-png.flaticon.com/512/2972/2972304.png'
             });
         }
-
-        // Putar Suara
         audio.play().catch(() => console.log("Menunggu klik user untuk suara"));
     }
 
@@ -317,13 +226,10 @@
             const [h, m] = t.split(':').map(Number);
             if (curTotalMin >= (h * 60 + m)) activeIdx = i;
 
-            // LOGIKA ADZAN: Jika menit tepat sama dan belum diputar hari ini
             if (currentTimeStr === t && !adzanPlayedStatus[names[i]]) {
                 triggerAdzan(indoNames[i]);
                 adzanPlayedStatus[names[i]] = true;
             }
-
-            // Reset status saat lewat menit sholat agar besok bisa bunyi lagi
             if (currentTimeStr !== t) {
                 adzanPlayedStatus[names[i]] = false;
             }
@@ -385,7 +291,6 @@
             ring.style.transform = `rotate(${-lerpHeading}deg)`;
             orbit.style.transform = `rotate(${qiblaAngle}deg)`;
             display.innerText = Math.round(lerpHeading) + "°";
-            
             const diffQibla = Math.abs(lerpHeading - qiblaAngle);
             display.style.color = (diffQibla < 2 || diffQibla > 358) ? "var(--primary-green)" : "#000";
         }
@@ -401,7 +306,6 @@
         if (userLat) window.open(`https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon},15z`, '_blank');
     }
 
-    // "Unlock" Audio - User harus klik sekali saat buka aplikasi
     document.addEventListener('click', function() {
         const audio = document.getElementById('adzanAudio');
         audio.muted = true;
