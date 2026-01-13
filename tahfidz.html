@@ -118,10 +118,14 @@
 </div>
 
 <script>
+    // URL Web App dari Google Apps Script Anda
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_FcWbbSpq49jYseGYQKUwN5YslFBRNIMMA5ZH0eZXr8NZY_TDtDU_jtXoesLk5oXf/exec";
+
     const alquran = [
         {n: "Al-Fatihah", j: 1}, {n: "Al-Baqarah", j: 1}, {n: "Ali 'Imran", j: 3}, {n: "An-Nisa'", j: 4}, {n: "Al-Ma'idah", j: 6}, {n: "Al-An'am", j: 7}, {n: "Al-A'raf", j: 8}, {n: "Al-Anfal", j: 9}, {n: "At-Taubah", j: 10}, {n: "Yunus", j: 11}, {n: "Hud", j: 11}, {n: "Yusuf", j: 12}, {n: "Ar-Ra'd", j: 13}, {n: "Ibrahim", j: 13}, {n: "Al-Hijr", j: 14}, {n: "An-Nahl", j: 14}, {n: "Al-Isra'", j: 15}, {n: "Al-Kahf", j: 15}, {n: "Maryam", j: 16}, {n: "Thaha", j: 16}, {n: "Al-Anbiya'", j: 17}, {n: "Al-Hajj", j: 17}, {n: "Al-Mu'minun", j: 18}, {n: "An-Nur", j: 18}, {n: "Al-Furqan", j: 18}, {n: "Asy-Syu'ara'", j: 19}, {n: "An-Naml", j: 19}, {n: "Al-Qashash", j: 20}, {n: "Al-'Ankabut", j: 20}, {n: "Ar-Rum", j: 21}, {n: "Luqman", j: 21}, {n: "As-Sajdah", j: 21}, {n: "Al-Ahzab", j: 21}, {n: "Saba'", j: 22}, {n: "Fathir", j: 22}, {n: "Yasin", j: 22}, {n: "Ash-Shaffat", j: 23}, {n: "Shad", j: 23}, {n: "Az-Zumar", j: 23}, {n: "Ghafir", j: 24}, {n: "Fushshilat", j: 24}, {n: "Asy-Syura", j: 25}, {n: "Az-Zukhruf", j: 25}, {n: "Ad-Dukhan", j: 25}, {n: "Al-Jatsiyah", j: 25}, {n: "Al-Ahqaf", j: 26}, {n: "Muhammad", j: 26}, {n: "Al-Fath", j: 26}, {n: "Al-Hujurat", j: 26}, {n: "Qaf", j: 26}, {n: "Adz-Dzariyat", j: 26}, {n: "Ath-Thur", j: 27}, {n: "An-Najm", j: 27}, {n: "Al-Qamar", j: 27}, {n: "Ar-Rahman", j: 27}, {n: "Al-Waqi'ah", j: 27}, {n: "Al-Hadid", j: 27}, {n: "Al-Mujadilah", j: 28}, {n: "Al-Hasyr", j: 28}, {n: "Al-Mumtahanah", j: 28}, {n: "Ash-Shaff", j: 28}, {n: "Al-Jumu'ah", j: 28}, {n: "Al-Munafiqun", j: 28}, {n: "At-Taghabun", j: 28}, {n: "Ath-Thalaq", j: 28}, {n: "At-Tahrim", j: 28}, {n: "Al-Mulk", j: 29}, {n: "Al-Qalam", j: 29}, {n: "Al-Haqqah", j: 29}, {n: "Al-Ma'arij", j: 29}, {n: "Nuh", j: 29}, {n: "Al-Jinn", j: 29}, {n: "Al-Muzzammil", j: 29}, {n: "Al-Muddatstsir", j: 29}, {n: "Al-Qiyamah", j: 29}, {n: "Al-Insan", j: 29}, {n: "Al-Mursalat", j: 29}, {n: "An-Naba'", j: 30}, {n: "An-Nazi'at", j: 30}, {n: "'Abasa", j: 30}, {n: "At-Takwir", j: 30}, {n: "Al-Infithar", j: 30}, {n: "Al-Muthaffifin", j: 30}, {n: "Al-Insyiqaq", j: 30}, {n: "Al-Buruj", j: 30}, {n: "Ath-Thariq", j: 30}, {n: "Al-A'la", j: 30}, {n: "Al-Ghasyiyah", j: 30}, {n: "Al-Fajr", j: 30}, {n: "Al-Balad", j: 30}, {n: "Asy-Syams", j: 30}, {n: "Al-Lail", j: 30}, {n: "Ad-Dhuha", j: 30}, {n: "Asy-Syarh", j: 30}, {n: "At-Tin", j: 30}, {n: "Al-'Alaq", j: 30}, {n: "Al-Qadr", j: 30}, {n: "Al-Bayyinah", j: 30}, {n: "Az-Zalzalah", j: 30}, {n: "Al-'Adiyat", j: 30}, {n: "Al-Qari'ah", j: 30}, {n: "At-Takatsur", j: 30}, {n: "Al-'Asr", j: 30}, {n: "Al-Humazah", j: 30}, {n: "Al-Fil", j: 30}, {n: "Quraisy", j: 30}, {n: "Al-Ma'un", j: 30}, {n: "Al-Kautsar", j: 30}, {n: "Al-Kafirun", j: 30}, {n: "An-Nashr", j: 30}, {n: "Al-Lahab", j: 30}, {n: "Al-Ikhlash", j: 30}, {n: "Al-Falaq", j: 30}, {n: "An-Nas", j: 30}
     ];
 
+    // Isi Dropdown Surah
     const selSurah = document.getElementById('surah');
     alquran.forEach(s => {
         let opt = document.createElement('option');
@@ -141,8 +145,79 @@
         stars.forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
     }
 
-    function simpanTahfidz() {
-        alert("Data Siap! Status: " + document.getElementById('status-progres').value);
+    // Event Listener saat pilih kelas
+    document.getElementById('pilih-kelas').addEventListener('change', function() {
+        const kelas = this.value;
+        const selectSantri = document.getElementById('pilih-santri');
+        
+        if (!kelas) return;
+
+        selectSantri.innerHTML = '<option value="">-- Memuat Nama... --</option>';
+
+        // Mengambil data santri dari Spreadsheet via Apps Script
+        fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`)
+            .then(res => res.json())
+            .then(data => {
+                selectSantri.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                data.forEach(s => {
+                    let opt = document.createElement('option');
+                    opt.value = s.nipd; // Simpan NIPD di value
+                    opt.text = s.nama;  // Tampilkan Nama
+                    selectSantri.appendChild(opt);
+                });
+            })
+            .catch(err => {
+                selectSantri.innerHTML = '<option value="">Gagal memuat data</option>';
+                console.error(err);
+            });
+    });
+
+    // Fungsi Simpan ke Spreadsheet
+    async function simpanTahfidz() {
+        const btn = document.querySelector('.btn-simpan');
+        const loading = document.getElementById('loading');
+        
+        const payload = {
+            nipd: document.getElementById('pilih-santri').value,
+            nama: document.getElementById('pilih-santri').options[document.getElementById('pilih-santri').selectedIndex].text,
+            kelas: document.getElementById('pilih-kelas').value,
+            surah: document.getElementById('surah').value,
+            juz: document.getElementById('juz').value,
+            ayat: document.getElementById('ayat-awal').value + "-" + document.getElementById('ayat-akhir').value,
+            status: document.getElementById('status-progres').value,
+            nilai: document.getElementById('nilai-bintang').value,
+            catatan: document.getElementById('catatan').value
+        };
+
+        // Validasi sederhana
+        if(!payload.nipd || !payload.surah || payload.nilai == "0") {
+            return alert("Mohon lengkapi Nama, Surah, dan Nilai Bintang!");
+        }
+
+        loading.style.display = "block";
+        btn.disabled = true;
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", // Gunakan no-cors untuk Web App GAS
+                body: JSON.stringify(payload),
+                headers: { "Content-Type": "application/json" }
+            });
+            
+            alert("✅ Data Hafalan Berhasil Disimpan!");
+            // Reset Form
+            document.getElementById('ayat-awal').value = "";
+            document.getElementById('ayat-akhir').value = "";
+            document.getElementById('catatan').value = "";
+            setStar(0);
+        } catch (error) {
+            alert("Terjadi kesalahan saat menyimpan.");
+            console.error(error);
+        } finally {
+            loading.style.display = "none";
+            btn.disabled = false;
+        }
     }
 </script>
 </body>
