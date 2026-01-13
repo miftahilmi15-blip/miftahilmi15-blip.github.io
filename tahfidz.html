@@ -6,12 +6,13 @@
     <title>E-SANTRI | Database Tahfidz</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --danger: #ef4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
         .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
+        
         .form-grup { margin-bottom: 15px; }
         label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
         select, input, textarea { 
@@ -19,9 +20,11 @@
             background: #f9f9f9; font-size: 14px; outline: none; transition: 0.3s;
         }
         select:focus, input:focus { border-color: var(--primary); background: #fff; }
+        
         .grid-2 { display: flex; gap: 10px; }
-        .rating { display: flex; gap: 10px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
-        .star { cursor: pointer; font-size: 28px; color: #ddd; }
+        .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
+        .star { cursor: pointer; font-size: 26px; color: #ddd; transition: 0.2s; }
+        
         .btn-simpan { 
             width: 100%; background: var(--primary); color: white; border: none; 
             padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px;
@@ -57,7 +60,7 @@
         <label>Nama Santri</label>
         <select id="pilih-santri">
             <option value="">-- Pilih Nama --</option>
-            <option value="12345 - Ahmad">12345 - Ahmad (Contoh)</option>
+            <option value="DUMMY">Nama akan muncul setelah pilih kelas</option>
         </select>
     </div>
 
@@ -70,7 +73,7 @@
         </div>
         <div class="form-grup" style="flex: 1;">
             <label>Juz</label>
-            <input type="text" id="juz" placeholder=".." readonly style="background: #ececec; text-align: center; font-weight: bold;">
+            <input type="text" id="juz" readonly style="background: #ececec; text-align: center; font-weight: bold;">
         </div>
     </div>
 
@@ -83,6 +86,14 @@
             <label>Ayat Akhir</label>
             <input type="number" id="ayat-akhir" placeholder="10">
         </div>
+    </div>
+
+    <div class="form-grup">
+        <label>Status Progres</label>
+        <select id="status-progres">
+            <option value="Lulus">✅ Lulus (Lanjut Hafalan Baru)</option>
+            <option value="Sabaq">🔄 Sabaq (Mengulang Hafalan)</option>
+        </select>
     </div>
 
     <div class="form-grup">
@@ -107,12 +118,10 @@
 </div>
 
 <script>
-    // DATABASE 114 SURAH DAN JUZ
     const alquran = [
         {n: "Al-Fatihah", j: 1}, {n: "Al-Baqarah", j: 1}, {n: "Ali 'Imran", j: 3}, {n: "An-Nisa'", j: 4}, {n: "Al-Ma'idah", j: 6}, {n: "Al-An'am", j: 7}, {n: "Al-A'raf", j: 8}, {n: "Al-Anfal", j: 9}, {n: "At-Taubah", j: 10}, {n: "Yunus", j: 11}, {n: "Hud", j: 11}, {n: "Yusuf", j: 12}, {n: "Ar-Ra'd", j: 13}, {n: "Ibrahim", j: 13}, {n: "Al-Hijr", j: 14}, {n: "An-Nahl", j: 14}, {n: "Al-Isra'", j: 15}, {n: "Al-Kahf", j: 15}, {n: "Maryam", j: 16}, {n: "Thaha", j: 16}, {n: "Al-Anbiya'", j: 17}, {n: "Al-Hajj", j: 17}, {n: "Al-Mu'minun", j: 18}, {n: "An-Nur", j: 18}, {n: "Al-Furqan", j: 18}, {n: "Asy-Syu'ara'", j: 19}, {n: "An-Naml", j: 19}, {n: "Al-Qashash", j: 20}, {n: "Al-'Ankabut", j: 20}, {n: "Ar-Rum", j: 21}, {n: "Luqman", j: 21}, {n: "As-Sajdah", j: 21}, {n: "Al-Ahzab", j: 21}, {n: "Saba'", j: 22}, {n: "Fathir", j: 22}, {n: "Yasin", j: 22}, {n: "Ash-Shaffat", j: 23}, {n: "Shad", j: 23}, {n: "Az-Zumar", j: 23}, {n: "Ghafir", j: 24}, {n: "Fushshilat", j: 24}, {n: "Asy-Syura", j: 25}, {n: "Az-Zukhruf", j: 25}, {n: "Ad-Dukhan", j: 25}, {n: "Al-Jatsiyah", j: 25}, {n: "Al-Ahqaf", j: 26}, {n: "Muhammad", j: 26}, {n: "Al-Fath", j: 26}, {n: "Al-Hujurat", j: 26}, {n: "Qaf", j: 26}, {n: "Adz-Dzariyat", j: 26}, {n: "Ath-Thur", j: 27}, {n: "An-Najm", j: 27}, {n: "Al-Qamar", j: 27}, {n: "Ar-Rahman", j: 27}, {n: "Al-Waqi'ah", j: 27}, {n: "Al-Hadid", j: 27}, {n: "Al-Mujadilah", j: 28}, {n: "Al-Hasyr", j: 28}, {n: "Al-Mumtahanah", j: 28}, {n: "Ash-Shaff", j: 28}, {n: "Al-Jumu'ah", j: 28}, {n: "Al-Munafiqun", j: 28}, {n: "At-Taghabun", j: 28}, {n: "Ath-Thalaq", j: 28}, {n: "At-Tahrim", j: 28}, {n: "Al-Mulk", j: 29}, {n: "Al-Qalam", j: 29}, {n: "Al-Haqqah", j: 29}, {n: "Al-Ma'arij", j: 29}, {n: "Nuh", j: 29}, {n: "Al-Jinn", j: 29}, {n: "Al-Muzzammil", j: 29}, {n: "Al-Muddatstsir", j: 29}, {n: "Al-Qiyamah", j: 29}, {n: "Al-Insan", j: 29}, {n: "Al-Mursalat", j: 29}, {n: "An-Naba'", j: 30}, {n: "An-Nazi'at", j: 30}, {n: "'Abasa", j: 30}, {n: "At-Takwir", j: 30}, {n: "Al-Infithar", j: 30}, {n: "Al-Muthaffifin", j: 30}, {n: "Al-Insyiqaq", j: 30}, {n: "Al-Buruj", j: 30}, {n: "Ath-Thariq", j: 30}, {n: "Al-A'la", j: 30}, {n: "Al-Ghasyiyah", j: 30}, {n: "Al-Fajr", j: 30}, {n: "Al-Balad", j: 30}, {n: "Asy-Syams", j: 30}, {n: "Al-Lail", j: 30}, {n: "Ad-Dhuha", j: 30}, {n: "Asy-Syarh", j: 30}, {n: "At-Tin", j: 30}, {n: "Al-'Alaq", j: 30}, {n: "Al-Qadr", j: 30}, {n: "Al-Bayyinah", j: 30}, {n: "Az-Zalzalah", j: 30}, {n: "Al-'Adiyat", j: 30}, {n: "Al-Qari'ah", j: 30}, {n: "At-Takatsur", j: 30}, {n: "Al-'Asr", j: 30}, {n: "Al-Humazah", j: 30}, {n: "Al-Fil", j: 30}, {n: "Quraisy", j: 30}, {n: "Al-Ma'un", j: 30}, {n: "Al-Kautsar", j: 30}, {n: "Al-Kafirun", j: 30}, {n: "An-Nashr", j: 30}, {n: "Al-Lahab", j: 30}, {n: "Al-Ikhlash", j: 30}, {n: "Al-Falaq", j: 30}, {n: "An-Nas", j: 30}
     ];
 
-    // ISI DROPDOWN SURAH SAAT LOAD
     const selSurah = document.getElementById('surah');
     alquran.forEach(s => {
         let opt = document.createElement('option');
@@ -121,13 +130,11 @@
         selSurah.appendChild(opt);
     });
 
-    // FUNGSI JUZ OTOMATIS
     function isiJuzOtomatis() {
         const found = alquran.find(x => x.n === selSurah.value);
         document.getElementById('juz').value = found ? found.j : "";
     }
 
-    // FUNGSI BINTANG
     function setStar(n) {
         document.getElementById('nilai-bintang').value = n;
         const stars = document.querySelectorAll('.star');
@@ -135,7 +142,7 @@
     }
 
     function simpanTahfidz() {
-        alert("Siap! Ekstensi Apps Script menyusul.");
+        alert("Data Siap! Status: " + document.getElementById('status-progres').value);
     }
 </script>
 </body>
