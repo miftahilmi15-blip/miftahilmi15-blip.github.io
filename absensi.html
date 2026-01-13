@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Absensi Premium</title>
+<title>E-Santri | Absensi Premium v2</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
-    --primary-light: #e8f5e9;
     --hadir: #22c55e;
     --sakit: #eab308;
     --izin: #3b82f6;
@@ -19,8 +18,6 @@
   
   body {
     background: #f0f4f3;
-    background-image: radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.05) 0px, transparent 50%),
-                      radial-gradient(at 100% 100%, rgba(212, 185, 106, 0.05) 0px, transparent 50%);
     padding: 20px;
     min-height: 100vh;
     display: flex;
@@ -30,63 +27,68 @@
 
   .container { width: 100%; max-width: 450px; }
 
-  /* HEADER */
-  header { text-align: center; padding: 20px 0 30px; }
-  header h1 { color: var(--primary); font-size: 28px; font-weight: 700; letter-spacing: -1px; }
-  header p { font-size: 12px; color: #666; margin-top: 5px; }
+  header { text-align: center; padding: 10px 0 20px; }
+  header h1 { color: var(--primary); font-size: 24px; font-weight: 700; }
 
-  /* SELECT CARD */
-  .select-card {
-    background: white; border-radius: 20px; padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.8);
+  .card {
+    background: white; border-radius: 20px; padding: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px;
   }
+
+  /* SEARCH & SELECT */
+  .search-box {
+    width: 100%; padding: 12px 15px; border-radius: 12px;
+    border: 1.5px solid #eee; margin-top: 10px; font-size: 14px; outline: none;
+  }
+  .search-box:focus { border-color: var(--primary); }
+
   select {
-    width: 100%; padding: 15px; border-radius: 12px; border: 1.5px solid #eee;
+    width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee;
     font-size: 15px; font-weight: 600; color: var(--primary); outline: none;
-    background-color: #f9fbfb; cursor: pointer;
+    background-color: #f9fbfb;
   }
 
-  /* STUDENT LIST */
+  /* OPSINYA: H, S, I, A */
+  .legend {
+    display: flex; justify-content: space-around; margin-bottom: 15px;
+    font-size: 11px; font-weight: 600; color: #666;
+  }
+  .legend span { display: flex; align-items: center; gap: 4px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* LIST SANTRI */
   .santri-list { margin-bottom: 100px; width: 100%; }
   .santri-item {
-    background: white; border-radius: 18px; padding: 16px;
-    margin-bottom: 12px; display: flex; align-items: center;
-    justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-    border: 1px solid #f1f5f9; transition: 0.3s;
+    background: white; border-radius: 15px; padding: 14px;
+    margin-bottom: 10px; display: flex; align-items: center;
+    justify-content: space-between; border: 1px solid #f1f5f9;
   }
-  .santri-info h3 { font-size: 14px; color: #333; font-weight: 600; }
-  .santri-info p { font-size: 11px; color: #999; }
+  .santri-info h3 { font-size: 13px; color: #333; font-weight: 600; text-transform: uppercase; }
+  .santri-info p { font-size: 10px; color: #999; }
 
-  /* BUTTON GROUP */
-  .btn-group { display: flex; gap: 6px; }
+  /* BUTTONS */
+  .btn-group { display: flex; gap: 5px; }
   .btn-status {
-    width: 36px; height: 36px; border-radius: 10px; border: 1.5px solid #f1f5f9;
-    background: white; font-weight: 700; font-size: 12px; color: #ccc;
-    cursor: pointer; transition: 0.2s;
+    width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid #f1f5f9;
+    background: white; font-weight: 800; font-size: 12px; color: #ccc; cursor: pointer;
   }
-  .h-on { background: var(--hadir)!important; color: white!important; border: none; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
-  .s-on { background: var(--sakit)!important; color: white!important; border: none; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3); }
-  .i-on { background: var(--izin)!important; color: white!important; border: none; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
-  .a-on { background: var(--alpha)!important; color: white!important; border: none; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+  .h-on { background: var(--hadir)!important; color: white!important; border: none; }
+  .s-on { background: var(--sakit)!important; color: white!important; border: none; }
+  .i-on { background: var(--izin)!important; color: white!important; border: none; }
+  .a-on { background: var(--alpha)!important; color: white!important; border: none; }
 
-  /* SUBMIT FOOTER */
   .footer-btn {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    width: 90%; max-width: 400px; padding: 18px; border-radius: 16px;
-    background: var(--primary); color: white; border: none;
-    font-weight: 700; font-size: 16px; box-shadow: 0 10px 25px rgba(31, 111, 81, 0.3);
-    cursor: pointer; z-index: 100;
+    width: 90%; max-width: 400px; padding: 16px; border-radius: 15px;
+    background: var(--primary); color: white; border: none; font-weight: 700;
+    box-shadow: 0 10px 25px rgba(31, 111, 81, 0.3);
   }
-  .footer-btn:active { transform: translateX(-50%) scale(0.97); }
 
-  /* LOADING */
   #loading {
-    display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.85);
+    display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8);
     z-index: 1000; flex-direction: column; align-items: center; justify-content: center;
-    backdrop-filter: blur(4px);
   }
-  .spinner { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>
 </head>
@@ -94,16 +96,13 @@
 
 <div id="loading">
   <div class="spinner"></div>
-  <p style="margin-top:15px; font-weight:600; color:var(--primary)">Mohon Tunggu...</p>
+  <p style="margin-top:10px; font-size:12px;">Memproses data...</p>
 </div>
 
 <div class="container">
-  <header>
-    <h1>E-SANTRI</h1>
-    <p>Sistem Absensi Kehadiran Santri</p>
-  </header>
+  <header><h1>E-SANTRI ABSENSI</h1></header>
 
-  <div class="select-card">
+  <div class="card">
     <select id="pilih-kelas">
       <option value="">-- Pilih Kelas --</option>
       <option value="7A">Kelas 7A</option>
@@ -119,27 +118,29 @@
       <option value="9C">Kelas 9C</option>
       <option value="9D">Kelas 9D</option>
     </select>
+    <input type="text" id="cari-nama" class="search-box" placeholder="Cari nama santri..." onkeyup="filterNama()">
   </div>
 
-  <div id="isi-tabel" class="santri-list">
-    <div style="text-align:center; padding: 50px; color:#999; font-size:13px;">Pilih kelas untuk memuat data</div>
+  <div class="legend">
+    <span><div class="dot" style="background:var(--hadir)"></div> Hadir</span>
+    <span><div class="dot" style="background:var(--sakit)"></div> Sakit</span>
+    <span><div class="dot" style="background:var(--izin)"></div> Izin</span>
+    <span><div class="dot" style="background:var(--alpha)"></div> Alfa</span>
   </div>
+
+  <div id="isi-tabel" class="santri-list"></div>
 
   <button class="footer-btn" onclick="kirimAbsen()">SIMPAN ABSENSI</button>
 </div>
 
 <script>
-  // URL WEB APP TERBARU ANDA
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzt3YZIHGYapL8x3vY_yZMIMC-YD7KalYmquvyPv9iit7r7ltSQ_dkP_36K0M43HJxhZw/exec";
 
   document.getElementById('pilih-kelas').onchange = function() {
     const kls = this.value;
     if(!kls) return;
     document.getElementById('loading').style.display = 'flex';
-    const oldScript = document.getElementById('jsonp');
-    if(oldScript) oldScript.remove();
     const script = document.createElement('script');
-    script.id = 'jsonp';
     script.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(kls)}&callback=handleResponse`;
     document.body.appendChild(script);
   };
@@ -148,15 +149,11 @@
     document.getElementById('loading').style.display = 'none';
     const container = document.getElementById('isi-tabel');
     container.innerHTML = '';
-    if(data.error) {
-      container.innerHTML = `<div style="text-align:center; color:red; padding:20px;">${data.error}</div>`;
-      return;
-    }
     data.forEach(s => {
       const div = document.createElement('div');
       div.className = 'santri-item';
       div.setAttribute('data-nipd', s.nipd);
-      div.setAttribute('data-nama', s.nama);
+      div.setAttribute('data-nama', s.nama.toLowerCase()); // Untuk filter
       div.innerHTML = `
         <div class="santri-info">
           <h3>${s.nama}</h3>
@@ -170,6 +167,16 @@
         </div>
       `;
       container.appendChild(div);
+    });
+  }
+
+  // FUNGSI CARI NAMA
+  function filterNama() {
+    const input = document.getElementById('cari-nama').value.toLowerCase();
+    const items = document.querySelectorAll('.santri-item');
+    items.forEach(item => {
+      const nama = item.getAttribute('data-nama');
+      item.style.display = nama.includes(input) ? "flex" : "none";
     });
   }
 
@@ -194,22 +201,18 @@
         rekap.push({
           kelas: kls,
           nipd: item.getAttribute('data-nipd'),
-          nama: item.getAttribute('data-nama'),
+          nama: item.querySelector('h3').innerText,
           status: statusBtn.getAttribute('data-aktif')
         });
       }
     });
-    if(rekap.length === 0) return alert("Pilih absen santri dulu!");
+    if(rekap.length === 0) return alert("Belum ada santri yang diabsen!");
     document.getElementById('loading').style.display = 'flex';
     try {
       await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(rekap) });
-      alert("✅ Berhasil Disimpan!");
+      alert("✅ Absensi Berhasil Disimpan!");
       location.reload();
-    } catch (e) {
-      alert("Gagal mengirim data.");
-    } finally {
-      document.getElementById('loading').style.display = 'none';
-    }
+    } catch (e) { alert("Gagal."); } finally { document.getElementById('loading').style.display = 'none'; }
   }
 </script>
 </body>
