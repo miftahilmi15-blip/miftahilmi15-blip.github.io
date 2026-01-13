@@ -1,1 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-SANTRI | Pencapaian Tahfidz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 20px; }
+        header h1 { color: var(--primary); font-size: 22px; }
+        
+        .form-grup { margin-bottom: 15px; }
+        label { font-size: 12px; font-weight: 600; color: #666; display: block; margin-bottom: 5px; }
+        select, input, textarea { 
+            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; 
+            background: #f9f9f9; font-size: 14px; outline: none;
+        }
+        
+        .rating { display: flex; gap: 10px; margin-top: 5px; }
+        .star { cursor: pointer; font-size: 24px; color: #ddd; transition: 0.2s; }
+        .star.active { color: var(--accent); }
 
+        .btn-simpan { 
+            width: 100%; background: var(--primary); color: white; border: none; 
+            padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px;
+        }
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="wadah">
+    <header>
+        <h1>Pencapaian Tahfidz</h1>
+        <p style="font-size: 11px; color: #999;">Catat hafalan baru santri hari ini</p>
+    </header>
+
+    <div class="form-grup">
+        <label>Pilih Kelas</label>
+        <select id="pilih-kelas">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="7A">Kelas 7A</option>
+            <option value="7B">Kelas 7B</option>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Nama Santri</label>
+        <select id="pilih-santri">
+            <option value="">-- Pilih Nama --</option>
+        </select>
+    </div>
+
+    <hr style="margin: 20px 0; border: 1px dashed #eee;">
+
+    <div class="form-grup">
+        <label>Surah</label>
+        <input type="text" id="surah" placeholder="Contoh: Al-Baqarah">
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <div class="form-grup" style="flex: 1;">
+            <label>Ayat (Dari)</label>
+            <input type="number" id="ayat-awal" placeholder="1">
+        </div>
+        <div class="form-grup" style="flex: 1;">
+            <label>Sampai</label>
+            <input type="number" id="ayat-akhir" placeholder="10">
+        </div>
+    </div>
+
+    <div class="form-grup">
+        <label>Kualitas Hafalan (Nilai)</label>
+        <div class="rating" id="star-rating">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+        </div>
+        <input type="hidden" id="nilai-input" value="0">
+    </div>
+
+    <div class="form-grup">
+        <label>Catatan Ustadz</label>
+        <textarea id="catatan" rows="2" placeholder="Catatan tajwid atau kelancaran..."></textarea>
+    </div>
+
+    <div id="loading">Memproses...</div>
+    <button class="btn-simpan" onclick="simpanTahfidz()">SIMPAN HAFALAN</button>
+</div>
+
+<script>
+    const SCRIPT_URL = "URL_APPS_SCRIPT_ANDA_DI_SINI"; // Ganti dengan URL Google Apps Script Anda
+
+    // Logika Rating Bintang
+    const stars = document.querySelectorAll('.star');
+    stars.forEach(star => {
+        star.onclick = function() {
+            let val = this.getAttribute('data-value');
+            document.getElementById('nilai-input').value = val;
+            stars.forEach(s => s.classList.remove('active'));
+            for(let i=0; i<val; i++) stars[i].classList.add('active');
+        }
+    });
+
+    // Simulasi ambil data santri saat kelas dipilih
+    document.getElementById('pilih-kelas').onchange = function() {
+        const santriList = {
+            "7A": ["Ahmad Fauzi", "Budi Santoso", "Zaidan"],
+            "7B": ["Siti Aminah", "Lutfia", "Rahmat"]
+        };
+        const kls = this.value;
+        const selectSnt = document.getElementById('pilih-santri');
+        selectSnt.innerHTML = '<option value="">-- Pilih Nama --</option>';
+        if(santriList[kls]) {
+            santriList[kls].forEach(nama => {
+                selectSnt.innerHTML += `<option value="${nama}">${nama}</option>`;
+            });
+        }
+    };
+
+    async function simpanTahfidz() {
+        const data = {
+            jenis: "tahfidz", // Penanda untuk di Google Script
+            tanggal: new Date().toLocaleDateString('id-ID'),
+            kelas: document.getElementById('pilih-kelas').value,
+            nama: document.getElementById('pilih-santri').value,
+            surah: document.getElementById('surah').value,
+            ayat: document.getElementById('ayat-awal').value + "-" + document.getElementById('ayat-akhir').value,
+            nilai: document.getElementById('nilai-input').value,
+            catatan: document.getElementById('catatan').value
+        };
+
+        if(!data.nama || !data.surah) return alert("Mohon lengkapi data!");
+
+        document.getElementById('loading').style.display = 'block';
+        
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(data)
+            });
+            alert("✅ Pencapaian Berhasil Dicatat!");
+            location.reload();
+        } catch (e) {
+            alert("Gagal menyimpan data.");
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>
