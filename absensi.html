@@ -134,16 +134,26 @@
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzt3YZIHGYapL8x3vY_yZMIMC-YD7KalYmquvyPv9iit7r7ltSQ_dkP_36K0M43HJxhZw/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8n-XKLxv8fPZ9-0-7gMCdZYg-Cn2PRufK6BvIlXMhLvsj1BX34yDN92AScG-Dxru8QQ/exec";
 
-  document.getElementById('pilih-kelas').onchange = function() {
-    const kls = this.value;
-    if(!kls) return;
-    document.getElementById('loading').style.display = 'flex';
-    const script = document.createElement('script');
-    script.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(kls)}&callback=handleResponse`;
-    document.body.appendChild(script);
-  };
+  document.getElementById('pilih-kelas').onchange = async function() {
+  const kls = this.value;
+  if(!kls) return;
+  
+  const loading = document.getElementById('loading');
+  loading.style.display = 'flex';
+  
+  try {
+    const response = await fetch(`${SCRIPT_URL}?kelas=${encodeURIComponent(kls)}`);
+    const data = await response.json();
+    handleResponse(data);
+  } catch (error) {
+    alert("Gagal memuat data santri. Pastikan nama sheet sesuai.");
+    console.error(error);
+  } finally {
+    loading.style.display = 'none';
+  }
+};
 
   function handleResponse(data) {
     document.getElementById('loading').style.display = 'none';
