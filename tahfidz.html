@@ -253,108 +253,158 @@
             <input type="number" id="ayat-awal" placeholder="1">
         </div>
         <div class="form-grup">
+            <lab<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-SANTRI | Pencapaian Tahfidz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        header h1 { color: var(--primary); font-size: 22px; font-weight: 800; }
+        .form-grup { margin-bottom: 15px; }
+        label { font-size: 12px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; }
+        select, input, textarea { 
+            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; 
+            background: #f9f9f9; font-size: 14px; outline: none; transition: 0.3s;
+        }
+        select:focus, input:focus { border-color: var(--primary); background: #fff; }
+        .grid-2 { display: flex; gap: 10px; }
+        .rating { display: flex; gap: 10px; margin-top: 5px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
+        .star { cursor: pointer; font-size: 28px; color: #ddd; transition: 0.2s; }
+        .btn-simpan { 
+            width: 100%; background: var(--primary); color: white; border: none; 
+            padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px;
+        }
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<div class="wadah">
+    <header>
+        <h1>CATAT TAHFIDZ</h1>
+        <p style="font-size: 11px; color: #777;">Pilih Surah maka Juz terisi otomatis</p>
+    </header>
+
+    <div class="form-grup">
+        <label>Pilih Kelas</label>
+        <select id="pilih-kelas">
+            <option value="">-- Pilih Kelas --</option>
+            <optgroup label="Kelas 7">
+                <option value="7A">7A</option><option value="7B">7B</option>
+                <option value="7C">7C</option><option value="7D">7D</option>
+            </optgroup>
+            <optgroup label="Kelas 8">
+                <option value="8A">8A</option><option value="8B">8B</option>
+                <option value="8C">8C</option><option value="8D">8D</option>
+            </optgroup>
+            <optgroup label="Kelas 9">
+                <option value="9A">9A</option><option value="9B">9B</option>
+                <option value="9C">9C</option><option value="9D">9D</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Nama Santri</label>
+        <select id="pilih-santri">
+            <option value="">-- Pilih Nama --</option>
+        </select>
+    </div>
+
+    <div class="grid-2">
+        <div class="form-grup" style="flex: 2;">
+            <label>Surah</label>
+            <select id="surah" onchange="updateJuz()">
+                <option value="">-- Pilih Surah --</option>
+            </select>
+        </div>
+        <div class="form-grup" style="flex: 1;">
+            <label>Juz</label>
+            <input type="text" id="juz" readonly style="background: #ececec; font-weight: bold; text-align: center;">
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="form-grup">
+            <label>Ayat Awal</label>
+            <input type="number" id="ayat-awal">
+        </div>
+        <div class="form-grup">
             <label>Ayat Akhir</label>
-            <input type="number" id="ayat-akhir" placeholder="..">
+            <input type="number" id="ayat-akhir">
         </div>
     </div>
 
     <div class="form-grup">
-        <label>Kualitas Hafalan (Bintang)</label>
-        <div class="rating" id="star-rating">
-            <span class="star" data-value="1">★</span>
-            <span class="star" data-value="2">★</span>
-            <span class="star" data-value="3">★</span>
-            <span class="star" data-value="4">★</span>
-            <span class="star" data-value="5">★</span>
+        <label>Kualitas Hafalan</label>
+        <div class="rating">
+            <span class="star" onclick="pilihBintang(1)">★</span>
+            <span class="star" onclick="pilihBintang(2)">★</span>
+            <span class="star" onclick="pilihBintang(3)">★</span>
+            <span class="star" onclick="pilihBintang(4)">★</span>
+            <span class="star" onclick="pilihBintang(5)">★</span>
         </div>
-        <input type="hidden" id="nilai-input" value="0">
+        <input type="hidden" id="nilai-bintang" value="0">
     </div>
 
     <div class="form-grup">
-        <label>Status</label>
-        <select id="status-lulus">
+        <label>Status Kelulusan</label>
+        <select id="status">
             <option value="Lulus">✅ Lulus (Lanjut)</option>
             <option value="Sabaq">🔄 Sabaq (Ulang)</option>
         </select>
     </div>
 
-    <div class="form-grup">
-        <label>Catatan Ustadz</label>
-        <textarea id="catatan" rows="2" placeholder="Catatan tajwid..."></textarea>
-    </div>
-
-    <div id="loading">Memproses Data...</div>
-    <button class="btn-simpan" onclick="simpanTahfidz()">SIMPAN PENCAPAIAN</button>
+    <div id="loading">Menyimpan data...</div>
+    <button class="btn-simpan" onclick="simpanData()">SIMPAN PENCAPAIAN</button>
 </div>
 
 <script>
-    const SCRIPT_URL = "URL_APPS_SCRIPT_ANDA_DI_SINI";
-
-    const dataAlquran = [
+    // Database Surah & Juz
+    const listSurah = [
         {n: "Al-Fatihah", j: 1}, {n: "Al-Baqarah", j: 1}, {n: "Ali 'Imran", j: 3}, {n: "An-Nisa'", j: 4}, {n: "Al-Ma'idah", j: 6}, {n: "Al-An'am", j: 7}, {n: "Al-A'raf", j: 8}, {n: "Al-Anfal", j: 9}, {n: "At-Taubah", j: 10}, {n: "Yunus", j: 11}, {n: "Hud", j: 11}, {n: "Yusuf", j: 12}, {n: "Ar-Ra'd", j: 13}, {n: "Ibrahim", j: 13}, {n: "Al-Hijr", j: 14}, {n: "An-Nahl", j: 14}, {n: "Al-Isra'", j: 15}, {n: "Al-Kahf", j: 15}, {n: "Maryam", j: 16}, {n: "Thaha", j: 16}, {n: "Al-Anbiya'", j: 17}, {n: "Al-Hajj", j: 17}, {n: "Al-Mu'minun", j: 18}, {n: "An-Nur", j: 18}, {n: "Al-Furqan", j: 18}, {n: "Asy-Syu'ara'", j: 19}, {n: "An-Naml", j: 19}, {n: "Al-Qashash", j: 20}, {n: "Al-'Ankabut", j: 20}, {n: "Ar-Rum", j: 21}, {n: "Luqman", j: 21}, {n: "As-Sajdah", j: 21}, {n: "Al-Ahzab", j: 21}, {n: "Saba'", j: 22}, {n: "Fathir", j: 22}, {n: "Yasin", j: 22}, {n: "Ash-Shaffat", j: 23}, {n: "Shad", j: 23}, {n: "Az-Zumar", j: 23}, {n: "Ghafir", j: 24}, {n: "Fushshilat", j: 24}, {n: "Asy-Syura", j: 25}, {n: "Az-Zukhruf", j: 25}, {n: "Ad-Dukhan", j: 25}, {n: "Al-Jatsiyah", j: 25}, {n: "Al-Ahqaf", j: 26}, {n: "Muhammad", j: 26}, {n: "Al-Fath", j: 26}, {n: "Al-Hujurat", j: 26}, {n: "Qaf", j: 26}, {n: "Adz-Dzariyat", j: 26}, {n: "Ath-Thur", j: 27}, {n: "An-Najm", j: 27}, {n: "Al-Qamar", j: 27}, {n: "Ar-Rahman", j: 27}, {n: "Al-Waqi'ah", j: 27}, {n: "Al-Hadid", j: 27}, {n: "Al-Mujadilah", j: 28}, {n: "Al-Hasyr", j: 28}, {n: "Al-Mumtahanah", j: 28}, {n: "Ash-Shaff", j: 28}, {n: "Al-Jumu'ah", j: 28}, {n: "Al-Munafiqun", j: 28}, {n: "At-Taghabun", j: 28}, {n: "Ath-Thalaq", j: 28}, {n: "At-Tahrim", j: 28}, {n: "Al-Mulk", j: 29}, {n: "Al-Qalam", j: 29}, {n: "Al-Haqqah", j: 29}, {n: "Al-Ma'arij", j: 29}, {n: "Nuh", j: 29}, {n: "Al-Jinn", j: 29}, {n: "Al-Muzzammil", j: 29}, {n: "Al-Muddatstsir", j: 29}, {n: "Al-Qiyamah", j: 29}, {n: "Al-Insan", j: 29}, {n: "Al-Mursalat", j: 29}, {n: "An-Naba'", j: 30}, {n: "An-Nazi'at", j: 30}, {n: "'Abasa", j: 30}, {n: "At-Takwir", j: 30}, {n: "Al-Infithar", j: 30}, {n: "Al-Muthaffifin", j: 30}, {n: "Al-Insyiqaq", j: 30}, {n: "Al-Buruj", j: 30}, {n: "Ath-Thariq", j: 30}, {n: "Al-A'la", j: 30}, {n: "Al-Ghasyiyah", j: 30}, {n: "Al-Fajr", j: 30}, {n: "Al-Balad", j: 30}, {n: "Asy-Syams", j: 30}, {n: "Al-Lail", j: 30}, {n: "Ad-Dhuha", j: 30}, {n: "Asy-Syarh", j: 30}, {n: "At-Tin", j: 30}, {n: "Al-'Alaq", j: 30}, {n: "Al-Qadr", j: 30}, {n: "Al-Bayyinah", j: 30}, {n: "Az-Zalzalah", j: 30}, {n: "Al-'Adiyat", j: 30}, {n: "Al-Qari'ah", j: 30}, {n: "At-Takatsur", j: 30}, {n: "Al-'Asr", j: 30}, {n: "Al-Humazah", j: 30}, {n: "Al-Fil", j: 30}, {n: "Quraisy", j: 30}, {n: "Al-Ma'un", j: 30}, {n: "Al-Kautsar", j: 30}, {n: "Al-Kafirun", j: 30}, {n: "An-Nashr", j: 30}, {n: "Al-Lahab", j: 30}, {n: "Al-Ikhlash", j: 30}, {n: "Al-Falaq", j: 30}, {n: "An-Nas", j: 30}
     ];
 
-    function loadSurah() {
-        const selectSurah = document.getElementById('surah');
-        dataAlquran.forEach(item => {
-            let opt = document.createElement('option');
-            opt.value = item.n;
-            opt.text = item.n;
-            opt.dataset.juz = item.j;
-            selectSurah.appendChild(opt);
-        });
-    }
-
-    function isiJuzOtomatis() {
-        const selectSurah = document.getElementById('surah');
-        const juzInput = document.getElementById('juz');
-        const selectedOption = selectSurah.options[selectSurah.selectedIndex];
-        juzInput.value = selectedOption.dataset.juz || "";
-    }
-
-    document.addEventListener('DOMContentLoaded', loadSurah);
-
-    const stars = document.querySelectorAll('.star');
-    stars.forEach(star => {
-        star.addEventListener('click', function() {
-            let val = this.getAttribute('data-value');
-            document.getElementById('nilai-input').value = val;
-            stars.forEach(s => s.classList.remove('active'));
-            for(let i=0; i<val; i++) stars[i].classList.add('active');
-        });
+    // Fungsi Otomatis Mengisi Dropdown Surah
+    const selectS = document.getElementById('surah');
+    listSurah.forEach(s => {
+        let el = document.createElement('option');
+        el.value = s.n;
+        el.text = s.n;
+        el.setAttribute('data-juz', s.j);
+        selectS.appendChild(el);
     });
 
-    async function simpanTahfidz() {
-        const payload = {
-            target: "tahfidz",
-            tanggal: new Date().toLocaleString('id-ID'),
-            kelas: document.getElementById('pilih-kelas').value,
-            nama: document.getElementById('pilih-santri').value,
-            juz: document.getElementById('juz').value,
-            surah: document.getElementById('surah').value,
-            ayat: document.getElementById('ayat-awal').value + "-" + document.getElementById('ayat-akhir').value,
-            bintang: document.getElementById('nilai-input').value,
-            status: document.getElementById('status-lulus').value,
-            catatan: document.getElementById('catatan').value
-        };
+    // Fungsi Mengisi Juz Otomatis
+    function updateJuz() {
+        const pilihan = selectS.options[selectS.selectedIndex];
+        const juzVal = pilihan.getAttribute('data-juz');
+        document.getElementById('juz').value = juzVal ? juzVal : "";
+    }
 
-        if(!payload.kelas || !payload.surah || !payload.nama) {
-            alert("Harap lengkapi Kelas, Nama, dan Surah!");
-            return;
-        }
+    // Fungsi Bintang
+    function pilihBintang(n) {
+        document.getElementById('nilai-bintang').value = n;
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((s, i) => {
+            s.style.color = i < n ? "#eab308" : "#ddd";
+        });
+    }
 
-        document.getElementById('loading').style.display = 'block';
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Data Hafalan Berhasil Disimpan!");
-            location.reload();
-        } catch (e) {
-            alert("Cek Spreadsheet Anda (Data biasanya sudah masuk)");
-            location.reload();
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
+    function simpanData() {
+        const nama = document.getElementById('pilih-santri').value;
+        const surah = document.getElementById('surah').value;
+        if(!nama || !surah) return alert("Pilih Nama & Surah!");
+        alert("Data Siap Dikirim ke Spreadsheet!");
     }
 </script>
+
 </body>
 </html>
