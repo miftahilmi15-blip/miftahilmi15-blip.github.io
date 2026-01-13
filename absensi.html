@@ -1,205 +1,254 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Absensi Digital</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { 
-            --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; 
-            --izin: #3b82f6; --alpha: #ef4444; --bg: #f0f7f4;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
-        
-        .wadah { 
-            width: 100%; max-width: 450px; background: white; padding: 25px; 
-            border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); align-self: flex-start; 
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Santri | Absensi Premium</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
-        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 15px; }
-        header h1 { color: var(--primary); font-size: 24px; font-weight: 800; }
-        header p { font-size: 12px; color: #777; }
+  :root {
+    --primary: #1f6f51;
+    --primary-hover: #16503a;
+    --hadir: #22c55e;
+    --sakit: #eab308;
+    --izin: #3b82f6;
+    --alpha: #ef4444;
+    --bg-light: #f3fbf7;
+  }
 
-        .form-grup { margin-bottom: 20px; }
-        select { 
-            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; 
-            background: #f9f9f9; font-weight: 600; color: #333; outline: none;
-        }
+  /* ========== BACKGROUND ANIMASI ========== */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+  
+  body {
+    background: var(--bg-light);
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.1) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(212, 185, 106, 0.1) 0px, transparent 50%);
+    background-attachment: fixed;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-        .area-tabel { border-radius: 15px; overflow: hidden; border: 1px solid #eee; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f8fafb; padding: 12px; font-size: 11px; color: #888; text-transform: uppercase; text-align: left; }
-        td { padding: 15px 12px; border-bottom: 1px solid #f8fafb; font-size: 13px; }
+  .container { width: 100%; max-width: 420px; }
 
-        .btn-status { 
-            width: 35px; height: 35px; border-radius: 10px; border: 1.5px solid #eee; 
-            background: white; cursor: pointer; font-weight: 800; color: #ddd; 
-            transition: 0.2s; margin-left: 2px;
-        }
+  /* ========== HEADER ========== */
+  .header-box { text-align: center; margin-bottom: 25px; position: relative; padding-top: 10px; }
+  .back-link { position: absolute; left: 0; top: 15px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 14px; }
+  .title { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
 
-        .h-on { background: var(--hadir)!important; color: white!important; border-color: var(--hadir); }
-        .s-on { background: var(--sakit)!important; color: white!important; border-color: var(--sakit); }
-        .i-on { background: var(--izin)!important; color: white!important; border-color: var(--izin); }
-        .a-on { background: var(--alpha)!important; color: white!important; border-color: var(--alpha); }
+  /* ========== KARTU PILIH KELAS ========== */
+  .card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
 
-        .btn-kirim { 
-            width: 100%; background: var(--primary); color: white; border: none; 
-            padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer;
-        }
+  select {
+    width: 100%; padding: 15px; border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
+    font-size: 15px; font-weight: 600; color: var(--primary); outline: none;
+    appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231f6f51' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat; background-position: right 15px center; background-size: 15px;
+  }
 
-        #loading { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255,255,255,0.8); z-index: 100; justify-content: center; align-items: center;
-            flex-direction: column; font-weight: 700; color: var(--primary);
-        }
-    </style>
+  /* ========== LIST SANTRI ========== */
+  .santri-item {
+    background: white; margin-bottom: 12px; padding: 15px;
+    border-radius: 18px; display: flex; align-items: center;
+    justify-content: space-between; border: 1px solid rgba(0,0,0,0.02);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    animation: fadeIn 0.4s ease forwards;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .santri-info h3 { font-size: 14px; color: #2d3436; font-weight: 700; }
+  .santri-info p { font-size: 11px; color: #636e72; }
+
+  /* ========== TOMBOL STATUS ========== */
+  .btn-group { display: flex; gap: 4px; }
+  .btn-status {
+    width: 35px; height: 35px; border-radius: 10px; border: 1.5px solid #f1f5f9;
+    background: white; font-weight: 800; font-size: 12px; color: #cbd5e1;
+    transition: 0.2s; cursor: pointer;
+  }
+  .h-on { background: var(--hadir)!important; color: white!important; border: none; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
+  .s-on { background: var(--sakit)!important; color: white!important; border: none; box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3); }
+  .i-on { background: var(--izin)!important; color: white!important; border: none; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+  .a-on { background: var(--alpha)!important; color: white!important; border: none; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+
+  /* ========== FOOTER TOMBOL ========== */
+  .footer-action {
+    position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px;
+    background: linear-gradient(to top, var(--bg-light) 70%, transparent);
+    display: flex; justify-content: center; z-index: 100;
+  }
+  .btn-kirim {
+    width: 100%; max-width: 380px; background: var(--primary); color: white; border: none;
+    padding: 18px; border-radius: 16px; font-weight: 700; font-size: 16px;
+    box-shadow: 0 10px 25px rgba(31, 111, 81, 0.3); cursor: pointer; transition: 0.3s;
+  }
+  .btn-kirim:active { transform: scale(0.96); }
+
+  /* ========== LOADING SPINNER ========== */
+  #loading {
+    display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8);
+    z-index: 1000; flex-direction: column; align-items: center; justify-content: center;
+    backdrop-filter: blur(5px);
+  }
+  .spinner { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
 
-<div id="loading">Memuat Data Santri...</div>
+<div id="loading">
+  <div class="spinner"></div>
+  <p style="margin-top:15px; font-weight:600; color:var(--primary)">Mengambil Data...</p>
+</div>
 
-<div class="wadah">
-    <header>
-        <h1>E-SANTRI</h1>
-        <p id="tgl-skrg"></p>
-    </header>
+<div class="container">
+  <header class="header-box">
+    <a href="index.html" class="back-link">← KEMBALI</a>
+    <h1 class="title">ABSENSI SANTRI</h1>
+  </header>
 
-    <div class="form-grup">
-        <select id="pilih-kelas">
-            <option value="">-- Pilih Kelas --</option>
-            <option value="7A">Kelas 7A</option>
-            <option value="7B">Kelas 7B</option>
-            <option value="7C">Kelas 7C</option>
-            <option value="7D">Kelas 7D</option>
-            <option value="8A">Kelas 8A</option>
-            <option value="8B">Kelas 8B</option>
-            <option value="8C">Kelas 8C</option>
-            <option value="8D">Kelas 8D</option>
-            <option value="9A">Kelas 9A</option>
-            <option value="9B">Kelas 9B</option>
-            <option value="9C">Kelas 9C</option>
-            <option value="9D">Kelas 9D</option>
-        </select>
-    </div>
+  <div class="card">
+    <select id="pilih-kelas">
+      <option value="">-- Pilih Kelas --</option>
+      <option value="7A">Kelas 7A</option>
+      <option value="7B">Kelas 7B</option>
+      <option value="7C">Kelas 7C</option>
+      <option value="7D">Kelas 7D</option>
+      <option value="8A">Kelas 8A</option>
+      <option value="8B">Kelas 8B</option>
+      <option value="8C">Kelas 8C</option>
+      <option value="8D">Kelas 8D</option>
+      <option value="9A">Kelas 9A</option>
+      <option value="9B">Kelas 9B</option>
+      <option value="9C">Kelas 9C</option>
+      <option value="9D">Kelas 9D</option>
+    </select>
+  </div>
 
-    <div class="area-tabel">
-        <table>
-            <thead>
-                <tr>
-                    <th>Santri</th>
-                    <th style="text-align: center;">H S I A</th>
-                </tr>
-            </thead>
-            <tbody id="isi-tabel">
-                <tr><td colspan="2" style="text-align:center; color:#999; padding: 30px;">Silakan pilih kelas...</td></tr>
-            </tbody>
-        </table>
-    </div>
+  <div id="isi-tabel" style="margin-bottom: 120px;">
+    <p style="text-align:center; color:#94a3b8; font-size:13px; margin-top:50px;">Silakan pilih kelas terlebih dahulu</p>
+  </div>
 
+  <div class="footer-action">
     <button class="btn-kirim" onclick="kirimAbsen()">SIMPAN ABSENSI</button>
+  </div>
 </div>
 
 <script>
-    // PERBAIKAN: Tanda kutip URL sudah diperbaiki
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFnuvsTjP5RjVgwi471MTr6X3t7tbqSVh1lgK5ppx6fvIMxlY_Z3jdyU6wZuyATbelkQ/exec";
+  // URL WEB APP YANG BARU ANDA BERIKAN
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyfw80EV6Ze8RtzO6NBeKedQ0Kp1NH9OSDyJy5Whm-tjdTmkWp4mrI95kjFQThPQJ9AOA/exec";
 
-    document.getElementById('tgl-skrg').textContent = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  // 1. Fungsi Ambil Data (Pilih Kelas)
+  document.getElementById('pilih-kelas').onchange = function() {
+    const kls = this.value;
+    if(!kls) return;
+    
+    document.getElementById('loading').style.display = 'flex';
+    
+    // Gunakan JSONP agar tidak diblokir browser HP
+    const oldScript = document.getElementById('jsonp');
+    if(oldScript) oldScript.remove();
 
-    // 1. Ambil Data via JSONP (Anti-Blokir)
-    document.getElementById('pilih-kelas').onchange = function() {
-        const kls = this.value;
-        if(!kls) return;
-        
-        document.getElementById('loading').style.display = 'flex';
-        
-        const oldScript = document.getElementById('jsonp');
-        if(oldScript) oldScript.remove();
+    const script = document.createElement('script');
+    script.id = 'jsonp';
+    script.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(kls)}&callback=handleResponse`;
+    document.body.appendChild(script);
+  };
 
-        const script = document.createElement('script');
-        script.id = 'jsonp';
-        // Mengirim parameter ke Google Script
-        script.src = SCRIPT_URL + "?kelas=" + encodeURIComponent(kls) + "&callback=handleResponse";
-        document.body.appendChild(script);
-    };
+  // 2. Fungsi Menampilkan Nama Santri
+  function handleResponse(data) {
+    document.getElementById('loading').style.display = 'none';
+    const container = document.getElementById('isi-tabel');
+    container.innerHTML = '';
 
-    // 2. Menangani hasil dari Google Sheets
-    function handleResponse(data) {
-        document.getElementById('loading').style.display = 'none';
-        const tbody = document.getElementById('isi-tabel');
-        tbody.innerHTML = '';
-
-        if(data.error) {
-            alert("Data tidak ketemu: " + data.error);
-            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:red;">' + data.error + '</td></tr>';
-            return;
-        }
-
-        data.forEach(s => {
-            const tr = document.createElement('tr');
-            tr.setAttribute('data-nipd', s.nipd);
-            tr.setAttribute('data-nama', s.nama);
-            tr.innerHTML = `
-                <td><div style="font-weight:700;">${s.nama}</div><div style="font-size:10px; color:#999;">${s.nipd}</div></td>
-                <td style="text-align:right; white-space:nowrap;">
-                    <button class="btn-status" onclick="pilih(this,'H')">H</button>
-                    <button class="btn-status" onclick="pilih(this,'S')">S</button>
-                    <button class="btn-status" onclick="pilih(this,'I')">I</button>
-                    <button class="btn-status" onclick="pilih(this,'A')">A</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+    if(data.error) {
+      container.innerHTML = `<div class="card" style="text-align:center; color:red; font-size:13px;">${data.error}</div>`;
+      return;
     }
 
-    function pilih(btn, status) {
-        const parent = btn.parentElement;
-        parent.querySelectorAll('.btn-status').forEach(b => {
-            b.className = 'btn-status';
-            b.removeAttribute('data-aktif');
+    data.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'santri-item';
+      div.setAttribute('data-nipd', s.nipd);
+      div.setAttribute('data-nama', s.nama);
+      div.innerHTML = `
+        <div class="santri-info">
+          <h3>${s.nama}</h3>
+          <p>${s.nipd}</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn-status" onclick="pilih(this,'H')">H</button>
+          <button class="btn-status" onclick="pilih(this,'S')">S</button>
+          <button class="btn-status" onclick="pilih(this,'I')">I</button>
+          <button class="btn-status" onclick="pilih(this,'A')">A</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  // 3. Fungsi Memilih Status (H/S/I/A)
+  function pilih(btn, status) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.btn-status').forEach(b => {
+      b.className = 'btn-status';
+      b.removeAttribute('data-aktif');
+    });
+    const warna = { 'H': 'h-on', 'S': 's-on', 'I': 'i-on', 'A': 'a-on' };
+    btn.classList.add(warna[status]);
+    btn.setAttribute('data-aktif', status);
+  }
+
+  // 4. Fungsi Kirim Data ke Google Sheets
+  async function kirimAbsen() {
+    const kls = document.getElementById('pilih-kelas').value;
+    const items = document.querySelectorAll('.santri-item');
+    let rekap = [];
+
+    items.forEach(item => {
+      const statusBtn = item.querySelector('[data-aktif]');
+      if(statusBtn) {
+        rekap.push({
+          kelas: kls,
+          nipd: item.getAttribute('data-nipd'),
+          nama: item.getAttribute('data-nama'),
+          status: statusBtn.getAttribute('data-aktif')
         });
-        const warna = { 'H': 'h-on', 'S': 's-on', 'I': 'i-on', 'A': 'a-on' };
-        btn.classList.add(warna[status]);
-        btn.setAttribute('data-aktif', status);
+      }
+    });
+
+    if(rekap.length === 0) return alert("Pilih absen santri dulu!");
+
+    document.getElementById('loading').querySelector('p').innerText = "Menyimpan Ke Database...";
+    document.getElementById('loading').style.display = 'flex';
+    
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(rekap)
+      });
+      alert("✅ Alhamdulillah, Absensi Berhasil Disimpan!");
+      location.reload();
+    } catch (e) {
+      alert("Gagal menyimpan. Cek koneksi internet.");
+    } finally {
+      document.getElementById('loading').style.display = 'none';
     }
-
-    async function kirimAbsen() {
-        const kls = document.getElementById('pilih-kelas').value;
-        const rows = document.querySelectorAll('#isi-tabel tr');
-        let rekap = [];
-
-        rows.forEach(tr => {
-            const status = tr.querySelector('[data-aktif]');
-            if(status) {
-                rekap.push({
-                    kelas: kls,
-                    nipd: tr.getAttribute('data-nipd'),
-                    nama: tr.getAttribute('data-nama'),
-                    status: status.getAttribute('data-aktif')
-                });
-            }
-        });
-
-        if(rekap.length === 0) return alert("Pilih absen dulu!");
-
-        document.getElementById('loading').innerText = "Mengirim ke Database...";
-        document.getElementById('loading').style.display = 'flex';
-        
-        try {
-            await fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(rekap)
-            });
-            alert("✅ Absensi Berhasil Disimpan!");
-            location.reload();
-        } catch (e) {
-            alert("Gagal mengirim data.");
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
-    }
+  }
 </script>
 </body>
 </html>
