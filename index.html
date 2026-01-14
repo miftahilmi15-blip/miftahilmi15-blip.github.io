@@ -9,8 +9,6 @@
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
   :root {
     --primary: #1f6f51;
     --primary-hover: #16503a;
@@ -54,17 +52,42 @@
 
   .container { width: 100%; max-width: 420px; z-index: 1; transition: var(--transition); opacity: 1; }
 
-  /* HEADER */
+  /* HEADER & LOGO 4D */
   .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
   @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
   
   .logo-box { 
-    width: 100px; height: 100px; margin: 0 auto 15px;
-    background: white; padding: 10px; border-radius: 25px;
+    width: 100px; height: 100px; margin: 0 auto 10px;
+    background: white; padding: 12px; border-radius: 28px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    /* Efek Logo Timbul */
+    filter: drop-shadow(0 5px 15px rgba(31, 111, 81, 0.2));
   }
   .logo { width: 100%; height: 100%; object-fit: contain; }
-  .title { font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+
+  /* TULISAN E-SANTRI 4D ANIMATED */
+  .title { 
+    font-family: 'Montserrat', sans-serif;
+    font-size: 34px; 
+    font-weight: 900; 
+    color: #ffffff; /* Putih */
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: inline-block;
+    /* Outline Hijau Elegan */
+    -webkit-text-stroke: 1.5px var(--primary);
+    /* Shadow 4D */
+    text-shadow: 
+        0 5px 15px rgba(31, 111, 81, 0.3),
+        0 10px 10px rgba(0, 0, 0, 0.1);
+    /* Animasi Melayang */
+    animation: floatAnim 3s ease-in-out infinite;
+  }
+
+  @keyframes floatAnim {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-10px) scale(1.03); }
+  }
 
   /* CARD */
   .card {
@@ -79,22 +102,24 @@
   input[type="email"], input[type="password"] {
     width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; font-size: 14px;
+    transition: 0.3s;
   }
+  input:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--soft); }
 
   .password-wrapper { position: relative; }
   .toggle-pass { 
     position: absolute; top: 18px; right: 15px; cursor: pointer; 
-    color: var(--primary); font-size: 11px; font-weight: 700;
+    color: var(--primary); font-size: 11px; font-weight: 700; text-transform: uppercase;
   }
 
   /* BUTTONS */
   .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-  .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
+  .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; box-shadow: 0 8px 20px rgba(31, 111, 81, 0.2); }
   .btn.outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
   .btn-google { background: #fff; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn:active { transform: scale(0.95); }
 
-  /* SIDEBAR & TRIGGER */
+  /* SIDEBAR */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
@@ -102,7 +127,6 @@
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  .menu-trigger:active { transform: scale(0.8) rotate(90deg); }
 
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
@@ -111,12 +135,9 @@
     border-radius: 30px 0 0 30px;
   }
   .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
-  .sidebar-nav a { display: block; padding: 16px 20px; text-decoration: none; color: var(--text); font-weight: 600; border-radius: 15px; margin-bottom: 8px; }
 
   /* DASHBOARD GRID */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; animation: fadeInUp 0.6s ease; }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  
   .menu-item { 
     background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
@@ -127,9 +148,8 @@
 
   .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
-
   .hidden { display:none !important; }
-  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 10px; font-weight: 700; text-align: center; }
+  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -143,16 +163,16 @@
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header" style="text-align: center; margin-bottom: 30px;">
-    <img id="user-photo" src="assets/default-avatar.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover;">
+    <img id="user-photo" src="assets/default-avatar.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover; border: 3px solid var(--soft);">
     <div id="sidebar-name" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top:10px;">Santri</div>
     <small id="sidebar-email" style="color: var(--muted);"></small>
   </div>
-  <div class="sidebar-nav">
-    <a href="index.html">🏠 Dashboard</a>
-    <a href="waktu-sholat.html">🕌 Waktu Sholat</a>
-    <a href="pengaduan.html">📩 Pengaduan</a>
-    <a href="kalender.html">📅 Kalender</a>
-    <a href="#" onclick="logout()" style="color: #d63031; background: rgba(214, 48, 49, 0.05); margin-top: 20px;">🚪 Keluar</a>
+  <div class="sidebar-nav" style="display: flex; flex-direction: column; gap: 5px;">
+    <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; border-radius:10px; background:var(--soft);">🏠 Dashboard</a>
+    <a href="waktu-sholat.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">🕌 Waktu Sholat</a>
+    <a href="pengaduan.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📩 Pengaduan</a>
+    <a href="kalender.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📅 Kalender</a>
+    <a href="#" onclick="logout()" style="text-decoration:none; color: #d63031; background: rgba(214, 48, 49, 0.05); padding:12px; border-radius:10px; margin-top: 10px; font-weight:700;">🚪 Keluar</a>
   </div>
 </div>
 
@@ -165,8 +185,8 @@
 
 <main class="container" id="main-container">
   <div id="login-card" class="card login hidden">
-    <h2 style="text-align:center; color:var(--primary);">Ahlan wa Sahlan!</h2>
-    <p style="text-align:center; color:var(--muted); font-size:12px; margin-bottom:20px;">Masuk ke akun Anda</p>
+    <h2 style="text-align:center; color:var(--primary); font-weight:800;">Ahlan wa Sahlan!</h2>
+    <p style="text-align:center; color:var(--muted); font-size:12px; margin-bottom:25px;">Masuk ke akun Anda</p>
     
     <input type="email" id="email" placeholder="Email">
     <div class="password-wrapper">
@@ -186,8 +206,8 @@
   </div>
 
   <section id="dashboard" class="hidden">
-    <div class="card" style="padding: 20px; text-align: center; border-left: 5px solid var(--primary);">
-        <h3 id="welcome-msg" style="color: var(--primary);">Selamat Datang</h3>
+    <div class="card" style="padding: 20px; text-align: center; border-left: 6px solid var(--primary);">
+        <h3 id="welcome-msg" style="color: var(--primary); font-weight:800;">Selamat Datang</h3>
     </div>
     
     <div class="menu-grid">
@@ -212,14 +232,12 @@
   });
   const auth = firebase.auth();
 
-  // FUNGSI PENGAMPU BUG "MUTER-MUTER"
   function hideLoading() {
     const ls = document.getElementById("loading-screen");
     ls.style.opacity = "0";
     setTimeout(() => ls.style.display = "none", 400);
   }
 
-  // Paksa hapus loading jika firebase macet lebih dari 3 detik
   const safetyTimeout = setTimeout(hideLoading, 3000);
 
   window.onpageshow = function(event) {
@@ -255,7 +273,7 @@
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user=>{
-    clearTimeout(safetyTimeout); // Hentikan timer pengaman jika firebase sudah merespon
+    clearTimeout(safetyTimeout);
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
     const menuBtn=document.getElementById("menu-btn");
