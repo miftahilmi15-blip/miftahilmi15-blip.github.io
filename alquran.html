@@ -3,61 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Qur'an Digital Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Al-Qur'an Digital Modern</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --quran-green: #1f6f51;
-            --bg-paper: #fcfbf7;
-            --text-dark: #2d3436;
-            --border-gold: #c5a059;
+            --primary: #1f6f51;
+            --gold: #c5a059;
+            --paper: #fdfaf4;
+            --text: #2d3436;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: #e0e6e0; color: var(--text-dark); padding-bottom: 160px; }
+        
+        body { 
+            background: #f0f2f0; 
+            color: var(--text);
+            line-height: 1.6;
+        }
 
+        /* HEADER ELEGANT */
         header {
-            background: var(--quran-green); color: white; padding: 25px 20px;
-            text-align: center; position: sticky; top: 0; z-index: 100;
+            background: linear-gradient(135deg, var(--primary), #144d38);
+            color: white;
+            padding: 40px 20px 60px;
+            text-align: center;
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 10px 30px rgba(31, 111, 81, 0.2);
         }
 
-        .main-content {
-            max-width: 600px; margin: 10px auto;
-            background: var(--bg-paper); min-height: 80vh;
-            border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        header h1 { font-family: 'Amiri', serif; font-size: 2.2rem; margin-bottom: 10px; }
+        
+        .selector-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* MUSHAF STYLE */
+        #surahSelect {
+            background: transparent;
+            color: white;
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* MUSHAF CARD */
+        .container {
+            max-width: 600px;
+            margin: -30px auto 150px;
+            background: var(--paper);
+            padding: 40px 30px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            min-height: 80vh;
+        }
+
+        .surah-title {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .surah-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: var(--gold);
+            margin: 10px auto;
+            border-radius: 5px;
+        }
+
         .page-content {
-            direction: rtl; text-align: justify; line-height: 2.8;
-            font-family: 'Amiri', serif; font-size: 28px;
+            direction: rtl;
+            text-align: justify;
+            line-height: 2.8;
+            font-family: 'Amiri', serif;
+            font-size: 28px;
+            color: #1a1a1a;
         }
+
         .ayah-num {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 40px; height: 40px; margin: 0 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            margin: 0 12px;
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
-            background-size: contain; font-size: 14px; font-weight: bold;
+            background-size: contain;
+            font-size: 14px;
+            font-family: sans-serif;
+            font-weight: bold;
         }
 
-        /* AUDIO PLAYER BAR */
-        .audio-player-fixed {
-            position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 600px; background: white;
-            padding: 15px; border-radius: 20px 20px 0 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.15); z-index: 110;
+        /* PREMIUM BOTTOM PLAYER & NAV */
+        .bottom-shelf {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 15px 20px;
+            z-index: 1000;
         }
-        .audio-info { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; font-weight: bold; color: var(--quran-green); }
-        audio { width: 100%; height: 35px; }
 
-        /* NAV BAR */
-        .nav-bar {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 600px; background: #fff;
-            display: flex; justify-content: space-around; padding: 15px;
-            border-top: 1px solid #eee; z-index: 120;
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        .nav-btn { border: none; background: none; color: #888; font-weight: bold; cursor: pointer; }
-        .nav-btn.active { color: var(--quran-green); }
+
+        #audioStatus { font-size: 0.75rem; font-weight: 700; color: var(--primary); flex-grow: 1; }
+
+        audio { height: 30px; width: 100%; border-radius: 10px; }
+
+        .nav-links {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .nav-btn {
+            border: none;
+            background: none;
+            color: #999;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-btn.active { color: var(--primary); }
+
+        .waqaf-grid { display: grid; gap: 15px; direction: ltr; }
+        .waqaf-item {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid #f0f0f0;
+        }
 
         .hidden { display: none; }
     </style>
@@ -65,35 +170,36 @@
 <body>
 
 <header>
-    <h2 id="currentTitle">Murottal Al-Qur'an</h2>
-    <div style="margin-top: 10px;">
-        <select id="surahSelect" style="padding: 8px; border-radius: 8px; width: 70%;"></select>
+    <h1 id="headerSurah">Al-Qur'an</h1>
+    <div class="selector-box">
+        <select id="surahSelect"></select>
     </div>
 </header>
 
-<div class="main-content">
+<div class="container">
     <div id="quranSection">
-        <div id="quranText" class="page-content">Memuat Al-Qur'an...</div>
+        <div id="surahTitleArea" class="surah-title"></div>
+        <div id="quranText" class="page-content"></div>
     </div>
 
     <div id="waqafSection" class="hidden">
-        <h3 style="text-align: center; margin-bottom: 20px; color: var(--quran-green);">Tanda Waqaf</h3>
-        <p style="text-align:center; color:#666;">(Data Tanda Waqaf Sesuai Gambar Anda)</p>
+        <h3 style="text-align:center; margin-bottom:25px; color:var(--primary)">Panduan Waqaf</h3>
+        <div class="waqaf-grid" id="waqafData">
+            </div>
     </div>
 </div>
 
-<div class="audio-player-fixed">
-    <div class="audio-info">
-        <span id="audioStatus">Mendengarkan: -</span>
-        <span>Qori: Mishary Rashid</span>
+<div class="bottom-shelf">
+    <div class="audio-controls">
+        <div id="audioStatus">Memuat Audio...</div>
+        <audio id="mainAudio" controls></audio>
     </div>
-    <audio id="mainAudio" controls></audio>
+    
+    <div class="nav-links">
+        <button class="nav-btn active" onclick="showTab('quran')">📖 MUSHAF</button>
+        <button class="nav-btn" onclick="showTab('waqaf')">📏 TAJWID</button>
+    </div>
 </div>
-
-<nav class="nav-bar">
-    <button class="nav-btn active" onclick="showPage('quran')">📖 BACA</button>
-    <button class="nav-btn" onclick="showPage('waqaf')">📏 WAQAF</button>
-</nav>
 
 <script>
     const surahSelect = document.getElementById("surahSelect");
@@ -101,37 +207,38 @@
     const mainAudio = document.getElementById("mainAudio");
     const audioStatus = document.getElementById("audioStatus");
 
-    // 1. Ambil Daftar Surah
+    // Fetch Daftar Surah
     fetch("https://api.quran.gading.dev/surah")
         .then(r => r.json())
         .then(d => {
             d.data.forEach(s => {
-                let opt = new Option(`${s.number}. ${s.name.transliteration.id}`, s.number);
+                let opt = new Option(s.name.transliteration.id, s.number);
                 surahSelect.add(opt);
             });
-            loadSurah(1); // Mulai dari Al-Fatihah
+            loadSurah(1);
         });
 
     surahSelect.onchange = () => loadSurah(surahSelect.value);
 
-    // 2. Fungsi Load Surah & Audio
     function loadSurah(no) {
-        quranText.innerHTML = "Memuat ayat...";
+        quranText.innerHTML = "<p style='text-align:center'>Membuka mushaf...</p>";
         
-        // Update Audio
-        // Menggunakan API mp3quran.net yang stabil
-        const audioUrl = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
-        mainAudio.src = audioUrl;
+        // Update Audio Link
+        mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
         
         fetch(`https://api.quran.gading.dev/surah/${no}`)
             .then(r => r.json())
             .then(d => {
                 const data = d.data;
-                document.getElementById("currentTitle").innerText = data.name.transliteration.id;
-                audioStatus.innerText = `Mendengarkan: Surah ${data.name.transliteration.id}`;
+                document.getElementById("headerSurah").innerText = data.name.short;
+                document.getElementById("surahTitleArea").innerHTML = `
+                    <h2 style="font-family:Amiri; color:var(--primary)">${data.name.short}</h2>
+                    <p style="font-size:0.8rem; color:var(--gold)">${data.name.translation.id} • ${data.numberOfVerses} Ayat</p>
+                `;
+                audioStatus.innerText = `Putar: Surah ${data.name.transliteration.id}`;
 
                 let html = "";
-                if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:20px; font-size:32px;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
+                if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:30px; font-size:32px; color:#000">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
                 
                 data.verses.forEach(v => {
                     html += `${v.text.arab} <span class="ayah-num">${v.number.inSurah}</span> `;
@@ -140,12 +247,13 @@
             });
     }
 
-    function showPage(p) {
+    function showTab(p) {
         document.getElementById('quranSection').className = p === 'quran' ? '' : 'hidden';
         document.getElementById('waqafSection').className = p === 'waqaf' ? '' : 'hidden';
         document.querySelectorAll('.nav-btn').forEach((b, i) => {
             b.classList.toggle('active', (i === 0 && p === 'quran') || (i === 1 && p === 'waqaf'));
         });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 </script>
 
