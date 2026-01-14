@@ -1,220 +1,197 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Al-Qur'an Digital Elegan</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Qur'an Digital Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --quran-green: #1f6f51;
+            --bg-paper: #fcfbf7;
+            --text-dark: #2d3436;
+            --border-gold: #c5a059;
+            --accent-light: #e9f5e9;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #e0e6e0; color: var(--text-dark); overflow-x: hidden; }
 
-<style>
-:root {
-  --quran-green: #4a7c4a;
-  --bg-paper: #fcfbf7;
-  --text-color: #2d3436;
-  --border-gold: #c5a059;
-}
+        /* HEADER */
+        header {
+            background: var(--quran-green); color: white; padding: 30px 20px;
+            text-align: center; position: sticky; top: 0; z-index: 100;
+        }
+        header h1 { font-family: 'Amiri', serif; font-size: 1.8rem; }
 
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #e0e6e0;
-  color: var(--text-color);
-}
+        /* MUSHAF CONTAINER */
+        .main-content {
+            max-width: 600px; margin: 10px auto 100px;
+            background: var(--bg-paper); min-height: 85vh;
+            border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
 
-/* HEADER STYLE */
-header {
-  background: var(--quran-green);
-  color: white;
-  padding: 20px;
-  text-align: center;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
+        /* SURAH LIST & TEXT */
+        .surah-header {
+            text-align: center; border: 2px solid var(--border-gold);
+            margin-bottom: 30px; padding: 15px; background: white;
+        }
+        .page-content {
+            direction: rtl; text-align: justify; line-height: 2.5;
+            font-family: 'Amiri', serif; font-size: 26px;
+        }
+        .ayah-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 35px; height: 35px; margin: 0 8px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
+            background-size: contain; font-size: 14px; font-weight: bold; color: #444;
+        }
 
-.info-bar {
-  background: #fff;
-  border-bottom: 2px solid var(--border-gold);
-  text-align: center;
-  padding: 8px;
-  font-weight: bold;
-  font-size: 14px;
-}
+        /* WAQAF PAGE STYLE (Berdasarkan Gambar Anda) */
+        .waqaf-container { display: none; }
+        .waqaf-card {
+            background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px;
+            display: flex; align-items: center; border: 1px solid #ddd;
+        }
+        .waqaf-symbol {
+            font-family: 'Amiri', serif; font-size: 2.2rem; width: 70px;
+            text-align: center; color: var(--quran-green); font-weight: bold;
+        }
+        .waqaf-info h4 { color: var(--quran-green); margin-bottom: 4px; }
+        .waqaf-info p { font-size: 0.85rem; color: #666; }
 
-/* MUSHAF CONTAINER */
-#mushaf-container {
-  max-width: 600px;
-  margin: 20px auto;
-  background: var(--bg-paper);
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  border: 1px solid #d1d1d1;
-  min-height: 80vh;
-}
+        /* BOTTOM NAVIGATION */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 600px; background: white;
+            display: flex; justify-content: space-around; padding: 15px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1); border-radius: 20px 20px 0 0;
+        }
+        .nav-btn { 
+            border: none; background: none; color: #888; cursor: pointer;
+            font-weight: 700; font-size: 0.9rem; transition: 0.3s;
+        }
+        .nav-btn.active { color: var(--quran-green); }
 
-.surah-header {
-  text-align: center;
-  border: 2px solid var(--border-gold);
-  margin-bottom: 30px;
-  padding: 10px;
-  background: #fff;
-}
+        /* LOADING */
+        #loading { text-align: center; padding: 50px; font-weight: bold; color: var(--quran-green); }
+        .hidden { display: none; }
 
-.surah-name {
-  font-family: 'Amiri', serif;
-  font-size: 28px;
-  color: var(--quran-green);
-  margin: 0;
-}
-
-.bismillah {
-  text-align: center;
-  font-family: 'Amiri', serif;
-  font-size: 32px;
-  margin: 20px 0 30px;
-  color: #000;
-}
-
-/* TAJWID STYLE (SIMULASI) */
-/* Agar teks mengalir seperti koran/buku */
-.page-content {
-  direction: rtl;
-  text-align: justify;
-  line-height: 2.5;
-  font-family: 'Amiri', serif;
-  font-size: 28px;
-  word-spacing: 5px;
-}
-
-/* NOMOR AYAT DALAM TEKS */
-.ayah-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 35px;
-  height: 35px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
-  background-size: contain;
-  background-repeat: no-repeat;
-  font-size: 14px;
-  font-family: sans-serif;
-  margin: 0 5px;
-  vertical-align: middle;
-  color: #444;
-  font-weight: bold;
-}
-
-/* CONTROLS */
-.controls {
-  position: sticky;
-  bottom: 0;
-  background: white;
-  padding: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-}
-
-select {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid var(--border-gold);
-}
-
-@media (max-width: 600px) {
-  #mushaf-container { margin: 0; padding: 20px; border-radius: 0; }
-  .page-content { font-size: 24px; }
-}
-</style>
+        @media (max-width: 600px) { .main-content { border-radius: 0; margin: 0; } }
+    </style>
 </head>
 <body>
 
 <header>
-  <div style="font-size: 0.8em; opacity: 0.8;">Al-Qur'anul Karim</div>
-  <div id="currentSurahName">Memuat...</div>
+    <div id="headerTitle">Al-Qur'anul Karim</div>
+    <select id="surahSelect" style="margin-top:10px; padding:5px; border-radius:5px;"></select>
 </header>
 
-<div class="info-bar" id="metaInfo">
-  Juz -- | Hizb -- | Halaman --
+<div class="main-content">
+    <div id="quranSection">
+        <div id="surahHeaderArea"></div>
+        <div id="quranText" class="page-content">
+            <div id="loading">Memuat Surah...</div>
+        </div>
+    </div>
+
+    <div id="waqafSection" class="waqaf-container">
+        <h3 style="text-align: center; margin-bottom: 20px; color: var(--quran-green);">Panduan Tanda Waqaf</h3>
+        
+        <div class="waqaf-card">
+            <div class="waqaf-symbol">م</div>
+            <div class="waqaf-info"><h4>Mesti Berhenti</h4><p>Waqaf Lazim: Harus berhenti di akhir kalimat.</p></div>
+        </div>
+        <div class="waqaf-card">
+            <div class="waqaf-symbol">قلى</div>
+            <div class="waqaf-info"><h4>Berhenti Lebih Utama</h4><p>Al-Waqfu Aula: Lebih baik berhenti.</p></div>
+        </div>
+        <div class="waqaf-card">
+            <div class="waqaf-symbol">∴ ∴</div>
+            <div class="waqaf-info"><h4>Berhenti di Salah Satu</h4><p>Mu'anaqah: Berhenti di salah satu tanda titik tiga.</p></div>
+        </div>
+        <div class="waqaf-card">
+            <div class="waqaf-symbol">ج</div>
+            <div class="waqaf-info"><h4>Boleh Berhenti / Sambung</h4><p>Waqaf Jaiz: Boleh berhenti atau melanjutkan bacaan.</p></div>
+        </div>
+        <div class="waqaf-card">
+            <div class="waqaf-symbol">صلى</div>
+            <div class="waqaf-info"><h4>Sambung Lebih Utama</h4><p>Al-Washlu Aula: Lebih baik melanjutkan bacaan.</p></div>
+        </div>
+        <div class="waqaf-card">
+            <div class="waqaf-symbol">لا</div>
+            <div class="waqaf-info"><h4>Jangan Berhenti</h4><p>Waqaf La Washal: Dilarang berhenti kecuali di akhir ayat.</p></div>
+        </div>
+    </div>
 </div>
 
-<div id="mushaf-container">
-  <div id="surahHeaderArea"></div>
-  <div id="bismillahArea"></div>
-  <div id="quranText" class="page-content"></div>
-</div>
-
-<div class="controls">
-  <select id="surahSelect"></select>
-  <audio id="audioPlayer" controls></audio>
-</div>
+<nav class="nav-bar">
+    <button class="nav-btn active" onclick="showPage('quran')">📖 BACA QURAN</button>
+    <button class="nav-btn" onclick="showPage('waqaf')">📏 TANDA WAQAF</button>
+</nav>
 
 <script>
-const surahSelect = document.getElementById("surahSelect");
-const quranText = document.getElementById("quranText");
-const audio = document.getElementById("audioPlayer");
+    const surahSelect = document.getElementById("surahSelect");
+    const quranText = document.getElementById("quranText");
 
-// Load Daftar Surah
-fetch("https://api.quran.gading.dev/surah")
-  .then(r => r.json())
-  .then(d => {
-    d.data.forEach(s => {
-      const o = document.createElement("option");
-      o.value = s.number;
-      o.textContent = `${s.number}. ${s.name.transliteration.id}`;
-      surahSelect.appendChild(o);
-    });
-    loadSurah(67); // Default Al-Mulk sesuai screenshot Anda
-    surahSelect.value = 67;
-  });
+    // Load Daftar Surah dari API
+    fetch("https://api.quran.gading.dev/surah")
+        .then(r => r.json())
+        .then(d => {
+            d.data.forEach(s => {
+                const o = document.createElement("option");
+                o.value = s.number;
+                o.textContent = `${s.number}. ${s.name.transliteration.id}`;
+                surahSelect.appendChild(o);
+            });
+            loadSurah(1); // Default Al-Fatihah
+        });
 
-surahSelect.onchange = () => loadSurah(surahSelect.value);
+    surahSelect.onchange = () => loadSurah(surahSelect.value);
 
-function arabNumber(n) {
-  const a = ["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
-  return n.toString().split("").map(x => a[x]).join("");
-}
+    function loadSurah(no) {
+        quranText.innerHTML = '<div id="loading">Memuat Ayat...</div>';
+        fetch(`https://api.quran.gading.dev/surah/${no}`)
+            .then(r => r.json())
+            .then(d => {
+                const data = d.data;
+                document.getElementById("surahHeaderArea").innerHTML = `
+                    <div class="surah-header">
+                        <h2 style="font-family: Amiri; color: var(--quran-green);">${data.name.short}</h2>
+                        <p style="font-size: 0.8rem; color: gray;">${data.name.translation.id} (${data.numberOfVerses} Ayat)</p>
+                    </div>
+                `;
 
-function loadSurah(no) {
-  quranText.innerHTML = "Memuat...";
-  
-  // Audio
-  audio.src = `https://server8.mp3quran.net/afs/${String(no).padStart(3,"0")}.mp3`;
+                let content = "";
+                // Tambahkan Bismillah jika bukan Al-Fatihah/At-Taubah
+                if(no != 1 && no != 9) {
+                    content += '<div style="text-align:center; margin-bottom:20px; font-size: 30px;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>';
+                }
 
-  fetch(`https://api.quran.gading.dev/surah/${no}`)
-    .then(r => r.json())
-    .then(d => {
-      const data = d.data;
-      document.getElementById("currentSurahName").textContent = data.name.transliteration.id;
-      document.getElementById("metaInfo").textContent = `Juz ${data.verses[0].meta.juz} | Surah Ke-${data.number} | ${data.numberOfVerses} Ayat`;
+                data.verses.forEach(v => {
+                    content += `${v.text.arab} <span class="ayah-num">${v.number.inSurah}</span> `;
+                });
+                quranText.innerHTML = content;
+            });
+    }
 
-      // Render Header Surah
-      document.getElementById("surahHeaderArea").innerHTML = `
-        <div class="surah-header">
-          <div class="surah-name">${data.name.short}</div>
-          <div style="font-size:12px; color:gray">${data.name.translation.id}</div>
-        </div>
-      `;
-
-      // Render Bismillah
-      if(no != 1 && no != 9) {
-        document.getElementById("bismillahArea").innerHTML = `<div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
-      } else {
-        document.getElementById("bismillahArea").innerHTML = "";
-      }
-
-      // Render Ayat (Inline/Flowing)
-      let fullContent = "";
-      data.verses.forEach(v => {
-        // Membersihkan teks arab dari bismillah jika ada di awal ayat (kecuali Al-Fatihah)
-        let text = v.text.arab;
-        fullContent += `${text} <span class="ayah-num">${arabNumber(v.number.inSurah)}</span> `;
-      });
-      
-      quranText.innerHTML = fullContent;
-    });
-}
+    // Fungsi Pindah Halaman
+    function showPage(page) {
+        const btns = document.querySelectorAll('.nav-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        
+        if(page === 'quran') {
+            document.getElementById('quranSection').style.display = 'block';
+            document.getElementById('waqafSection').style.display = 'none';
+            btns[0].classList.add('active');
+        } else {
+            document.getElementById('quranSection').style.display = 'none';
+            document.getElementById('waqafSection').style.display = 'block';
+            btns[1].classList.add('active');
+        }
+        window.scrollTo(0,0);
+    }
 </script>
 
 </body>
