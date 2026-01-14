@@ -18,18 +18,16 @@
     --muted: #636e72;
     --glass: rgba(255, 255, 255, 0.9);
     --soft: rgba(31, 111, 81, 0.1);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* ========== ANIMATED BACKGROUND ========== */
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   
   body {
     background: #f3fbf7;
     background-image: 
       radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(212, 185, 106, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(31, 111, 81, 0.1) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(212, 185, 106, 0.1) 0px, transparent 50%);
+      radial-gradient(at 100% 0%, rgba(212, 185, 106, 0.15) 0px, transparent 50%);
     background-attachment: fixed;
     color: var(--text);
     padding: 20px;
@@ -37,9 +35,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden;
   }
 
-  /* LAYAR LOADING (Mencegah Kedipan Login) */
+  /* LOADING SCREEN */
   #loading-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #f3fbf7; display: flex; align-items: center; justify-content: center;
@@ -52,10 +51,12 @@
   }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  .container { width: 100%; max-width: 420px; z-index: 1; }
+  .container { width: 100%; max-width: 420px; z-index: 1; transition: var(--transition); }
 
-  /* ========== HEADER & LOGO ========== */
-  .header-box { text-align: center; padding: 40px 0 20px; }
+  /* HEADER */
+  .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  
   .logo-box { 
     width: 100px; height: 100px; margin: 0 auto 15px;
     background: white; padding: 10px; border-radius: 25px;
@@ -65,96 +66,85 @@
   .title { font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
   .tagline { font-size: 12px; color: var(--muted); font-weight: 500; }
 
-  /* ========== GLASS CARD DESIGN ========== */
+  /* CARDS & INPUTS */
   .card {
     background: var(--glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 24px;
-    padding: 35px;
-    margin-bottom: 25px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-radius: 24px; padding: 35px; margin-bottom: 25px;
     border: 1px solid rgba(255, 255, 255, 0.7);
     box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
   }
 
-  .card.login h2 { font-size: 24px; color: var(--primary); font-weight: 700; text-align: center; margin-bottom: 8px; }
-  .welcome-txt { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 25px; }
+  /* DASHBOARD ANIMATION */
+  #dashboard { animation: fadeInUp 0.6s ease-out; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* ========== REALISTIC INPUTS ========== */
-  input[type="email"], input[type="password"] {
-    width: 100%; padding: 15px 18px; margin-bottom: 15px; border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; font-size: 14px; transition: 0.3s;
-  }
-  input:focus { outline: none; border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(31, 111, 81, 0.1); }
-
-  .password-wrapper { position: relative; }
-  .toggle-pass { 
-    position: absolute; top: 22px; right: 15px; cursor: pointer; 
-    color: var(--primary); font-size: 11px; font-weight: 700; text-transform: uppercase;
-  }
-
-  .remember-me {
-    display: flex; align-items: center; gap: 10px; margin: 5px 0 20px; 
-    font-size: 13px; color: var(--muted); cursor: pointer;
-  }
-  .remember-me input { width: 18px; height: 18px; accent-color: var(--primary); }
-
-  /* ========== PREMIUM BUTTONS ========== */
-  .btn { 
-    width: 100%; padding: 15px; border-radius: 12px; border: none; 
-    font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s;
-  }
-  .btn.primary { 
-    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-    color: #fff; box-shadow: 0 8px 20px rgba(31, 111, 81, 0.3);
-  }
-  .btn.primary:active { transform: scale(0.98); }
-  
-  .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 10px; }
-
-  .btn-google {
-    background: #fff; color: #444; border: 1px solid #ddd; margin-top: 10px;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-  }
-
-  /* ========== DASHBOARD GRID ========== */
+  /* MENU GRID & ITEMS */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .menu-item { 
     background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
-    border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: 0.3s;
+    border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+    transition: var(--transition); cursor: pointer;
   }
   .menu-item:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-  .menu-icon { width: 42px; height: 42px; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); }
+  .menu-item:active { transform: scale(0.92); background: var(--soft); }
+  .menu-icon { width: 42px; height: 42px; margin-bottom: 10px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* ========== SIDEBAR ========== */
+  /* MENU TRIGGER (TITIK TIGA) - IMPROVED */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
-    background: var(--primary); color: #fff; width: 45px; height: 45px;
+    background: var(--primary); color: #fff; width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
-    border-radius: 15px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
+    border-radius: 16px; cursor: pointer; 
+    box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-size: 20px;
   }
+  .menu-trigger:active { transform: scale(0.8) rotate(90deg); background: var(--primary-hover); }
 
+  /* SIDEBAR - IMPROVED */
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
-    background: white; transition: .4s cubic-bezier(0.4, 0, 0.2, 1); 
+    background: white; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
     z-index: 1200; display: flex; flex-direction: column; padding: 50px 25px;
-    border-radius: 30px 0 0 30px;
+    border-radius: 30px 0 0 30px; transform: translateX(20px);
   }
-  .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
+  .sidebar.open { right: 0; transform: translateX(0); box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
 
-  .sidebar-header img { width: 85px; height: 85px; border-radius: 25px; border: 4px solid var(--soft); margin-bottom: 15px; object-fit: cover; }
+  /* SIDEBAR NAV ANIMATION */
   .sidebar-nav a { 
     display: block; padding: 16px 20px; text-decoration: none; color: var(--text); 
-    font-weight: 600; font-size: 15px; border-radius: 15px; margin-bottom: 10px; transition: 0.2s;
+    font-weight: 600; font-size: 15px; border-radius: 15px; margin-bottom: 10px; 
+    transition: 0.3s; opacity: 0; transform: translateX(20px);
   }
+  .sidebar.open .sidebar-nav a { opacity: 1; transform: translateX(0); }
+  .sidebar.open .sidebar-nav a:nth-child(1) { transition-delay: 0.1s; }
+  .sidebar.open .sidebar-nav a:nth-child(2) { transition-delay: 0.15s; }
+  .sidebar.open .sidebar-nav a:nth-child(3) { transition-delay: 0.2s; }
+  .sidebar.open .sidebar-nav a:nth-child(4) { transition-delay: 0.25s; }
+  .sidebar.open .sidebar-nav a:nth-child(5) { transition-delay: 0.3s; }
+  .sidebar.open .sidebar-nav a:nth-child(6) { transition-delay: 0.35s; }
+
   .sidebar-nav a:hover { background: var(--soft); color: var(--primary); padding-left: 25px; }
 
-  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,34,24,0.3); backdrop-filter: blur(4px); z-index: 1100; }
-  .overlay.show { display: block; }
+  .overlay { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,34,24,0.3); backdrop-filter: blur(4px); z-index: 1100; 
+    transition: opacity 0.4s ease; opacity: 0;
+  }
+  .overlay.show { display: block; opacity: 1; }
+
+  /* BUTTONS */
+  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+  .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
+  .btn:active { transform: scale(0.96); }
 
   .hidden { display:none !important; }
-  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 1px; }
+  
+  /* Form Inputs */
+  input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; background: #f8fafb; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -162,25 +152,23 @@
 </head>
 <body>
 
-<div id="loading-screen">
-  <div class="spinner"></div>
-</div>
+<div id="loading-screen"><div class="spinner"></div></div>
 
 <div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header" style="text-align: center; margin-bottom: 30px;">
-    <img id="user-photo" src="assets/default-avatar.png">
-    <div class="user-name" id="sidebar-name" style="font-size: 18px; font-weight: 800; color: var(--primary);">Memuat...</div>
+    <img id="user-photo" src="assets/default-avatar.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover;">
+    <div id="sidebar-name" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top:10px;">Memuat...</div>
     <small id="sidebar-email" style="color: var(--muted);"></small>
   </div>
   <div class="sidebar-nav">
     <a href="index.html">🏠 Dashboard</a>
-    <a href="#" onclick="alert('Buka Edit Profil')">👤 Edit Profil</a>
-    <a href="pengaduan.html">📩 Pengaduan Santri</a>
+    <a href="#">👤 Edit Profil</a>
+    <a href="pengaduan.html">📩 Pengaduan</a>
     <a href="kalender.html">📅 Kalender</a>
     <a href="waktu-sholat.html">🕌 Waktu Sholat</a>
-    <a href="#" onclick="logout()" style="color: #d63031; margin-top: 20px; background: rgba(214, 48, 49, 0.05);">🚪 Keluar Akun</a>
+    <a href="#" onclick="logout()" style="color: #d63031; background: rgba(214, 48, 49, 0.05);">🚪 Keluar</a>
   </div>
 </div>
 
@@ -188,52 +176,31 @@
 
 <header class="header-box">
   <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
-  <div class="header-text">
-    <h1 class="title">E-SANTRI</h1>
-    <p class="tagline">Berpegang teguh pada Al-Quran dan Hadist</p>
-  </div>
+  <h1 class="title">E-SANTRI</h1>
+  <p class="tagline">Berpegang teguh pada Al-Quran dan Hadist</p>
 </header>
 
-<main class="container">
+<main class="container" id="main-container">
   <div id="login-card" class="card login hidden">
-    <h2>Ahlan wa Sahlan!</h2>
-    <p class="welcome-txt">Silakan masuk ke akun santri Anda</p>
-    
-    <input type="email" id="email" placeholder="Email Santri" required>
-    
-    <div class="password-wrapper">
-      <input type="password" id="password" placeholder="Password" required>
-      <span class="toggle-pass" onclick="togglePassword()">Lihat</span>
-    </div>
-
-    <label class="remember-me">
-      <input type="checkbox" id="remember-checkbox"> Simpan Password
-    </label>
-
-    <p id="msg" style="text-align:center; font-size:12px; margin-bottom:15px; font-weight: 600;"></p>
-    
-    <div class="login-btn-group">
-      <button class="btn primary" onclick="login()">MASUK</button>
-      <button class="btn btn-outline" onclick="register()">DAFTAR BARU</button>
-      <button class="btn btn-google" onclick="loginWithGoogle()">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google Login
-      </button>
-    </div>
+    <h2 style="text-align:center; color:var(--primary);">Ahlan wa Sahlan!</h2>
+    <p style="text-align:center; color:var(--muted); font-size:13px; margin-bottom:20px;">Silakan masuk ke akun Anda</p>
+    <input type="email" id="email" placeholder="Email Santri">
+    <input type="password" id="password" placeholder="Password">
+    <button class="btn primary" onclick="login()">MASUK</button>
   </div>
 
   <section id="dashboard" class="hidden">
-    <div class="card" style="padding: 20px; margin-bottom: 20px; text-align: center; border-left: 5px solid var(--primary);">
-        <h3 id="welcome-msg" style="color: var(--primary); font-size: 20px;">Selamat Datang</h3>
+    <div class="card" style="padding: 20px; text-align: center; border-left: 5px solid var(--primary);">
+        <h3 id="welcome-msg" style="color: var(--primary);">Selamat Datang</h3>
     </div>
     
     <div class="menu-grid">
       <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
       <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
       <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="goTo('sop.html')"><img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span></div>
+      <div class="menu-item" onclick="goTo('sop.html')"><img src="icons/sop.png" class="menu-icon"><span>SOP</span></div>
       <div class="menu-item" onclick="goTo('kalender.html')"><img src="icons/kalender.png" class="menu-icon"><span>Kaldik</span></div>
-      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Perizinan</span></div>
-      <div class="menu-item" onclick="goTo('ibadah.html')"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
+      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
 </main>
@@ -248,74 +215,47 @@
   });
   const auth = firebase.auth();
 
-  window.onload = () => {
-    const savedEmail = localStorage.getItem("e_santri_email");
-    const savedPass = localStorage.getItem("e_santri_pass");
-    if (savedEmail && savedPass) {
-      document.getElementById("email").value = savedEmail;
-      document.getElementById("password").value = savedPass;
-      document.getElementById("remember-checkbox").checked = true;
-    }
+  // FUNGSI PINDAH HALAMAN DENGAN TRANSISI LEMBUT
+  function goTo(url) {
+    const container = document.getElementById('main-container');
+    container.style.opacity = "0";
+    container.style.transform = "scale(0.98)";
+    
+    // Memberikan feedback getar singkat (jika didukung)
+    if (navigator.vibrate) navigator.vibrate(10);
+    
+    setTimeout(() => {
+        window.location.href = url;
+    }, 300);
+  }
+
+  // SIDEBAR LOGIC
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const menuBtn = document.getElementById("menu-btn");
+
+  menuBtn.onclick = () => {
+    sidebar.classList.add("open");
+    overlay.classList.add("show");
   };
 
-  function togglePassword(){
-    const pass = document.getElementById("password");
-    const toggle = document.querySelector(".toggle-pass");
-    if(pass.type==="password"){ pass.type="text"; toggle.innerText="Tutup"; }
-    else{ pass.type="password"; toggle.innerText="Lihat"; }
-  }
+  overlay.onclick = () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+  };
 
-  function msg(t,type="error"){
-    const msgEl = document.getElementById("msg");
-    msgEl.innerText = t;
-    msgEl.style.color = type==="error"?"#d63031":"#1f6f51";
-  }
-
-  function login(){
-    const email=document.getElementById("email").value;
-    const pass=document.getElementById("password").value;
-    const remember = document.getElementById("remember-checkbox").checked;
-    auth.signInWithEmailAndPassword(email,pass)
-      .then(() => {
-        if (remember) {
-          localStorage.setItem("e_santri_email", email);
-          localStorage.setItem("e_santri_pass", pass);
-        } else {
-          localStorage.removeItem("e_santri_email");
-          localStorage.removeItem("e_santri_pass");
-        }
-      })
-      .catch(e=> msg(e.message));
-  }
-
-  function register(){
-    const email=document.getElementById("email").value;
-    const pass=document.getElementById("password").value;
-    auth.createUserWithEmailAndPassword(email,pass)
-      .then(()=> msg("Akun berhasil dibuat!","success"))
-      .catch(e=> msg(e.message));
-  }
-
-  function logout(){ auth.signOut().then(()=>location.reload()); }
-  function loginWithGoogle(){
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(e=>msg(e.message));
-  }
-
-  // HANDLING LOGIN STATUS & LOADING SCREEN
-  auth.onAuthStateChanged(user=>{
-    const loginCard=document.getElementById("login-card");
-    const dashboard=document.getElementById("dashboard");
-    const menuBtn=document.getElementById("menu-btn");
-    const loadingScreen=document.getElementById("loading-screen");
+  // AUTH LOGIC
+  auth.onAuthStateChanged(user => {
+    const loginCard = document.getElementById("login-card");
+    const dashboard = document.getElementById("dashboard");
+    const loadingScreen = document.getElementById("loading-screen");
 
     if(user){
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
       menuBtn.style.display="flex";
-      document.getElementById("sidebar-name").innerText=user.displayName||"Santri";
-      document.getElementById("sidebar-email").innerText=user.email;
-      document.getElementById("user-photo").src=user.photoURL||"assets/default-avatar.png";
+      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
+      document.getElementById("sidebar-email").innerText = user.email;
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
     } else {
       loginCard.classList.remove("hidden");
@@ -323,19 +263,21 @@
       menuBtn.style.display="none";
     }
 
-    // Sembunyikan loading screen setelah status auth diketahui
     setTimeout(() => {
         loadingScreen.style.opacity = "0";
         setTimeout(() => loadingScreen.style.display = "none", 500);
     }, 600);
   });
 
-  const sidebar=document.getElementById("sidebar");
-  const overlay=document.getElementById("overlay");
-  const menuBtn=document.getElementById("menu-btn");
-  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
-  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
-  function goTo(x){ window.location=x; }
+  function login() {
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+  }
+
+  function logout() {
+    auth.signOut().then(() => location.reload());
+  }
 </script>
 
 </body>
