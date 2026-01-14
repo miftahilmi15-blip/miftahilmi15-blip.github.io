@@ -70,40 +70,48 @@ body {
   transform: scale(1.08);
 }
 
-.header-text .title {
-  font-size: 32px; /* Diperbesar agar efek 4D terlihat */
-  font-weight: 900; /* Sangat Tebal */
-  color: var(--primary);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  
-  /* Efek 4D Timbul Berlapis */
-  text-shadow: 
-    0 1px 0 #ccc, 
-    0 2px 0 #c9c9c9, 
-    0 3px 0 #bbb, 
-    0 4px 0 #b9b9b9, 
-    0 5px 0 #aaa, 
-    0 6px 1px rgba(0,0,0,0.1), 
-    0 0 5px rgba(0,0,0,0.1), 
-    0 1px 3px rgba(0,0,0,0.3), 
-    0 3px 5px rgba(0,0,0,0.2), 
-    0 5px 10px rgba(0,0,0,0.25), 
-    0 10px 10px rgba(0,0,0,0.2);
-}
-
-.header-text .tagline {
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 500;
-  margin-top: 4px;
-}
 
 /* ========== CARD DESIGN ========== */
 .card {
   background: var(--card);
   border-radius: 16px;
-  padding: 35px;
+  padding: 35p.header-text .title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 36px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  
+  /* Warna Putih dengan Outline Hijau */
+  color: #ffffff; 
+  -webkit-text-stroke: 1.5px var(--primary); /* Garis pinggir hijau sesuai script */
+  
+  /* Efek Timbul 4D */
+  text-shadow: 
+    0 5px 15px rgba(31, 111, 81, 0.3),
+    0 10px 10px rgba(0, 0, 0, 0.1);
+
+  display: inline-block;
+  
+  /* Memanggil Animasi Bergerak */
+  animation: floatAnim 3s ease-in-out infinite;
+}
+
+/* Script Animasi Bergerak (Mengayun Pelan) */
+@keyframes floatAnim {
+  0% {
+    transform: translateY(0px) scale(1);
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+  }
+  50% {
+    transform: translateY(-10px) scale(1.02); /* Bergerak ke atas sedikit */
+    filter: drop-shadow(0 20px 15px rgba(0,0,0,0.2));
+  }
+  100% {
+    transform: translateY(0px) scale(1);
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
+  }
+}x;
   margin-bottom: 20px;
   box-shadow: 0 10px 30px rgba(31, 111, 81, 0.05);
   border: 1px solid var(--border);
