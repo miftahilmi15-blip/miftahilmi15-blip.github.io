@@ -1,5 +1,5 @@
-/* ========== CSS E-SANTRI PREMIUM 4D ==========
-   Style: Minimalist, Professional, & 3D Depth
+/* ========== CSS E-SANTRI PREMIUM 4D ANIMATED ==========
+   Style: Minimalist, Professional, & Motion Design
 */
 
 :root {
@@ -39,7 +39,7 @@ body {
   margin: 0 auto;
 }
 
-/* ========== HEADER (Logo & Brand 4D) ========== */
+/* ========== HEADER (Logo & Brand 4D Bergerak) ========== */
 .header-box {
   display: flex;
   flex-direction: column;
@@ -61,7 +61,6 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* Efek Timbul pada Gambar Logo */
   filter: drop-shadow(0 8px 15px rgba(0,0,0,0.2));
   transition: transform 0.3s ease;
 }
@@ -70,48 +69,52 @@ body {
   transform: scale(1.08);
 }
 
-
-/* ========== CARD DESIGN ========== */
-.card {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 35p.header-text .title {
-  font-family: 'Montserrat', sans-serif;
+/* TULISAN E-SANTRI BERGERAK */
+.header-text .title {
+  font-family: 'Montserrat', sans-serif; /* Pastikan Montserrat sudah dipanggil di HTML */
   font-size: 36px;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 3px;
+  display: inline-block;
   
   /* Warna Putih dengan Outline Hijau */
   color: #ffffff; 
-  -webkit-text-stroke: 1.5px var(--primary); /* Garis pinggir hijau sesuai script */
+  -webkit-text-stroke: 1.5px var(--primary);
   
   /* Efek Timbul 4D */
   text-shadow: 
     0 5px 15px rgba(31, 111, 81, 0.3),
     0 10px 10px rgba(0, 0, 0, 0.1);
 
-  display: inline-block;
-  
-  /* Memanggil Animasi Bergerak */
+  /* Memanggil Animasi */
   animation: floatAnim 3s ease-in-out infinite;
 }
 
-/* Script Animasi Bergerak (Mengayun Pelan) */
+.header-text .tagline {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Script Animasi Bergerak (Melayang) */
 @keyframes floatAnim {
-  0% {
+  0%, 100% {
     transform: translateY(0px) scale(1);
     filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
   }
   50% {
-    transform: translateY(-10px) scale(1.02); /* Bergerak ke atas sedikit */
+    transform: translateY(-12px) scale(1.05); /* Gerak naik & membesar sedikit */
     filter: drop-shadow(0 20px 15px rgba(0,0,0,0.2));
   }
-  100% {
-    transform: translateY(0px) scale(1);
-    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.1));
-  }
-}x;
+}
+
+/* ========== CARD DESIGN ========== */
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 35px;
   margin-bottom: 20px;
   box-shadow: 0 10px 30px rgba(31, 111, 81, 0.05);
   border: 1px solid var(--border);
@@ -246,6 +249,12 @@ body.dark input {
   background: #121a18;
   border-color: #2d3a36;
   color: white;
+}
+
+body.dark .header-text .title {
+  /* Di dark mode, outline tetap hijau agar menyala */
+  -webkit-text-stroke: 1.5px #2ecc71; 
+  text-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
 }
 
 /* Utility: Hidden */
