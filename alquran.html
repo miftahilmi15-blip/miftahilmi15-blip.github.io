@@ -3,151 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Qur'an Digital Aesthetic</title>
+    <title>Mushaf Digital Al-Itqan</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1f6f51;
+            --primary: #1b5e20;
             --accent: #c5a059;
-            --bg-body: #f0f2f0;
             --bg-mushaf: #fdfaf4;
-            --text-main: #2d3436;
+            --white: #ffffff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-body); color: var(--text-main); }
+        body { background: #e8eee8; color: #2d3436; padding-bottom: 180px; }
 
-        /* HEADER */
+        /* HEADER ELEGANT */
         header {
-            background: linear-gradient(135deg, var(--primary), #144d38);
-            color: white; padding: 40px 20px 60px; text-align: center;
-            border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, var(--primary), #0a3d0e);
+            color: white; padding: 35px 20px; text-align: center;
+            border-radius: 0 0 35px 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             position: sticky; top: 0; z-index: 100;
         }
-        header h2 { font-family: 'Amiri', serif; font-size: 2.2rem; margin-bottom: 15px; }
+        header h2 { font-family: 'Amiri', serif; font-size: 2rem; margin-bottom: 12px; }
         
         select {
             background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
-            color: white; padding: 12px 20px; border-radius: 20px; width: 85%;
-            outline: none; backdrop-filter: blur(10px); cursor: pointer;
+            color: white; padding: 10px 15px; border-radius: 15px; width: 80%;
+            outline: none; backdrop-filter: blur(10px); cursor: pointer; font-weight: 600;
         }
 
-        /* MAIN CONTENT */
-        .main-content {
-            max-width: 600px; margin: -30px auto 180px;
-            background: var(--bg-mushaf); min-height: 80vh;
-            border-radius: 30px; padding: 40px 25px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+        /* MUSHAF CONTENT */
+        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+        .mushaf-card {
+            background: var(--bg-mushaf); border-radius: 25px; padding: 40px 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05); border: 1px solid #dcdcdc;
         }
-
-        .page-content {
+        .text-arab {
             direction: rtl; text-align: justify; line-height: 2.8;
             font-family: 'Amiri', serif; font-size: 28px; color: #1a1a1a;
         }
         .ayah-num {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 40px; height: 40px; margin: 0 10px;
+            width: 42px; height: 42px; margin: 0 10px;
             background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
             background-size: contain; font-size: 14px; font-weight: bold; font-family: sans-serif;
         }
 
-        /* TAJWID/WAQAF CARDS */
-        .tajwid-grid { display: grid; grid-template-columns: 1fr; gap: 15px; direction: ltr; }
-        .tajwid-card {
-            background: white; padding: 20px; border-radius: 20px;
-            display: flex; align-items: center; gap: 20px;
-            border: 1px solid #eee; transition: 0.3s;
-        }
-        .tajwid-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .symbol { 
-            font-family: 'Amiri', serif; font-size: 2.5rem; width: 70px; 
-            text-align: center; color: var(--primary); font-weight: bold;
-        }
-        .info h4 { color: var(--primary); margin-bottom: 5px; font-weight: 700; }
-        .info p { font-size: 0.85rem; color: #666; line-height: 1.4; }
-
-        /* FLOATING PLAYER CONTROL */
-        .player-container {
+        /* FLOATING NAVIGATION BAR */
+        .bottom-nav {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 500px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px); border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            padding: 15px 25px; z-index: 1000; border: 1px solid rgba(255,255,255,0.5);
+            width: 90%; max-width: 500px; background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px); border-radius: 25px; padding: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 1000;
         }
-        .audio-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.8rem; }
-        .audio-meta b { color: var(--primary); }
-        audio { width: 100%; height: 35px; border-radius: 15px; }
+        .audio-info { font-size: 11px; font-weight: 700; color: var(--primary); margin-bottom: 10px; text-align: center; }
+        .nav-links { display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; padding-top: 10px; }
+        .nav-item { border: none; background: none; color: #7f8c8d; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center; }
+        .nav-item.active { color: var(--primary); }
 
-        /* NAVIGATION BAR */
-        .nav-bar {
-            display: flex; justify-content: space-around; margin-top: 15px;
-            border-top: 1px solid #eee; padding-top: 12px;
+        /* MODAL TAJWID (FITUR DALAM) */
+        .modal {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
         }
-        .nav-btn {
-            border: none; background: none; color: #a0a0a0;
-            font-size: 0.75rem; font-weight: 700; cursor: pointer;
-            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        .modal-content {
+            background: white; margin: 10% auto; padding: 25px; border-radius: 30px;
+            width: 90%; max-width: 500px; max-height: 70vh; overflow-y: auto;
         }
-        .nav-btn.active { color: var(--primary); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { color: var(--primary); }
+        .close-btn { font-size: 24px; cursor: pointer; color: #ccc; }
 
-        .hidden { display: none; }
+        /* TAJWID CONTENT STYLE */
+        .tajwid-section { margin-bottom: 25px; }
+        .tajwid-section h4 { 
+            background: var(--primary); color: white; padding: 8px 15px; 
+            border-radius: 10px; font-size: 13px; margin-bottom: 15px;
+        }
+        .tajwid-item { 
+            background: #f9f9f9; padding: 12px; border-radius: 12px; 
+            margin-bottom: 10px; border-left: 4px solid var(--accent);
+        }
+        .tajwid-item b { color: var(--primary); font-size: 14px; }
+        .tajwid-item p { font-size: 12px; color: #555; margin-top: 4px; }
+        .source-tag { font-size: 10px; font-style: italic; color: #999; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
 
 <header>
-    <h2 id="currentTitle">Murottal Al-Qur'an</h2>
+    <h2 id="surahNameTitle">Al-Qur'anul Karim</h2>
     <select id="surahSelect"></select>
 </header>
 
-<div class="main-content">
-    <div id="quranSection">
-        <div id="quranText" class="page-content">Memuat Al-Qur'an...</div>
-    </div>
-
-    <div id="waqafSection" class="hidden">
-        <h3 style="text-align: center; margin-bottom: 25px; color: var(--primary);">Panduan Tanda Waqaf</h3>
-        <div class="tajwid-grid">
-            <div class="tajwid-card">
-                <div class="symbol">م</div>
-                <div class="info"><h4>Waqaf Lazim</h4><p>Harus berhenti (Mesti). Berhenti di sini untuk menjaga kesempurnaan makna ayat.</p></div>
-            </div>
-            <div class="tajwid-card">
-                <div class="symbol">قلى</div>
-                <div class="info"><h4>Al-Waqfu Aula</h4><p>Berhenti lebih utama daripada melanjutkan bacaan.</p></div>
-            </div>
-            <div class="tajwid-card">
-                <div class="symbol">∴ ∴</div>
-                <div class="info"><h4>Mu'anaqah</h4><p>Berhenti di salah satu tanda titik tiga tersebut, jangan berhenti di keduanya.</p></div>
-            </div>
-            <div class="tajwid-card">
-                <div class="symbol">ج</div>
-                <div class="info"><h4>Waqaf Jaiz</h4><p>Boleh berhenti, boleh juga melanjutkan bacaan (setara).</p></div>
-            </div>
-            <div class="tajwid-card">
-                <div class="symbol">صلى</div>
-                <div class="info"><h4>Al-Washlu Aula</h4><p>Melanjutkan bacaan (Washal) lebih utama daripada berhenti.</p></div>
-            </div>
-            <div class="tajwid-card">
-                <div class="symbol">لا</div>
-                <div class="info"><h4>Waqaf La Washal</h4><p>Jangan berhenti. Tidak boleh berhenti di tengah ayat ini.</p></div>
-            </div>
-        </div>
+<div class="container">
+    <div class="mushaf-card">
+        <div id="quranText" class="text-arab">Memuat ayat...</div>
     </div>
 </div>
 
-<div class="player-container">
-    <div class="audio-meta">
-        <span id="audioStatus">Siap Memutar...</span>
-        <b>Qori: Mishary Rashid</b>
-    </div>
+<div class="bottom-nav">
+    <div class="audio-info" id="audioInfo">Putar Audio: Menunggu...</div>
+    <audio id="mainAudio" controls style="width: 100%; height: 35px; margin-bottom: 10px;"></audio>
     
-    <audio id="mainAudio" controls></audio>
+    <div class="nav-links">
+        <button class="nav-item active" onclick="window.scrollTo(0,0)">📖 BACA</button>
+        <button class="nav-item" onclick="openModal()">💎 FITUR TAJWID</button>
+    </div>
+</div>
 
-    <div class="nav-bar">
-        <button class="nav-btn active" onclick="showPage('quran')">📖 MUSHAF</button>
-        <button class="nav-btn" onclick="showPage('waqaf')">📏 TAJWID</button>
+<div id="tajwidModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Ilmu Tajwid & Gharib</h3>
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+        </div>
+
+        <div class="tajwid-section">
+            <h4>📗 Hukum Tajwid (Metode Qiraati)</h4>
+            <div class="tajwid-item">
+                <b>Ikhfa' Haqiqi</b>
+                <p>Apabila Nun Sukun/Tanwin bertemu salah satu dari 15 huruf. Dibaca samar dengan dengung 2 harakat.</p>
+                <span class="source-tag">Sumber: Kitab Tajwid Qiraati Jilid Lanjutan</span>
+            </div>
+            <div class="tajwid-item">
+                <b>Idgham Bilaghunnah</b>
+                <p>Apabila Nun Sukun/Tanwin bertemu huruf Lam (ل) atau Ra' (ر). Dibaca lebur tanpa mendengung.</p>
+                <span class="source-tag">Sumber: Kitab Tajwid Qiraati</span>
+            </div>
+        </div>
+
+        <div class="tajwid-section">
+            <h4>📖 Pelajaran Gharib & Musykilat</h4>
+            <div class="tajwid-item">
+                <b>Saktah (سكتة)</b>
+                <p>Berhenti sejenak tanpa bernafas selama 2 harakat. Terdapat di 4 tempat (Al-Kahfi, Yasin, Al-Qiyamah, Al-Muthaffifin).</p>
+                <span class="source-tag">Sumber: Pelajaran Gharib Qiraati</span>
+            </div>
+            <div class="tajwid-item">
+                <b>Imalah (إمالة)</b>
+                <p>Mencondongkan bunyi Fathah ke arah Kasrah (seperti huruf 'e' pada kata 'sate'). Contoh: Majreha (QS. Hud: 41).</p>
+                <span class="source-tag">Sumber: Gharib Al-Qur'an</span>
+            </div>
+        </div>
+
+        <div class="tajwid-section">
+            <h4>📏 Tanda-Tanda Waqaf</h4>
+            <div class="tajwid-item">
+                <b>Tanda (م) - Waqaf Lazim</b>
+                <p>Harus berhenti demi menjaga kesempurnaan makna.</p>
+            </div>
+            <div class="tajwid-item">
+                <b>Tanda (لا) - La Washal</b>
+                <p>Dilarang berhenti di tengah kalimat tersebut.</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -155,9 +164,9 @@
     const surahSelect = document.getElementById("surahSelect");
     const quranText = document.getElementById("quranText");
     const mainAudio = document.getElementById("mainAudio");
-    const audioStatus = document.getElementById("audioStatus");
+    const audioInfo = document.getElementById("audioInfo");
 
-    // Load Daftar Surah
+    // Fetch Daftar Surah
     fetch("https://api.quran.gading.dev/surah")
         .then(r => r.json())
         .then(d => {
@@ -165,29 +174,26 @@
                 let opt = new Option(`${s.number}. ${s.name.transliteration.id}`, s.number);
                 surahSelect.add(opt);
             });
-            loadSurah(1);
+            loadSurah(1); // Default Fatihah
         });
 
     surahSelect.onchange = () => loadSurah(surahSelect.value);
 
     function loadSurah(no) {
-        quranText.innerHTML = "<p style='text-align:center; padding-top:50px;'>Membuka Mushaf...</p>";
-        
-        // Update Audio
+        quranText.innerHTML = "Sedang membuka mushaf...";
         mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
         
         fetch(`https://api.quran.gading.dev/surah/${no}`)
             .then(r => r.json())
             .then(d => {
                 const data = d.data;
-                document.getElementById("currentTitle").innerText = data.name.transliteration.id;
-                audioStatus.innerText = `Memutar: Surah ${data.name.transliteration.id}`;
+                document.getElementById("surahNameTitle").innerText = data.name.transliteration.id;
+                audioInfo.innerText = `Murottal: Surah ${data.name.transliteration.id}`;
 
                 let html = "";
                 if(no != 1 && no != 9) {
-                    html += `<div style="text-align:center; margin-bottom:30px; font-size:32px;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
+                    html += `<div style="text-align:center; margin-bottom:30px; font-size:35px;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
                 }
-                
                 data.verses.forEach(v => {
                     html += `${v.text.arab} <span class="ayah-num">${v.number.inSurah}</span> `;
                 });
@@ -195,13 +201,12 @@
             });
     }
 
-    function showPage(p) {
-        document.getElementById('quranSection').className = p === 'quran' ? '' : 'hidden';
-        document.getElementById('waqafSection').className = p === 'waqaf' ? '' : 'hidden';
-        document.querySelectorAll('.nav-btn').forEach((b, i) => {
-            b.classList.toggle('active', (i === 0 && p === 'quran') || (i === 1 && p === 'waqaf'));
-        });
-        window.scrollTo({top: 0, behavior: 'smooth'});
+    // Modal Logic
+    function openModal() { document.getElementById("tajwidModal").style.display = "block"; }
+    function closeModal() { document.getElementById("tajwidModal").style.display = "none"; }
+    window.onclick = function(event) {
+        let modal = document.getElementById("tajwidModal");
+        if (event.target == modal) modal.style.display = "none";
     }
 </script>
 
