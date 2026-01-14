@@ -177,8 +177,6 @@
       <input type="checkbox" id="remember-checkbox"> Simpan Password
     </label>
 
-    <p id="msg" style="text-align:center; font-size:11px; margin-bottom:10px; font-weight:600;"></p>
-    
     <button class="btn primary" onclick="login()">MASUK</button>
     <button class="btn outline" onclick="register()">DAFTAR BARU</button>
     <button class="btn btn-google" onclick="loginWithGoogle()">
@@ -213,14 +211,21 @@
   });
   const auth = firebase.auth();
 
-  // FIX: Mengatasi bug saat tekan tombol back browser
+  // FUNGSI PENGAMPU BUG "MUTER-MUTER"
+  function hideLoading() {
+    const ls = document.getElementById("loading-screen");
+    ls.style.opacity = "0";
+    setTimeout(() => ls.style.display = "none", 400);
+  }
+
+  // Paksa hapus loading jika firebase macet lebih dari 3 detik
+  const safetyTimeout = setTimeout(hideLoading, 3000);
+
   window.onpageshow = function(event) {
-    if (event.persisted) {
-      window.location.reload(); 
-    }
     const container = document.getElementById('main-container');
     container.style.opacity = "1";
     container.style.transform = "scale(1)";
+    if (event.persisted) hideLoading();
   };
 
   function goTo(url) {
@@ -230,32 +235,29 @@
     setTimeout(() => { window.location.href = url; }, 250);
   }
 
-  // --- Sisa Logic Firebase (Sama seperti sebelumnya) ---
   function togglePassword(){
     const pass = document.getElementById("password");
-    const toggle = document.querySelector(".toggle-pass");
     pass.type = pass.type === "password" ? "text" : "password";
-    toggle.innerText = pass.type === "password" ? "Lihat" : "Tutup";
   }
 
   function login(){
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
-    auth.signInWithEmailAndPassword(email,pass).catch(e=> msg(e.message));
+    auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
   }
 
   function loginWithGoogle(){
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(e=>msg(e.message));
+    auth.signInWithPopup(provider).catch(e=>alert(e.message));
   }
 
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user=>{
+    clearTimeout(safetyTimeout); // Hentikan timer pengaman jika firebase sudah merespon
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
     const menuBtn=document.getElementById("menu-btn");
-    const loadingScreen=document.getElementById("loading-screen");
 
     if(user){
       loginCard.classList.add("hidden");
@@ -269,7 +271,7 @@
       dashboard.classList.add("hidden");
       menuBtn.style.display="none";
     }
-    setTimeout(() => { loadingScreen.style.opacity = "0"; setTimeout(()=>loadingScreen.style.display="none", 400); }, 500);
+    hideLoading();
   });
 
   const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
