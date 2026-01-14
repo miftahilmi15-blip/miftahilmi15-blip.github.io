@@ -3,101 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Qur'an Digital Premium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Al-Qur'an Digital Kemenag Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #1b5e20;
             --accent: #c5a059;
-            --bg: #f4f7f4;
-            --mushaf: #fdfaf4;
+            --bg-paper: #fcfaf2; /* Warna kertas mushaf lama */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); padding-top: 230px; }
+        body { background: #eef1ee; color: #2d3436; padding-top: 185px; }
 
-        /* HEADER FIXED */
+        /* HEADER & AUDIO */
         header {
             position: fixed; top: 0; left: 0; right: 0;
-            background: linear-gradient(135deg, var(--primary), #0a3d0e);
-            color: white; padding: 15px 20px; z-index: 2000;
-            border-radius: 0 0 30px 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, var(--primary), #083b0a);
+            color: white; padding: 12px 20px; z-index: 2000;
+            border-radius: 0 0 25px 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .header-top h2 { font-family: 'Amiri', serif; font-size: 1.5rem; }
+        .kebab-btn { cursor: pointer; font-size: 26px; width: 40px; text-align: right; }
 
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .header-top h2 { font-family: 'Amiri', serif; font-size: 1.6rem; letter-spacing: 1px; }
-
-        /* KEBAB MENU */
-        .kebab-btn { cursor: pointer; font-size: 28px; padding: 5px; line-height: 1; }
-        
-        /* AUDIO BOX */
-        .audio-box { background: rgba(255,255,255,0.15); padding: 12px; border-radius: 20px; backdrop-filter: blur(10px); }
-        .audio-box small { display: block; text-align: center; font-size: 11px; margin-bottom: 5px; font-weight: 600; opacity: 0.9; }
-        audio { width: 100%; height: 32px; filter: invert(1) hue-rotate(150deg); }
+        .audio-box { background: rgba(255,255,255,0.1); padding: 8px; border-radius: 15px; }
+        audio { width: 100%; height: 28px; filter: invert(1); }
 
         .surah-select { 
-            width: 100%; margin-top: 12px; padding: 10px; border-radius: 12px; 
-            border: none; font-weight: 700; color: var(--primary); outline: none;
+            width: 100%; margin-top: 10px; padding: 10px; border-radius: 12px; 
+            border: none; font-weight: 700; color: var(--primary); font-size: 14px;
         }
 
-        /* MUSHAF AREA */
-        .main-content { max-width: 650px; margin: 0 auto; padding: 0 15px; }
+        /* MUSHAF STYLE (PADAT SEPERTI KERTAS) */
+        .main-content { max-width: 600px; margin: 0 auto; padding: 0 10px; }
         .mushaf-card {
-            background: var(--mushaf); border-radius: 35px; padding: 40px 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05); min-height: 70vh;
-            border: 1px solid #e0e0e0;
+            background: var(--bg-paper); border-radius: 15px; padding: 35px 22px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05); min-height: 85vh;
+            border: 1px solid #d4c4a8;
         }
 
-        .page-content { direction: rtl; text-align: justify; line-height: 3.5; }
-        .ayah-item { 
-            font-family: 'Amiri', serif; font-size: 30px; color: #1a1a1a;
-            cursor: pointer; padding: 5px 2px; border-radius: 10px; transition: 0.2s;
+        .page-content { 
+            direction: rtl; text-align: justify; 
+            line-height: 2.2; /* Kerapatan Mushaf Cetak */
+            word-spacing: 1px;
         }
-        .ayah-item:hover { background: rgba(197, 160, 89, 0.15); }
+
+        .ayah-item { 
+            font-family: 'Amiri', serif; font-size: 26px; color: #1a1a1a;
+            cursor: pointer; transition: 0.15s; display: inline;
+        }
+        .ayah-item:hover { background: rgba(197, 160, 89, 0.2); border-radius: 4px; }
 
         .ayah-num {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 42px; height: 42px; margin: 0 10px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="5"/></svg>');
-            background-size: contain; font-size: 13px; font-weight: 900; font-family: sans-serif;
-            color: var(--accent); vertical-align: middle; direction: ltr;
+            width: 32px; height: 32px; margin: 0 4px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="6"/></svg>');
+            background-size: contain; font-size: 11px; font-weight: 800;
+            color: #7a5d24; vertical-align: middle; direction: ltr; font-family: sans-serif;
         }
 
-        /* MODAL / DRAWER SYSTEM */
-        .overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-            z-index: 3000; backdrop-filter: blur(4px);
-        }
+        /* DRAWER / MODAL */
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; backdrop-filter: blur(2px); }
         .drawer {
             display: none; position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-radius: 30px 30px 0 0;
             z-index: 3100; padding: 25px; max-height: 85vh; overflow-y: auto;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2); animation: slideUp 0.3s ease;
+            animation: slideUp 0.3s ease-out;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        /* TAJWID CARDS INSIDE DRAWER */
-        .feature-grid { display: grid; gap: 12px; margin-top: 15px; }
-        .feature-card { 
-            background: #f8f9f8; padding: 15px; border-radius: 18px; 
-            border-left: 5px solid var(--primary);
-        }
-        .feature-card h4 { color: var(--primary); font-size: 14px; margin-bottom: 5px; }
-        .feature-card p { font-size: 12.5px; color: #555; line-height: 1.5; }
-        .source { font-size: 10px; color: var(--accent); font-weight: 700; margin-top: 5px; display: block; }
-
-        .close-drawer { text-align: center; color: #ccc; font-size: 24px; cursor: pointer; margin-bottom: 10px; }
+        /* MATERI TAJWID & GHARIB */
+        .section-tag { background: var(--primary); color: white; display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-bottom: 10px; font-weight: 700; }
+        .materi-card { background: #f8f9fa; border-left: 4px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
+        .materi-card h4 { font-size: 14px; margin-bottom: 5px; color: var(--primary); }
+        .materi-card p { font-size: 12.5px; line-height: 1.5; color: #444; }
+        .arab-inline { font-family: 'Amiri', serif; font-size: 18px; color: #000; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="header-top">
-        <h2 id="surahTitle">Al-Qur'an Digital</h2>
-        <div class="kebab-btn" onclick="openDrawer('features')">⋮</div>
+        <h2 id="surahTitle">Al-Qur'an Kemenag</h2>
+        <div class="kebab-btn" onclick="openMateri()">⋮</div>
     </div>
     <div class="audio-box">
-        <small id="audioStatus">Murottal Mishary Rashid</small>
         <audio id="mainAudio" controls></audio>
     </div>
     <select id="surahSelect" class="surah-select"></select>
@@ -105,36 +95,51 @@
 
 <div class="main-content">
     <div class="mushaf-card">
-        <div id="quranText" class="page-content">Menghubungkan ke Server...</div>
+        <div id="quranText" class="page-content">Memuat data resmi Kemenag...</div>
     </div>
 </div>
 
 <div id="overlay" class="overlay" onclick="closeAll()"></div>
-<div id="translateDrawer" class="drawer">
-    <div class="close-drawer" onclick="closeAll()">▬</div>
-    <h3 id="transTitle" style="color:var(--primary); margin-bottom:15px;">Terjemah</h3>
-    <p id="transBody" style="line-height:1.7; color:#333;"></p>
+
+<div id="transDrawer" class="drawer">
+    <div style="width: 40px; height: 5px; background: #eee; border-radius: 10px; margin: -10px auto 20px;"></div>
+    <h3 id="transTitle" style="color:var(--primary); margin-bottom:15px;">Arti Ayat</h3>
+    <p id="transBody" style="line-height:1.7; font-size:15px; color: #333;"></p>
 </div>
 
-<div id="featureDrawer" class="drawer">
-    <div class="close-drawer" onclick="closeAll()">▬</div>
-    <h3 style="color:var(--primary); text-align:center; margin-bottom:20px;">Materi Qiraati & Gharib</h3>
+<div id="materiDrawer" class="drawer">
+    <h3 style="text-align:center; margin-bottom:20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">Pelajari Tajwid & Gharib</h3>
     
-    <div class="feature-grid">
-        <div class="feature-card">
-            <h4>📖 Pelajaran Gharib</h4>
-            <p>Saktah: Berhenti sejenak tanpa bernafas (2 harakat).<br>Imalah: Bunyi 're' pada Majreha (Hud: 41).<br>Isymam: Memonyongkan bibir (Yusuf: 11).</p>
-            <span class="source">SUMBER: PELAJARAN GHARIB QIRAATI</span>
-        </div>
-        <div class="feature-card" style="border-left-color: var(--accent);">
-            <h4>📗 Hukum Tajwid</h4>
-            <p>Ikhfa: Membaca samar dengan dengung.<br>Idgham: Memasukkan bunyi nun sukun ke huruf berikutnya.</p>
-            <span class="source">SUMBER: KITAB TAJWID QIRAATI</span>
-        </div>
-        <div class="feature-card" style="border-left-color: #e74c3c;">
-            <h4>📏 Tanda Waqaf</h4>
-            <p><b>م</b> : Waqaf Lazim (Harus Berhenti)<br><b>لا</b> : La Washal (Jangan Berhenti)<br><b>ج</b> : Jaiz (Boleh berhenti/Lanjut)</p>
-        </div>
+    <div class="section-tag">ILMU TAJWID (Qiraati)</div>
+    <div class="materi-card">
+        <h4>Hukum Nun Sukun & Tanwin</h4>
+        <p><b>Izhar:</b> Jelas. <b>Idgham:</b> Masuk (Bighunnah/Bilaghunnah). <b>Iqlab:</b> Bunyi 'N' jadi 'M' ketemu Ba. <b>Ikhfa:</b> Samar & Dengung.</p>
+    </div>
+    <div class="materi-card">
+        <h4>Hukum Mad</h4>
+        <p><b>Mad Thabi'i:</b> 2 harakat. <b>Mad Wajib:</b> 5 harakat dalam 1 kata. <b>Mad Jaiz:</b> 4-5 harakat di lain kata.</p>
+    </div>
+
+    <div class="section-tag">PELAJARAN GHARIB (Standar Qiraati)</div>
+    <div class="materi-card">
+        <h4>Saktah <span class="arab-inline">(سكتة)</span></h4>
+        <p>Berhenti sejenak tanpa ambil nafas (2 harakat). <br>Terletak di: Al-Kahfi: 1, Yasin: 52, Al-Qiyamah: 27, Al-Muthaffifin: 14.</p>
+    </div>
+    <div class="materi-card">
+        <h4>Imalah <span class="arab-inline">(إمالة)</span></h4>
+        <p>Bunyi 'A' miring ke 'E'. Contoh: <span class="arab-inline">مَجْرٰىهَا</span> (Majreha) di QS. Hud: 41.</p>
+    </div>
+    <div class="materi-card">
+        <h4>Isymam <span class="arab-inline">(إشمام)</span></h4>
+        <p>Memoncongkan bibir saat membaca dengung pada kata <span class="arab-inline">لَا تَأْمَنَّا</span> (QS. Yusuf: 11).</p>
+    </div>
+    <div class="materi-card">
+        <h4>Tashil <span class="arab-inline">(تسهيل)</span></h4>
+        <p>Membaca Hamzah kedua samar (antara hamzah dan alif). Contoh: <span class="arab-inline">ءَاَعْجَمِيٌّ</span> (QS. Fussilat: 44).</p>
+    </div>
+    <div class="materi-card">
+        <h4>Naql <span class="arab-inline">(نقل)</span></h4>
+        <p>Memindah harakat ke huruf mati sebelumnya. Contoh: <span class="arab-inline">بِئْسَ الِاسْمُ</span> (Bi'salismu) jadi (Bi'salis-mu) di Al-Hujurat: 11.</p>
     </div>
 </div>
 
@@ -143,8 +148,8 @@
     const quranText = document.getElementById("quranText");
     const mainAudio = document.getElementById("mainAudio");
 
-    // Menggunakan API yang lebih cepat dan stabil
-    async function initApp() {
+    // Menggunakan API resmi alternatif yang menyediakan data Kemenag
+    async function fetchKemenag() {
         try {
             const res = await fetch("https://equran.id/api/v2/surat");
             const data = await res.json();
@@ -153,61 +158,55 @@
                 surahSelect.add(opt);
             });
             loadSurah(1);
-        } catch (e) {
-            quranText.innerHTML = "Gagal memuat data. Periksa koneksi internet Anda.";
-        }
+        } catch (e) { quranText.innerText = "Gagal terhubung ke server."; }
     }
 
     async function loadSurah(no) {
-        quranText.innerHTML = "<div style='text-align:center;'>Membuka lembaran mushaf...</div>";
+        quranText.innerHTML = "<p style='text-align:center;'>Membuka Mushaf Kemenag...</p>";
         mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
         
         try {
             const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
             const json = await res.json();
             const data = json.data;
-            
             document.getElementById("surahTitle").innerText = data.namaLatin;
             
             let html = "";
             if(no != 1 && no != 9) {
-                html += `<div style="text-align:center; margin-bottom:35px; font-size:35px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
+                html += `<div style="text-align:center; margin-bottom:25px; font-size:35px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
             }
 
             data.ayat.forEach(v => {
-                // Bersihkan teks terjemah dari tanda petik agar tidak error
                 const cleanTrans = v.teksIndonesia.replace(/'/g, "&apos;");
-                html += `<span class="ayah-item" onclick="openTranslate(${v.nomorAyat}, '${cleanTrans}')">
+                html += `<span class="ayah-item" onclick="openTrans(${v.nomorAyat}, '${cleanTrans}')">
                             ${v.teksArab} <span class="ayah-num">${v.nomorAyat}</span>
                          </span> `;
             });
             quranText.innerHTML = html;
-        } catch (e) {
-            quranText.innerHTML = "Gagal memuat ayat. Silakan coba lagi.";
-        }
+        } catch (e) { quranText.innerText = "Error memuat ayat."; }
     }
 
     surahSelect.onchange = () => loadSurah(surahSelect.value);
 
-    function openTranslate(num, text) {
-        document.getElementById("transTitle").innerText = `Ayat ${num}`;
-        document.getElementById("transBody").innerHTML = text;
+    function openTrans(num, text) {
+        document.getElementById("transTitle").innerText = `QS. ${document.getElementById("surahTitle").innerText}: Ayat ${num}`;
+        document.getElementById("transBody").innerText = text;
         document.getElementById("overlay").style.display = "block";
-        document.getElementById("translateDrawer").style.display = "block";
+        document.getElementById("transDrawer").style.display = "block";
     }
 
-    function openDrawer(type) {
+    function openMateri() {
         document.getElementById("overlay").style.display = "block";
-        document.getElementById("featureDrawer").style.display = "block";
+        document.getElementById("materiDrawer").style.display = "block";
     }
 
     function closeAll() {
         document.getElementById("overlay").style.display = "none";
-        document.getElementById("translateDrawer").style.display = "none";
-        document.getElementById("featureDrawer").style.display = "none";
+        document.getElementById("transDrawer").style.display = "none";
+        document.getElementById("materiDrawer").style.display = "none";
     }
 
-    initApp();
+    fetchKemenag();
 </script>
 
 </body>
