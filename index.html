@@ -99,7 +99,7 @@
   .btn-google { background: #fff; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn:active { transform: scale(0.95); }
 
-  /* MENU TRIGGER (TITIK TIGA) - LEMBUT */
+  /* MENU TRIGGER (TITIK TIGA) - PREMIUM */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
@@ -125,17 +125,18 @@
   }
   .sidebar-nav a:hover { background: var(--soft); color: var(--primary); padding-left: 25px; }
 
-  /* DASHBOARD GRID */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; animation: fadeInUp 0.6s ease; }
+  /* DASHBOARD GRID - ALL ICONS RETURNED */
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; animation: fadeInUp 0.6s ease; }
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   
   .menu-item { 
-    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
+    background: #fff; padding: 18px 8px; border-radius: 20px; text-align: center; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.02);
   }
   .menu-item:active { transform: scale(0.9); background: var(--soft); }
-  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
-  .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
+  .menu-icon { width: 38px; height: 38px; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
+  .menu-item span { display: block; font-size: 10px; font-weight: 700; color: #444; text-transform: uppercase; }
 
   .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,34,24,0.3); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
@@ -163,6 +164,7 @@
     <a href="index.html">🏠 Dashboard</a>
     <a href="pengaduan.html">📩 Pengaduan</a>
     <a href="kalender.html">📅 Kalender</a>
+    <a href="waktu-sholat.html">🕌 Waktu Sholat</a>
     <a href="#" onclick="logout()" style="color: #d63031; background: rgba(214, 48, 49, 0.05);">🚪 Keluar Akun</a>
   </div>
 </div>
@@ -181,7 +183,6 @@
     <p style="text-align:center; color:var(--muted); font-size:12px; margin-bottom:20px;">Silakan masuk ke akun santri Anda</p>
     
     <input type="email" id="email" placeholder="Email Santri">
-    
     <div class="password-wrapper">
       <input type="password" id="password" placeholder="Password">
       <span class="toggle-pass" onclick="togglePassword()">Lihat</span>
@@ -212,6 +213,9 @@
       <div class="menu-item" onclick="goTo('sop.html')"><img src="icons/sop.png" class="menu-icon"><span>SOP Santri</span></div>
       <div class="menu-item" onclick="goTo('kalender.html')"><img src="icons/kalender.png" class="menu-icon"><span>Kaldik</span></div>
       <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Perizinan</span></div>
+      <div class="menu-item" onclick="goTo('ibadah.html')"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
+      <div class="menu-item" onclick="goTo('waktu-sholat.html')"><img src="icons/sholat.png" class="menu-icon"><span>Sholat</span></div>
+      <div class="menu-item" onclick="goTo('pengaduan.html')"><img src="icons/pengaduan.png" class="menu-icon"><span>Aduan</span></div>
     </div>
   </section>
 </main>
@@ -226,7 +230,6 @@
   });
   const auth = firebase.auth();
 
-  // FITUR: SIMPAN PASSWORD (LOCALSTORAGE)
   window.onload = () => {
     const savedEmail = localStorage.getItem("e_santri_email");
     const savedPass = localStorage.getItem("e_santri_pass");
@@ -237,7 +240,6 @@
     }
   };
 
-  // FITUR: LIHAT PASSWORD
   function togglePassword(){
     const pass = document.getElementById("password");
     const toggle = document.querySelector(".toggle-pass");
@@ -251,7 +253,6 @@
     msgEl.style.color = type==="error"?"#d63031":"#1f6f51";
   }
 
-  // LOGIN MANUAL
   function login(){
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
@@ -269,16 +270,14 @@
       .catch(e=> msg(e.message));
   }
 
-  // DAFTAR BARU
   function register(){
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
     auth.createUserWithEmailAndPassword(email,pass)
-      .then(()=> msg("Akun berhasil dibuat! Silakan Masuk.","success"))
+      .then(()=> msg("Berhasil! Silakan Masuk.","success"))
       .catch(e=> msg(e.message));
   }
 
-  // LOGIN GOOGLE
   function loginWithGoogle(){
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider).catch(e=>msg(e.message));
@@ -286,7 +285,6 @@
 
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
-  // TRANSISI PINDAH HALAMAN LEMBUT
   function goTo(url) {
     const container = document.getElementById('main-container');
     container.style.opacity = "0";
@@ -294,7 +292,6 @@
     setTimeout(() => { window.location.href = url; }, 300);
   }
 
-  // AUTH STATE CHECK
   auth.onAuthStateChanged(user=>{
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
@@ -321,7 +318,6 @@
     }, 600);
   });
 
-  // SIDEBAR & OVERLAY
   const sidebar=document.getElementById("sidebar");
   const overlay=document.getElementById("overlay");
   const menuBtn=document.getElementById("menu-btn");
