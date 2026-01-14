@@ -1,12 +1,12 @@
-const CACHE_NAME = 'e-santri-v1';
+const CACHE_NAME = 'byond-prayer-v2';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html', // Pastikan nama file HTML Anda sesuai
+  './',
+  './index.html',
   'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap',
   'https://www.islamcan.com/audio/adhan/makkah.mp3'
 ];
 
-// Install Service Worker dan simpan aset ke cache
+// 1. Install Service Worker & Simpan Audio Adzan ke Cache
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -16,7 +16,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Aktivasi Service Worker
+// 2. Bersihkan Cache Lama jika ada pembaruan
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -32,7 +32,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Strategi Fetch (Cache First)
+// 3. Strategi Fetch (Agar aplikasi bisa dibuka tanpa internet)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request).then((response) => {
@@ -41,9 +41,10 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Menangani klik pada notifikasi adzan
+// 4. Menangani interaksi saat notifikasi adzan diklik
 self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
+  event.notification.close(); // Tutup notifikasi saat diklik
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       // Jika aplikasi sudah terbuka, fokuskan ke tab tersebut
@@ -52,9 +53,9 @@ self.addEventListener('notificationclick', (event) => {
           return client.focus();
         }
       }
-      // Jika belum terbuka, buka tab baru
+      // Jika belum terbuka, buka aplikasi
       if (clients.openWindow) {
-        return clients.openWindow('/');
+        return clients.openWindow('./');
       }
     })
   );
