@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Qur'an Digital Kemenag Premium</title>
+    <title>Mushaf Al-Itqan Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #1b5e20;
             --accent: #c5a059;
-            --bg-paper: #fcfaf2; /* Warna kertas mushaf lama */
+            --bg-paper: #fcfaf2;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -44,7 +44,7 @@
 
         .page-content { 
             direction: rtl; text-align: justify; 
-            line-height: 2.2; /* Kerapatan Mushaf Cetak */
+            line-height: 2.2; 
             word-spacing: 1px;
         }
 
@@ -68,24 +68,34 @@
             display: none; position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-radius: 30px 30px 0 0;
             z-index: 3100; padding: 25px; max-height: 85vh; overflow-y: auto;
-            animation: slideUp 0.3s ease-out;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2); animation: slideUp 0.3s ease-out;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        /* MATERI TAJWID & GHARIB */
-        .section-tag { background: var(--primary); color: white; display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-bottom: 10px; font-weight: 700; }
+        /* TABS UNTUK MATERI */
+        .tab-menu { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { 
+            padding: 8px 15px; border-radius: 20px; border: 1px solid var(--primary); 
+            background: none; color: var(--primary); font-size: 12px; font-weight: 700; 
+            white-space: nowrap; cursor: pointer;
+        }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        /* MATERI STYLE */
+        .materi-section { display: none; }
+        .materi-section.active { display: block; }
         .materi-card { background: #f8f9fa; border-left: 4px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 12px; }
         .materi-card h4 { font-size: 14px; margin-bottom: 5px; color: var(--primary); }
-        .materi-card p { font-size: 12.5px; line-height: 1.5; color: #444; }
-        .arab-inline { font-family: 'Amiri', serif; font-size: 18px; color: #000; }
+        .materi-card p { font-size: 12px; line-height: 1.6; color: #444; }
+        .arab-inline { font-family: 'Amiri', serif; font-size: 20px; color: #000; direction: rtl; }
     </style>
 </head>
 <body>
 
 <header>
     <div class="header-top">
-        <h2 id="surahTitle">Al-Qur'an Kemenag</h2>
-        <div class="kebab-btn" onclick="openMateri()">⋮</div>
+        <h2 id="surahTitle">Al-Qur'an Digital</h2>
+        <div class="kebab-btn" onclick="openDrawer('materi')">⋮</div>
     </div>
     <div class="audio-box">
         <audio id="mainAudio" controls></audio>
@@ -95,52 +105,86 @@
 
 <div class="main-content">
     <div class="mushaf-card">
-        <div id="quranText" class="page-content">Memuat data resmi Kemenag...</div>
+        <div id="quranText" class="page-content">Memuat Mushaf...</div>
     </div>
 </div>
 
 <div id="overlay" class="overlay" onclick="closeAll()"></div>
 
-<div id="transDrawer" class="drawer">
+<div id="materiDrawer" class="drawer">
     <div style="width: 40px; height: 5px; background: #eee; border-radius: 10px; margin: -10px auto 20px;"></div>
-    <h3 id="transTitle" style="color:var(--primary); margin-bottom:15px;">Arti Ayat</h3>
-    <p id="transBody" style="line-height:1.7; font-size:15px; color: #333;"></p>
+    
+    <div class="tab-menu">
+        <button class="tab-btn active" onclick="switchTab(event, 'tabTajwid')">TAJWID</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tabGharib')">GHARIB</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tabWaqaf')">WAQAF</button>
+    </div>
+
+    <div id="tabTajwid" class="materi-section active">
+        <div class="materi-card">
+            <h4>Hukum Nun Sukun & Tanwin</h4>
+            <p>
+                1. <b>Izhar Halqi:</b> Jelas (Huruf: ء ح خ ع غ هـ)<br>
+                2. <b>Idgham Bighunnah:</b> Dengung (Huruf: ي ن م و)<br>
+                3. <b>Idgham Bilaghunnah:</b> Tanpa Dengung (Huruf: ل ر)<br>
+                4. <b>Iqlab:</b> Bunyi 'N' jadi 'M' (Huruf: ب)<br>
+                5. <b>Ikhfa' Haqiqi:</b> Samar (Huruf: 15 selain di atas)
+            </p>
+        </div>
+        <div class="materi-card">
+            <h4>Hukum Mim Sukun</h4>
+            <p>
+                1. <b>Ikhfa' Syafawi:</b> Samar (Mim ketemu ب)<br>
+                2. <b>Idgham Mithlain:</b> Dengung (Mim ketemu م)<br>
+                3. <b>Izhar Syafawi:</b> Jelas (Selain م dan ب)
+            </p>
+        </div>
+        <div class="materi-card">
+            <h4>Hukum Mad (Qiraati)</h4>
+            <p>
+                <b>Mad Thabi'i:</b> 2 Harakat.<br>
+                <b>Mad Wajib Muttasil:</b> 5 Harakat (Hamzah dalam 1 kata).<br>
+                <b>Mad Jaiz Munfasil:</b> 4-5 Harakat (Hamzah beda kata).<br>
+                <b>Mad Arid Lissukun:</b> 2, 4, 6 Harakat (Berhenti di akhir ayat).
+            </p>
+        </div>
+    </div>
+
+    <div id="tabGharib" class="materi-section">
+        <div class="materi-card">
+            <h4>Saktah <span class="arab-inline">(سكتة)</span></h4>
+            <p>Berhenti sejenak tanpa ambil nafas 2 harakat. Terdapat di Al-Kahfi: 1, Yasin: 52, Al-Qiyamah: 27, Al-Muthaffifin: 14.</p>
+        </div>
+        <div class="materi-card">
+            <h4>Imalah <span class="arab-inline">(إمالة)</span></h4>
+            <p>Membaca fathah condong ke kasrah. Contoh: <span class="arab-inline">مَجْرٰىهَا</span> (Majreha) - QS. Hud: 41.</p>
+        </div>
+        <div class="materi-card">
+            <h4>Isymam <span class="arab-inline">(إشمام)</span></h4>
+            <p>Memoncongkan bibir (isyarat dhammah) pada kata <span class="arab-inline">لَا تَأْمَنَّا</span> - QS. Yusuf: 11.</p>
+        </div>
+        <div class="materi-card">
+            <h4>Tashil <span class="arab-inline">(تسهيل)</span></h4>
+            <p>Hamzah kedua dibaca samar. Contoh: <span class="arab-inline">ءَاَعْجَمِيٌّ</span> - QS. Fussilat: 44.</p>
+        </div>
+        <div class="materi-card">
+            <h4>Naql <span class="arab-inline">(نقل)</span></h4>
+            <p>Pindah harakat. Contoh: <span class="arab-inline">بِئْسَ الِاسْمُ</span> jadi <i>Bi’salis-mu</i> - QS. Al-Hujurat: 11.</p>
+        </div>
+    </div>
+
+    <div id="tabWaqaf" class="materi-section">
+        <div class="materi-card"><h4>م : Waqaf Lazim</h4><p>Harus berhenti (Mesti).</p></div>
+        <div class="materi-card"><h4>لا : La Washal</h4><p>Dilarang berhenti.</p></div>
+        <div class="materi-card"><h4>قلى : Al-Waqfu Aula</h4><p>Berhenti lebih utama.</p></div>
+        <div class="materi-card"><h4>صلى : Al-Washlu Aula</h4><p>Lanjut lebih utama.</p></div>
+        <div class="materi-card"><h4>ج : Waqaf Jaiz</h4><p>Boleh berhenti atau lanjut.</p></div>
+    </div>
 </div>
 
-<div id="materiDrawer" class="drawer">
-    <h3 style="text-align:center; margin-bottom:20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">Pelajari Tajwid & Gharib</h3>
-    
-    <div class="section-tag">ILMU TAJWID (Qiraati)</div>
-    <div class="materi-card">
-        <h4>Hukum Nun Sukun & Tanwin</h4>
-        <p><b>Izhar:</b> Jelas. <b>Idgham:</b> Masuk (Bighunnah/Bilaghunnah). <b>Iqlab:</b> Bunyi 'N' jadi 'M' ketemu Ba. <b>Ikhfa:</b> Samar & Dengung.</p>
-    </div>
-    <div class="materi-card">
-        <h4>Hukum Mad</h4>
-        <p><b>Mad Thabi'i:</b> 2 harakat. <b>Mad Wajib:</b> 5 harakat dalam 1 kata. <b>Mad Jaiz:</b> 4-5 harakat di lain kata.</p>
-    </div>
-
-    <div class="section-tag">PELAJARAN GHARIB (Standar Qiraati)</div>
-    <div class="materi-card">
-        <h4>Saktah <span class="arab-inline">(سكتة)</span></h4>
-        <p>Berhenti sejenak tanpa ambil nafas (2 harakat). <br>Terletak di: Al-Kahfi: 1, Yasin: 52, Al-Qiyamah: 27, Al-Muthaffifin: 14.</p>
-    </div>
-    <div class="materi-card">
-        <h4>Imalah <span class="arab-inline">(إمالة)</span></h4>
-        <p>Bunyi 'A' miring ke 'E'. Contoh: <span class="arab-inline">مَجْرٰىهَا</span> (Majreha) di QS. Hud: 41.</p>
-    </div>
-    <div class="materi-card">
-        <h4>Isymam <span class="arab-inline">(إشمام)</span></h4>
-        <p>Memoncongkan bibir saat membaca dengung pada kata <span class="arab-inline">لَا تَأْمَنَّا</span> (QS. Yusuf: 11).</p>
-    </div>
-    <div class="materi-card">
-        <h4>Tashil <span class="arab-inline">(تسهيل)</span></h4>
-        <p>Membaca Hamzah kedua samar (antara hamzah dan alif). Contoh: <span class="arab-inline">ءَاَعْجَمِيٌّ</span> (QS. Fussilat: 44).</p>
-    </div>
-    <div class="materi-card">
-        <h4>Naql <span class="arab-inline">(نقل)</span></h4>
-        <p>Memindah harakat ke huruf mati sebelumnya. Contoh: <span class="arab-inline">بِئْسَ الِاسْمُ</span> (Bi'salismu) jadi (Bi'salis-mu) di Al-Hujurat: 11.</p>
-    </div>
+<div id="transDrawer" class="drawer">
+    <h3 id="transTitle" style="color:var(--primary); margin-bottom:10px;">Arti Ayat</h3>
+    <p id="transBody" style="line-height:1.7; font-size:15px;"></p>
 </div>
 
 <script>
@@ -148,8 +192,7 @@
     const quranText = document.getElementById("quranText");
     const mainAudio = document.getElementById("mainAudio");
 
-    // Menggunakan API resmi alternatif yang menyediakan data Kemenag
-    async function fetchKemenag() {
+    async function init() {
         try {
             const res = await fetch("https://equran.id/api/v2/surat");
             const data = await res.json();
@@ -158,55 +201,55 @@
                 surahSelect.add(opt);
             });
             loadSurah(1);
-        } catch (e) { quranText.innerText = "Gagal terhubung ke server."; }
+        } catch (e) { quranText.innerText = "Error API."; }
     }
 
     async function loadSurah(no) {
-        quranText.innerHTML = "<p style='text-align:center;'>Membuka Mushaf Kemenag...</p>";
+        quranText.innerHTML = "<p style='text-align:center;'>Memuat Mushaf...</p>";
         mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
         
-        try {
-            const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
-            const json = await res.json();
-            const data = json.data;
-            document.getElementById("surahTitle").innerText = data.namaLatin;
-            
-            let html = "";
-            if(no != 1 && no != 9) {
-                html += `<div style="text-align:center; margin-bottom:25px; font-size:35px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
-            }
-
-            data.ayat.forEach(v => {
-                const cleanTrans = v.teksIndonesia.replace(/'/g, "&apos;");
-                html += `<span class="ayah-item" onclick="openTrans(${v.nomorAyat}, '${cleanTrans}')">
-                            ${v.teksArab} <span class="ayah-num">${v.nomorAyat}</span>
-                         </span> `;
-            });
-            quranText.innerHTML = html;
-        } catch (e) { quranText.innerText = "Error memuat ayat."; }
+        const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
+        const json = await res.json();
+        const data = json.data;
+        document.getElementById("surahTitle").innerText = data.namaLatin;
+        
+        let html = "";
+        if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:25px; font-size:35px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
+        
+        data.ayat.forEach(v => {
+            const cleanTrans = v.teksIndonesia.replace(/'/g, "&apos;");
+            html += `<span class="ayah-item" onclick="openTrans(${v.nomorAyat}, '${cleanTrans}')">${v.teksArab} <span class="ayah-num">${v.nomorAyat}</span></span> `;
+        });
+        quranText.innerHTML = html;
     }
 
-    surahSelect.onchange = () => loadSurah(surahSelect.value);
-
     function openTrans(num, text) {
-        document.getElementById("transTitle").innerText = `QS. ${document.getElementById("surahTitle").innerText}: Ayat ${num}`;
+        document.getElementById("transTitle").innerText = `Ayat ${num}`;
         document.getElementById("transBody").innerText = text;
         document.getElementById("overlay").style.display = "block";
         document.getElementById("transDrawer").style.display = "block";
     }
 
-    function openMateri() {
+    function openDrawer() {
         document.getElementById("overlay").style.display = "block";
         document.getElementById("materiDrawer").style.display = "block";
     }
 
-    function closeAll() {
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("transDrawer").style.display = "none";
-        document.getElementById("materiDrawer").style.display = "none";
+    function switchTab(evt, tabId) {
+        document.querySelectorAll('.materi-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        evt.currentTarget.classList.add('active');
     }
 
-    fetchKemenag();
+    function closeAll() {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("materiDrawer").style.display = "none";
+        document.getElementById("transDrawer").style.display = "none";
+    }
+
+    surahSelect.onchange = () => loadSurah(surahSelect.value);
+    init();
 </script>
 
 </body>
