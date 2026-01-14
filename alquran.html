@@ -3,259 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Al-Qur'an Digital Modern</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>E-SANTRI | Database Tahfidz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1f6f51;
-            --gold: #c5a059;
-            --paper: #fdfaf4;
-            --text: #2d3436;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --danger: #ef4444; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
         
-        body { 
-            background: #f0f2f0; 
-            color: var(--text);
-            line-height: 1.6;
+        .form-grup { margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        select, input, textarea { 
+            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; 
+            background: #f9f9f9; font-size: 14px; outline: none; transition: 0.3s;
         }
-
-        /* HEADER ELEGANT */
-        header {
-            background: linear-gradient(135deg, var(--primary), #144d38);
-            color: white;
-            padding: 40px 20px 60px;
-            text-align: center;
-            border-radius: 0 0 40px 40px;
-            box-shadow: 0 10px 30px rgba(31, 111, 81, 0.2);
-        }
-
-        header h1 { font-family: 'Amiri', serif; font-size: 2.2rem; margin-bottom: 10px; }
+        select:focus, input:focus { border-color: var(--primary); background: #fff; }
         
-        .selector-box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        #surahSelect {
-            background: transparent;
-            color: white;
-            border: none;
-            outline: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* MUSHAF CARD */
-        .container {
-            max-width: 600px;
-            margin: -30px auto 150px;
-            background: var(--paper);
-            padding: 40px 30px;
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-            min-height: 80vh;
-        }
-
-        .surah-title {
-            text-align: center;
-            margin-bottom: 40px;
-            position: relative;
-        }
+        .grid-2 { display: flex; gap: 10px; }
+        .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
+        .star { cursor: pointer; font-size: 26px; color: #ddd; transition: 0.2s; }
         
-        .surah-title::after {
-            content: '';
-            display: block;
-            width: 50px;
-            height: 3px;
-            background: var(--gold);
-            margin: 10px auto;
-            border-radius: 5px;
+        /* Tombol Pendukung */
+        .btn-extra {
+            background: #f1f5f9; color: #475569; border: none; padding: 10px;
+            border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer;
+            width: 100%; margin-bottom: 10px; transition: 0.3s;
+        }
+        .btn-extra:hover { background: #e2e8f0; }
+        
+        /* Panel Audio & Tajwid yang disembunyikan */
+        #panel-pendukung { 
+            display: none; background: #f8fafc; padding: 15px; 
+            border-radius: 15px; margin-bottom: 15px; border: 1px dashed #cbd5e1;
         }
 
-        .page-content {
-            direction: rtl;
-            text-align: justify;
-            line-height: 2.8;
-            font-family: 'Amiri', serif;
-            font-size: 28px;
-            color: #1a1a1a;
+        .btn-simpan { 
+            width: 100%; background: var(--primary); color: white; border: none; 
+            padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px;
         }
-
-        .ayah-num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            margin: 0 12px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
-            background-size: contain;
-            font-size: 14px;
-            font-family: sans-serif;
-            font-weight: bold;
-        }
-
-        /* PREMIUM BOTTOM PLAYER & NAV */
-        .bottom-shelf {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 500px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 15px 20px;
-            z-index: 1000;
-        }
-
-        .audio-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-
-        #audioStatus { font-size: 0.75rem; font-weight: 700; color: var(--primary); flex-grow: 1; }
-
-        audio { height: 30px; width: 100%; border-radius: 10px; }
-
-        .nav-links {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .nav-btn {
-            border: none;
-            background: none;
-            color: #999;
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-btn.active { color: var(--primary); }
-
-        .waqaf-grid { display: grid; gap: 15px; direction: ltr; }
-        .waqaf-item {
-            background: white;
-            padding: 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            border: 1px solid #f0f0f0;
-        }
-
-        .hidden { display: none; }
+        .btn-simpan:disabled { background: #ccc; cursor: not-allowed; }
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1 id="headerSurah">Al-Qur'an</h1>
-    <div class="selector-box">
-        <select id="surahSelect"></select>
-    </div>
-</header>
+<div class="wadah">
+    <header>
+        <h1>CATAT TAHFIDZ</h1>
+        <p style="font-size: 11px; color: #777;">Database Hafalan Otomatis</p>
+    </header>
 
-<div class="container">
-    <div id="quranSection">
-        <div id="surahTitleArea" class="surah-title"></div>
-        <div id="quranText" class="page-content"></div>
+    <div class="form-grup">
+        <label>Pilih Kelas</label>
+        <select id="pilih-kelas">
+            <option value="">-- Pilih Kelas --</option>
+            <optgroup label="KELAS 7">
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+            </optgroup>
+            <optgroup label="KELAS 8">
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+            </optgroup>
+            <optgroup label="KELAS 9">
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+            </optgroup>
+        </select>
     </div>
 
-    <div id="waqafSection" class="hidden">
-        <h3 style="text-align:center; margin-bottom:25px; color:var(--primary)">Panduan Waqaf</h3>
-        <div class="waqaf-grid" id="waqafData">
+    <div class="form-grup">
+        <label>Nama Santri</label>
+        <select id="pilih-santri">
+            <option value="">-- Pilih Nama --</option>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Jenis Hafalan</label>
+        <select id="jenis-hafalan" onchange="toggleMateri()">
+            <option value="Quran">Al-Qur'an</option>
+            <option value="Jilid">Jilid (Yanbu'a/Iqra)</option>
+        </select>
+    </div>
+
+    <button type="button" class="btn-extra" onclick="toggleExtra()">🎧 Buka Fitur Audio & Tajwid</button>
+    <div id="panel-pendukung">
+        <div class="form-grup">
+            <label>Putar Audio Murottal</label>
+            <audio controls style="width: 100%; height: 35px;">
+                <source src="" type="audio/mpeg" id="audio-source">
+                Browser tidak mendukung audio.
+            </audio>
+        </div>
+        <div class="form-grup" id="info-tajwid">
+            <label>💡 Panduan Tajwid</label>
+            <p style="font-size: 12px; color: #555; background: white; padding: 10px; border-radius: 8px;">
+                Pilih Surah untuk melihat catatan tajwid penting di sini.
+            </p>
+        </div>
+    </div>
+
+    <div id="input-quran">
+        <div class="grid-2">
+            <div class="form-grup" style="flex: 2;">
+                <label>Surah</label>
+                <select id="surah" onchange="isiJuzOtomatis()">
+                    <option value="">-- Pilih Surah --</option>
+                </select>
             </div>
-    </div>
-</div>
+            <div class="form-grup" style="flex: 1;">
+                <label>Juz</label>
+                <input type="text" id="juz" readonly style="background: #ececec; text-align: center; font-weight: bold;">
+            </div>
+        </div>
 
-<div class="bottom-shelf">
-    <div class="audio-controls">
-        <div id="audioStatus">Memuat Audio...</div>
-        <audio id="mainAudio" controls></audio>
+        <div class="grid-2">
+            <div class="form-grup">
+                <label>Ayat Awal</label>
+                <input type="number" id="ayat-awal" placeholder="1">
+            </div>
+            <div class="form-grup">
+                <label>Ayat Akhir</label>
+                <input type="number" id="ayat-akhir" placeholder="10">
+            </div>
+        </div>
     </div>
-    
-    <div class="nav-links">
-        <button class="nav-btn active" onclick="showTab('quran')">📖 MUSHAF</button>
-        <button class="nav-btn" onclick="showTab('waqaf')">📏 TAJWID</button>
+
+    <div id="input-jilid" style="display:none;">
+        <div class="grid-2">
+            <div class="form-grup" style="flex: 2;">
+                <label>Pilih Jilid</label>
+                <select id="select-jilid">
+                    <option value="">-- Pilih Jilid --</option>
+                    <option value="Jilid 1A">Jilid 1A (Hal 1-30)</option>
+                    <option value="Jilid 1B">Jilid 1B (Hal 31-60)</option>
+                    <option value="Jilid 2A">Jilid 2A (Hal 1-30)</option>
+                    <option value="Jilid 2B">Jilid 2B (Hal 31-60)</option>
+                    <option value="Jilid 3A">Jilid 3A (Hal 1-31)</option>
+                    <option value="Jilid 3B">Jilid 3B (Hal 32-60)</option>
+                    <option value="Jilid 4A">Jilid 4A (Hal 1-34)</option>
+                    <option value="Jilid 4B">Jilid 4B (Hal 35-60)</option>
+                </select>
+            </div>
+            <div class="form-grup" style="flex: 1;">
+                <label>Halaman</label>
+                <input type="number" id="halaman-jilid" placeholder="Hal">
+            </div>
+        </div>
     </div>
+
+    <div class="form-grup">
+        <label>Status Progres</label>
+        <select id="status-progres">
+            <option value="Lulus">✅ Lulus (Lanjut Hafalan Baru)</option>
+            <option value="Sabaq">🔄 Sabaq (Mengulang Hafalan)</option>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Kualitas Hafalan</label>
+        <div class="rating">
+            <span class="star" onclick="setStar(1)">★</span>
+            <span class="star" onclick="setStar(2)">★</span>
+            <span class="star" onclick="setStar(3)">★</span>
+            <span class="star" onclick="setStar(4)">★</span>
+            <span class="star" onclick="setStar(5)">★</span>
+        </div>
+        <input type="hidden" id="nilai-bintang" value="0">
+    </div>
+
+    <div class="form-grup">
+        <label>Catatan Ustadz</label>
+        <textarea id="catatan" rows="2" placeholder="Tulis catatan makhraj/tajwid..."></textarea>
+    </div>
+
+    <div id="loading">⏳ Sedang menyimpan data ke pusat...</div>
+    <button class="btn-simpan" onclick="simpanTahfidz()">SIMPAN PENCAPAIAN</button>
 </div>
 
 <script>
-    const surahSelect = document.getElementById("surahSelect");
-    const quranText = document.getElementById("quranText");
-    const mainAudio = document.getElementById("mainAudio");
-    const audioStatus = document.getElementById("audioStatus");
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzp-7z6-SlQQ60fBQclI7DkLNC-Z2hwp7oMWalJM8pD1tgZPhxreyv0OxBDRau4zkHF/exec";
 
-    // Fetch Daftar Surah
-    fetch("https://api.quran.gading.dev/surah")
-        .then(r => r.json())
-        .then(d => {
-            d.data.forEach(s => {
-                let opt = new Option(s.name.transliteration.id, s.number);
-                surahSelect.add(opt);
-            });
-            loadSurah(1);
-        });
+    const alquran = [
+        {n: "Al-Fatihah", j: 1}, {n: "Al-Baqarah", j: 1}, {n: "Ali 'Imran", j: 3}, {n: "An-Nisa'", j: 4}, {n: "Al-Ma'idah", j: 6}, {n: "Al-An'am", j: 7}, {n: "Al-A'raf", j: 8}, {n: "Al-Anfal", j: 9}, {n: "At-Taubah", j: 10}, {n: "Yunus", j: 11}, {n: "Hud", j: 11}, {n: "Yusuf", j: 12}, {n: "Ar-Ra'd", j: 13}, {n: "Ibrahim", j: 13}, {n: "Al-Hijr", j: 14}, {n: "An-Nahl", j: 14}, {n: "Al-Isra'", j: 15}, {n: "Al-Kahf", j: 15}, {n: "Maryam", j: 16}, {n: "Thaha", j: 16}, {n: "Al-Anbiya'", j: 17}, {n: "Al-Hajj", j: 17}, {n: "Al-Mu'minun", j: 18}, {n: "An-Nur", j: 18}, {n: "Al-Furqan", j: 18}, {n: "Asy-Syu'ara'", j: 19}, {n: "An-Naml", j: 19}, {n: "Al-Qashash", j: 20}, {n: "Al-'Ankabut", j: 20}, {n: "Ar-Rum", j: 21}, {n: "Luqman", j: 21}, {n: "As-Sajdah", j: 21}, {n: "Al-Ahzab", j: 21}, {n: "Saba'", j: 22}, {n: "Fathir", j: 22}, {n: "Yasin", j: 22}, {n: "Ash-Shaffat", j: 23}, {n: "Shad", j: 23}, {n: "Az-Zumar", j: 23}, {n: "Ghafir", j: 24}, {n: "Fushshilat", j: 24}, {n: "Asy-Syura", j: 25}, {n: "Az-Zukhruf", j: 25}, {n: "Ad-Dukhan", j: 25}, {n: "Al-Jatsiyah", j: 25}, {n: "Al-Ahqaf", j: 26}, {n: "Muhammad", j: 26}, {n: "Al-Fath", j: 26}, {n: "Al-Hujurat", j: 26}, {n: "Qaf", j: 26}, {n: "Adz-Dzariyat", j: 26}, {n: "Ath-Thur", j: 27}, {n: "An-Najm", j: 27}, {n: "Al-Qamar", j: 27}, {n: "Ar-Rahman", j: 27}, {n: "Al-Waqi'ah", j: 27}, {n: "Al-Hadid", j: 27}, {n: "Al-Mujadilah", j: 28}, {n: "Al-Hasyr", j: 28}, {n: "Al-Mumtahanah", j: 28}, {n: "Ash-Shaff", j: 28}, {n: "Al-Jumu'ah", j: 28}, {n: "Al-Munafiqun", j: 28}, {n: "At-Taghabun", j: 28}, {n: "Ath-Thalaq", j: 28}, {n: "At-Tahrim", j: 28}, {n: "Al-Mulk", j: 29}, {n: "Al-Qalam", j: 29}, {n: "Al-Haqqah", j: 29}, {n: "Al-Ma'arij", j: 29}, {n: "Nuh", j: 29}, {n: "Al-Jinn", j: 29}, {n: "Al-Muzzammil", j: 29}, {n: "Al-Muddatstsir", j: 29}, {n: "Al-Qiyamah", j: 29}, {n: "Al-Insan", j: 29}, {n: "Al-Mursalat", j: 29}, {n: "An-Naba'", j: 30}, {n: "An-Nazi'at", j: 30}, {n: "'Abasa", j: 30}, {n: "At-Takwir", j: 30}, {n: "Al-Infithar", j: 30}, {n: "Al-Muthaffifin", j: 30}, {n: "Al-Insyiqaq", j: 30}, {n: "Al-Buruj", j: 30}, {n: "Ath-Thariq", j: 30}, {n: "Al-A'la", j: 30}, {n: "Al-Ghasyiyah", j: 30}, {n: "Al-Fajr", j: 30}, {n: "Al-Balad", j: 30}, {n: "Asy-Syams", j: 30}, {n: "Al-Lail", j: 30}, {n: "Ad-Dhuha", j: 30}, {n: "Asy-Syarh", j: 30}, {n: "At-Tin", j: 30}, {n: "Al-'Alaq", j: 30}, {n: "Al-Qadr", j: 30}, {n: "Al-Bayyinah", j: 30}, {n: "Az-Zalzalah", j: 30}, {n: "Al-'Adiyat", j: 30}, {n: "Al-Qari'ah", j: 30}, {n: "At-Takatsur", j: 30}, {n: "Al-'Asr", j: 30}, {n: "Al-Humazah", j: 30}, {n: "Al-Fil", j: 30}, {n: "Quraisy", j: 30}, {n: "Al-Ma'un", j: 30}, {n: "Al-Kautsar", j: 30}, {n: "Al-Kafirun", j: 30}, {n: "An-Nashr", j: 30}, {n: "Al-Lahab", j: 30}, {n: "Al-Ikhlash", j: 30}, {n: "Al-Falaq", j: 30}, {n: "An-Nas", j: 30}
+    ];
 
-    surahSelect.onchange = () => loadSurah(surahSelect.value);
+    const selSurah = document.getElementById('surah');
+    alquran.forEach(s => {
+        let opt = document.createElement('option');
+        opt.value = s.n;
+        opt.innerHTML = s.n;
+        selSurah.appendChild(opt);
+    });
 
-    function loadSurah(no) {
-        quranText.innerHTML = "<p style='text-align:center'>Membuka mushaf...</p>";
-        
-        // Update Audio Link
-        mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
-        
-        fetch(`https://api.quran.gading.dev/surah/${no}`)
-            .then(r => r.json())
-            .then(d => {
-                const data = d.data;
-                document.getElementById("headerSurah").innerText = data.name.short;
-                document.getElementById("surahTitleArea").innerHTML = `
-                    <h2 style="font-family:Amiri; color:var(--primary)">${data.name.short}</h2>
-                    <p style="font-size:0.8rem; color:var(--gold)">${data.name.translation.id} • ${data.numberOfVerses} Ayat</p>
-                `;
-                audioStatus.innerText = `Putar: Surah ${data.name.transliteration.id}`;
-
-                let html = "";
-                if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:30px; font-size:32px; color:#000">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
-                
-                data.verses.forEach(v => {
-                    html += `${v.text.arab} <span class="ayah-num">${v.number.inSurah}</span> `;
-                });
-                quranText.innerHTML = html;
-            });
+    function toggleExtra() {
+        const panel = document.getElementById('panel-pendukung');
+        const btn = document.querySelector('.btn-extra');
+        if (panel.style.display === "none" || panel.style.display === "") {
+            panel.style.display = "block";
+            btn.innerText = "✖ Tutup Audio & Tajwid";
+        } else {
+            panel.style.display = "none";
+            btn.innerText = "🎧 Buka Fitur Audio & Tajwid";
+        }
     }
 
-    function showTab(p) {
-        document.getElementById('quranSection').className = p === 'quran' ? '' : 'hidden';
-        document.getElementById('waqafSection').className = p === 'waqaf' ? '' : 'hidden';
-        document.querySelectorAll('.nav-btn').forEach((b, i) => {
-            b.classList.toggle('active', (i === 0 && p === 'quran') || (i === 1 && p === 'waqaf'));
-        });
-        window.scrollTo({top: 0, behavior: 'smooth'});
+    function toggleMateri() {
+        const jenis = document.getElementById('jenis-hafalan').value;
+        document.getElementById('input-quran').style.display = (jenis === 'Quran') ? 'block' : 'none';
+        document.getElementById('input-jilid').style.display = (jenis === 'Jilid') ? 'block' : 'none';
+    }
+
+    function isiJuzOtomatis() {
+        const found = alquran.find(x => x.n === selSurah.value);
+        document.getElementById('juz').value = found ? found.j : "";
+    }
+
+    function setStar(n) {
+        document.getElementById('nilai-bintang').value = n;
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
+    }
+
+    document.getElementById('pilih-kelas').addEventListener('change', function() {
+        const kelas = this.value;
+        const selectSantri = document.getElementById('pilih-santri');
+        if (!kelas) return;
+        selectSantri.innerHTML = '<option value="">⏳ Memuat Nama...</option>';
+        fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`)
+            .then(res => res.json())
+            .then(data => {
+                selectSantri.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                data.forEach(s => {
+                    let opt = document.createElement('option');
+                    opt.value = s.nipd;
+                    opt.text = s.nama;
+                    selectSantri.appendChild(opt);
+                });
+            });
+    });
+
+    async function simpanTahfidz() {
+        const btn = document.querySelector('.btn-simpan');
+        const loading = document.getElementById('loading');
+        const sSantri = document.getElementById('pilih-santri');
+        const jenis = document.getElementById('jenis-hafalan').value;
+        
+        let materiFinal = "";
+        let juzFinal = "";
+        let posisiFinal = "";
+
+        if(jenis === 'Quran') {
+            materiFinal = document.getElementById('surah').value;
+            juzFinal = document.getElementById('juz').value;
+            posisiFinal = document.getElementById('ayat-awal').value + "-" + document.getElementById('ayat-akhir').value;
+        } else {
+            materiFinal = document.getElementById('select-jilid').value;
+            juzFinal = "-";
+            posisiFinal = "Hal: " + document.getElementById('halaman-jilid').value;
+        }
+
+        const payload = {
+            nipd: sSantri.value,
+            nama: sSantri.options[sSantri.selectedIndex].text,
+            kelas: document.getElementById('pilih-kelas').value,
+            surah: materiFinal,
+            juz: juzFinal,
+            ayat: posisiFinal,
+            status: document.getElementById('status-progres').value,
+            nilai: document.getElementById('nilai-bintang').value,
+            catatan: document.getElementById('catatan').value
+        };
+
+        if(!payload.nipd || !payload.surah || payload.nilai == "0") {
+            return alert("Lengkapi Nama, Surah/Jilid, dan Nilai Bintang!");
+        }
+
+        loading.style.display = "block";
+        btn.disabled = true;
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify(payload)
+            });
+            alert("✅ Berhasil Disimpan!");
+            document.getElementById('ayat-awal').value = "";
+            document.getElementById('ayat-akhir').value = "";
+            document.getElementById('halaman-jilid').value = "";
+            document.getElementById('catatan').value = "";
+            setStar(0);
+        } catch (error) {
+            alert("Terjadi kesalahan.");
+        } finally {
+            loading.style.display = "none";
+            btn.disabled = false;
+        }
     }
 </script>
-
 </body>
 </html>
