@@ -145,7 +145,6 @@
     let adzanPlayedStatus = { Fajr: false, Dhuhr: false, Asr: false, Maghrib: false, Isha: false };
 
     function init() {
-        // --- PENDAFTARAN SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
                 .then(() => console.log("Service Worker Active"))
@@ -178,9 +177,10 @@
         try {
             const dateObj = new Date();
             const d = dateObj.toISOString().split('T')[0];
+            // Menggunakan method=20 (Kemenag RI) atau method=3 agar mirip jadwal Google/Lokal Indonesia
             const [locRes, prayRes] = await Promise.all([
                 fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`).then(r => r.json()),
-                fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=4`).then(r => r.json())
+                fetch(`https://api.aladhan.com/v1/timings/${d}?latitude=${lat}&longitude=${lon}&method=20`).then(r => r.json())
             ]);
             document.getElementById('cityName').innerText = locRes.address.city || locRes.address.town || "Lokasi Anda";
             document.getElementById('dateDisplay').innerText = dateObj.toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
@@ -199,13 +199,21 @@
 
     function triggerAdzan(sholatName) {
         const audio = document.getElementById('adzanAudio');
+        audio.volume = 1.0;
+
         if (Notification.permission === "granted") {
-            new Notification(`Waktu Sholat ${sholatName}`, {
-                body: `Memasuki waktu sholat ${sholatName}. Klik untuk buka aplikasi.`,
-                icon: 'https://cdn-icons-png.flaticon.com/512/2972/2972304.png'
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(`Waktu Sholat ${sholatName}`, {
+                    body: `Waktu sholat ${sholatName} telah tiba untuk wilayah ${document.getElementById('cityName').innerText}`,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/2972/2972304.png',
+                    vibrate: [500, 100, 500, 100, 500],
+                    requireInteraction: true
+                });
             });
         }
-        audio.play().catch(() => console.log("Menunggu klik user untuk suara"));
+        
+        // Coba putar audio (memerlukan setidaknya 1 klik user sebelumnya)
+        audio.play().catch(e => console.log("Audio play diblokir: " + e));
     }
 
     function updateActivePrayer() {
@@ -306,12 +314,13 @@
         if (userLat) window.open(`https://www.google.com/maps/search/masjid+terdekat/@${userLat},${userLon},15z`, '_blank');
     }
 
-    document.addEventListener('click', function() {
+   document.addEventListener('click', function() {
         const audio = document.getElementById('adzanAudio');
         audio.muted = true;
         audio.play().then(() => {
             audio.pause();
             audio.muted = false;
+            console.log("Audio Unlocked");
         });
     }, { once: true });
 
