@@ -196,111 +196,212 @@
         selSurah.appendChild(opt);
     });
 
-    function toggleExtra() {
-        const panel = document.getElementById('panel-pendukung');
-        const btn = document.querySelector('.btn-extra');
-        if (panel.style.display === "none" || panel.style.display === "") {
-            panel.style.display = "block";
-            btn.innerText = "✖ Tutup Audio & Tajwid";
-        } else {
-            panel.style.display = "none";
-            btn.innerText = "🎧 Buka Fitur Audio & Tajwid";
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Qur'an Digital Aesthetic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1f6f51;
+            --accent: #c5a059;
+            --bg-body: #f0f2f0;
+            --bg-mushaf: #fdfaf4;
+            --text-main: #2d3436;
         }
-    }
 
-    function toggleMateri() {
-        const jenis = document.getElementById('jenis-hafalan').value;
-        document.getElementById('input-quran').style.display = (jenis === 'Quran') ? 'block' : 'none';
-        document.getElementById('input-jilid').style.display = (jenis === 'Jilid') ? 'block' : 'none';
-    }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-main); }
 
-    function isiJuzOtomatis() {
-        const found = alquran.find(x => x.n === selSurah.value);
-        document.getElementById('juz').value = found ? found.j : "";
-    }
-
-    function setStar(n) {
-        document.getElementById('nilai-bintang').value = n;
-        const stars = document.querySelectorAll('.star');
-        stars.forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
-    }
-
-    document.getElementById('pilih-kelas').addEventListener('change', function() {
-        const kelas = this.value;
-        const selectSantri = document.getElementById('pilih-santri');
-        if (!kelas) return;
-        selectSantri.innerHTML = '<option value="">⏳ Memuat Nama...</option>';
-        fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`)
-            .then(res => res.json())
-            .then(data => {
-                selectSantri.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                data.forEach(s => {
-                    let opt = document.createElement('option');
-                    opt.value = s.nipd;
-                    opt.text = s.nama;
-                    selectSantri.appendChild(opt);
-                });
-            });
-    });
-
-    async function simpanTahfidz() {
-        const btn = document.querySelector('.btn-simpan');
-        const loading = document.getElementById('loading');
-        const sSantri = document.getElementById('pilih-santri');
-        const jenis = document.getElementById('jenis-hafalan').value;
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, var(--primary), #144d38);
+            color: white; padding: 40px 20px 60px; text-align: center;
+            border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 100;
+        }
+        header h2 { font-family: 'Amiri', serif; font-size: 2.2rem; margin-bottom: 15px; }
         
-        let materiFinal = "";
-        let juzFinal = "";
-        let posisiFinal = "";
-
-        if(jenis === 'Quran') {
-            materiFinal = document.getElementById('surah').value;
-            juzFinal = document.getElementById('juz').value;
-            posisiFinal = document.getElementById('ayat-awal').value + "-" + document.getElementById('ayat-akhir').value;
-        } else {
-            materiFinal = document.getElementById('select-jilid').value;
-            juzFinal = "-";
-            posisiFinal = "Hal: " + document.getElementById('halaman-jilid').value;
+        select {
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            color: white; padding: 12px 20px; border-radius: 20px; width: 85%;
+            outline: none; backdrop-filter: blur(10px); cursor: pointer;
         }
 
-        const payload = {
-            nipd: sSantri.value,
-            nama: sSantri.options[sSantri.selectedIndex].text,
-            kelas: document.getElementById('pilih-kelas').value,
-            surah: materiFinal,
-            juz: juzFinal,
-            ayat: posisiFinal,
-            status: document.getElementById('status-progres').value,
-            nilai: document.getElementById('nilai-bintang').value,
-            catatan: document.getElementById('catatan').value
-        };
-
-        if(!payload.nipd || !payload.surah || payload.nilai == "0") {
-            return alert("Lengkapi Nama, Surah/Jilid, dan Nilai Bintang!");
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 600px; margin: -30px auto 180px;
+            background: var(--bg-mushaf); min-height: 80vh;
+            border-radius: 30px; padding: 40px 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
         }
 
-        loading.style.display = "block";
-        btn.disabled = true;
+        .page-content {
+            direction: rtl; text-align: justify; line-height: 2.8;
+            font-family: 'Amiri', serif; font-size: 28px; color: #1a1a1a;
+        }
+        .ayah-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; margin: 0 10px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z" fill="none" stroke="%23c5a059" stroke-width="4"/></svg>');
+            background-size: contain; font-size: 14px; font-weight: bold; font-family: sans-serif;
+        }
 
-        try {
-            await fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify(payload)
+        /* TAJWID/WAQAF CARDS */
+        .tajwid-grid { display: grid; grid-template-columns: 1fr; gap: 15px; direction: ltr; }
+        .tajwid-card {
+            background: white; padding: 20px; border-radius: 20px;
+            display: flex; align-items: center; gap: 20px;
+            border: 1px solid #eee; transition: 0.3s;
+        }
+        .tajwid-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .symbol { 
+            font-family: 'Amiri', serif; font-size: 2.5rem; width: 70px; 
+            text-align: center; color: var(--primary); font-weight: bold;
+        }
+        .info h4 { color: var(--primary); margin-bottom: 5px; font-weight: 700; }
+        .info p { font-size: 0.85rem; color: #666; line-height: 1.4; }
+
+        /* FLOATING PLAYER CONTROL */
+        .player-container {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 500px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px); border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 15px 25px; z-index: 1000; border: 1px solid rgba(255,255,255,0.5);
+        }
+        .audio-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.8rem; }
+        .audio-meta b { color: var(--primary); }
+        audio { width: 100%; height: 35px; border-radius: 15px; }
+
+        /* NAVIGATION BAR */
+        .nav-bar {
+            display: flex; justify-content: space-around; margin-top: 15px;
+            border-top: 1px solid #eee; padding-top: 12px;
+        }
+        .nav-btn {
+            border: none; background: none; color: #a0a0a0;
+            font-size: 0.75rem; font-weight: 700; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .nav-btn.active { color: var(--primary); }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2 id="currentTitle">Murottal Al-Qur'an</h2>
+    <select id="surahSelect"></select>
+</header>
+
+<div class="main-content">
+    <div id="quranSection">
+        <div id="quranText" class="page-content">Memuat Al-Qur'an...</div>
+    </div>
+
+    <div id="waqafSection" class="hidden">
+        <h3 style="text-align: center; margin-bottom: 25px; color: var(--primary);">Panduan Tanda Waqaf</h3>
+        <div class="tajwid-grid">
+            <div class="tajwid-card">
+                <div class="symbol">م</div>
+                <div class="info"><h4>Waqaf Lazim</h4><p>Harus berhenti (Mesti). Berhenti di sini untuk menjaga kesempurnaan makna ayat.</p></div>
+            </div>
+            <div class="tajwid-card">
+                <div class="symbol">قلى</div>
+                <div class="info"><h4>Al-Waqfu Aula</h4><p>Berhenti lebih utama daripada melanjutkan bacaan.</p></div>
+            </div>
+            <div class="tajwid-card">
+                <div class="symbol">∴ ∴</div>
+                <div class="info"><h4>Mu'anaqah</h4><p>Berhenti di salah satu tanda titik tiga tersebut, jangan berhenti di keduanya.</p></div>
+            </div>
+            <div class="tajwid-card">
+                <div class="symbol">ج</div>
+                <div class="info"><h4>Waqaf Jaiz</h4><p>Boleh berhenti, boleh juga melanjutkan bacaan (setara).</p></div>
+            </div>
+            <div class="tajwid-card">
+                <div class="symbol">صلى</div>
+                <div class="info"><h4>Al-Washlu Aula</h4><p>Melanjutkan bacaan (Washal) lebih utama daripada berhenti.</p></div>
+            </div>
+            <div class="tajwid-card">
+                <div class="symbol">لا</div>
+                <div class="info"><h4>Waqaf La Washal</h4><p>Jangan berhenti. Tidak boleh berhenti di tengah ayat ini.</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="player-container">
+    <div class="audio-meta">
+        <span id="audioStatus">Siap Memutar...</span>
+        <b>Qori: Mishary Rashid</b>
+    </div>
+    
+    <audio id="mainAudio" controls></audio>
+
+    <div class="nav-bar">
+        <button class="nav-btn active" onclick="showPage('quran')">📖 MUSHAF</button>
+        <button class="nav-btn" onclick="showPage('waqaf')">📏 TAJWID</button>
+    </div>
+</div>
+
+<script>
+    const surahSelect = document.getElementById("surahSelect");
+    const quranText = document.getElementById("quranText");
+    const mainAudio = document.getElementById("mainAudio");
+    const audioStatus = document.getElementById("audioStatus");
+
+    // Load Daftar Surah
+    fetch("https://api.quran.gading.dev/surah")
+        .then(r => r.json())
+        .then(d => {
+            d.data.forEach(s => {
+                let opt = new Option(`${s.number}. ${s.name.transliteration.id}`, s.number);
+                surahSelect.add(opt);
             });
-            alert("✅ Berhasil Disimpan!");
-            document.getElementById('ayat-awal').value = "";
-            document.getElementById('ayat-akhir').value = "";
-            document.getElementById('halaman-jilid').value = "";
-            document.getElementById('catatan').value = "";
-            setStar(0);
-        } catch (error) {
-            alert("Terjadi kesalahan.");
-        } finally {
-            loading.style.display = "none";
-            btn.disabled = false;
-        }
+            loadSurah(1);
+        });
+
+    surahSelect.onchange = () => loadSurah(surahSelect.value);
+
+    function loadSurah(no) {
+        quranText.innerHTML = "<p style='text-align:center; padding-top:50px;'>Membuka Mushaf...</p>";
+        
+        // Update Audio
+        mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
+        
+        fetch(`https://api.quran.gading.dev/surah/${no}`)
+            .then(r => r.json())
+            .then(d => {
+                const data = d.data;
+                document.getElementById("currentTitle").innerText = data.name.transliteration.id;
+                audioStatus.innerText = `Memutar: Surah ${data.name.transliteration.id}`;
+
+                let html = "";
+                if(no != 1 && no != 9) {
+                    html += `<div style="text-align:center; margin-bottom:30px; font-size:32px;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
+                }
+                
+                data.verses.forEach(v => {
+                    html += `${v.text.arab} <span class="ayah-num">${v.number.inSurah}</span> `;
+                });
+                quranText.innerHTML = html;
+            });
+    }
+
+    function showPage(p) {
+        document.getElementById('quranSection').className = p === 'quran' ? '' : 'hidden';
+        document.getElementById('waqafSection').className = p === 'waqaf' ? '' : 'hidden';
+        document.querySelectorAll('.nav-btn').forEach((b, i) => {
+            b.classList.toggle('active', (i === 0 && p === 'quran') || (i === 1 && p === 'waqaf'));
+        });
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 </script>
+
 </body>
 </html>
