@@ -3,48 +3,171 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri</title>
+<title>E-Santri | Premium Edition</title>
 <link rel="icon" type="image/png" href="logo-assunnah.png">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="logo-assunnah.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root { --primary: #1f6f51; --text: #2d3436; --soft: rgba(31, 111, 81, 0.1); }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  
-  body { background: #f3fbf7; color: var(--text); padding: 20px; display: flex; flex-direction: column; align-items: center; }
+  :root {
+    --primary: #1f6f51;
+    --primary-hover: #16503a;
+    --accent: #d4b96a;      
+    --text: #2d3436;
+    --muted: #636e72;
+    --glass: rgba(255, 255, 255, 0.9);
+    --soft: rgba(31, 111, 81, 0.1);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-  /* MENU TITIK TIGA (SIDEBAR) */
-  .menu-trigger { position: fixed; top: 25px; right: 25px; z-index: 1000; background: var(--primary); color: #fff; width: 45px; height: 45px; display: none; align-items: center; justify-content: center; border-radius: 12px; cursor: pointer; font-size: 24px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-  .sidebar { position: fixed; top: 0; right: -80%; width: 70%; height: 100%; background: white; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1100; padding: 40px 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); border-radius: 25px 0 0 25px; }
-  .sidebar.open { right: 0; }
-  .sidebar-link { text-decoration: none; color: var(--text); display: block; padding: 15px; font-weight: 600; border-bottom: 1px solid #f0f0f0; transition: 0.2s; }
-  .sidebar-link:active { background: var(--soft); }
-  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 1050; backdrop-filter: blur(3px); }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    background: #f3fbf7;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(212, 185, 106, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text);
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  /* LOADING SCREEN */
+  #loading-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #f3fbf7; display: flex; align-items: center; justify-content: center;
+    z-index: 9999; transition: opacity 0.5s ease;
+  }
+  .spinner {
+    width: 45px; height: 45px; border: 4px solid var(--soft);
+    border-top: 4px solid var(--primary); border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  .container { width: 100%; max-width: 420px; z-index: 1; transition: opacity 0.3s ease; opacity: 1; }
+
+  /* HEADER & LOGO */
+  .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  
+  .logo-box { 
+    width: 100px; height: 100px; margin: 0 auto 10px;
+    background: white; padding: 12px; border-radius: 28px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    filter: drop-shadow(0 5px 15px rgba(31, 111, 81, 0.2));
+  }
+  .logo { width: 100%; height: 100%; object-fit: contain; }
+
+  .title { 
+    font-family: 'Montserrat', sans-serif;
+    font-size: 34px; font-weight: 900; color: #ffffff;
+    letter-spacing: 2px; text-transform: uppercase;
+    display: inline-block;
+    -webkit-text-stroke: 1.5px var(--primary);
+    text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3), 0 10px 10px rgba(0, 0, 0, 0.1);
+    animation: floatAnim 3s ease-in-out infinite;
+  }
+
+  @keyframes floatAnim {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-10px) scale(1.03); }
+  }
+
+  /* MAHFUZAT TICKER */
+  .mahfuzat-ticker {
+    background: white;
+    margin-bottom: 25px;
+    padding: 8px 12px;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(31, 111, 81, 0.1);
+    cursor: pointer;
+  }
+  .ticker-label {
+    background: var(--primary);
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 50px;
+    margin-right: 12px;
+    white-space: nowrap;
+    z-index: 2;
+  }
+  .ticker-content {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ar-run {
+    font-family: 'Noto Naskh Arabic', serif;
+    color: var(--primary);
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  /* SIDEBAR */
+  .menu-trigger {
+    position: fixed; top: 25px; right: 25px; z-index: 1300;
+    background: var(--primary); color: #fff; width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
+  }
+
+  .sidebar { 
+    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
+    background: white; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+    z-index: 1200; display: flex; flex-direction: column; padding: 50px 25px;
+    border-radius: 30px 0 0 30px;
+  }
+  .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+  .nav-item {
+    text-decoration: none; color: var(--text); font-weight: 600; padding: 14px;
+    border-radius: 12px; transition: 0.3s; display: flex; align-items: center; gap: 12px;
+  }
+  .nav-item:active { background: var(--soft); }
+
+  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
 
-  /* HEADER */
-  .header-box { text-align: center; margin-bottom: 20px; }
-  .logo-box { width: 80px; height: 80px; margin: 0 auto 10px; background: white; padding: 10px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-  .logo { width: 100%; height: 100%; object-fit: contain; }
-  .title { font-family: 'Montserrat', sans-serif; font-size: 30px; color: var(--primary); letter-spacing: 1px; }
+  /* CARD & GRID */
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-radius: 24px; padding: 30px; margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
+  }
 
-  /* MAHFUZAT BERGERAK */
-  .mahfuzat-ticker { background: white; margin-bottom: 25px; padding: 12px; border-radius: 50px; display: flex; align-items: center; overflow: hidden; width: 100%; max-width: 400px; border: 1px solid #eee; }
-  .ticker-label { background: var(--primary); color: white; font-size: 10px; padding: 5px 12px; border-radius: 20px; margin-right: 12px; font-weight: 800; }
-
-  /* DASHBOARD GRID */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 400px; }
-  .menu-item { background: white; padding: 18px 5px; border-radius: 22px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s; }
-  .menu-item:active { transform: scale(0.92); background: #fafafa; }
-  .menu-icon { width: 38px; height: 38px; margin-bottom: 6px; }
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .menu-item { 
+    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
+  }
+  .menu-item:active { transform: scale(0.9); background: var(--soft); }
+  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* FORM LOGIN */
-  .card { background: white; padding: 30px; border-radius: 25px; width: 100%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-  input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; }
-  .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 10px; font-size: 14px; }
-  .btn-login { background: var(--primary); color: white; }
-  .btn-google { background: white; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .hidden { display: none !important; }
+  .hidden { display:none !important; }
+  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
+
+  input[type="email"], input[type="password"] {
+    width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
+  }
+  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+  .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -52,82 +175,133 @@
 </head>
 <body>
 
-<div class="menu-trigger" id="menu-btn" onclick="toggleSidebar()">&#x22EE;</div>
+<div id="loading-screen"><div class="spinner"></div></div>
+<div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
 
 <div class="sidebar" id="sidebar">
-  <div style="text-align:center; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid #f0f0f0;">
-    <h4 style="color:var(--primary);">Menu Navigasi</h4>
+  <div class="sidebar-header" style="text-align: center; margin-bottom: 20px;">
+    <img id="user-photo" src="assets/default-avatar.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover; border: 3px solid var(--soft);">
+    <div id="sidebar-name" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top:10px;">Santri</div>
   </div>
-  <a href="#" onclick="location.href='waktusholat.html'" class="sidebar-link">🕌 Waktu Sholat</a>
-  <a href="#" onclick="location.href='pengaduan.html'" class="sidebar-link">📣 Pengaduan</a>
-  <a href="#" onclick="location.href='kalender.html'" class="sidebar-link">📅 Kalender</a>
-  <a href="#" onclick="logout()" class="sidebar-link" style="color:#e74c3c; margin-top:20px; border-top:1px solid #f0f0f0;">🚪 Keluar</a>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item">🏠 Dashboard</a>
+    <a href="#" onclick="goTo('waktusholat.html')" class="nav-item">🕌 Waktu Sholat</a>
+    <a href="#" onclick="goTo('pengaduan.html')" class="nav-item">📣 Pengaduan</a>
+    <a href="#" onclick="goTo('kalender.html')" class="nav-item">📅 Kalender</a>
+    <hr style="margin: 10px 0; opacity: 0.1;">
+    <a href="#" onclick="logout()" class="nav-item" style="color: #d63031; font-weight: 700;">🚪 Keluar</a>
+  </nav>
 </div>
-<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="overlay" id="overlay"></div>
 
 <header class="header-box">
   <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
   <h1 class="title">E-SANTRI</h1>
 </header>
 
-<main style="width: 100%; display: flex; flex-direction: column; align-items: center;">
-  
-  <div id="login-card" class="card hidden">
-    <h2 style="text-align:center; margin-bottom:20px; color:var(--primary);">Masuk</h2>
+<main class="container" id="main-container">
+  <div id="login-card" class="card login hidden">
+    <h2 style="text-align:center; color:var(--primary); font-weight:800;">Ahlan wa Sahlan!</h2>
+    <p style="text-align:center; color:var(--muted); font-size:12px; margin-bottom:25px;">Masuk ke akun Anda</p>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
-    <button class="btn btn-login" onclick="login()">MASUK</button>
-    <div style="text-align:center; margin-bottom: 15px;">
-      <a href="daftar.html" style="text-decoration:none; color:var(--primary); font-size:13px; font-weight:700;">Daftar Akun Baru</a>
-    </div>
-    <div style="text-align:center; color:#ccc; font-size:12px; margin-bottom:15px;">ATAU</div>
-    <button class="btn btn-google" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Masuk dengan Google
-    </button>
+    <button class="btn primary" onclick="login()">MASUK</button>
   </div>
 
-  <section id="dashboard" class="hidden" style="width:100%; max-width:400px;">
-    <h3 id="welcome-msg" style="margin-bottom:15px; color:var(--primary); font-weight:800;">Ahlan, Santri!</h3>
-    
-    <div class="mahfuzat-ticker">
-      <div class="ticker-label">MAHFUZAT</div>
-      <marquee scrollamount="5" direction="left" id="mahfuzat-text">...</marquee>
+  <section id="dashboard" class="hidden">
+    <div style="margin-bottom: 15px; padding-left: 10px;">
+        <h3 id="welcome-msg" style="color: var(--primary); font-weight:800; font-size: 18px;">Ahlan, Santri!</h3>
     </div>
 
+    <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
+        <div class="ticker-label">MAHFUZAT</div>
+        <div class="ticker-content">
+            <marquee scrollamount="5" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+                <span class="ar-run" id="runArab">...</span> 
+                <span id="runIndo" style="color: var(--muted); opacity: 0.8;">...</span>
+            </marquee>
+        </div>
+    </div>
+    
     <div class="menu-grid">
-      <div class="menu-item" onclick="location.href='absensi.html'"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
-      <div class="menu-item" onclick="location.href='tahfidz.html'"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="location.href='alquran.html'"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="location.href='perpustakaan.html'"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
-      <div class="menu-item" onclick="location.href='kamus.html'"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="location.href='ibadah.html'"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
-      <div class="menu-item" onclick="location.href='izin.html'"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
+      <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
+      <div class="menu-item" onclick="goTo('ibadah.html')"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
+      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
 </main>
 
+<footer>JANGAN TINGGALKAN SHOLAT</footer>
+
 <script>
-  firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
+  firebase.initializeApp({
+    apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+    authDomain:"e-santri-ed555.firebaseapp.com",
+    projectId:"e-santri-ed555"
+  });
   const auth = firebase.auth();
 
-  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
-  function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>alert(e.message)); }
-  function logout() { auth.signOut().then(()=>location.reload()); }
-  function toggleSidebar() { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("overlay").classList.toggle("show"); }
+  const daftarMahfuzat = [
+    { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
+    { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
+    { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
+    { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." }
+  ];
 
-  auth.onAuthStateChanged(user => {
-    if(user) {
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("menu-btn").style.display = "flex";
+  function updateMahfuzatHome() {
+    const tgl = new Date().getDate();
+    const index = tgl % daftarMahfuzat.length;
+    const data = daftarMahfuzat[index];
+    document.getElementById('runArab').innerText = data.ar;
+    document.getElementById('runIndo').innerText = " — " + data.id;
+  }
+
+  function hideLoading() {
+    const ls = document.getElementById("loading-screen");
+    ls.style.opacity = "0";
+    setTimeout(() => ls.style.display = "none", 400);
+  }
+
+  function goTo(url) {
+    const container = document.getElementById('main-container');
+    container.style.opacity = "0.5";
+    window.location.href = url;
+  }
+
+  function login(){
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
+  }
+
+  function logout(){ auth.signOut().then(()=>location.reload()); }
+
+  auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card");
+    const dashboard=document.getElementById("dashboard");
+    const menuBtn=document.getElementById("menu-btn");
+
+    if(user){
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display="flex";
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
-      document.getElementById("mahfuzat-text").innerText = "مَنْ جَدَّ وَجَدَ — Barang siapa bersungguh-sungguh, dapatlah ia.";
+      updateMahfuzatHome();
     } else {
-      document.getElementById("login-card").classList.remove("hidden");
-      document.getElementById("dashboard").classList.add("hidden");
-      document.getElementById("menu-btn").style.display = "none";
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      menuBtn.style.display="none";
     }
+    hideLoading();
   });
+
+  const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
+  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
+  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
 </script>
 </body>
 </html>
