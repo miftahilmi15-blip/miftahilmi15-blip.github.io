@@ -228,7 +228,7 @@
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
         <div class="ticker-label">MAHFUZAT</div>
         <div class="ticker-content">
-            <marquee id="mahfuzat-marquee" scrollamount="5" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+            <marquee id="mahfuzat-marquee" scrollamount="6" direction="left" behavior="scroll">
                 <span class="ar-run" id="runArab">...</span> 
                 <span id="runIndo" style="color: var(--muted); opacity: 0.8;">...</span>
             </marquee>
@@ -240,7 +240,7 @@
       <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
       <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
       <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>perpustakaan</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
       <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
@@ -287,7 +287,6 @@
     auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
   }
 
-  // FUNGSI DAFTAR
   function register() {
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
@@ -297,7 +296,6 @@
       .catch(e => alert(e.message));
   }
 
-  // FUNGSI LOGIN GOOGLE
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider).catch(e => alert(e.message));
@@ -320,6 +318,7 @@
       document.getElementById("sidebar-email").innerText = user.email;
       if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
 
+      // MENJALANKAN UPDATE MAHFUZAT AGAR MUNCUL & GERAK
       updateMahfuzatHome();
     } else {
       loginCard.classList.remove("hidden");
