@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Absensi Siswa Premium</title>
+<title>E-Absensi Siswa v2.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
@@ -14,26 +14,24 @@
   header h1 { color: var(--primary); font-size: 22px; font-weight: 700; }
   
   .card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; }
+  label { font-size: 12px; font-weight: 600; color: #666; margin-left: 5px; }
+  select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; font-size: 15px; font-weight: 600; color: var(--primary); outline: none; background-color: #f9fbfb; margin-top: 5px; cursor: pointer; }
   .search-box { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; margin-top: 10px; font-size: 14px; outline: none; }
-  select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; font-size: 15px; font-weight: 600; color: var(--primary); outline: none; background-color: #f9fbfb; }
 
-  .santri-list { margin-bottom: 100px; width: 100%; }
-  .santri-item { background: white; border-radius: 15px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; animation: slideIn 0.3s ease; }
-  @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-  
+  .santri-list { margin-bottom: 120px; width: 100%; }
+  .santri-item { background: white; border-radius: 15px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; transition: 0.3s; }
   .santri-info h3 { font-size: 13px; color: #333; font-weight: 600; text-transform: uppercase; }
   .santri-info p { font-size: 10px; color: #999; }
 
   .btn-group { display: flex; gap: 5px; }
-  .btn-status { width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid #f1f5f9; background: white; font-weight: 800; font-size: 12px; color: #ccc; cursor: pointer; transition: 0.2s; }
-  
+  .btn-status { width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid #f1f5f9; background: white; font-weight: 800; font-size: 12px; color: #ccc; cursor: pointer; }
   .h-on { background: var(--hadir)!important; color: white!important; border: none; }
   .s-on { background: var(--sakit)!important; color: white!important; border: none; }
   .i-on { background: var(--izin)!important; color: white!important; border: none; }
   .a-on { background: var(--alpha)!important; color: white!important; border: none; }
 
   .footer-actions { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: white; padding: 20px; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
-  .btn-save { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer; box-shadow: 0 5px 15px rgba(31, 111, 81, 0.3); }
+  .btn-save { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary); color: white; font-weight: 700; cursor: pointer; font-size: 16px; }
 
   #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
   .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -42,32 +40,30 @@
 </head>
 <body>
 
-<div id="loading"><div class="spinner"></div><p style="margin-top:10px; font-weight:600; color:var(--primary);">Memuat Data...</p></div>
+<div id="loading"><div class="spinner"></div><p style="margin-top:10px;">Mengambil data siswa...</p></div>
 
 <div class="container">
   <header><h1>E-ABSENSI SISWA</h1></header>
 
   <div class="card">
+    <label>Pilih Kelas</label>
     <select id="pilih-kelas">
-  <option value="">-- Pilih Kelas --</option>
-  <option value="7A">Kelas 7A</option>
-  <option value="7B">Kelas 7B</option>
-  <option value="7C">Kelas 7C</option>
-  <option value="7D">Kelas 7D</option>
-  <option value="8A">Kelas 8A</option>
-  <option value="8B">Kelas 8B</option>
-  <option value="8C">Kelas 8C</option>
-  <option value="8D">Kelas 8D</option>
-  <option value="9A">Kelas 9A</option>
-  <option value="9B">Kelas 9B</option>
-  <option value="9C">Kelas 9C</option>
-  <option value="9D">Kelas 9D</option>
+        <option value="">-- Pilih Kelas --</option>
+        <optgroup label="KELAS 7">
+            <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+        </optgroup>
+        <optgroup label="KELAS 8">
+            <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+        </optgroup>
+        <optgroup label="KELAS 9">
+            <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+        </optgroup>
     </select>
     <input type="text" id="cari-nama" class="search-box" placeholder="Cari nama siswa..." onkeyup="filterNama()">
   </div>
 
   <div id="isi-tabel" class="santri-list">
-    <p style="text-align:center; color:#999; margin-top:20px;">Silakan pilih kelas terlebih dahulu.</p>
+    <p style="text-align:center; color:#999; margin-top:20px;">Silakan pilih kelas untuk memuat data.</p>
   </div>
 
   <div class="footer-actions">
@@ -76,31 +72,28 @@
 </div>
 
 <script>
-  // LINK SCRIPT ANDA
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOQBPM9rYI6bf8SWLnZqSGCdK1FmJoPc4LKFATGYtVLXo1YAmGWzZz4NFgaBVABACPxw/exec";
+  // URL Deployment Anda yang baru
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1xiunxseCFuheVcXfNkqHp1A4f5x9xzuHl9wNi5CsG3Y4RnudWl2w8a6wNIXJy1QDtA/exec";
 
-  // 1. Ambil Data Siswa Saat Kelas Dipilih
+  // Ambil data saat kelas diubah
   document.getElementById('pilih-kelas').onchange = function() {
     const kls = this.value;
     if(!kls) return;
-    
     document.getElementById('loading').style.display = 'flex';
-    
-    // Menggunakan JSONP (Callback) agar tidak terkena CORS error
     const script = document.createElement('script');
     script.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(kls)}&callback=handleResponse`;
     document.body.appendChild(script);
   };
 
-  // 2. Tampilkan Data Siswa ke Layar
+  // Tampilkan data siswa
   function handleResponse(data) {
     document.getElementById('loading').style.display = 'none';
     const container = document.getElementById('isi-tabel');
     container.innerHTML = '';
-
-    if (data.length === 0) {
-      container.innerHTML = '<p style="text-align:center; color:red; margin-top:20px;">Data siswa tidak ditemukan.</p>';
-      return;
+    
+    if(data.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#ef4444; margin-top:20px;">Data tidak ditemukan di kelas ini.</p>';
+        return;
     }
 
     data.forEach(s => {
@@ -109,10 +102,7 @@
       div.setAttribute('data-nipd', s.nipd);
       div.setAttribute('data-nama', s.nama.toLowerCase());
       div.innerHTML = `
-        <div class="santri-info">
-          <h3>${s.nama}</h3>
-          <p>${s.nipd}</p>
-        </div>
+        <div class="santri-info"><h3>${s.nama}</h3><p>${s.nipd}</p></div>
         <div class="btn-group">
           <button class="btn-status" onclick="pilih(this,'H')">H</button>
           <button class="btn-status" onclick="pilih(this,'S')">S</button>
@@ -123,63 +113,44 @@
     });
   }
 
-  // 3. Fungsi Pilih Status (H, S, I, A)
   function pilih(btn, status) {
-    // Reset tombol lain dalam baris yang sama
-    btn.parentElement.querySelectorAll('.btn-status').forEach(b => {
-      b.className = 'btn-status';
-      b.removeAttribute('data-aktif');
-    });
-
-    // Aktifkan tombol yang diklik
+    btn.parentElement.querySelectorAll('.btn-status').forEach(b => { b.className = 'btn-status'; b.removeAttribute('data-aktif'); });
     const warna = { 'H': 'h-on', 'S': 's-on', 'I': 'i-on', 'A': 'a-on' };
-    btn.classList.add(warna[status]);
-    btn.setAttribute('data-aktif', status);
+    btn.classList.add(warna[status]); btn.setAttribute('data-aktif', status);
   }
 
-  // 4. Pencarian Nama
   function filterNama() {
     const input = document.getElementById('cari-nama').value.toLowerCase();
     document.querySelectorAll('.santri-item').forEach(item => {
-      const nama = item.getAttribute('data-nama');
-      item.style.display = nama.includes(input) ? "flex" : "none";
+      item.style.display = item.getAttribute('data-nama').includes(input) ? "flex" : "none";
     });
   }
 
-  // 5. Kirim Data ke Google Sheets
   async function kirimAbsen() {
     const kls = document.getElementById('pilih-kelas').value;
     const items = document.querySelectorAll('.santri-item');
     let rekap = [];
-
     items.forEach(item => {
       const statusBtn = item.querySelector('[data-aktif]');
-      if(statusBtn) {
-        rekap.push({
-          kelas: kls,
-          nipd: item.getAttribute('data-nipd'),
-          nama: item.querySelector('h3').innerText,
-          status: statusBtn.getAttribute('data-aktif')
-        });
-      }
+      if(statusBtn) rekap.push({ 
+          kelas: kls, 
+          nipd: item.getAttribute('data-nipd'), 
+          nama: item.querySelector('h3').innerText, 
+          status: statusBtn.getAttribute('data-aktif') 
+      });
     });
 
-    if(rekap.length === 0) return alert("Mohon isi absen minimal satu siswa!");
-
+    if(rekap.length === 0) return alert("Pilih setidaknya satu siswa untuk diabsen!");
+    
     document.getElementById('loading').style.display = 'flex';
-
     try {
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify(rekap)
-      });
-      alert("✅ Data absensi berhasil terkirim!");
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(rekap) });
+      alert("✅ Data Berhasil Disimpan ke Spreadsheet!");
       location.reload();
-    } catch (e) {
-      alert("❌ Gagal mengirim data. Cek koneksi.");
-    } finally {
-      document.getElementById('loading').style.display = 'none';
+    } catch (e) { 
+      alert("Gagal mengirim data."); 
+    } finally { 
+      document.getElementById('loading').style.display = 'none'; 
     }
   }
 </script>
