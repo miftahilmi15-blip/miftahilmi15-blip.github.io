@@ -79,54 +79,25 @@
     50% { transform: translateY(-10px) scale(1.03); }
   }
 
-  /* MAHFUZAT TICKER RUNNING TEXT */
+  /* MAHFUZAT TICKER */
   .mahfuzat-ticker {
-    background: white;
-    margin-bottom: 25px;
-    padding: 8px 12px;
-    border-radius: 50px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    border: 1px solid rgba(31, 111, 81, 0.1);
-    cursor: pointer;
+    background: white; margin-bottom: 25px; padding: 8px 12px; border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; align-items: center;
+    overflow: hidden; border: 1px solid rgba(31, 111, 81, 0.1); cursor: pointer;
   }
   .ticker-label {
-    background: var(--primary);
-    color: white;
-    font-size: 8px;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 50px;
-    margin-right: 12px;
-    white-space: nowrap;
+    background: var(--primary); color: white; font-size: 8px; font-weight: 800;
+    padding: 4px 10px; border-radius: 50px; margin-right: 12px; white-space: nowrap;
   }
-  .ticker-content {
-    flex: 1;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .ticker-content marquee {
-    font-size: 13px;
-    color: var(--text);
-  }
-  .ar-run {
-    font-family: 'Noto Naskh Arabic', serif;
-    color: var(--primary);
-    font-weight: bold;
-    margin-right: 5px;
-  }
+  .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; }
+  .ticker-content marquee { font-size: 13px; color: var(--text); }
+  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 5px; }
 
   /* CARD & GRID */
   .card {
-    background: var(--glass);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border-radius: 24px; padding: 30px; margin-bottom: 25px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
+    background: var(--glass); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; 
+    margin-bottom: 25px; border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
   }
-
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .menu-item { 
     background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
@@ -136,34 +107,32 @@
   .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* MENU TITIK TIGA (SIDEBAR TRIGGER) */
+  /* SIDEBAR & TRIGGER */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
   }
-
   .sidebar { 
-    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
-    background: white; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-    z-index: 1200; display: flex; flex-direction: column; padding: 50px 25px;
-    border-radius: 30px 0 0 30px;
+    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: white; 
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1200; display: flex; 
+    flex-direction: column; padding: 50px 25px; border-radius: 30px 0 0 30px;
   }
   .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
-
   .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
   .hidden { display:none !important; }
   footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 
-  /* INPUTS */
+  /* INPUTS & BUTTONS */
   input[type="email"], input[type="password"] {
     width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
   }
-  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
+  .btn.google { background: white; color: #444; border: 1px solid #ddd; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -199,6 +168,12 @@
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <button class="btn primary" onclick="login()">MASUK</button>
+    
+    <div style="text-align:center; margin: 15px 0; color: #ccc; font-size: 12px;">ATAU</div>
+    
+    <button class="btn google" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Masuk dengan Google
+    </button>
   </div>
 
   <section id="dashboard" class="hidden">
@@ -271,18 +246,27 @@
     auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
   }
 
+  // FUNGSI LOGIN GOOGLE DIKEMBALIKAN
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(e => alert(e.message));
+  }
+
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user=>{
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
     const menuBtn=document.getElementById("menu-btn");
+    const userPhoto = document.getElementById("user-photo");
 
     if(user){
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
       menuBtn.style.display="flex";
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
+      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
+      if(user.photoURL) userPhoto.src = user.photoURL;
       updateMahfuzatHome();
     } else {
       loginCard.classList.remove("hidden");
