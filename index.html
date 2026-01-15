@@ -50,7 +50,13 @@
   }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  .container { width: 100%; max-width: 420px; z-index: 1; transition: var(--transition); }
+  /* TRANSISI HALAMAN */
+  .container { 
+    width: 100%; max-width: 420px; z-index: 1; 
+    transition: opacity 0.4s ease, transform 0.4s ease; 
+    opacity: 1; transform: translateY(0);
+  }
+  .fade-out { opacity: 0; transform: translateY(20px); pointer-events: none; }
 
   /* HEADER & LOGO */
   .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
@@ -123,7 +129,7 @@
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  .menu-trigger:active { transform: scale(0.85) rotate(90deg); background: var(--primary-hover); }
+  .menu-trigger:active { transform: scale(0.85) rotate(90deg); }
 
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
@@ -137,7 +143,6 @@
   .overlay.show { display: block; }
   .hidden { display:none !important; }
 
-  /* INPUTS & BUTTONS */
   input[type="email"], input[type="password"] {
     width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; outline: none;
@@ -165,7 +170,7 @@
     <div id="sidebar-email" style="font-size: 12px; color: var(--muted); margin-top:2px;">email@santri.com</div>
   </div>
   <div class="sidebar-nav" style="display: flex; flex-direction: column; gap: 5px;">
-    <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; background:var(--soft); border-radius:10px;">🏠 Dashboard</a>
+    <a href="#" onclick="goTo('index.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; background:var(--soft); border-radius:10px;">🏠 Dashboard</a>
     <a href="#" onclick="goTo('waktu-sholat.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">🕌 Waktu Sholat</a>
     <a href="#" onclick="goTo('pengaduan.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📣 Pengaduan</a>
     <a href="#" onclick="goTo('kalender.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📅 Kalender</a>
@@ -176,8 +181,8 @@
 
 <div class="overlay" id="overlay"></div>
 
-<header class="header-box">
-  <div class="logo-box"><img src="logo-assunnah.png" class="logo" alt="Logo"></div>
+<header class="header-box" id="main-header">
+  <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
   <h1 class="title">E-SANTRI</h1>
 </header>
 
@@ -191,7 +196,7 @@
     <button class="btn outline" onclick="register()">DAFTAR AKUN BARU</button>
     <div style="text-align: center; margin: 15px 0; color: var(--muted); font-size: 12px;">Atau</div>
     <button class="btn google" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google"> Masuk dengan Google
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Masuk dengan Google
     </button>
   </div>
 
@@ -199,7 +204,6 @@
     <div style="margin-bottom: 15px; padding-left: 10px;">
         <h3 id="welcome-msg" style="color: var(--primary); font-weight:800; font-size: 18px;">Ahlan, Santri!</h3>
     </div>
-
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
         <div class="ticker-label">MAHFUZAT</div>
         <div class="ticker-content">
@@ -209,14 +213,13 @@
             </marquee>
         </div>
     </div>
-    
     <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon" alt="icon"><span>Absensi</span></div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon" alt="icon"><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon" alt="icon"><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon" alt="icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon" alt="icon"><span>Perpustakaan</span></div>
-      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon" alt="icon"><span>Izin</span></div>
+      <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
+      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
 </main>
@@ -224,13 +227,26 @@
 <footer>JANGAN TINGGALKAN SHOLAT</footer>
 
 <script>
-  // Silahkan ganti konfigurasi Firebase Anda jika perlu
   firebase.initializeApp({
     apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
     authDomain:"e-santri-ed555.firebaseapp.com",
     projectId:"e-santri-ed555"
   });
   const auth = firebase.auth();
+
+  // SMOOTH NAVIGATION
+  function goTo(url) {
+    const container = document.getElementById('main-container');
+    container.classList.add('fade-out'); // Efek halus keluar
+    setTimeout(() => {
+      window.location.href = url;
+    }, 400);
+  }
+
+  // REVEAL ON BACK BUTTON (Agar saat kembali dari alquran, dashboard tidak hilang)
+  window.addEventListener('pageshow', () => {
+    document.getElementById('main-container').classList.remove('fade-out');
+  });
 
   const daftarMahfuzat = [
     { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
@@ -255,14 +271,9 @@
     { ar: "اِجْهَدْ وَلَا تَكْسَلْ وَلَا تَكُ غَافِلًا", id: "Bersungguh-sungguhlah, jangan malas, dan jangan jadi pelala." },
     { ar: "الصَّبْرُ يُعِيْنُ عَلَى كُلِّ عَمَلٍ", id: "Kesabaran itu menolong segala pekerjaan." },
     { ar: "لَا تُؤَخِّرْ عَمَلَكَ إِلَى الغَدِ", id: "Jangan tunda pekerjaanmu hingga esok hari." },
-    { ar: "اُطْلُبِ العِلْمَ مِنَ المَهْدِ إِلَى اللَّحْدِ", id: "Tuntutlah ilmu dari buaian hingga liang lahat." },
-    { ar: "بِقَدْرِ الكَدِّ تُكْتَسَبُ المَعَالِي", id: "Setinggi apa usaha yang dilakukan, setinggi itu pula derajat yang didapat." },
+    { ar: "اُطْلُبِ Al-Ilma مِنَ المَهْدِ إِلَى اللَّحْدِ", id: "Tuntutlah ilmu dari buaian hingga liang lahat." },
     { ar: "خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ", id: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya." },
-    { ar: "اَلْمَرْءُ عَلَى دِيْنِ خَلِيْلِهِ", id: "Seseorang itu tergantung pada agama teman dekatnya." },
-    { ar: "لِكُلِّ مَقَامٍ مَقَالٌ وَلِكُلِّ مَقَالٍ مَقَامٌ", id: "Tiap tempat ada bicaranya, dan tiap bicara ada tempatnya." },
-    { ar: "قُلِ الحَقَّ وَلَوْ كَانَ مُرًّا", id: "Katakanlah kebenaran itu walaupun pahit." },
-    { ar: "سَلاَمَةُ الإِنْسَانِ فِي حِفْظِ اللِّسَانِ", id: "Keselamatan manusia itu dalam menjaga lidahnya." },
-    { ar: "العِلْمُ صَيْدٌ وَالكتَابَةُ قَيْدُهُ", id: "Ilmu adalah buruan dan tulisan adalah pengikatnya." }
+    { ar: "سَلاَمَةُ الإِنْسَانِ فِي حِفْظِ اللِّسَانِ", id: "Keselamatan manusia itu dalam menjaga lidahnya." }
   ];
 
   function updateMahfuzatHome() {
@@ -281,8 +292,6 @@
     setTimeout(() => ls.style.display = "none", 400);
   }
 
-  function goTo(url) { window.location.href = url; }
-
   function login(){
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
@@ -293,9 +302,7 @@
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
     if(!email || !pass) { alert("Isi email dan password untuk mendaftar"); return; }
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(() => alert("Berhasil mendaftar!"))
-      .catch(e => alert(e.message));
+    auth.createUserWithEmailAndPassword(email, pass).catch(e => alert(e.message));
   }
 
   function loginGoogle() {
@@ -305,6 +312,7 @@
 
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
+  // LOGIKA PROTEKSI AKSES
   auth.onAuthStateChanged(user=>{
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
@@ -320,6 +328,7 @@
       if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
       updateMahfuzatHome();
     } else {
+      // JIKA TIDAK LOGIN: KUNCI DI HALAMAN LOGIN
       loginCard.classList.remove("hidden");
       dashboard.classList.add("hidden");
       menuBtn.style.display="none";
@@ -327,18 +336,9 @@
     hideLoading();
   });
 
-  const sidebar=document.getElementById("sidebar"), 
-        overlay=document.getElementById("overlay"), 
-        menuBtn=document.getElementById("menu-btn");
-
-  menuBtn.onclick=()=>{ 
-    sidebar.classList.add("open"); 
-    overlay.classList.add("show"); 
-  }
-  overlay.onclick=()=>{ 
-    sidebar.classList.remove("open"); 
-    overlay.classList.remove("show"); 
-  }
+  const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
+  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
+  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
 </script>
 </body>
 </html>
