@@ -71,7 +71,7 @@
 
 <script>
   // Ganti URL ini dengan URL Web App terbaru Anda
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgs6vPgoQfl_6XgLY_vHrYNnzBKS2zuNZvHnpGeehYAhGDgRwKz_IGB1lTbpe-pt7rRA/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyp9z87a6dndHsZqBz6ykshpKuPwDBJi6zSM13qJGW96fd2dMaRG6RyjwmZ4huXhdwx-A/exec";
   const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc"; 
   const GID_CETAK = "196349453";
 
@@ -89,32 +89,31 @@
   };
 
   // 2. Tampilkan data ke layar
-  function render(data) {
-    document.getElementById('loading').style.display = 'none';
-    const cont = document.getElementById('list');
-    
-    if (data.error) {
-       cont.innerHTML = `<p style="text-align:center;padding:20px;color:red">${data.error}</p>`;
-       return;
-    }
-
-    cont.innerHTML = data.length ? '' : '<p style="text-align:center;padding:20px;color:#888">Tidak ada data di tab kelas ini.</p>';
-    
-    data.forEach(x => {
-      const d = document.createElement('div');
-      d.className = 'santri-item';
-      d.innerHTML = `
-        <div><b style="font-size:13px; color:#333;">${x.nama}</b><br><small style="color:#999">${x.nipd}</small></div>
-        <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}">
-          <button class="btn-status" onclick="set(this,'H')">H</button>
-          <button class="btn-status" onclick="set(this,'S')">S</button>
-          <button class="btn-status" onclick="set(this,'I')">I</button>
-          <button class="btn-status" onclick="set(this,'A')">A</button>
-        </div>`;
-      cont.appendChild(d);
-    });
+function render(data) {
+  document.getElementById('loading').style.display = 'none';
+  const cont = document.getElementById('list');
+  
+  if (data.error) {
+     cont.innerHTML = `<p style="text-align:center;padding:20px;color:red">${data.error}</p>`;
+     return;
   }
 
+  cont.innerHTML = data.length ? '' : '<p style="text-align:center;padding:20px;color:#888">Tidak ada data.</p>';
+  
+  data.forEach(x => {
+    const d = document.createElement('div');
+    d.className = 'santri-item';
+    d.innerHTML = `
+      <div><b style="font-size:13px; color:#333;">${x.nama}</b><br><small style="color:#999">${x.nipd}</small></div>
+      <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}"> 
+        <button class="btn-status" onclick="set(this,'H')">H</button>
+        <button class="btn-status" onclick="set(this,'S')">S</button>
+        <button class="btn-status" onclick="set(this,'I')">I</button>
+        <button class="btn-status" onclick="set(this,'A')">A</button>
+      </div>`;
+    cont.appendChild(d);
+  });
+}
   // 3. Fungsi Hadir Semua
   function hadirSemua() {
     const items = document.querySelectorAll('.santri-item');
@@ -145,32 +144,43 @@
   }
 
   // 6. Simpan data
-  async function simpan() {
-    const res = [];
-    const kls = document.getElementById('pilih-kelas').value;
-    document.querySelectorAll('.btn-group').forEach(g => {
-      const st = g.querySelector('[data-st]');
-      if(st) res.push({ 
+async function simpan() {
+  const res = [];
+  const kls = document.getElementById('pilih-kelas').value;
+  
+  // Ambil semua grup tombol yang sudah dipilih statusnya
+  document.querySelectorAll('.btn-group').forEach(g => {
+    const st = g.querySelector('[data-st]'); // Mencari tombol yang punya atribut data-st
+    if(st) {
+      res.push({ 
         kelas: kls, 
-        nipd: g.dataset.nipd, 
-        nama: g.dataset.nama, 
-        status: st.getAttribute('data-st') 
+        nipd: g.getAttribute('data-nipd'), // Mengambil NIPD dari div btn-group
+        nama: g.getAttribute('data-nama'), // Mengambil Nama dari div btn-group
+        status: st.getAttribute('data-st')  // Mengambil status (H/S/I/A)
       });
+    }
+  });
+  
+  if(!res.length) return alert("Pilih absen minimal satu siswa!");
+  
+  document.getElementById('loading').style.display = 'flex';
+  
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      cache: 'no-cache',
+      body: JSON.stringify(res) // Data dikirim dalam bentuk teks JSON
     });
     
-    if(!res.length) return alert("Mohon isi absen minimal satu siswa!");
-    
-    document.getElementById('loading').style.display = 'flex';
-    try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
-      alert("✅ Data Absensi Berhasil Disimpan!"); 
-      location.reload();
-    } catch(e) { 
-      alert("Gagal menyimpan data."); 
-    } finally { 
-      document.getElementById('loading').style.display = 'none'; 
-    }
+    alert("✅ Absensi Berhasil Dikirim ke Spreadsheet!"); 
+    location.reload();
+  } catch(e) { 
+    alert("Gagal mengirim data. Cek koneksi internet."); 
+  } finally { 
+    document.getElementById('loading').style.display = 'none'; 
   }
+}
 
   // 7. Download PDF
   function cetak() {
