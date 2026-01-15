@@ -79,7 +79,7 @@
     50% { transform: translateY(-10px) scale(1.03); }
   }
 
-  /* MAHFUZAT TICKER RUNNING TEXT (SLIM EDITION) */
+  /* MAHFUZAT TICKER RUNNING TEXT */
   .mahfuzat-ticker {
     background: white;
     margin-bottom: 25px;
@@ -101,11 +101,10 @@
     border-radius: 50px;
     margin-right: 12px;
     white-space: nowrap;
-    letter-spacing: 1px;
   }
   .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; }
   .ticker-content marquee { font-size: 13px; color: var(--text); }
-  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 8px; }
+  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 5px; }
 
   /* CARD & GRID */
   .card {
@@ -146,6 +145,7 @@
   .hidden { display:none !important; }
   footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 
+  /* INPUTS */
   input[type="email"], input[type="password"] {
     width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
@@ -190,7 +190,7 @@
   </div>
 
   <section id="dashboard" class="hidden">
-    <div style="margin-bottom: 12px; padding-left: 10px;">
+    <div style="margin-bottom: 15px; padding-left: 10px;">
         <h3 id="welcome-msg" style="color: var(--primary); font-weight:800; font-size: 18px;">Ahlan, Santri!</h3>
     </div>
 
@@ -208,9 +208,10 @@
       <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
       <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
       <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
       <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('ibadah.html')"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
       <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
+      <div class="menu-item" onclick="goTo('ibadah.html')"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
     </div>
   </section>
 </main>
@@ -225,6 +226,7 @@
   });
   const auth = firebase.auth();
 
+  // DATA MAHFUZAT
   const daftarMahfuzat = [
     { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
     { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
@@ -246,10 +248,7 @@
 
   function hideLoading() {
     const ls = document.getElementById("loading-screen");
-    if(ls) {
-        ls.style.opacity = "0";
-        setTimeout(() => ls.style.display = "none", 400);
-    }
+    if(ls) { ls.style.opacity = "0"; setTimeout(() => ls.style.display = "none", 400); }
   }
 
   function goTo(url) {
@@ -270,7 +269,6 @@
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
     const menuBtn=document.getElementById("menu-btn");
-
     if(user){
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
