@@ -13,18 +13,15 @@
   header { text-align: center; padding: 10px 0 20px; }
   header h1 { color: var(--primary); font-size: 24px; font-weight: 700; }
   
-  /* Kartu Filter */
   .card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; }
   select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; font-size: 15px; font-weight: 600; color: var(--primary); outline: none; background-color: #f9fbfb; }
   .search-box { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; margin-top: 10px; font-size: 14px; outline: none; }
   
-  /* List Siswa */
   .siswa-list { margin-bottom: 160px; width: 100%; }
   .siswa-item { background: white; border-radius: 15px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
   .siswa-info h3 { font-size: 13px; color: #333; font-weight: 600; text-transform: uppercase; }
   .siswa-info p { font-size: 10px; color: #999; }
   
-  /* Tombol H, S, I, A */
   .btn-group { display: flex; gap: 5px; }
   .btn-status { width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid #f1f5f9; background: white; font-weight: 800; font-size: 12px; color: #ccc; cursor: pointer; transition: 0.2s; }
   .h-on { background: var(--hadir)!important; color: white!important; border: none; }
@@ -32,13 +29,11 @@
   .i-on { background: var(--izin)!important; color: white!important; border: none; }
   .a-on { background: var(--alpha)!important; color: white!important; border: none; }
 
-  /* Footer Actions */
   .footer-actions { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: white; padding: 15px; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
   .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
   .btn-save { background: var(--primary); color: white; }
   .btn-download { background: #475569; color: white; }
 
-  /* Loading */
   #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
   .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -75,18 +70,19 @@
 </div>
 
 <script>
-  // --- KONFIGURASI ---
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzt3YZIHGYapL8x3vY_yZMIMC-YD7KalYmquvyPv9iit7r7ltSQ_dkP_36K0M43HJxhZw/exec";
+  // --- KONFIGURASI OTOMATIS ---
+  // URL Script terbaru yang Anda berikan
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-6QWJeLX1zwdvvJ2avB9otFTBBdgcj5pCJLCoDeKHBpYhHuKmkl09FeZrOix7rvbRpg/exec";
+  // ID Spreadsheet Anda
   const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc"; 
-  const GID_CETAK = "196349453"; // GID tab SIAP_CETAK yang Anda berikan
+  // GID tab SIAP_CETAK dari link Anda
+  const GID_CETAK = "196349453"; 
 
-  // Fungsi memanggil data siswa berdasarkan kelas
   document.getElementById('pilih-kelas').onchange = function() {
     const kls = this.value;
     if(!kls) return;
     document.getElementById('loading').style.display = 'flex';
     
-    // JSONP Call
     const script = document.createElement('script');
     script.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(kls)}&callback=handleResponse`;
     document.body.appendChild(script);
@@ -97,6 +93,11 @@
     const container = document.getElementById('isi-tabel');
     container.innerHTML = '';
     
+    if(data.error) {
+       container.innerHTML = `<p style="text-align:center; color:red; padding-top:20px;">${data.error}</p>`;
+       return;
+    }
+
     data.forEach(s => {
       const div = document.createElement('div');
       div.className = 'siswa-item';
@@ -148,19 +149,19 @@
       }
     });
 
-    if(dataKirim.length === 0) return alert("Pilih H/S/I/A dulu!");
+    if(dataKirim.length === 0) return alert("Pilih status absen (H/S/I/A) dulu!");
     
     document.getElementById('loading').style.display = 'flex';
     try {
       await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataKirim) });
-      alert("✅ Data Berhasil Disimpan!");
+      alert("✅ Absensi Berhasil Disimpan!");
       location.reload();
     } catch (e) { alert("Gagal mengirim data."); } finally { document.getElementById('loading').style.display = 'none'; }
   }
 
   function downloadLaporan() {
     const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&gid=${GID_CETAK}&size=A4&portrait=true&fitw=true&gridlines=false`;
-    const konfirmasi = confirm("Pastikan Kelas & Bulan sudah dipilih di tab SIAP_CETAK Spreadsheet. Lanjutkan?");
+    const konfirmasi = confirm("Pastikan Kelas & Bulan sudah dipilih di tab SIAP_CETAK Spreadsheet agar data sesuai. Lanjutkan download?");
     if(konfirmasi) window.open(url, '_blank');
   }
 </script>
