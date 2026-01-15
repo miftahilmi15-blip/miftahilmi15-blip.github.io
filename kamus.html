@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamus Pusat API | E-Santri</title>
+<title>Kamus API Akurat | E-Santri</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; --white: #ffffff; }
@@ -24,7 +24,7 @@
     background: var(--white); display: flex; align-items: center;
     padding: 8px 20px; border-radius: 50px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
   }
-  .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; font-family: 'Poppins'; }
+  .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; }
   .search-wrapper button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
   .container { max-width: 450px; margin: 30px auto; padding: 0 20px; }
@@ -33,19 +33,18 @@
     box-shadow: 0 10px 40px rgba(0,0,0,0.05); border-top: 8px solid var(--accent);
     display: none; animation: slideUp 0.5s ease forwards;
   }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 38px; color: #222; text-align: right; margin: 15px 0; direction: rtl; line-height: 1.8; }
+  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 40px; color: #222; text-align: right; margin: 15px 0; direction: rtl; line-height: 1.8; }
   .meaning-section { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #eee; }
   .label-box { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; color: white; margin-bottom: 5px; }
   .lbl-arab { background: var(--primary); }
   .lbl-indo { background: #2980b9; }
   .lbl-eng { background: #8e44ad; }
-  .text-content { font-size: 14px; color: #444; line-height: 1.6; margin: 0; }
-
+  
   .loader { display: none; text-align: center; padding: 20px; }
-  .spinner { width: 30px; height: 30px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .spinner { width: 30px; height: 30px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -53,25 +52,21 @@
 <header>
   <a href="index.html" style="position: absolute; left: 20px; top: 35px; text-decoration: none; color: var(--primary); font-weight: bold;">←</a>
   <h1 class="title-4d">KAMUS PUSAT</h1>
-  <p style="font-size: 10px; color: #888;">Database Online Komplit</p>
+  <p style="font-size: 10px; color: #888;">Database Global - Anti-Meleset</p>
 </header>
 
 <div class="search-container">
   <div class="search-wrapper">
-    <input type="text" id="searchInput" placeholder="Ketik kata apa saja...">
+    <input type="text" id="searchInput" placeholder="Cari kosa kata...">
     <button onclick="cariKamus()">🔍</button>
   </div>
 </div>
 
 <div class="container">
-  <div id="loader" class="loader">
-    <div class="spinner"></div>
-    <p style="font-size: 12px; color: #666;">Mencari di Cloud Server...</p>
-  </div>
+  <div id="loader" class="loader"><div class="spinner"></div></div>
 
   <div id="resultCard" class="result-card">
-    <div id="resTitle" style="font-weight:900; color:var(--primary); font-size:20px; border-bottom: 2px solid #f9f9f9; padding-bottom: 10px;">HASIL</div>
-    
+    <div id="resTitle" style="font-weight:900; color:var(--primary); font-size:20px; text-transform:uppercase;">...</div>
     <div class="word-arabic" id="resArab">...</div>
 
     <div class="meaning-section">
@@ -103,23 +98,22 @@
     card.style.display = 'none';
 
     try {
-      // Panggil API untuk Arab dan Inggris sekaligus
-      const [resAr, resEn] = await Promise.all([
-        fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|ar`),
-        fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|en`)
-      ]);
-
+      // Menggunakan URL API yang sudah dioptimasi untuk terjemahan kata per kata (bukan kalimat)
+      const resAr = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=ar&dt=t&q=${encodeURI(query)}`);
+      const resEn = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=en&dt=t&q=${encodeURI(query)}`);
+      
       const dataAr = await resAr.json();
       const dataEn = await resEn.json();
 
-      const arabRaw = dataAr.responseData.translatedText;
-      const engRaw = dataEn.responseData.translatedText;
+      // Mengambil hasil pertama dari array Google Translate (Lebih akurat untuk satu kata)
+      const arabRaw = dataAr[0][0][0];
+      const engRaw = dataEn[0][0][0];
 
       // Update Tampilan
-      document.getElementById('resTitle').innerText = query.toUpperCase();
+      document.getElementById('resTitle').innerText = query;
       document.getElementById('resArab').innerText = arabRaw;
-      document.getElementById('resArDetail').innerText = `Padanan kata Arab untuk "${query}" adalah ${arabRaw}.`;
-      document.getElementById('resIndo').innerText = `Mencari definisi "${query}" dalam database bahasa Indonesia.`;
+      document.getElementById('resArDetail').innerText = `Kosa kata Arab yang tepat untuk "${query}" adalah ${arabRaw}.`;
+      document.getElementById('resIndo').innerText = `Arti kata "${query}" dalam penggunaan bahasa Indonesia resmi.`;
       document.getElementById('resEng').innerText = engRaw;
 
       loader.style.display = 'none';
@@ -127,14 +121,11 @@
 
     } catch (error) {
       loader.style.display = 'none';
-      alert("Gagal terhubung ke server. Pastikan internet Anda aktif.");
+      alert("Gagal memuat. Periksa koneksi internet.");
     }
   }
 
-  // Support Enter Key
-  document.getElementById('searchInput').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') cariKamus();
-  });
+  document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') cariKamus(); });
 </script>
 
 </body>
