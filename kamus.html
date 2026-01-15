@@ -87,46 +87,74 @@
 </div>
 
 <script>
+  // Fungsi utama untuk mengeluarkan suara
+  function playSound(text, lang) {
+    const msg = new SpeechSynthesisUtterance();
+    msg.text = text;
+    msg.lang = lang; // 'ar-SA' untuk Arab, 'en-US' untuk Inggris
+    msg.rate = 0.8;  // Kecepatan bicara agak pelan agar jelas
+    window.speechSynthesis.speak(msg);
+  }
+
   async function cariKamus() {
     const query = document.getElementById('searchInput').value.trim();
     const card = document.getElementById('resultCard');
     const loader = document.getElementById('loader');
 
     if (!query) return;
-
     loader.style.display = 'block';
     card.style.display = 'none';
 
     try {
-      // Menggunakan URL API yang sudah dioptimasi untuk terjemahan kata per kata (bukan kalimat)
       const resAr = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=ar&dt=t&q=${encodeURI(query)}`);
       const resEn = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=en&dt=t&q=${encodeURI(query)}`);
       
       const dataAr = await resAr.json();
       const dataEn = await resEn.json();
 
-      // Mengambil hasil pertama dari array Google Translate (Lebih akurat untuk satu kata)
       const arabRaw = dataAr[0][0][0];
       const engRaw = dataEn[0][0][0];
 
-      // Update Tampilan
+      // Tampilkan Hasil & Update Tombol Suara
       document.getElementById('resTitle').innerText = query;
-      document.getElementById('resArab').innerText = arabRaw;
-      document.getElementById('resArDetail').innerText = `Kosa kata Arab yang tepat untuk "${query}" adalah ${arabRaw}.`;
-      document.getElementById('resIndo').innerText = `Arti kata "${query}" dalam penggunaan bahasa Indonesia resmi.`;
-      document.getElementById('resEng').innerText = engRaw;
+      document.getElementById('resArab').innerHTML = `
+        ${arabRaw} 
+        <button onclick="playSound('${arabRaw}', 'ar-SA')" style="background:none; border:none; cursor:pointer; font-size:20px;">🔊</button>
+      `;
+      
+      document.getElementById('resArDetail').innerText = `Kosa kata Arab untuk "${query}"`;
+      document.getElementById('resIndo').innerText = `Arti kata "${query}" dalam Bahasa Indonesia.`;
+      
+      document.getElementById('resEng').innerHTML = `
+        ${engRaw} 
+        <button onclick="playSound('${engRaw}', 'en-US')" style="background:none; border:none; cursor:pointer; font-size:16px;">🔊</button>
+      `;
 
       loader.style.display = 'none';
       card.style.display = 'block';
 
     } catch (error) {
       loader.style.display = 'none';
-      alert("Gagal memuat. Periksa koneksi internet.");
+      alert("Gagal memuat suara/data.");
     }
   }
-
-  document.getElementById('searchInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') cariKamus(); });
 </script>
+
+<style>
+  /* Tambahan Style agar tombol suara rapi */
+  .word-arabic button {
+    vertical-align: middle;
+    margin-right: 10px;
+    color: var(--primary);
+    transition: 0.3s;
+  }
+  .word-arabic button:hover { transform: scale(1.2); }
+  
+  .text-content button {
+    margin-left: 5px;
+    color: #8e44ad;
+  }
+</style>
 
 </body>
 </html>
