@@ -1,273 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Database Tahfidz</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --danger: #ef4444; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
-        .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
-        header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
-        
-        .form-grup { margin-bottom: 15px; }
-        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        select, input, textarea { 
-            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; 
-            background: #f9f9f9; font-size: 14px; outline: none; transition: 0.3s;
-        }
-        select:focus, input:focus { border-color: var(--primary); background: #fff; }
-        
-        .grid-2 { display: flex; gap: 10px; }
-        .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
-        .star { cursor: pointer; font-size: 26px; color: #ddd; transition: 0.2s; }
-        
-        .btn-simpan { 
-            width: 100%; background: var(--primary); color: white; border: none; 
-            padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px;
-        }
-        .btn-simpan:disabled { background: #ccc; cursor: not-allowed; }
-        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; font-size: 12px; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Absensi Siswa Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+  body { background: #f0f4f3; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+  .container { width: 100%; max-width: 450px; }
+  header { text-align: center; padding: 10px 0 20px; }
+  header h1 { color: var(--primary); font-size: 24px; font-weight: 700; }
+  
+  .card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 15px; }
+  select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; font-size: 15px; font-weight: 600; color: var(--primary); outline: none; background-color: #f9fbfb; }
+  .search-box { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; margin-top: 10px; font-size: 14px; outline: none; }
+  
+  .siswa-list { margin-bottom: 160px; width: 100%; }
+  .siswa-item { background: white; border-radius: 15px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+  .siswa-info h3 { font-size: 13px; color: #333; font-weight: 600; text-transform: uppercase; line-height: 1.2; }
+  .siswa-info p { font-size: 10px; color: #999; }
+  
+  .btn-group { display: flex; gap: 5px; }
+  .btn-status { width: 38px; height: 38px; border-radius: 10px; border: 1.5px solid #f1f5f9; background: white; font-weight: 800; font-size: 12px; color: #ccc; cursor: pointer; transition: 0.2s; }
+  .h-on { background: var(--hadir)!important; color: white!important; border: none; }
+  .s-on { background: var(--sakit)!important; color: white!important; border: none; }
+  .i-on { background: var(--izin)!important; color: white!important; border: none; }
+  .a-on { background: var(--alpha)!important; color: white!important; border: none; }
+
+  .footer-actions { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: white; padding: 15px; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
+  .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
+  .btn-save { background: var(--primary); color: white; }
+  .btn-download { background: #475569; color: white; }
+
+  #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
 </head>
 <body>
 
-<div class="wadah">
-    <header>
-        <h1>REKAP TAHFIDZ</h1>
-        <p style="font-size: 11px; color: #777;">Teruslah Konsisten Dalam Belajar Al-Quran</p>
-    </header>
+<div id="loading"><div class="spinner"></div><p style="margin-top:10px; font-weight:600;">Sedang Memproses...</p></div>
 
-    <div class="form-grup">
-        <label>Pilih Kelas</label>
-        <select id="pilih-kelas">
-            <option value="">-- Pilih Kelas --</option>
-            <optgroup label="KELAS 7">
-                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-            </optgroup>
-            <optgroup label="KELAS 8">
-                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-            </optgroup>
-            <optgroup label="KELAS 9">
-                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-            </optgroup>
-        </select>
-    </div>
+<div class="container">
+  <header><h1>E-ABSENSI SISWA</h1></header>
 
-    <div class="form-grup">
-        <label>Nama Santri</label>
-        <select id="pilih-santri">
-            <option value="">-- Pilih Nama --</option>
-        </select>
-    </div>
+  <div class="card">
+    <select id="pilih-kelas">
+      <option value="">-- Pilih Kelas --</option>
+      <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+      <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+      <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+    </select>
+    <input type="text" id="cari-nama" class="search-box" placeholder="Cari nama siswa..." onkeyup="filterNama()">
+  </div>
 
-    <div class="form-grup">
-        <label>Jenis Hafalan</label>
-        <select id="jenis-hafalan" onchange="toggleMateri()">
-            <option value="Quran">Al-Qur'an</option>
-            <option value="Jilid">Jilid </option>
-        </select>
-    </div>
+  <div id="isi-tabel" class="siswa-list">
+    <p style="text-align:center; color:#999; padding-top:20px;">Silakan pilih kelas...</p>
+  </div>
 
-    <div id="input-quran">
-        <div class="grid-2">
-            <div class="form-grup" style="flex: 2;">
-                <label>Surah</label>
-                <select id="surah" onchange="isiJuzOtomatis()">
-                    <option value="">-- Pilih Surah --</option>
-                </select>
-            </div>
-            <div class="form-grup" style="flex: 1;">
-                <label>Juz</label>
-                <input type="text" id="juz" readonly style="background: #ececec; text-align: center; font-weight: bold;">
-            </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="form-grup">
-                <label>Ayat Awal</label>
-                <input type="number" id="ayat-awal" placeholder="1">
-            </div>
-            <div class="form-grup">
-                <label>Ayat Akhir</label>
-                <input type="number" id="ayat-akhir" placeholder="10">
-            </div>
-        </div>
-    </div>
-
-    <div id="input-jilid" style="display:none;">
-        <div class="grid-2">
-            <div class="form-grup" style="flex: 2;">
-                <label>Pilih Jilid</label>
-                <select id="select-jilid">
-                    <option value="">-- Pilih Jilid --</option>
-                    <option value="Jilid 1A">Jilid 1A (Hal 1-30)</option>
-                    <option value="Jilid 1B">Jilid 1B (Hal 31-60)</option>
-                    <option value="Jilid 2A">Jilid 2A (Hal 1-30)</option>
-                    <option value="Jilid 2B">Jilid 2B (Hal 31-60)</option>
-                    <option value="Jilid 3A">Jilid 3A (Hal 1-31)</option>
-                    <option value="Jilid 3B">Jilid 3B (Hal 32-60)</option>
-                    <option value="Jilid 4A">Jilid 4A (Hal 1-34)</option>
-                    <option value="Jilid 4B">Jilid 4B (Hal 35-60)</option>
-                </select>
-            </div>
-            <div class="form-grup" style="flex: 1;">
-                <label>Halaman</label>
-                <input type="number" id="halaman-jilid" placeholder="Hal">
-            </div>
-        </div>
-    </div>
-
-    <div class="form-grup">
-        <label>Status Progres</label>
-        <select id="status-progres">
-            <option value="Lulus">✅ Lulus </option>
-            <option value="Sabaq">🔄 Mengulang </option>
-        </select>
-    </div>
-
-    <div class="form-grup">
-        <label>Kualitas Hafalan</label>
-        <div class="rating">
-            <span class="star" onclick="setStar(1)">★</span>
-            <span class="star" onclick="setStar(2)">★</span>
-            <span class="star" onclick="setStar(3)">★</span>
-            <span class="star" onclick="setStar(4)">★</span>
-            <span class="star" onclick="setStar(5)">★</span>
-        </div>
-        <input type="hidden" id="nilai-bintang" value="0">
-    </div>
-
-    <div class="form-grup">
-        <label>Catatan Ustadz</label>
-        <textarea id="catatan" rows="2" placeholder="Tulis catatan makhraj/tajwid..."></textarea>
-    </div>
-
-    <div id="loading">⏳ Sedang menyimpan data ke pusat...</div>
-    <button class="btn-simpan" onclick="simpanTahfidz()">SIMPAN PENCAPAIAN</button>
+  <div class="footer-actions">
+    <button class="btn-main btn-save" onclick="kirimAbsen()">SIMPAN ABSENSI</button>
+    <button class="btn-main btn-download" onclick="downloadLaporan()">📥 DOWNLOAD PDF LAPORAN</button>
+  </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzp-7z6-SlQQ60fBQclI7DkLNC-Z2hwp7oMWalJM8pD1tgZPhxreyv0OxBDRau4zkHF/exec";
+  // GUNAKAN LINK TERBARU ANDA
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx88bBR_nigwqBb-sC8tk44fpElh875fZuZBxlGFUOjZuwskmj14f2D1j5OoV9ZRVcSfw/exec";
+  const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc";
+  const GID_CETAK = "196349453";
 
-    const alquran = [
-        {n: "Al-Fatihah", j: 1}, {n: "Al-Baqarah", j: 1}, {n: "Ali 'Imran", j: 3}, {n: "An-Nisa'", j: 4}, {n: "Al-Ma'idah", j: 6}, {n: "Al-An'am", j: 7}, {n: "Al-A'raf", j: 8}, {n: "Al-Anfal", j: 9}, {n: "At-Taubah", j: 10}, {n: "Yunus", j: 11}, {n: "Hud", j: 11}, {n: "Yusuf", j: 12}, {n: "Ar-Ra'd", j: 13}, {n: "Ibrahim", j: 13}, {n: "Al-Hijr", j: 14}, {n: "An-Nahl", j: 14}, {n: "Al-Isra'", j: 15}, {n: "Al-Kahf", j: 15}, {n: "Maryam", j: 16}, {n: "Thaha", j: 16}, {n: "Al-Anbiya'", j: 17}, {n: "Al-Hajj", j: 17}, {n: "Al-Mu'minun", j: 18}, {n: "An-Nur", j: 18}, {n: "Al-Furqan", j: 18}, {n: "Asy-Syu'ara'", j: 19}, {n: "An-Naml", j: 19}, {n: "Al-Qashash", j: 20}, {n: "Al-'Ankabut", j: 20}, {n: "Ar-Rum", j: 21}, {n: "Luqman", j: 21}, {n: "As-Sajdah", j: 21}, {n: "Al-Ahzab", j: 21}, {n: "Saba'", j: 22}, {n: "Fathir", j: 22}, {n: "Yasin", j: 22}, {n: "Ash-Shaffat", j: 23}, {n: "Shad", j: 23}, {n: "Az-Zumar", j: 23}, {n: "Ghafir", j: 24}, {n: "Fushshilat", j: 24}, {n: "Asy-Syura", j: 25}, {n: "Az-Zukhruf", j: 25}, {n: "Ad-Dukhan", j: 25}, {n: "Al-Jatsiyah", j: 25}, {n: "Al-Ahqaf", j: 26}, {n: "Muhammad", j: 26}, {n: "Al-Fath", j: 26}, {n: "Al-Hujurat", j: 26}, {n: "Qaf", j: 26}, {n: "Adz-Dzariyat", j: 26}, {n: "Ath-Thur", j: 27}, {n: "An-Najm", j: 27}, {n: "Al-Qamar", j: 27}, {n: "Ar-Rahman", j: 27}, {n: "Al-Waqi'ah", j: 27}, {n: "Al-Hadid", j: 27}, {n: "Al-Mujadilah", j: 28}, {n: "Al-Hasyr", j: 28}, {n: "Al-Mumtahanah", j: 28}, {n: "Ash-Shaff", j: 28}, {n: "Al-Jumu'ah", j: 28}, {n: "Al-Munafiqun", j: 28}, {n: "At-Taghabun", j: 28}, {n: "Ath-Thalaq", j: 28}, {n: "At-Tahrim", j: 28}, {n: "Al-Mulk", j: 29}, {n: "Al-Qalam", j: 29}, {n: "Al-Haqqah", j: 29}, {n: "Al-Ma'arij", j: 29}, {n: "Nuh", j: 29}, {n: "Al-Jinn", j: 29}, {n: "Al-Muzzammil", j: 29}, {n: "Al-Muddatstsir", j: 29}, {n: "Al-Qiyamah", j: 29}, {n: "Al-Insan", j: 29}, {n: "Al-Mursalat", j: 29}, {n: "An-Naba'", j: 30}, {n: "An-Nazi'at", j: 30}, {n: "'Abasa", j: 30}, {n: "At-Takwir", j: 30}, {n: "Al-Infithar", j: 30}, {n: "Al-Muthaffifin", j: 30}, {n: "Al-Insyiqaq", j: 30}, {n: "Al-Buruj", j: 30}, {n: "Ath-Thariq", j: 30}, {n: "Al-A'la", j: 30}, {n: "Al-Ghasyiyah", j: 30}, {n: "Al-Fajr", j: 30}, {n: "Al-Balad", j: 30}, {n: "Asy-Syams", j: 30}, {n: "Al-Lail", j: 30}, {n: "Ad-Dhuha", j: 30}, {n: "Asy-Syarh", j: 30}, {n: "At-Tin", j: 30}, {n: "Al-'Alaq", j: 30}, {n: "Al-Qadr", j: 30}, {n: "Al-Bayyinah", j: 30}, {n: "Az-Zalzalah", j: 30}, {n: "Al-'Adiyat", j: 30}, {n: "Al-Qari'ah", j: 30}, {n: "At-Takatsur", j: 30}, {n: "Al-'Asr", j: 30}, {n: "Al-Humazah", j: 30}, {n: "Al-Fil", j: 30}, {n: "Quraisy", j: 30}, {n: "Al-Ma'un", j: 30}, {n: "Al-Kautsar", j: 30}, {n: "Al-Kafirun", j: 30}, {n: "An-Nashr", j: 30}, {n: "Al-Lahab", j: 30}, {n: "Al-Ikhlash", j: 30}, {n: "Al-Falaq", j: 30}, {n: "An-Nas", j: 30}
-    ];
+  // FUNGSI AMBIL DATA (Logika Fetch seperti Tahfidz)
+  document.getElementById('pilih-kelas').onchange = function() {
+    const kls = this.value;
+    if(!kls) return;
+    
+    document.getElementById('loading').style.display = 'flex';
+    const container = document.getElementById('isi-tabel');
+    container.innerHTML = '<p style="text-align:center; padding-top:20px;">Memuat nama siswa...</p>';
 
-    // Load Surah Dropdown
-    const selSurah = document.getElementById('surah');
-    alquran.forEach(s => {
-        let opt = document.createElement('option');
-        opt.value = s.n;
-        opt.innerHTML = s.n;
-        selSurah.appendChild(opt);
-    });
-
-    function isiJuzOtomatis() {
-        const found = alquran.find(x => x.n === selSurah.value);
-        document.getElementById('juz').value = found ? found.j : "";
-    }
-
-    function setStar(n) {
-        document.getElementById('nilai-bintang').value = n;
-        const stars = document.querySelectorAll('.star');
-        stars.forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
-    }
-
-    // Tambahan: Fungsi Toggle Input
-    function toggleMateri() {
-        const jenis = document.getElementById('jenis-hafalan').value;
-        document.getElementById('input-quran').style.display = (jenis === 'Quran') ? 'block' : 'none';
-        document.getElementById('input-jilid').style.display = (jenis === 'Jilid') ? 'block' : 'none';
-    }
-
-    // Ambil Nama Santri per Kelas
-    document.getElementById('pilih-kelas').addEventListener('change', function() {
-        const kelas = this.value;
-        const selectSantri = document.getElementById('pilih-santri');
-        if (!kelas) return;
-
-        selectSantri.innerHTML = '<option value="">⏳ Memuat Nama...</option>';
-        fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`)
-            .then(res => res.json())
-            .then(data => {
-                selectSantri.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                data.forEach(s => {
-                    let opt = document.createElement('option');
-                    opt.value = s.nipd;
-                    opt.text = s.nama;
-                    selectSantri.appendChild(opt);
-                });
-            })
-            .catch(err => {
-                selectSantri.innerHTML = '<option value="">Gagal memuat data</option>';
-            });
-    });
-
-    // Simpan Data
-    async function simpanTahfidz() {
-        const btn = document.querySelector('.btn-simpan');
-        const loading = document.getElementById('loading');
-        const sSantri = document.getElementById('pilih-santri');
-        const jenis = document.getElementById('jenis-hafalan').value;
+    fetch(`${SCRIPT_URL}?kelas=${kls}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        container.innerHTML = '';
         
-        // Logika penentuan materi (Surah vs Jilid)
-        let materiFinal = "";
-        let juzFinal = "";
-        let posisiFinal = "";
-
-        if(jenis === 'Quran') {
-            materiFinal = document.getElementById('surah').value;
-            juzFinal = document.getElementById('juz').value;
-            posisiFinal = document.getElementById('ayat-awal').value + "-" + document.getElementById('ayat-akhir').value;
-        } else {
-            materiFinal = document.getElementById('select-jilid').value;
-            juzFinal = "-"; // Jilid tidak ada juz
-            posisiFinal = "Hal: " + document.getElementById('halaman-jilid').value;
+        if(data.error) {
+          container.innerHTML = `<p style="color:red; text-align:center; padding-top:20px;">${data.error}</p>`;
+          return;
         }
 
-        const payload = {
-            nipd: sSantri.value,
-            nama: sSantri.options[sSantri.selectedIndex].text,
-            kelas: document.getElementById('pilih-kelas').value,
-            surah: materiFinal,
-            juz: juzFinal,
-            ayat: posisiFinal,
-            status: document.getElementById('status-progres').value,
-            nilai: document.getElementById('nilai-bintang').value,
-            catatan: document.getElementById('catatan').value
-        };
+        data.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'siswa-item';
+          div.setAttribute('data-nipd', s.nipd);
+          div.setAttribute('data-nama', s.nama.toLowerCase());
+          div.innerHTML = `
+            <div class="siswa-info"><h3>${s.nama}</h3><p>${s.nipd}</p></div>
+            <div class="btn-group">
+              <button class="btn-status" onclick="pilih(this,'H')">H</button>
+              <button class="btn-status" onclick="pilih(this,'S')">S</button>
+              <button class="btn-status" onclick="pilih(this,'I')">I</button>
+              <button class="btn-status" onclick="pilih(this,'A')">A</button>
+            </div>`;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        document.getElementById('loading').style.display = 'none';
+        alert("Gagal memuat data. Pastikan Script sudah di-Deploy ulang.");
+      });
+  };
 
-        if(!payload.nipd || !payload.surah || payload.nilai == "0") {
-            return alert("Lengkapi Nama, Surah/Jilid, dan Nilai Bintang!");
-        }
+  function filterNama() {
+    const input = document.getElementById('cari-nama').value.toLowerCase();
+    document.querySelectorAll('.siswa-item').forEach(item => {
+      item.style.display = item.getAttribute('data-nama').includes(input) ? "flex" : "none";
+    });
+  }
 
-        loading.style.display = "block";
-        btn.disabled = true;
+  function pilih(btn, status) {
+    btn.parentElement.querySelectorAll('.btn-status').forEach(b => { 
+      b.className = 'btn-status'; 
+      b.removeAttribute('data-aktif'); 
+    });
+    const warna = { 'H': 'h-on', 'S': 's-on', 'I': 'i-on', 'A': 'a-on' };
+    btn.classList.add(warna[status]); 
+    btn.setAttribute('data-aktif', status);
+  }
 
-        try {
-            await fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify(payload)
-            });
-            alert("✅ Berhasil Disimpan!");
-            // Reset fields
-            document.getElementById('ayat-awal').value = "";
-            document.getElementById('ayat-akhir').value = "";
-            document.getElementById('halaman-jilid').value = "";
-            document.getElementById('catatan').value = "";
-            setStar(0);
-        } catch (error) {
-            alert("Terjadi kesalahan.");
-        } finally {
-            loading.style.display = "none";
-            btn.disabled = false;
-        }
-    }
+  async function kirimAbsen() {
+    const kls = document.getElementById('pilih-kelas').value;
+    const items = document.querySelectorAll('.siswa-item');
+    let dataKirim = [];
+    
+    items.forEach(item => {
+      const statusBtn = item.querySelector('[data-aktif]');
+      if(statusBtn) {
+        dataKirim.push({ 
+          kelas: kls, 
+          nipd: item.getAttribute('data-nipd'), 
+          nama: item.querySelector('h3').innerText, 
+          status: statusBtn.getAttribute('data-aktif') 
+        });
+      }
+    });
+
+    if(dataKirim.length === 0) return alert("Pilih status absen dulu!");
+    
+    document.getElementById('loading').style.display = 'flex';
+    try {
+      await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(dataKirim) });
+      alert("✅ Berhasil Disimpan!");
+      location.reload();
+    } catch (e) { alert("Gagal menyimpan."); } finally { document.getElementById('loading').style.display = 'none'; }
+  }
+
+  function downloadLaporan() {
+    const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&gid=${GID_CETAK}&size=A4&portrait=true&fitw=true&gridlines=false`;
+    if(confirm("Download laporan PDF?")) window.open(url, '_blank');
+  }
 </script>
 </body>
 </html>
