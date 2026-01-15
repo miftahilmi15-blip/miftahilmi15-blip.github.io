@@ -48,19 +48,19 @@
 
   <div class="card">
     <select id="pilih-kelas">
-  <option value="">-- Pilih Kelas --</option>
-  <option value="7A">7A</option>
-  <option value="7B">7B</option>
-  <option value="7C">7C</option>
-  <option value="7D">7D</option>
-  <option value="8A">8A</option>
-  <option value="8B">8B</option>
-  <option value="8C">8C</option>
-  <option value="8D">8D</option>
-  <option value="9A">9A</option>
-  <option value="9B">9B</option>
-  <option value="9C">9C</option>
-  <option value="9D">9D</option>
+      <option value="">-- Pilih Kelas --</option>
+      <option value="7A">7A</option>
+      <option value="7B">7B</option>
+      <option value="7C">7C</option>
+      <option value="7D">7D</option>
+      <option value="8A">8A</option>
+      <option value="8B">8B</option>
+      <option value="8C">8C</option>
+      <option value="8D">8D</option>
+      <option value="9A">9A</option>
+      <option value="9B">9B</option>
+      <option value="9C">9C</option>
+      <option value="9D">9D</option>
     </select>
     <input type="text" id="cari-nama" class="search-box" placeholder="Cari nama siswa..." onkeyup="filterNama()">
   </div>
@@ -76,12 +76,9 @@
 </div>
 
 <script>
-  // --- KONFIGURASI OTOMATIS ---
-  // URL Script terbaru yang Anda berikan
+  // --- KONFIGURASI FINAL ---
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-6QWJeLX1zwdvvJ2avB9otFTBBdgcj5pCJLCoDeKHBpYhHuKmkl09FeZrOix7rvbRpg/exec";
-  // ID Spreadsheet Anda
   const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc"; 
-  // GID tab SIAP_CETAK dari link Anda
   const GID_CETAK = "196349453"; 
 
   document.getElementById('pilih-kelas').onchange = function() {
@@ -155,7 +152,7 @@
       }
     });
 
-    if(dataKirim.length === 0) return alert("Pilih status absen (H/S/I/A) dulu!");
+    if(dataKirim.length === 0) return alert("Pilih status absen dulu!");
     
     document.getElementById('loading').style.display = 'flex';
     try {
@@ -167,7 +164,7 @@
 
   function downloadLaporan() {
     const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&gid=${GID_CETAK}&size=A4&portrait=true&fitw=true&gridlines=false`;
-    const konfirmasi = confirm("Pastikan Kelas & Bulan sudah dipilih di tab SIAP_CETAK Spreadsheet agar data sesuai. Lanjutkan download?");
+    const konfirmasi = confirm("Pastikan Kelas & Bulan sudah dipilih di tab SIAP_CETAK Spreadsheet. Lanjutkan?");
     if(konfirmasi) window.open(url, '_blank');
   }
 </script>
