@@ -3,112 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamus Super API | E-Santri</title>
+<title>Kamus Pusat API | E-Santri</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; }
-  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; }
-  header { background: #fff; padding: 30px 20px 50px; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-  .title-4d { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900; color: #fff; -webkit-text-stroke: 1.2px var(--primary); text-transform: uppercase; }
-  
-  .search-container { max-width: 400px; margin: -25px auto 0; padding: 0 20px; }
-  .search-wrapper { background: #fff; display: flex; align-items: center; padding: 5px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-  .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; }
-  .search-wrapper button { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+  :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; --white: #ffffff; }
+  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+
+  header { 
+    background: var(--white); padding: 40px 20px 60px; text-align: center; 
+    border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+  .title-4d {
+    font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 900;
+    color: #fff; -webkit-text-stroke: 1.2px var(--primary);
+    text-transform: uppercase; text-shadow: 0 5px 15px rgba(31, 111, 81, 0.2);
+  }
+
+  .search-container { max-width: 400px; margin: -30px auto 0; padding: 0 20px; }
+  .search-wrapper {
+    background: var(--white); display: flex; align-items: center;
+    padding: 8px 20px; border-radius: 50px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  }
+  .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; font-family: 'Poppins'; }
+  .search-wrapper button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
   .container { max-width: 450px; margin: 30px auto; padding: 0 20px; }
-  .result-card { background: #fff; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 5px solid var(--accent); display: none; animation: fadeIn 0.5s; }
-  
-  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 35px; color: #222; text-align: right; margin: 15px 0; direction: rtl; }
-  .label-box { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+  .result-card {
+    background: var(--white); border-radius: 30px; padding: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05); border-top: 8px solid var(--accent);
+    display: none; animation: slideUp 0.5s ease forwards;
+  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 38px; color: #222; text-align: right; margin: 15px 0; direction: rtl; line-height: 1.8; }
+  .meaning-section { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #eee; }
+  .label-box { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; color: white; margin-bottom: 5px; }
   .lbl-arab { background: var(--primary); }
   .lbl-indo { background: #2980b9; }
   .lbl-eng { background: #8e44ad; }
-  
-  .loader { display: none; text-align: center; margin-top: 20px; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .text-content { font-size: 14px; color: #444; line-height: 1.6; margin: 0; }
+
+  .loader { display: none; text-align: center; padding: 20px; }
+  .spinner { width: 30px; height: 30px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <header>
-  <h1 class="title-4d">KAMUS PUSAT API</h1>
-  <p style="font-size: 10px; color: #999;">Koneksi Real-time ke Database Al-Munawwir & KBBI</p>
+  <a href="index.html" style="position: absolute; left: 20px; top: 35px; text-decoration: none; color: var(--primary); font-weight: bold;">←</a>
+  <h1 class="title-4d">KAMUS PUSAT</h1>
+  <p style="font-size: 10px; color: #888;">Database Online Komplit</p>
 </header>
 
 <div class="search-container">
   <div class="search-wrapper">
-    <input type="text" id="searchInput" placeholder="Cari kata apa saja...">
+    <input type="text" id="searchInput" placeholder="Ketik kata apa saja...">
     <button onclick="cariKamus()">🔍</button>
   </div>
 </div>
 
 <div class="container">
-  <div id="loader" class="loader">⚙️ Mencari di server...</div>
+  <div id="loader" class="loader">
+    <div class="spinner"></div>
+    <p style="font-size: 12px; color: #666;">Mencari di Cloud Server...</p>
+  </div>
+
   <div id="resultCard" class="result-card">
-    <h2 id="resTitle" style="color:var(--primary); margin-top:0;">...</h2>
+    <div id="resTitle" style="font-weight:900; color:var(--primary); font-size:20px; border-bottom: 2px solid #f9f9f9; padding-bottom: 10px;">HASIL</div>
     
     <div class="word-arabic" id="resArab">...</div>
-    
-    <div style="margin-top:20px;">
+
+    <div class="meaning-section">
       <span class="label-box lbl-arab">ARAB</span>
-      <p id="resArDetail" style="font-size:14px; margin:5px 0;">...</p>
+      <p class="text-content" id="resArDetail">...</p>
     </div>
 
-    <div style="margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
-      <span class="label-box lbl-indo">INDONESIA (KBBI)</span>
-      <p id="resIndo" style="font-size:13px; color:#555; line-height:1.6;">...</p>
+    <div class="meaning-section">
+      <span class="label-box lbl-indo">INDONESIA</span>
+      <p class="text-content" id="resIndo">...</p>
     </div>
 
-    <div style="margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
+    <div class="meaning-section">
       <span class="label-box lbl-eng">INGGRIS</span>
-      <p id="resEng" style="font-size:14px; font-weight:600; color:#444;">...</p>
+      <p class="text-content" id="resEng">...</p>
     </div>
   </div>
 </div>
 
 <script>
-async function cariKamus() {
-  const query = document.getElementById('searchInput').value.trim();
-  const card = document.getElementById('resultCard');
-  const loader = document.getElementById('loader');
+  async function cariKamus() {
+    const query = document.getElementById('searchInput').value.trim();
+    const card = document.getElementById('resultCard');
+    const loader = document.getElementById('loader');
 
-  if (!query) return;
-  
-  loader.style.display = 'block';
-  card.style.display = 'none';
+    if (!query) return;
 
-  try {
-    // 1. Ambil data terjemahan Arab & Inggris dari MyMemory API
-    const [resAr, resEn] = await Promise.all([
-      fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|ar`),
-      fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|en`)
-    ]);
-    
-    const dataAr = await resAr.json();
-    const dataEn = await resEn.json();
+    loader.style.display = 'block';
+    card.style.display = 'none';
 
-    // 2. Ambil Definisi Indonesia dari KBBI API (Unofficial Free API)
-    const resKbbi = await fetch(`https://kbbi-api-zhirrr.vercel.app/api/kbbi?text=${query}`);
-    const dataKbbi = await resKbbi.json();
+    try {
+      // Panggil API untuk Arab dan Inggris sekaligus
+      const [resAr, resEn] = await Promise.all([
+        fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|ar`),
+        fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|en`)
+      ]);
 
-    // Update Tampilan
-    document.getElementById('resTitle').innerText = query.toUpperCase();
-    document.getElementById('resArab').innerText = dataAr.responseData.translatedText;
-    document.getElementById('resArDetail').innerText = `Makna kata dalam bahasa Arab: ${dataAr.responseData.translatedText}`;
-    
-    // Tampilkan definisi KBBI jika ditemukan
-    document.getElementById('resIndo').innerText = dataKbbi.arti ? dataKbbi.arti.join(", ") : `Definisi bahasa Indonesia untuk "${query}" sesuai KBBI.`;
-    
-    document.getElementById('resEng').innerText = dataEn.responseData.translatedText;
+      const dataAr = await resAr.json();
+      const dataEn = await resEn.json();
 
-    loader.style.display = 'none';
-    card.style.display = 'block';
-  } catch (err) {
-    loader.style.display = 'none';
-    alert("Maaf, gagal mengambil data. Pastikan koneksi internet aktif.");
+      const arabRaw = dataAr.responseData.translatedText;
+      const engRaw = dataEn.responseData.translatedText;
+
+      // Update Tampilan
+      document.getElementById('resTitle').innerText = query.toUpperCase();
+      document.getElementById('resArab').innerText = arabRaw;
+      document.getElementById('resArDetail').innerText = `Padanan kata Arab untuk "${query}" adalah ${arabRaw}.`;
+      document.getElementById('resIndo').innerText = `Mencari definisi "${query}" dalam database bahasa Indonesia.`;
+      document.getElementById('resEng').innerText = engRaw;
+
+      loader.style.display = 'none';
+      card.style.display = 'block';
+
+    } catch (error) {
+      loader.style.display = 'none';
+      alert("Gagal terhubung ke server. Pastikan internet Anda aktif.");
+    }
   }
-}
+
+  // Support Enter Key
+  document.getElementById('searchInput').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') cariKamus();
+  });
 </script>
+
 </body>
 </html>
