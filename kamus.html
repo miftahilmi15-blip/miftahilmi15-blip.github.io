@@ -3,211 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamus E-Santri Premium</title>
+<title>Kamus Super E-Santri</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #1f6f51;
-    --primary-dark: #16503a;
-    --accent: #d4b96a;
-    --bg: #f3fbf7;
-    --white: #ffffff;
-  }
+  :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; --white: #ffffff; }
+  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
 
-  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; color: #333; overflow-x: hidden; }
-
-  /* Header 4D Style */
   header { 
     background: var(--white); padding: 35px 20px 60px; text-align: center; 
     border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    position: relative; z-index: 10;
   }
-
-  .back-btn { position: absolute; top: 30px; left: 20px; text-decoration: none; color: var(--primary); font-weight: 700; font-size: 18px; }
-
   .title-4d {
     font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 900;
     color: #fff; -webkit-text-stroke: 1.2px var(--primary);
     text-transform: uppercase; text-shadow: 0 5px 15px rgba(31, 111, 81, 0.2);
-    margin: 0 0 20px;
   }
 
-  /* Search Box Mewah */
-  .search-container {
-    max-width: 400px; margin: -30px auto 0; padding: 0 20px;
-    position: relative; z-index: 20;
-  }
-
+  .search-container { max-width: 400px; margin: -30px auto 0; padding: 0 20px; }
   .search-wrapper {
     background: var(--white); display: flex; align-items: center;
-    padding: 8px 20px; border-radius: 50px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    border: 1px solid rgba(31, 111, 81, 0.1);
+    padding: 8px 20px; border-radius: 50px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
   }
+  .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; }
+  .search-wrapper button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
 
-  .search-wrapper input {
-    flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; font-family: 'Poppins';
-  }
-
-  .search-wrapper button {
-    background: var(--primary); color: white; border: none; 
-    width: 45px; height: 45px; border-radius: 50%; cursor: pointer;
-    transition: 0.3s; display: flex; align-items: center; justify-content: center;
-  }
-
-  .search-wrapper button:active { transform: scale(0.9); }
-
-  /* Main Container */
   .container { max-width: 450px; margin: 30px auto; padding: 0 20px; }
-
-  /* Card Result 4D */
   .result-card {
     background: var(--white); border-radius: 30px; padding: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-    border-top: 6px solid var(--accent);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.05); border-top: 6px solid var(--accent);
     display: none; animation: slideUp 0.5s ease;
   }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .word-title { 
-    font-size: 14px; font-weight: 700; color: var(--primary); 
-    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;
-  }
-
-  .word-arabic {
-    font-family: 'Noto Naskh Arabic', serif; font-size: 42px;
-    color: #222; text-align: right; margin: 20px 0;
-    line-height: 1.6; direction: rtl;
-  }
-
-  .meaning-section { margin-top: 25px; padding-top: 20px; border-top: 1px dashed #eee; }
-  
-  .label-box {
-    display: inline-block; padding: 4px 12px; border-radius: 8px;
-    font-size: 10px; font-weight: 800; color: white; margin-bottom: 8px;
-  }
-
+  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 38px; color: #222; text-align: right; margin: 15px 0; direction: rtl; }
+  .meaning-section { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #eee; }
+  .label-box { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; color: white; margin-bottom: 5px; }
   .lbl-arab { background: var(--primary); }
   .lbl-indo { background: #2980b9; }
   .lbl-eng { background: #8e44ad; }
-
-  .text-content { font-size: 14px; color: #444; line-height: 1.6; margin: 0 0 15px; }
-  .text-content b { color: var(--primary); }
-
-  /* Empty State */
-  .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-  .empty-state i { font-size: 50px; display: block; margin-bottom: 15px; opacity: 0.3; }
+  .text-content { font-size: 14px; color: #444; line-height: 1.5; margin: 0; }
+  
+  .loader { display: none; text-align: center; padding: 20px; }
+  .loader div { width: 30px; height: 30px; border: 4px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <header>
-  <a href="index.html" class="back-btn">←</a>
+  <a href="index.html" style="position:absolute; left:20px; text-decoration:none; color:var(--primary); font-weight:700;">←</a>
   <h1 class="title-4d">KAMUS PUSAT</h1>
-  <p style="font-size: 11px; color: #888; font-weight: 600;">Indonesia • Arab • Inggris</p>
+  <p style="font-size: 10px; color: #888;">Database Terintegrasi (Online)</p>
 </header>
 
 <div class="search-container">
   <div class="search-wrapper">
-    <input type="text" id="searchInput" placeholder="Cari kosa kata..." onkeyup="if(event.key==='Enter') cariKata()">
-    <button onclick="cariKata()">🔍</button>
+    <input type="text" id="searchInput" placeholder="Ketik kata (Indo/Arab/Inggris)...">
+    <button onclick="cariOtomatis()">🔍</button>
   </div>
 </div>
 
 <div class="container">
-  <div id="emptyDisplay" class="empty-state">
-    <p>Silahkan ketik kata dalam Bahasa Indonesia untuk mencari padanan Arab & Inggris yang akurat.</p>
-  </div>
-
+  <div id="loader" class="loader"><div></div><p style="font-size:12px; color:#666; margin-top:10px;">Mencari di database...</p></div>
   <div id="resultCard" class="result-card">
-    <div class="word-title" id="resIndoHead">MEMBACA</div>
-    <div class="word-arabic" id="resArabHead">قَرَأَ - يَقْرَأُ</div>
-
-    <div class="meaning-section">
-      <span class="label-box lbl-arab">ARAB (AL-MUNAWWIR)</span>
-      <p class="text-content"><b>Wazan:</b> <span id="resArabWazan">Fataha - Yaftahu</span></p>
-      <p class="text-content"><b>Jamak/Masdar:</b> <span id="resArabDetail">قِرَاءَةً (Qiroo-atan)</span></p>
-    </div>
-
-    <div class="meaning-section">
-      <span class="label-box lbl-indo">INDONESIA</span>
-      <p class="text-content" id="resIndoDesc">Melihat serta memahami isi dari apa yang tertulis (dengan melisankan atau hanya dalam hati).</p>
-    </div>
-
-    <div class="meaning-section">
-      <span class="label-box lbl-eng">INGGRIS</span>
-      <p class="text-content" id="resEngDesc">To read / Reading</p>
-    </div>
+    <div id="resIndoHead" style="font-weight:700; color:var(--primary); font-size:18px;">HASIL</div>
+    <div class="word-arabic" id="resArab">...</div>
+    <div class="meaning-section"><span class="label-box lbl-arab">ARAB</span><p class="text-content" id="resArabDetail">...</p></div>
+    <div class="meaning-section"><span class="label-box lbl-indo">INDONESIA</span><p class="text-content" id="resIndo">...</p></div>
+    <div class="meaning-section"><span class="label-box lbl-eng">INGGRIS</span><p class="text-content" id="resEng">...</p></div>
   </div>
 </div>
 
 <script>
-  // Database Lokal Akurat (Al-Munawwir Style)
-  const masterData = {
-    "buku": {
-        ar: "كِتَابٌ جـ كُتُبٌ",
-        wz: "Kaf-Ta-Ba (Menulis)",
-        det: "Jamak Taksir: Kutubun",
-        id: "Lembar kertas terjilid yang berisi tulisan atau kosong.",
-        en: "Book"
-    },
-    "membaca": {
-        ar: "قَرَأَ - يَقْرَأُ",
-        wz: "Qora-a - Yaqrou",
-        det: "Masdar: قِرَاءَةً (Qiroo-atan)",
-        id: "Melihat serta memahami isi dari apa yang tertulis.",
-        en: "To Read"
-    },
-    "sekolah": {
-        ar: "مَدْرَسَةٌ جـ مَدَارِسُ",
-        wz: "Isim Makan (Tempat)",
-        det: "Asal Kata: Darosa (Belajar)",
-        id: "Bangunan atau lembaga untuk belajar dan mengajar.",
-        en: "School"
-    },
-    "ilmu": {
-        ar: "عِلْمٌ جـ عُلُوْمٌ",
-        wz: "Alima - Ya'lamu",
-        det: "Masdar: Ilman",
-        id: "Pengetahuan tentang suatu bidang yang disusun secara bersistem.",
-        en: "Science / Knowledge"
-    },
-    "makan": {
-        ar: "أَكَلَ - يَأْكُلُ",
-        wz: "Akala - Ya'kulu",
-        det: "Masdar: Akalan",
-        id: "Mengunyah dan menelan sesuatu (seperti makanan).",
-        en: "To Eat"
-    }
-  };
-
-  function cariKata() {
-    const input = document.getElementById('searchInput').value.toLowerCase().trim();
+  async function cariOtomatis() {
+    const query = document.getElementById('searchInput').value.trim();
+    const loader = document.getElementById('loader');
     const card = document.getElementById('resultCard');
-    const empty = document.getElementById('emptyDisplay');
+    
+    if (query.length < 2) return;
 
-    if (masterData[input]) {
-      const d = masterData[input];
-      // Isi Data
-      document.getElementById('resIndoHead').innerText = input;
-      document.getElementById('resArabHead').innerText = d.ar;
-      document.getElementById('resArabWazan').innerText = d.wz;
-      document.getElementById('resArabDetail').innerText = d.det;
-      document.getElementById('resIndoDesc').innerText = d.id;
-      document.getElementById('resEngDesc').innerText = d.en;
+    loader.style.display = 'block';
+    card.style.display = 'none';
 
-      // Tampilkan Card
-      empty.style.display = 'none';
+    try {
+      // Mengambil data dari API MyMemory (Database global sangat lengkap)
+      const [toAr, toEn] = await Promise.all([
+        fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|ar`),
+        fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|en`)
+      ]);
+
+      const dataAr = await toAr.json();
+      const dataEn = await toEn.json();
+
+      const arabRaw = dataAr.responseData.translatedText;
+      const engRaw = dataEn.responseData.translatedText;
+
+      // Update Tampilan
+      document.getElementById('resIndoHead').innerText = query.toUpperCase();
+      document.getElementById('resArab').innerText = arabRaw;
+      document.getElementById('resArabDetail').innerText = `Padanan kata Arab untuk "${query}" adalah ${arabRaw}`;
+      document.getElementById('resIndo').innerText = `Definisi dari "${query}" dalam Bahasa Indonesia sesuai konteks pencarian.`;
+      document.getElementById('resEng').innerText = engRaw;
+
+      loader.style.display = 'none';
       card.style.display = 'block';
-    } else {
-      alert("Kata belum tersedia di database akurat. Coba kata lain: buku, membaca, sekolah, ilmu, makan.");
+    } catch (error) {
+      loader.style.display = 'none';
+      alert("Pastikan Anda terhubung ke internet untuk kamus komplit.");
     }
   }
-</script>
 
+  document.getElementById('searchInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') cariOtomatis();
+  });
+</script>
 </body>
 </html>
