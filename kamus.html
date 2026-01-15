@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamus Lughah | E-Santri</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1f6f51;
+    --bg: #f3fbf7;
+    --accent: #d4b96a;
+  }
+
+  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+
+  /* Header Premium */
+  header { 
+    background: white; padding: 30px 20px; text-align: center; 
+    border-radius: 0 0 35px 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+
+  .title-4d {
+    font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900;
+    color: #fff; -webkit-text-stroke: 1.2px var(--primary);
+    text-transform: uppercase; text-shadow: 0 5px 10px rgba(31, 111, 81, 0.2);
+  }
+
+  .container { max-width: 450px; margin: 0 auto; padding: 20px; }
+
+  /* Search Box */
+  .search-wrapper {
+    background: white; padding: 10px; border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05); margin-top: -40px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .search-wrapper input {
+    flex: 1; border: none; outline: none; padding: 12px; font-size: 15px;
+  }
+
+  /* Language Switcher */
+  .lang-tabs {
+    display: flex; background: #e0ece6; border-radius: 12px;
+    margin: 20px 0; padding: 5px;
+  }
+
+  .tab {
+    flex: 1; text-align: center; padding: 10px; font-size: 12px;
+    font-weight: 700; cursor: pointer; border-radius: 10px; transition: 0.3s;
+  }
+
+  .tab.active { background: var(--primary); color: white; }
+
+  /* Result List */
+  .result-container { display: flex; flex-direction: column; gap: 15px; }
+
+  .vocab-card {
+    background: white; padding: 20px; border-radius: 20px;
+    border-left: 5px solid var(--primary);
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    animation: slideUp 0.4s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .vocab-info h3 { margin: 0; font-size: 14px; color: #888; }
+  .vocab-info p { margin: 5px 0 0; font-size: 18px; font-weight: 700; color: #2d3436; }
+
+  .vocab-arabic { text-align: right; }
+  .vocab-arabic p { font-size: 24px; font-family: 'Amiri', serif; color: var(--primary); }
+
+  .back-btn { text-decoration: none; color: var(--primary); font-weight: 700; display: block; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="back-btn">← Kembali</a>
+  <h1 class="title-4d">KAMUS LUGHAH</h1>
+  <p style="font-size: 11px; color: #666;">Pelajari kosa kata Arab & Inggris harian</p>
+</header>
+
+<div class="container">
+  <div class="search-wrapper">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="Cari kata (Contoh: Buku)..." onkeyup="searchVocab()">
+  </div>
+
+  <div class="lang-tabs">
+    <div class="tab active" onclick="switchLang('id', this)">INDONESIA</div>
+    <div class="tab" onclick="switchLang('ar', this)">ARAB</div>
+    <div class="tab" onclick="switchLang('en', this)">INGGRIS</div>
+  </div>
+
+  <div id="resultContainer" class="result-container">
+    </div>
+</div>
+
+<script>
+  // Data Kamus (Bisa ditambah sampai ribuan)
+  const dictionary = [
+    { id: "Buku", ar: "كِتَابٌ", en: "Book", pron: "Kitaabun" },
+    { id: "Pulpen", ar: "قَلَمٌ", en: "Pen", pron: "Qolamun" },
+    { id: "Sekolah", ar: "مَدْرَسَةٌ", en: "School", pron: "Madrosatun" },
+    { id: "Guru", ar: "أُسْتَاذٌ", en: "Teacher", pron: "Ustadzun" },
+    { id: "Murid", ar: "تِلْمِيْذٌ", en: "Student", pron: "Tilmiidzun" },
+    { id: "Pintu", ar: "بَابٌ", en: "Door", pron: "Baabun" },
+    { id: "Makan", ar: "أَكَلَ", en: "Eat", pron: "Akala" },
+    { id: "Minum", ar: "شَرِبَ", en: "Drink", pron: "Syariba" }
+  ];
+
+  let currentLang = 'id';
+
+  function switchLang(lang, el) {
+    currentLang = lang;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    searchVocab();
+  }
+
+  function searchVocab() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const container = document.getElementById('resultContainer');
+    container.innerHTML = '';
+
+    if (input === "") {
+        container.innerHTML = '<p style="text-align:center; color:#999; font-size:12px;">Ketik kata untuk mencari...</p>';
+        return;
+    }
+
+    const filtered = dictionary.filter(item => {
+        return item[currentLang].toLowerCase().includes(input);
+    });
+
+    filtered.forEach(item => {
+        container.innerHTML += `
+            <div class="vocab-card">
+              <div class="vocab-info">
+                <h3>${item.en}</h3>
+                <p>${item.id}</p>
+                <small style="color:var(--accent)">${item.pron}</small>
+              </div>
+              <div class="vocab-arabic">
+                <p>${item.ar}</p>
+              </div>
+            </div>
+        `;
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:#999;">Kata tidak ditemukan.</p>';
+    }
+  }
+
+  // Jalankan placeholder
+  searchVocab();
+</script>
+
+</body>
+</html>
