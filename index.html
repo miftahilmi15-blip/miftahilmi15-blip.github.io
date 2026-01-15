@@ -171,6 +171,26 @@
   /* TAMBAHAN UNTUK GOOGLE & DAFTAR */
   .btn.google { background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn.outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+  /* Animasi berputar dan sedikit membesar saat diklik */
+.menu-trigger:active {
+    transform: scale(0.85) rotate(90deg);
+    background: var(--primary-hover);
+}
+
+/* Animasi halus saat transisi */
+.menu-trigger {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Tambahan efek ripple (opsional) */
+@keyframes rippleEffect {
+    0% { box-shadow: 0 0 0 0 rgba(31, 111, 81, 0.4); }
+    100% { box-shadow: 0 0 0 15px rgba(31, 111, 81, 0); }
+}
+
+.menu-trigger.clicked {
+    animation: rippleEffect 0.4s linear;
+}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
