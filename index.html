@@ -3,13 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Original Edition</title>
+<title>E-Santri | Premium Edition</title>
 <link rel="icon" type="image/png" href="logo-assunnah.png">
 <link rel="apple-touch-icon" href="logo-assunnah.png">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  /* KEMBALI KE STYLE ASLI ANDA */
   :root {
     --primary: #1f6f51;
     --primary-hover: #16503a;
@@ -54,7 +53,9 @@
   .container { width: 100%; max-width: 420px; z-index: 1; }
 
   /* HEADER ASLI DENGAN STROKE */
-  .header-box { text-align: center; padding: 40px 0 20px; }
+  .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  
   .logo-box { 
     width: 100px; height: 100px; margin: 0 auto 10px;
     background: white; padding: 12px; border-radius: 28px;
@@ -62,13 +63,14 @@
     filter: drop-shadow(0 5px 15px rgba(31, 111, 81, 0.2));
   }
   .logo { width: 100%; height: 100%; object-fit: contain; }
+
   .title { 
     font-family: 'Montserrat', sans-serif;
     font-size: 34px; font-weight: 900; color: #ffffff;
     letter-spacing: 2px; text-transform: uppercase;
     display: inline-block;
     -webkit-text-stroke: 1.5px var(--primary);
-    text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3);
+    text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3), 0 10px 10px rgba(0, 0, 0, 0.1);
     animation: floatAnim 3s ease-in-out infinite;
   }
   @keyframes floatAnim {
@@ -76,7 +78,7 @@
     50% { transform: translateY(-10px) scale(1.03); }
   }
 
-  /* MAHFUZAT TICKER ASLI */
+  /* MAHFUZAT TICKER */
   .mahfuzat-ticker {
     background: white; margin-bottom: 25px; padding: 8px 12px;
     border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
@@ -91,21 +93,23 @@
   .ticker-content marquee { font-size: 13px; color: var(--text); line-height: 24px; }
   .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 8px; font-size: 15px; }
 
-  /* GRID 3 KOLOM ASLI */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  /* TAMPILAN DASHBOARD ELEGAN (3 KOLOM) */
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .menu-item { 
-    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
+    background: #fff; padding: 22px 10px; border-radius: 24px; text-align: center; 
+    box-shadow: 0 8px 20px rgba(31, 111, 81, 0.05); 
+    border: 1px solid rgba(31, 111, 81, 0.03);
+    transition: var(--transition); cursor: pointer;
   }
-  .menu-item:active { transform: scale(0.9); background: var(--soft); }
-  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
+  .menu-item:active { transform: scale(0.92); background: var(--soft); }
+  .menu-icon { width: 42px; height: 42px; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* FITUR BARU: ABSEN TUTUP */
-  .menu-locked { filter: grayscale(1); opacity: 0.5; cursor: not-allowed !important; }
-  .text-closed { color: #d63031 !important; }
+  /* STYLE KHUSUS ABSEN TUTUP */
+  .menu-locked { filter: grayscale(1); opacity: 0.5; cursor: not-allowed !important; background: #f8f9fa !important; border: 1px dashed #ccc !important; }
+  .text-closed { color: #e74c3c !important; }
 
-  /* SIDEBAR & AUTH (STYLE ASLI) */
+  /* SIDEBAR & AUTH */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
@@ -121,12 +125,12 @@
   .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
   .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
-  .card.login { background: var(--glass); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; margin-bottom: 25px; width: 100%; }
+  .hidden { display:none !important; }
+  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
+
   input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; }
   .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
   .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
-  .hidden { display:none !important; }
-  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -146,7 +150,6 @@
   <div class="sidebar-nav" style="display: flex; flex-direction: column; gap: 5px;">
     <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; background:var(--soft); border-radius:10px;">🏠 Dashboard</a>
     <a href="#" onclick="goTo('waktu-sholat.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">🕌 Waktu Sholat</a>
-    <a href="#" onclick="goTo('pengaduan.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📣 Pengaduan</a>
     <a href="#" onclick="logout()" style="text-decoration:none; color: #d63031; padding:12px; font-weight:700;">🚪 Keluar</a>
   </div>
 </div>
@@ -159,8 +162,8 @@
 </header>
 
 <main class="container">
-  <div id="login-card" class="card login hidden">
-    <h2 style="text-align:center; color:var(--primary); font-weight:800;">Ahlan wa Sahlan!</h2>
+  <div id="login-card" class="card login hidden" style="background:white; padding:30px; border-radius:24px;">
+    <h2 style="text-align:center; color:var(--primary); font-weight:800; margin-bottom:20px;">Ahlan wa Sahlan!</h2>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <button class="btn primary" onclick="login()">MASUK</button>
@@ -176,7 +179,7 @@
         <div class="ticker-content">
             <marquee scrollamount="4">
                 <span class="ar-run" id="runArab">...</span> 
-                <span id="runIndo">...</span>
+                <span id="runIndo" style="color: var(--muted); font-weight: 600;">...</span>
             </marquee>
         </div>
     </div>
@@ -189,7 +192,7 @@
       <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
       <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
       <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Maktabah</span></div>
       <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
@@ -205,10 +208,21 @@
   });
   const auth = firebase.auth();
 
-  // Logika Penguncian Jam
+  // Logika Mahfuzat
+  const daftarMahfuzat = [{ ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." }]; 
+  function updateMahfuzatHome() {
+    const tgl = new Date().getDate();
+    const data = daftarMahfuzat[(tgl - 1) % daftarMahfuzat.length];
+    if (data) {
+        document.getElementById('runArab').innerText = data.ar;
+        document.getElementById('runIndo').innerText = " — " + data.id;
+    }
+  }
+
+  // LOGIKA ABSENSI OTOMATIS
   function updateTampilanAbsensi() {
-    const sekarang = new Date();
-    const waktu = (sekarang.getHours() * 100) + sekarang.getMinutes();
+    const skrg = new Date();
+    const waktu = (skrg.getHours() * 100) + skrg.getMinutes();
     const btn = document.getElementById('menu-absensi');
     const txt = document.getElementById('text-absensi');
 
@@ -224,34 +238,43 @@
   }
 
   function cekJamAbsen() {
-    const sekarang = new Date();
-    const waktu = (sekarang.getHours() * 100) + sekarang.getMinutes();
+    const skrg = new Date();
+    const waktu = (skrg.getHours() * 100) + skrg.getMinutes();
     if (waktu < 630 || waktu > 800) {
-      alert("Maaf, Absensi sudah ditutup.");
+      alert("Maaf, Absensi sudah ditutup (06:30 - 08:00).");
     } else {
       window.location.href = 'absensi.html';
     }
   }
 
-  // Sisa Logika Firebase Anda (Tetap sama)
+  function login(){
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
+  }
+
   auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card"), dashboard=document.getElementById("dashboard"), menuBtn=document.getElementById("menu-btn");
     if(user){
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("menu-btn").style.display="flex";
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display="flex";
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
-      updateTampilanAbsensi(); // Cek jam absen saat login
+      updateMahfuzatHome();
+      updateTampilanAbsensi();
     } else {
-      document.getElementById("login-card").classList.remove("hidden");
-      document.getElementById("dashboard").classList.add("hidden");
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
     }
-    document.getElementById("loading-screen").style.display = "none";
+    document.getElementById("loading-screen").style.opacity = "0";
+    setTimeout(() => document.getElementById("loading-screen").style.display = "none", 400);
   });
 
-  // Sidebar Logic
   const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
   menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
   overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+  function goTo(url) { window.location.href = url; }
+  function logout(){ auth.signOut().then(()=>location.reload()); }
 </script>
 </body>
 </html>
