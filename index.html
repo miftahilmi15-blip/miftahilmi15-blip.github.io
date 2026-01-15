@@ -107,15 +107,18 @@
     overflow: hidden;
     white-space: nowrap;
   }
+  /* Mengatur gaya marquee agar tidak merusak layout */
   .ticker-content marquee {
     font-size: 13px;
     color: var(--text);
+    line-height: 24px; /* Menjaga tinggi baris */
   }
   .ar-run {
     font-family: 'Noto Naskh Arabic', serif;
     color: var(--primary);
     font-weight: bold;
-    margin-right: 5px;
+    margin-right: 8px;
+    font-size: 15px; /* Sedikit lebih besar untuk Arab */
   }
 
   /* CARD & GRID */
@@ -228,9 +231,9 @@
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
         <div class="ticker-label">MAHFUZAT</div>
         <div class="ticker-content">
-            <marquee id="mahfuzat-marquee" scrollamount="5" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+            <marquee id="mahfuzat-marquee" scrollamount="4" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
                 <span class="ar-run" id="runArab">...</span> 
-                <span id="runIndo" style="color: var(--muted); opacity: 0.8;">...</span>
+                <span id="runIndo" style="color: var(--muted); opacity: 0.9; font-weight: 600;">...</span>
             </marquee>
         </div>
     </div>
@@ -256,19 +259,51 @@
   });
   const auth = firebase.auth();
 
+  // DATA 30 MAHFUZAT (Agar berubah tiap hari)
   const daftarMahfuzat = [
-    { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
-    { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
-    { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
-    { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." }
+        { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
+        { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
+        { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
+        { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." },
+        { ar: "مَنْ سَارَ عَلَى الدَّرْبِ وَصَلَ", id: "Barang siapa berjalan pada jalannya, sampailah ia." },
+        { ar: "آفَةُ الْعِلْمِ النِّسْيَانُ", id: "Penyakit ilmu adalah lupa." },
+        { ar: "الآدَابُ فَوْقَ الْعِلْمِ", id: "Adab itu di atas ilmu." },
+        { ar: "خَيْرُ جَلِيْسٍ فِي الزَّمَانِ كِتَابٌ", id: "Sebaik-baik teman duduk setiap waktu adalah buku." },
+        { ar: "لَوْلَا العِلْمُ لَكَانَ النَّاسُ كَالبَهَائِمِ", id: "Kalaulah tidak karena ilmu niscaya manusia itu seperti binatang." },
+        { ar: "تَعَلَّمَنَّ صَغِيْرًا وَاعْمَلْ بِهِ كَبِيْرًا", id: "Belajarlah di waktu kecil dan amalkanlah di waktu besar." },
+        { ar: "اَلْعِلْمُ صَيْدٌ وَالْكِتَابَةُ قَيْدُهُ", id: "Ilmu adalah buruan dan tulisan adalah pengikatnya." },
+        { ar: "مَنْ كَثُرَ إِحْسَانُهُ كَثُرَ إِخْوَانُهُ", id: "Barang siapa banyak perbuatan baiknya, banyak pulalah temannya." },
+        { ar: "بَيْضَةُ اليَوْمِ خَيْرٌ مِنْ دَجَاجَةِ الغَدِ", id: "Telur hari ini lebih baik daripada ayam esok hari." },
+        { ar: "مَنْ حَفَرَ حُفْرَةً وَقَعَ فِيْهَا", id: "Barang siapa menggali lubang, maka ia akan terperosok ke dalamnya." },
+        { ar: "عَدُوٌّ عَاقِلٌ خَيْرٌ مِنْ صَدِيْقٍ جَاهِلٍ", id: "Musuh yang berakal lebih baik daripada teman yang bodoh." },
+        { ar: "مَنْ عَرَفَ بُعْدَ السَّفَرِ اِسْتَعَدَّ", id: "Barang siapa tahu jauhnya perjalanan, ia akan bersiap-siap." },
+        { ar: "مَنْ ظَلَمَ نَفْسَهُ فَهُوَ لِغَيْرِهِ أَظْلَمُ", id: "Barang siapa menzalimi dirinya sendiri, ia akan lebih zalim kepada orang lain." },
+        { ar: "فَكِّرْ قَبْلَ أَنْ تَعْزِمَ", id: "Berpikirlah sebelum bertekad." },
+        { ar: "مَنْ قَلَّ صِدْقُهُ قَلَّ صَدِيْقُهُ", id: "Barang siapa sedikit kejujurannya, sedikit pulalah temannya." },
+        { ar: "اِجْهَدْ وَلَا تَكْسَلْ وَلَا تَكُ غَافِلًا", id: "Bersungguh-sungguhlah, jangan malas, dan jangan jadi pelala." },
+        { ar: "مَنْ قَلَّ صِدْقُهُ قَلَّ صَدِيْقُهُ", id: "Barang siapa sedikit benarnya, sedikit pulalah temannya." },
+        { ar: "الصَّبْرُ يُعِيْنُ عَلَى كُلِّ عَمَلٍ", id: "Kesabaran itu menolong segala pekerjaan." },
+        { ar: "لَا تُؤَخِّرْ عَمَلَكَ إِلَى الغَدِ", id: "Jangan tunda pekerjaanmu hingga esok hari." },
+        { ar: "اُطْلُبِ العِلْمَ مِنَ المَهْدِ إِلَى اللَّحْدِ", id: "Tuntutlah ilmu dari buaian hingga liang lahat." },
+        { ar: "بِقَدْرِ الكَدِّ تُكْتَسَبُ المَعَالِي", id: "Setinggi apa usaha yang dilakukan, setinggi itu pula derajat yang didapat." },
+        { ar: "خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ", id: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya." },
+        { ar: "اَلْمَرْءُ عَلَى دِيْنِ خَلِيْلِهِ", id: "Seseorang itu tergantung pada agama teman dekatnya." },
+        { ar: "لِكُلِّ مَقَامٍ مَقَالٌ وَلِكُلِّ مَقَالٍ مَقَامٌ", id: "Tiap tempat ada bicaranya, dan tiap bicara ada tempatnya." },
+        { ar: "قُلِ الحَقَّ وَلَوْ كَانَ مُرًّا", id: "Katakanlah kebenaran itu walaupun pahit." },
+        { ar: "سَلاَمَةُ الإِنْسَانِ فِي حِفْظِ اللِّسَانِ", id: "Keselamatan manusia itu dalam menjaga lidahnya." }
   ];
 
   function updateMahfuzatHome() {
     const tgl = new Date().getDate();
-    const index = tgl % daftarMahfuzat.length;
+    // Menggunakan Modulus agar index tidak error (1-30)
+    const index = (tgl - 1) % daftarMahfuzat.length;
     const data = daftarMahfuzat[index];
-    document.getElementById('runArab').innerText = data.ar;
-    document.getElementById('runIndo').innerText = " — " + data.id;
+    
+    // Pastikan data ada sebelum di-set
+    if (data) {
+        document.getElementById('runArab').innerText = data.ar;
+        document.getElementById('runIndo').innerText = " — " + data.id;
+    }
   }
 
   function hideLoading() {
@@ -318,7 +353,6 @@
       document.getElementById("sidebar-email").innerText = user.email;
       if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
 
-      // MENJALANKAN UPDATE MAHFUZAT AGAR MUNCUL & GERAK
       updateMahfuzatHome();
     } else {
       loginCard.classList.remove("hidden");
