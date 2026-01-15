@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="logo-assunnah.png">
 <link rel="apple-touch-icon" href="logo-assunnah.png">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
@@ -52,7 +52,7 @@
 
   .container { width: 100%; max-width: 420px; z-index: 1; transition: var(--transition); opacity: 1; }
 
-  /* HEADER & LOGO 4D */
+  /* HEADER & LOGO */
   .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
   @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
   
@@ -79,21 +79,35 @@
     50% { transform: translateY(-10px) scale(1.03); }
   }
 
-  /* MAHFUZAT DAY HOME CARD */
-  .home-mahfuzat {
-    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-    margin-bottom: 25px; padding: 25px; border-radius: 24px; color: white;
-    text-align: center; position: relative; overflow: hidden;
-    box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2); cursor: pointer;
+  /* MAHFUZAT TICKER RUNNING TEXT (SLIM EDITION) */
+  .mahfuzat-ticker {
+    background: white;
+    margin-bottom: 25px;
+    padding: 6px 12px;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(31, 111, 81, 0.1);
+    cursor: pointer;
   }
-  .home-mahfuzat::after {
-    content: "❞"; font-size: 70px; position: absolute; right: 10px; bottom: -15px; opacity: 0.1;
+  .ticker-label {
+    background: var(--primary);
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 50px;
+    margin-right: 12px;
+    white-space: nowrap;
+    letter-spacing: 1px;
   }
-  .mahfuzat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-bottom: 10px; display: block; }
-  #homeArab { font-family: 'Noto Naskh Arabic', serif; font-size: 22px; margin-bottom: 8px; direction: rtl; }
-  #homeIndo { font-size: 12px; font-style: italic; opacity: 0.9; line-height: 1.4; }
+  .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; }
+  .ticker-content marquee { font-size: 13px; color: var(--text); }
+  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 8px; }
 
-  /* CARD */
+  /* CARD & GRID */
   .card {
     background: var(--glass);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -102,26 +116,14 @@
     box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
   }
 
-  /* INPUTS */
-  input[type="email"], input[type="password"] {
-    width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; font-size: 14px;
-    transition: 0.3s;
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .menu-item { 
+    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
   }
-  input:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--soft); }
-
-  .password-wrapper { position: relative; }
-  .toggle-pass { 
-    position: absolute; top: 18px; right: 15px; cursor: pointer; 
-    color: var(--primary); font-size: 11px; font-weight: 700; text-transform: uppercase;
-  }
-
-  /* BUTTONS */
-  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-  .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; box-shadow: 0 8px 20px rgba(31, 111, 81, 0.2); }
-  .btn.outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
-  .btn-google { background: #fff; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .btn:active { transform: scale(0.95); }
+  .menu-item:active { transform: scale(0.9); background: var(--soft); }
+  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
+  .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
   /* SIDEBAR */
   .menu-trigger {
@@ -129,7 +131,6 @@
     background: var(--primary); color: #fff; width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
   .sidebar { 
@@ -140,20 +141,17 @@
   }
   .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
 
-  /* DASHBOARD GRID */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; animation: fadeInUp 0.6s ease; }
-  .menu-item { 
-    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
-  }
-  .menu-item:active { transform: scale(0.9); background: var(--soft); }
-  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
-  .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
-
   .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
   .hidden { display:none !important; }
   footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
+
+  input[type="email"], input[type="password"] {
+    width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
+  }
+  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
+  .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -162,21 +160,16 @@
 <body>
 
 <div id="loading-screen"><div class="spinner"></div></div>
-
 <div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header" style="text-align: center; margin-bottom: 30px;">
     <img id="user-photo" src="assets/default-avatar.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover; border: 3px solid var(--soft);">
     <div id="sidebar-name" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top:10px;">Santri</div>
-    <small id="sidebar-email" style="color: var(--muted);"></small>
   </div>
   <div class="sidebar-nav" style="display: flex; flex-direction: column; gap: 5px;">
-    <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; border-radius:10px; background:var(--soft);">🏠 Dashboard</a>
-    <a href="waktu-sholat.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">🕌 Waktu Sholat</a>
-    <a href="pengaduan.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📩 Pengaduan</a>
-    <a href="kalender.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📅 Kalender</a>
-    <a href="#" onclick="logout()" style="text-decoration:none; color: #d63031; background: rgba(214, 48, 49, 0.05); padding:12px; border-radius:10px; margin-top: 10px; font-weight:700;">🚪 Keluar</a>
+    <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; background:var(--soft); border-radius:10px;">🏠 Dashboard</a>
+    <a href="#" onclick="logout()" style="text-decoration:none; color: #d63031; padding:12px; font-weight:700;">🚪 Keluar</a>
   </div>
 </div>
 
@@ -191,43 +184,33 @@
   <div id="login-card" class="card login hidden">
     <h2 style="text-align:center; color:var(--primary); font-weight:800;">Ahlan wa Sahlan!</h2>
     <p style="text-align:center; color:var(--muted); font-size:12px; margin-bottom:25px;">Masuk ke akun Anda</p>
-    
     <input type="email" id="email" placeholder="Email">
-    <div class="password-wrapper">
-      <input type="password" id="password" placeholder="Password">
-      <span class="toggle-pass" onclick="togglePassword()">Lihat</span>
-    </div>
-
-    <label style="display:flex; align-items:center; gap:8px; font-size:12px; margin:10px 0 20px; color:var(--muted); cursor:pointer;">
-      <input type="checkbox" id="remember-checkbox"> Simpan Password
-    </label>
-
+    <input type="password" id="password" placeholder="Password">
     <button class="btn primary" onclick="login()">MASUK</button>
-    <button class="btn outline" onclick="register()">DAFTAR BARU</button>
-    <button class="btn btn-google" onclick="loginWithGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Google Login
-    </button>
   </div>
 
   <section id="dashboard" class="hidden">
-    <div class="card" style="padding: 20px; text-align: center; border-left: 6px solid var(--primary); margin-bottom:15px;">
-        <h3 id="welcome-msg" style="color: var(--primary); font-weight:800;">Selamat Datang</h3>
+    <div style="margin-bottom: 12px; padding-left: 10px;">
+        <h3 id="welcome-msg" style="color: var(--primary); font-weight:800; font-size: 18px;">Ahlan, Santri!</h3>
     </div>
 
-    <div class="home-mahfuzat" onclick="goTo('mahfuzat.html')">
-        <span class="mahfuzat-label">Mahfuzat Day</span>
-        <div id="homeArab">...</div>
-        <div id="homeIndo">...</div>
+    <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
+        <div class="ticker-label">MAHFUZAT</div>
+        <div class="ticker-content">
+            <marquee scrollamount="5" direction="left">
+                <span class="ar-run" id="runArab">...</span> 
+                <span id="runIndo" style="color: var(--muted); opacity: 0.8;">...</span>
+            </marquee>
+        </div>
     </div>
     
     <div class="menu-grid">
       <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
       <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
       <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
       <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
       <div class="menu-item" onclick="goTo('ibadah.html')"><img src="icons/ibadah.png" class="menu-icon"><span>Ibadah</span></div>
+      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
 </main>
@@ -242,70 +225,37 @@
   });
   const auth = firebase.auth();
 
-/* MAHFUZAT MINIMALIS */
-  .home-mahfuzat {
-    background: white;
-    margin-bottom: 20px; 
-    padding: 15px 20px; 
-    border-radius: 18px; 
-    border-left: 5px solid var(--primary);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  const daftarMahfuzat = [
+    { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
+    { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
+    { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
+    { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." }
+  ];
+
+  function updateMahfuzatHome() {
+    const tgl = new Date().getDate();
+    const index = tgl % daftarMahfuzat.length;
+    const data = daftarMahfuzat[index];
+    const elArab = document.getElementById('runArab');
+    const elIndo = document.getElementById('runIndo');
+    if(elArab && elIndo) {
+        elArab.innerText = data.ar;
+        elIndo.innerText = " — " + data.id;
+    }
   }
-  .mahfuzat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  .mahfuzat-label { 
-    font-size: 9px; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-    color: var(--primary); 
-    font-weight: 800;
-  }
-  #homeArab { 
-    font-family: 'Noto Naskh Arabic', serif; 
-    font-size: 18px; 
-    color: #333; 
-    direction: rtl; 
-    text-align: right;
-  }
-  #homeIndo { 
-    font-size: 11px; 
-    color: var(--muted); 
-    font-style: italic; 
-    text-align: right;
-  }
+
   function hideLoading() {
     const ls = document.getElementById("loading-screen");
-    ls.style.opacity = "0";
-    setTimeout(() => ls.style.display = "none", 400);
+    if(ls) {
+        ls.style.opacity = "0";
+        setTimeout(() => ls.style.display = "none", 400);
+    }
   }
-
-  const safetyTimeout = setTimeout(hideLoading, 3000);
-
-  window.onpageshow = function(event) {
-    const container = document.getElementById('main-container');
-    container.style.opacity = "1";
-    container.style.transform = "scale(1)";
-    if (event.persisted) hideLoading();
-  };
 
   function goTo(url) {
     const container = document.getElementById('main-container');
     container.style.opacity = "0";
-    container.style.transform = "scale(0.95)";
     setTimeout(() => { window.location.href = url; }, 250);
-  }
-
-  function togglePassword(){
-    const pass = document.getElementById("password");
-    pass.type = pass.type === "password" ? "text" : "password";
   }
 
   function login(){
@@ -314,15 +264,9 @@
     auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
   }
 
-  function loginWithGoogle(){
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(e=>alert(e.message));
-  }
-
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user=>{
-    clearTimeout(safetyTimeout);
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
     const menuBtn=document.getElementById("menu-btn");
@@ -331,8 +275,6 @@
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
       menuBtn.style.display="flex";
-      document.getElementById("sidebar-name").innerText=user.displayName||"Santri";
-      document.getElementById("user-photo").src=user.photoURL||"assets/default-avatar.png";
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
       updateMahfuzatHome();
     } else {
