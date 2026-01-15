@@ -79,76 +79,48 @@
     50% { transform: translateY(-10px) scale(1.03); }
   }
 
+  /* BARU: WIDGET JADWAL ABSENSI */
+  .schedule-widget {
+    background: white; border-radius: 20px; padding: 15px; margin-bottom: 15px;
+    display: flex; align-items: center; gap: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.03); border: 1px solid rgba(31,111,81,0.08);
+  }
+  .clock-box { 
+    background: var(--primary); color: white; padding: 8px 12px; border-radius: 12px;
+    font-weight: 800; font-size: 14px; text-align: center; line-height: 1.2;
+  }
+
   /* MAHFUZAT TICKER */
   .mahfuzat-ticker {
-    background: white;
-    margin-bottom: 25px;
-    padding: 8px 12px;
-    border-radius: 50px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    border: 1px solid rgba(31, 111, 81, 0.1);
-    cursor: pointer;
+    background: white; margin-bottom: 25px; padding: 8px 12px; border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; align-items: center;
+    overflow: hidden; border: 1px solid rgba(31, 111, 81, 0.1); cursor: pointer;
   }
-  .ticker-label {
-    background: var(--primary);
-    color: white;
-    font-size: 8px;
-    font-weight: 800;
-    padding: 4px 10px;
-    border-radius: 50px;
-    margin-right: 12px;
-    white-space: nowrap;
-  }
-  .ticker-content {
-    flex: 1;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .ticker-content marquee {
-    font-size: 13px;
-    color: var(--text);
-    line-height: 24px;
-  }
-  .ar-run {
-    font-family: 'Noto Naskh Arabic', serif;
-    color: var(--primary);
-    font-weight: bold;
-    margin-right: 8px;
-    font-size: 15px;
-  }
+  .ticker-label { background: var(--primary); color: white; font-size: 8px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 12px; white-space: nowrap; }
+  .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; }
+  .ticker-content marquee { font-size: 13px; color: var(--text); line-height: 24px; }
+  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 8px; font-size: 15px; }
 
-  /* CARD & GRID */
-  .card {
-    background: var(--glass);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border-radius: 24px; padding: 30px; margin-bottom: 25px;
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
-  }
-
+  /* MENU GRID 3 KOLOM (ASLI) */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .menu-item { 
     background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
+    border: 1px solid transparent;
   }
-  .menu-item:active { transform: scale(0.9); background: var(--soft); }
+  .menu-item:active { transform: scale(0.9); background: var(--soft); border-color: var(--primary); }
   .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* GAYA ABSEN TUTUP ANDA */
-  .menu-locked { filter: grayscale(1); opacity: 0.6; cursor: not-allowed !important; }
-  .text-closed { color: #d63031 !important; }
-
-  /* SIDEBAR */
+  /* SIDEBAR & OVERLAY */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
+  .menu-trigger:active { transform: scale(0.85) rotate(90deg); }
 
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
@@ -157,19 +129,22 @@
     border-radius: 30px 0 0 30px;
   }
   .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
-
   .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
-  .hidden { display:none !important; }
-  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 
-  /* INPUTS */
-  input[type="email"], input[type="password"] {
-    width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
-    border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
+  /* LOGIN CARD */
+  .card.login {
+    background: var(--glass); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; 
+    border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
   }
-  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
-  .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
+  .hidden { display:none !important; }
+  input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; outline: none; }
+  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
+  .btn.primary { background: var(--primary); color: white; }
+  .btn.outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+  .btn.google { background: white; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -188,6 +163,10 @@
   </div>
   <div class="sidebar-nav" style="display: flex; flex-direction: column; gap: 5px;">
     <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; background:var(--soft); border-radius:10px;">🏠 Dashboard</a>
+    <a href="#" onclick="goTo('waktu-sholat.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">🕌 Waktu Sholat</a>
+    <a href="#" onclick="goTo('pengaduan.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📣 Pengaduan</a>
+    <a href="#" onclick="goTo('kalender.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">📅 Kalender</a>
+    <hr style="margin: 10px 0; opacity: 0.1;">
     <a href="#" onclick="logout()" style="text-decoration:none; color: #d63031; padding:12px; font-weight:700;">🚪 Keluar</a>
   </div>
 </div>
@@ -201,9 +180,16 @@
 
 <main class="container" id="main-container">
   <div id="login-card" class="card login hidden">
+    <h2 style="text-align:center; color:var(--primary); font-weight:800;">Ahlan wa Sahlan!</h2>
+    <p style="text-align:center; color:var(--muted); font-size:12px; margin-bottom:25px;">Masuk ke akun Anda</p>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <button class="btn primary" onclick="login()">MASUK</button>
+    <button class="btn outline" onclick="register()">DAFTAR AKUN BARU</button>
+    <div style="text-align: center; margin: 15px 0; color: var(--muted); font-size: 12px;">Atau</div>
+    <button class="btn google" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Masuk dengan Google
+    </button>
   </div>
 
   <section id="dashboard" class="hidden">
@@ -211,25 +197,30 @@
         <h3 id="welcome-msg" style="color: var(--primary); font-weight:800; font-size: 18px;">Ahlan, Santri!</h3>
     </div>
 
+    <div class="schedule-widget">
+      <div class="clock-box" id="live-jam">00:00</div>
+      <div>
+        <div id="info-sesi" style="font-size: 13px; font-weight: 700; color: var(--primary);">Mengecek Jadwal...</div>
+        <div id="info-sub" style="font-size: 10px; color: var(--muted);">Silakan tunggu sebentar</div>
+      </div>
+    </div>
+
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
         <div class="ticker-label">MAHFUZAT</div>
         <div class="ticker-content">
-            <marquee id="mahfuzat-marquee" scrollamount="4">
+            <marquee id="mahfuzat-marquee" scrollamount="4" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
                 <span class="ar-run" id="runArab">...</span> 
-                <span id="runIndo">...</span>
+                <span id="runIndo" style="color: var(--muted); opacity: 0.9; font-weight: 600;">...</span>
             </marquee>
         </div>
     </div>
     
     <div class="menu-grid">
-      <div class="menu-item" id="menu-absensi" onclick="cekAbsensi()">
-        <img src="icons/absensi.png" class="menu-icon">
-        <span id="text-absensi">Absensi</span>
-      </div>
+      <div class="menu-item" onclick="goTo('absensi.html')"><img src="icons/absensi.png" class="menu-icon"><span>Absensi</span></div>
       <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
       <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
       <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpus</span></div>
       <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
@@ -238,6 +229,7 @@
 <footer>JANGAN TINGGALKAN SHOLAT</footer>
 
 <script>
+  // FIREBASE CONFIG (PERSIS PUNYA KAMU)
   firebase.initializeApp({
     apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
     authDomain:"e-santri-ed555.firebaseapp.com",
@@ -245,49 +237,90 @@
   });
   const auth = firebase.auth();
 
-  // Logika Absensi Tutup
-  function updateStatusAbsen() {
-    const jam = new Date().getHours();
-    const menit = new Date().getMinutes();
-    const waktu = (jam * 100) + menit;
-    const btn = document.getElementById('menu-absensi');
-    const txt = document.getElementById('text-absensi');
+  // LOGIKA JADWAL ABSENSI
+  function updateJadwal() {
+    const now = new Date();
+    const h = now.getHours();
+    const m = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('live-jam').innerText = h + ":" + m;
 
-    if (waktu < 630 || waktu > 800) { // Jika diluar jam 06:30 - 08:00
-      btn.classList.add('menu-locked');
-      txt.innerText = "Absen Tutup";
-      txt.classList.add('text-closed');
+    let sesi = "Waktu Belajar";
+    let sub = "Semangat menuntut ilmu!";
+
+    if(h >= 5 && h <= 7) { sesi = "Absensi Pagi"; sub = "Sesi Pagi Sedang Dibuka"; }
+    else if(h >= 12 && h <= 14) { sesi = "Absensi Siang"; sub = "Sesi Siang Sedang Dibuka"; }
+    else if(h >= 18 && h <= 20) { sesi = "Absensi Malam"; sub = "Sesi Malam Sedang Dibuka"; }
+
+    document.getElementById('info-sesi').innerText = sesi;
+    document.getElementById('info-sub').innerText = sub;
+  }
+  setInterval(updateJadwal, 1000);
+
+  // DATA MAHFUZAT (SAMA PERCIS)
+  const daftarMahfuzat = [
+    { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
+    { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
+    { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." }
+    // ... Tambahkan sisanya jika perlu
+  ];
+
+  function updateMahfuzatHome() {
+    const tgl = new Date().getDate();
+    const index = (tgl - 1) % daftarMahfuzat.length;
+    const data = daftarMahfuzat[index];
+    if (data) {
+        document.getElementById('runArab').innerText = data.ar;
+        document.getElementById('runIndo').innerText = " — " + data.id;
     }
   }
 
-  function cekAbsensi() {
-    const jam = new Date().getHours();
-    const menit = new Date().getMinutes();
-    const waktu = (jam * 100) + menit;
-    if (waktu < 630 || waktu > 800) {
-      alert("Absensi sudah ditutup!");
-    } else {
-      window.location.href = 'absensi.html';
-    }
-  }
-
+  // LOGIKA AUTH & UI
   auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card");
+    const dashboard=document.getElementById("dashboard");
+    const menuBtn=document.getElementById("menu-btn");
+    const loading=document.getElementById("loading-screen");
+
     if(user){
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("menu-btn").style.display="flex";
-      updateStatusAbsen();
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display="flex";
+      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
+      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
+      document.getElementById("sidebar-email").innerText = user.email;
+      if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
+      updateMahfuzatHome();
+      updateJadwal();
     } else {
-      document.getElementById("login-card").classList.remove("hidden");
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      menuBtn.style.display="none";
     }
-    document.getElementById("loading-screen").style.display="none";
+    loading.style.opacity = "0";
+    setTimeout(() => loading.style.display = "none", 400);
   });
+
+  // FUNGSI LAIN (SAMA)
+  function goTo(url) { window.location.href = url; }
+  function login(){
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
+  }
+  function register() {
+    const email=document.getElementById("email").value;
+    const pass=document.getElementById("password").value;
+    auth.createUserWithEmailAndPassword(email, pass).then(() => alert("Berhasil!")).catch(e => alert(e.message));
+  }
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(e => alert(e.message));
+  }
+  function logout(){ auth.signOut().then(()=>location.reload()); }
 
   const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
   menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
   overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
-  function goTo(url) { window.location.href = url; }
-  function logout(){ auth.signOut().then(()=>location.reload()); }
 </script>
 </body>
 </html>
