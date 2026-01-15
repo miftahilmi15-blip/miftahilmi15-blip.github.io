@@ -143,95 +143,55 @@ function render(data) {
     });
   }
 
-  // 6. Simpan data (Sudah ditambah fitur KUNCI JAM)
-async function simpan() {
-  // --- FITUR KUNCI JAM (06:30 - 08:00) ---
-  const sekarang = new Date();
-  const jam = sekarang.getHours();
-  const menit = sekarang.getMinutes();
-  const waktuSekarang = (jam * 100) + menit; // Contoh: jam 07:15 jadi 715
+  // 6. Simpan data (DENGAN PROTEKSI JAM)
+  async function simpan() {
+    // --- PROTEKSI JAM (Hanya bisa absen 06:30 - 08:00) ---
+    const sekarang = new Date();
+    const jam = sekarang.getHours();
+    const menit = sekarang.getMinutes();
+    const waktuSekarang = (jam * 100) + menit;
 
-  // Jika jam kurang dari 06:30 (630) atau lebih dari 08:00 (800)
-  if (waktuSekarang < 630 || waktuSekarang > 800) {
-    alert("⛔ ABSENSI DIKUNCI!\n\nAbsensi hanya bisa dilakukan pada pukul 06:30 s/d 08:00 WIB.");
-    return; // Berhenti di sini, data tidak akan dikirim
-  }
-  // ---------------------------------------
-
-  const res = [];
-  const kls = document.getElementById('pilih-kelas').value;
-  
-  // Ambil semua grup tombol yang sudah dipilih statusnya
-  document.querySelectorAll('.btn-group').forEach(g => {
-    const st = g.querySelector('[data-st]'); 
-    if(st) {
-      res.push({ 
-        kelas: kls, 
-        nipd: g.getAttribute('data-nipd'), 
-        nama: g.getAttribute('data-nama'), 
-        status: st.getAttribute('data-st')  
-      });
+    if (waktuSekarang < 630 || waktuSekarang > 800) {
+      alert("⛔ ABSENSI DIKUNCI!\n\nAbsensi hanya dibuka pukul 06:30 s/d 08:00 WIB.");
+      return; 
     }
-  });
+    // -----------------------------------------------------
 
-  if(!res.length) return alert("Pilih absen minimal satu siswa!");
-  
-  document.getElementById('loading').style.display = 'flex';
-  
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      body: JSON.stringify(res) 
-    });
+    const res = [];
+    const kls = document.getElementById('pilih-kelas').value;
     
-    alert("✅ Absensi Berhasil Dikirim!"); 
-    location.reload();
-  } catch(e) { 
-    alert("Gagal mengirim data. Cek koneksi internet."); 
-  } finally { 
-    document.getElementById('loading').style.display = 'none'; 
-  }
-}
-  });
-  function doPost(e) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheetAturan = ss.getSheetByName("PENGATURAN");
-  const jamSekarang = new Date();
-  const jamTutup = new Date(sheetAturan.getRange("B3").getValue());
-
-  // Logika: Jika waktu sekarang lebih besar dari jam tutup di Spreadsheet
-  if (jamSekarang.getTime() > jamTutup.getTime()) {
-    return ContentService.createTextOutput("Gagal: Absensi sudah ditutup.");
-  }
-
-  // ... lanjutkan kode kirim data ke Google Sheets Anda ...
-  console.log("Absen berhasil, masih dalam jam operasional.");
-}
-  // ... simpan data ...
-}
-  if(!res.length) return alert("Pilih absen minimal satu siswa!");
-  
-  document.getElementById('loading').style.display = 'flex';
-  
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      body: JSON.stringify(res) // Data dikirim dalam bentuk teks JSON
+    document.querySelectorAll('.btn-group').forEach(g => {
+      const st = g.querySelector('[data-st]'); 
+      if(st) {
+        res.push({ 
+          kelas: kls, 
+          nipd: g.getAttribute('data-nipd'), 
+          nama: g.getAttribute('data-nama'), 
+          status: st.getAttribute('data-st')  
+        });
+      }
     });
-    
-    alert("✅ Absensi Berhasil Dikirim ke Spreadsheet!"); 
-    location.reload();
-  } catch(e) { 
-    alert("Gagal mengirim data. Cek koneksi internet."); 
-  } finally { 
-    document.getElementById('loading').style.display = 'none'; 
-  }
-}
 
+    if(!res.length) return alert("Pilih absen minimal satu siswa!");
+    
+    document.getElementById('loading').style.display = 'flex';
+    
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        cache: 'no-cache',
+        body: JSON.stringify(res)
+      });
+      
+      alert("✅ Absensi Berhasil Terkirim!"); 
+      location.reload();
+    } catch(e) { 
+      alert("Gagal mengirim data. Cek koneksi internet."); 
+    } finally { 
+      document.getElementById('loading').style.display = 'none'; 
+    }
+  }
   // 7. Download PDF
   function cetak() {
     const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&gid=${GID_CETAK}&size=A4&portrait=true&fitw=true&gridlines=false`;
