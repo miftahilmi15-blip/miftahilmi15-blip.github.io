@@ -3,122 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahfuzat Day - E-Santri</title>
+    <title>Daftar Mahfuzat | E-Santri</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --accent: #d4b96a; }
-        body { font-family: 'Poppins', sans-serif; background: #f3fbf7; margin: 0; padding: 20px; }
+        :root { --primary: #1f6f51; --soft: #f3fbf7; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body { background: var(--soft); padding: 20px; color: #333; }
 
-        .mahfuzat-container {
-            max-width: 450px; margin: 0 auto;
+        .header { display: flex; align-items: center; margin-bottom: 25px; gap: 15px; }
+        .back-btn { 
+            background: white; width: 40px; height: 40px; border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; 
+            text-decoration: none; color: var(--primary); font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
-        .mahfuzat-card {
-            background: linear-gradient(135deg, var(--primary), #16503a);
-            border-radius: 30px; padding: 30px; color: white;
-            box-shadow: 0 15px 35px rgba(31, 111, 81, 0.2);
-            position: relative; overflow: hidden;
-            text-align: center;
+        .title h2 { font-size: 18px; color: var(--primary); }
+        .title p { font-size: 11px; color: #888; }
+
+        /* LIST STYLE */
+        .mahfuzat-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .mahfuzat-item {
+            background: white; border-radius: 20px; padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: 0.3s;
+            position: relative;
         }
 
-        .mahfuzat-card::before {
-            content: "❞"; position: absolute; top: 10px; left: 20px;
-            font-size: 80px; opacity: 0.1; color: white;
+        .mahfuzat-item:active { transform: scale(0.98); }
+
+        .ar { 
+            font-family: 'Noto Naskh Arabic', serif; font-size: 20px; 
+            color: var(--primary); text-align: right; margin-bottom: 10px;
+            line-height: 1.8;
         }
 
-        .label-top {
-            font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
-            background: rgba(255,255,255,0.2); padding: 5px 15px;
-            border-radius: 20px; display: inline-block; margin-bottom: 30px;
+        .id { font-size: 12px; color: #666; font-style: italic; line-height: 1.5; padding-right: 40px; }
+
+        .copy-icon {
+            position: absolute; bottom: 20px; right: 20px;
+            background: var(--soft); color: var(--primary);
+            padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;
         }
 
-        .text-arab {
-            font-family: 'Noto Naskh Arabic', serif; font-size: 28px;
-            line-height: 2; margin-bottom: 20px; direction: rtl;
+        /* Notifikasi sukses salin */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 10px 25px; 
+            border-radius: 50px; font-size: 12px; display: none; z-index: 1000;
         }
-
-        .text-indo {
-            font-style: italic; font-size: 15px; opacity: 0.9;
-            line-height: 1.6; margin-bottom: 30px;
-        }
-
-        .btn-action {
-            display: flex; justify-content: center; gap: 15px;
-        }
-
-        .btn {
-            background: white; border: none; color: var(--primary);
-            padding: 10px 20px; border-radius: 12px; font-weight: 600;
-            font-size: 12px; cursor: pointer; transition: 0.3s;
-        }
-
-        .btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body>
 
-<div class="mahfuzat-container">
-    <div class="mahfuzat-card">
-        <div class="label-top">Mahfuzat Hari Ini</div>
-        
-        <div class="text-arab" id="displayArab">...</div>
-        <div class="text-indo" id="displayIndo">...</div>
-
-        <div class="btn-action">
-            <button class="btn" onclick="copyText()">📋 Salin</button>
-            <button class="btn" onclick="shareWa()">📲 Share WA</button>
-        </div>
+<div class="header">
+    <a href="index.html" class="back-btn">←</a>
+    <div class="title">
+        <h2>Koleksi Mahfuzat</h2>
+        <p>Kata Mutiara Pembentuk Karakter</p>
     </div>
-    
-    <p style="text-align:center; font-size:11px; color:#888; margin-top:20px;">
-        Ganti otomatis setiap hari untuk motivasi santri
-    </p>
 </div>
 
+<div class="mahfuzat-list" id="listContainer">
+    </div>
+
+<div id="toast">Berhasil menyalin!</div>
+
 <script>
-    // Koleksi Mahfuzat Lengkap
-    const daftarMahfuzat = [
+    const daftar = [
         { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
         { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
-        { ar: "مَنْ سَارَ عَلَى الدَّرْبِ وَصَلَ", id: "Barang siapa berjalan pada jalannya, sampailah ia." },
-        { ar: "مَنْ قَلَّ صِدْقُهُ قَلَّ صَدِيْقُهُ", id: "Barang siapa sedikit jujurnya, sedikit pulalah temannya." },
-        { ar: "جَالِسْ أَهْلَ الصِّدْقِ وَالْوَفَاءِ", id: "Bergaullah dengan orang yang jujur dan menepati janji." },
-        { ar: "مَوَدَّةُ الصَّدِيْقِ تَظْهَرُ وَقْتَ الضِّيْقِ", id: "Kasih sayang seorang teman itu tampak pada waktu kesempitan." },
-        { ar: "وَمَا اللَّذَّةُ إِلاَّ بَعْدَ التَّعَبِ", id: "Tidak ada kenikmatan kecuali setelah kelelahan." },
-        { ar: "اَلصَّبْرُ يُعِيْنُ عَلَى كُلِّ عَمَلٍ", id: "Kesabaran itu membantu segala pekerjaan." },
-        { ar: "جَرِّبْ وَلاَحِظْ تَكُنْ عَارِفًا", id: "Cobalah dan perhatikanlah, niscaya kau akan jadi orang yang tahu." },
+        { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
         { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." },
-        { ar: "اَلآدَابُ فَوْقَ الْعِلْمِ", id: "Adab itu di atas ilmu." },
-        { ar: "بَيْضَةُ الْيَوْمِ خَيْرٌ مِنْ دَجَاجَةِ الْغَدِ", id: "Telur hari ini lebih baik daripada ayam esok hari." },
-        { ar: "الْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
-        { ar: "خَيْرُ جَلِيْسٍ فِي الزَّمَانِ كِتَابٌ", id: "Sebaik-baik teman duduk setiap waktu adalah buku." }
+        { ar: "مَنْ سَارَ عَلَى الدَّرْبِ وَصَلَ", id: "Barang siapa berjalan pada jalannya, sampailah ia." },
+        { ar: "آفَةُ الْعِلْمِ النِّسْيَانُ", id: "Penyakit ilmu adalah lupa." },
+        { ar: "جَرِّبْ وَلاَحِظْ تَكُنْ عَارِفًا", id: "Cobalah dan perhatikanlah, niscaya kau akan jadi orang yang tahu." },
+        { ar: "الآدَابُ فَوْقَ الْعِلْمِ", id: "Adab itu di atas ilmu." }
     ];
 
-    function tampilkanMahfuzat() {
-        const tgl = new Date();
-        const index = tgl.getDate() % daftarMahfuzat.length; // Otomatis pilih berdasarkan tanggal hari ini
-        
-        const data = daftarMahfuzat[index];
-        document.getElementById('displayArab').innerText = data.ar;
-        document.getElementById('displayIndo').innerText = `"${data.id}"`;
+    const container = document.getElementById('listContainer');
+
+    function renderList() {
+        container.innerHTML = daftar.map((item, index) => `
+            <div class="mahfuzat-item" onclick="copyText('${item.ar} - ${item.id}')">
+                <div class="ar">${item.ar}</div>
+                <div class="id">${item.id}</div>
+                <div class="copy-icon">📋</div>
+            </div>
+        `).join('');
     }
 
-    function copyText() {
-        const ar = document.getElementById('displayArab').innerText;
-        const id = document.getElementById('displayIndo').innerText;
-        navigator.clipboard.writeText(ar + "\n" + id);
-        alert("Mahfuzat berhasil disalin!");
+    function copyText(text) {
+        navigator.clipboard.writeText(text);
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
     }
 
-    function shareWa() {
-        const ar = document.getElementById('displayArab').innerText;
-        const id = document.getElementById('displayIndo').innerText;
-        const text = encodeURIComponent("*Mahfuzat Hari Ini*\n\n" + ar + "\n" + id);
-        window.open(`https://wa.me/?text=${text}`);
-    }
-
-    // Jalankan saat halaman dibuka
-    tampilkanMahfuzat();
+    renderList();
 </script>
 
 </body>
