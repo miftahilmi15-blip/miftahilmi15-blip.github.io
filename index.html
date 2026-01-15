@@ -50,9 +50,9 @@
   }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  .container { width: 100%; max-width: 420px; z-index: 1; }
+  .container { width: 100%; max-width: 420px; z-index: 1; transition: var(--transition); opacity: 1; }
 
-  /* HEADER ASLI DENGAN STROKE */
+  /* HEADER & LOGO */
   .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
   @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
   
@@ -73,6 +73,7 @@
     text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3), 0 10px 10px rgba(0, 0, 0, 0.1);
     animation: floatAnim 3s ease-in-out infinite;
   }
+
   @keyframes floatAnim {
     0%, 100% { transform: translateY(0px) scale(1); }
     50% { transform: translateY(-10px) scale(1.03); }
@@ -80,42 +81,75 @@
 
   /* MAHFUZAT TICKER */
   .mahfuzat-ticker {
-    background: white; margin-bottom: 25px; padding: 8px 12px;
-    border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-    display: flex; align-items: center; overflow: hidden;
-    border: 1px solid rgba(31, 111, 81, 0.1); cursor: pointer;
+    background: white;
+    margin-bottom: 25px;
+    padding: 8px 12px;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(31, 111, 81, 0.1);
+    cursor: pointer;
   }
   .ticker-label {
-    background: var(--primary); color: white;
-    font-size: 8px; font-weight: 800; padding: 4px 10px;
-    border-radius: 50px; margin-right: 12px;
+    background: var(--primary);
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 50px;
+    margin-right: 12px;
+    white-space: nowrap;
   }
-  .ticker-content marquee { font-size: 13px; color: var(--text); line-height: 24px; }
-  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 8px; font-size: 15px; }
+  .ticker-content {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-content marquee {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 24px;
+  }
+  .ar-run {
+    font-family: 'Noto Naskh Arabic', serif;
+    color: var(--primary);
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 15px;
+  }
 
-  /* TAMPILAN DASHBOARD ELEGAN (3 KOLOM) */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { 
-    background: #fff; padding: 22px 10px; border-radius: 24px; text-align: center; 
-    box-shadow: 0 8px 20px rgba(31, 111, 81, 0.05); 
-    border: 1px solid rgba(31, 111, 81, 0.03);
-    transition: var(--transition); cursor: pointer;
+  /* CARD & GRID */
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-radius: 24px; padding: 30px; margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 15px 35px rgba(0, 71, 49, 0.08);
   }
-  .menu-item:active { transform: scale(0.92); background: var(--soft); }
-  .menu-icon { width: 42px; height: 42px; margin-bottom: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05)); }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .menu-item { 
+    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
+  }
+  .menu-item:active { transform: scale(0.9); background: var(--soft); }
+  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* STYLE KHUSUS ABSEN TUTUP */
-  .menu-locked { filter: grayscale(1); opacity: 0.5; cursor: not-allowed !important; background: #f8f9fa !important; border: 1px dashed #ccc !important; }
-  .text-closed { color: #e74c3c !important; }
+  /* GAYA ABSEN TUTUP ANDA */
+  .menu-locked { filter: grayscale(1); opacity: 0.6; cursor: not-allowed !important; }
+  .text-closed { color: #d63031 !important; }
 
-  /* SIDEBAR & AUTH */
+  /* SIDEBAR */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
   }
+
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
     background: white; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
@@ -123,13 +157,18 @@
     border-radius: 30px 0 0 30px;
   }
   .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
+
+  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
   .overlay.show { display: block; }
   .hidden { display:none !important; }
   footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 
-  input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; }
-  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
+  /* INPUTS */
+  input[type="email"], input[type="password"] {
+    width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
+  }
+  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; }
   .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
 </style>
 
@@ -149,7 +188,6 @@
   </div>
   <div class="sidebar-nav" style="display: flex; flex-direction: column; gap: 5px;">
     <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; background:var(--soft); border-radius:10px;">🏠 Dashboard</a>
-    <a href="#" onclick="goTo('waktu-sholat.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">🕌 Waktu Sholat</a>
     <a href="#" onclick="logout()" style="text-decoration:none; color: #d63031; padding:12px; font-weight:700;">🚪 Keluar</a>
   </div>
 </div>
@@ -161,9 +199,8 @@
   <h1 class="title">E-SANTRI</h1>
 </header>
 
-<main class="container">
-  <div id="login-card" class="card login hidden" style="background:white; padding:30px; border-radius:24px;">
-    <h2 style="text-align:center; color:var(--primary); font-weight:800; margin-bottom:20px;">Ahlan wa Sahlan!</h2>
+<main class="container" id="main-container">
+  <div id="login-card" class="card login hidden">
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <button class="btn primary" onclick="login()">MASUK</button>
@@ -177,22 +214,22 @@
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
         <div class="ticker-label">MAHFUZAT</div>
         <div class="ticker-content">
-            <marquee scrollamount="4">
+            <marquee id="mahfuzat-marquee" scrollamount="4">
                 <span class="ar-run" id="runArab">...</span> 
-                <span id="runIndo" style="color: var(--muted); font-weight: 600;">...</span>
+                <span id="runIndo">...</span>
             </marquee>
         </div>
     </div>
     
     <div class="menu-grid">
-      <div class="menu-item" id="menu-absensi" onclick="cekJamAbsen()">
+      <div class="menu-item" id="menu-absensi" onclick="cekAbsensi()">
         <img src="icons/absensi.png" class="menu-icon">
         <span id="text-absensi">Absensi</span>
       </div>
       <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
       <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
       <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Maktabah</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
       <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
   </section>
@@ -208,66 +245,42 @@
   });
   const auth = firebase.auth();
 
-  // Logika Mahfuzat
-  const daftarMahfuzat = [{ ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." }]; 
-  function updateMahfuzatHome() {
-    const tgl = new Date().getDate();
-    const data = daftarMahfuzat[(tgl - 1) % daftarMahfuzat.length];
-    if (data) {
-        document.getElementById('runArab').innerText = data.ar;
-        document.getElementById('runIndo').innerText = " — " + data.id;
-    }
-  }
-
-  // LOGIKA ABSENSI OTOMATIS
-  function updateTampilanAbsensi() {
-    const skrg = new Date();
-    const waktu = (skrg.getHours() * 100) + skrg.getMinutes();
+  // Logika Absensi Tutup
+  function updateStatusAbsen() {
+    const jam = new Date().getHours();
+    const menit = new Date().getMinutes();
+    const waktu = (jam * 100) + menit;
     const btn = document.getElementById('menu-absensi');
     const txt = document.getElementById('text-absensi');
 
-    if (waktu < 630 || waktu > 800) {
+    if (waktu < 630 || waktu > 800) { // Jika diluar jam 06:30 - 08:00
       btn.classList.add('menu-locked');
       txt.innerText = "Absen Tutup";
       txt.classList.add('text-closed');
-    } else {
-      btn.classList.remove('menu-locked');
-      txt.innerText = "Absensi";
-      txt.classList.remove('text-closed');
     }
   }
 
-  function cekJamAbsen() {
-    const skrg = new Date();
-    const waktu = (skrg.getHours() * 100) + skrg.getMinutes();
+  function cekAbsensi() {
+    const jam = new Date().getHours();
+    const menit = new Date().getMinutes();
+    const waktu = (jam * 100) + menit;
     if (waktu < 630 || waktu > 800) {
-      alert("Maaf, Absensi sudah ditutup (06:30 - 08:00).");
+      alert("Absensi sudah ditutup!");
     } else {
       window.location.href = 'absensi.html';
     }
   }
 
-  function login(){
-    const email=document.getElementById("email").value;
-    const pass=document.getElementById("password").value;
-    auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
-  }
-
   auth.onAuthStateChanged(user=>{
-    const loginCard=document.getElementById("login-card"), dashboard=document.getElementById("dashboard"), menuBtn=document.getElementById("menu-btn");
     if(user){
-      loginCard.classList.add("hidden");
-      dashboard.classList.remove("hidden");
-      menuBtn.style.display="flex";
-      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
-      updateMahfuzatHome();
-      updateTampilanAbsensi();
+      document.getElementById("login-card").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+      document.getElementById("menu-btn").style.display="flex";
+      updateStatusAbsen();
     } else {
-      loginCard.classList.remove("hidden");
-      dashboard.classList.add("hidden");
+      document.getElementById("login-card").classList.remove("hidden");
     }
-    document.getElementById("loading-screen").style.opacity = "0";
-    setTimeout(() => document.getElementById("loading-screen").style.display = "none", 400);
+    document.getElementById("loading-screen").style.display="none";
   });
 
   const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
