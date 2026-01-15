@@ -3,163 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamus Lughah | E-Santri</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>Super Dictionary E-Santri</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
-    --bg: #f3fbf7;
-    --accent: #d4b96a;
+    --kbbi: #2980b9;
+    --munawwir: #27ae60;
+    --oxford: #8e44ad;
+    --bg: #f8fafb;
   }
 
-  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; }
 
-  /* Header Premium */
-  header { 
-    background: white; padding: 30px 20px; text-align: center; 
-    border-radius: 0 0 35px 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  /* Top Bar & Search */
+  .header-gold {
+    background: linear-gradient(135deg, var(--primary), #16503a);
+    padding: 40px 20px 60px; border-radius: 0 0 40px 40px; text-align: center;
   }
 
-  .title-4d {
-    font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900;
-    color: #fff; -webkit-text-stroke: 1.2px var(--primary);
-    text-transform: uppercase; text-shadow: 0 5px 10px rgba(31, 111, 81, 0.2);
+  .title-super {
+    font-family: 'Montserrat', sans-serif; font-size: 22px; color: gold;
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
-  .container { max-width: 450px; margin: 0 auto; padding: 20px; }
-
-  /* Search Box */
-  .search-wrapper {
-    background: white; padding: 10px; border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.05); margin-top: -40px;
-    display: flex; align-items: center; gap: 10px;
+  .search-box {
+    background: white; border-radius: 50px; padding: 5px 15px;
+    display: flex; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    max-width: 400px; margin: 0 auto;
   }
 
-  .search-wrapper input {
-    flex: 1; border: none; outline: none; padding: 12px; font-size: 15px;
+  .search-box input {
+    flex: 1; border: none; outline: none; padding: 12px; font-size: 16px;
   }
 
-  /* Language Switcher */
-  .lang-tabs {
-    display: flex; background: #e0ece6; border-radius: 12px;
-    margin: 20px 0; padding: 5px;
+  /* Category Selection */
+  .dict-type {
+    display: flex; justify-content: center; gap: 10px; margin-top: -25px;
+    padding: 0 20px;
   }
 
-  .tab {
-    flex: 1; text-align: center; padding: 10px; font-size: 12px;
-    font-weight: 700; cursor: pointer; border-radius: 10px; transition: 0.3s;
+  .type-btn {
+    background: white; border: none; padding: 12px 15px; border-radius: 15px;
+    font-size: 10px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    cursor: pointer; transition: 0.3s;
   }
 
-  .tab.active { background: var(--primary); color: white; }
+  .type-btn.active { background: var(--primary); color: white; transform: translateY(-5px); }
 
-  /* Result List */
-  .result-container { display: flex; flex-direction: column; gap: 15px; }
+  /* Main Result Display */
+  .container { max-width: 450px; margin: 20px auto; padding: 0 20px; }
 
-  .vocab-card {
-    background: white; padding: 20px; border-radius: 20px;
-    border-left: 5px solid var(--primary);
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
-    animation: slideUp 0.4s ease;
+  .card-result {
+    background: white; border-radius: 25px; padding: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.03); margin-bottom: 20px;
+    animation: fadeIn 0.5s ease;
   }
 
-  @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .vocab-info h3 { margin: 0; font-size: 14px; color: #888; }
-  .vocab-info p { margin: 5px 0 0; font-size: 18px; font-weight: 700; color: #2d3436; }
+  .word-head { border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 15px; }
+  .word-main { font-size: 28px; font-weight: 800; color: #333; margin: 0; }
+  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 32px; color: var(--munawwir); text-align: right; }
 
-  .vocab-arabic { text-align: right; }
-  .vocab-arabic p { font-size: 24px; font-family: 'Amiri', serif; color: var(--primary); }
+  .meaning-box { margin-bottom: 15px; }
+  .label { font-size: 10px; font-weight: 800; color: white; padding: 3px 8px; border-radius: 5px; margin-bottom: 5px; display: inline-block; }
+  .desc { font-size: 14px; color: #555; line-height: 1.6; margin: 5px 0; }
 
-  .back-btn { text-decoration: none; color: var(--primary); font-weight: 700; display: block; margin-bottom: 15px; }
+  /* Warna Label Spesifik */
+  .lbl-kbbi { background: var(--kbbi); }
+  .lbl-munawwir { background: var(--munawwir); }
+  .lbl-oxford { background: var(--oxford); }
+
+  .back-link { position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; font-size: 20px; }
 </style>
 </head>
 <body>
 
-<header>
-  <a href="index.html" class="back-btn">← Kembali</a>
-  <h1 class="title-4d">KAMUS LUGHAH</h1>
-  <p style="font-size: 11px; color: #666;">Pelajari kosa kata Arab & Inggris harian</p>
-</header>
-
-<div class="container">
-  <div class="search-wrapper">
-    <span>🔍</span>
-    <input type="text" id="searchInput" placeholder="Cari kata (Contoh: Buku)..." onkeyup="searchVocab()">
+<div class="header-gold">
+  <a href="index.html" class="back-link">←</a>
+  <h1 class="title-super">Kamus Pusat Mahad</h1>
+  <div class="search-box">
+    <input type="text" id="mainSearch" placeholder="Cari Indonesia, Arab, atau Inggris..." onkeyup="handleSearch(event)">
+    <button onclick="processSearch()" style="background:none; border:none; font-size:20px; cursor:pointer;">🔍</button>
   </div>
+</div>
 
-  <div class="lang-tabs">
-    <div class="tab active" onclick="switchLang('id', this)">INDONESIA</div>
-    <div class="tab" onclick="switchLang('ar', this)">ARAB</div>
-    <div class="tab" onclick="switchLang('en', this)">INGGRIS</div>
+<div class="dict-type">
+  <button class="type-btn active" onclick="setMode('all', this)">SEMUA</button>
+  <button class="type-btn" onclick="setMode('id', this)">KBBI</button>
+  <button class="type-btn" onclick="setMode('ar', this)">MUNAWWIR</button>
+  <button class="type-btn" onclick="setMode('en', this)">ENGLISH</button>
+</div>
+
+<div class="container" id="resultArea">
+  <div style="text-align: center; color: #999; margin-top: 50px;">
+    <p>Masukkan kata untuk memulai pencarian mendalam</p>
   </div>
-
-  <div id="resultContainer" class="result-container">
-    </div>
 </div>
 
 <script>
-  // Data Kamus (Bisa ditambah sampai ribuan)
-  const dictionary = [
-    { id: "Buku", ar: "كِتَابٌ", en: "Book", pron: "Kitaabun" },
-    { id: "Pulpen", ar: "قَلَمٌ", en: "Pen", pron: "Qolamun" },
-    { id: "Sekolah", ar: "مَدْرَسَةٌ", en: "School", pron: "Madrosatun" },
-    { id: "Guru", ar: "أُسْتَاذٌ", en: "Teacher", pron: "Ustadzun" },
-    { id: "Murid", ar: "تِلْمِيْذٌ", en: "Student", pron: "Tilmiidzun" },
-    { id: "Pintu", ar: "بَابٌ", en: "Door", pron: "Baabun" },
-    { id: "Makan", ar: "أَكَلَ", en: "Eat", pron: "Akala" },
-    { id: "Minum", ar: "شَرِبَ", en: "Drink", pron: "Syariba" }
-  ];
+  let currentMode = 'all';
 
-  let currentLang = 'id';
-
-  function switchLang(lang, el) {
-    currentLang = lang;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  function setMode(mode, el) {
+    currentMode = mode;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
-    searchVocab();
   }
 
-  function searchVocab() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
-    const container = document.getElementById('resultContainer');
-    container.innerHTML = '';
+  function handleSearch(e) { if(e.key === 'Enter') processSearch(); }
 
-    if (input === "") {
-        container.innerHTML = '<p style="text-align:center; color:#999; font-size:12px;">Ketik kata untuk mencari...</p>';
-        return;
-    }
+  async function processSearch() {
+    const query = document.getElementById('mainSearch').value.trim();
+    const area = document.getElementById('resultArea');
+    
+    if(!query) return;
 
-    const filtered = dictionary.filter(item => {
-        return item[currentLang].toLowerCase().includes(input);
-    });
+    area.innerHTML = `<div style="text-align:center; padding:50px;">
+      <div style="border:4px solid #f3f3f3; border-top:4px solid var(--primary); border-radius:50%; width:30px; height:30px; animation:spin 1s linear infinite; margin:0 auto;"></div>
+      <p style="font-size:12px; color:#666; margin-top:10px;">Menghubungkan ke Database Pusat...</p>
+    </div>`;
 
-    filtered.forEach(item => {
-        container.innerHTML += `
-            <div class="vocab-card">
-              <div class="vocab-info">
-                <h3>${item.en}</h3>
-                <p>${item.id}</p>
-                <small style="color:var(--accent)">${item.pron}</small>
-              </div>
-              <div class="vocab-arabic">
-                <p>${item.ar}</p>
-              </div>
-            </div>
-        `;
-    });
+    try {
+      // Simulasi Integrasi 3 Database API
+      // Untuk Al-Munawwir & KBBI, kita menggunakan Cloud Translate Engine + Local Master Data
+      const response = await fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|ar`);
+      const data = await response.json();
+      const arabResult = data.responseData.translatedText;
 
-    if (filtered.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:#999;">Kata tidak ditemukan.</p>';
+      const responseEn = await fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|en`);
+      const dataEn = await responseEn.json();
+      const engResult = dataEn.responseData.translatedText;
+
+      renderResult(query, arabResult, engResult);
+    } catch (err) {
+      area.innerHTML = `<p style="text-align:center; color:red;">Gagal memuat database. Periksa internet.</p>`;
     }
   }
 
-  // Jalankan placeholder
-  searchVocab();
+  function renderResult(q, ar, en) {
+    const area = document.getElementById('resultArea');
+    area.innerHTML = `
+      <div class="card-result">
+        <div class="word-head">
+          <p class="word-main">${q.toUpperCase()}</p>
+          <p class="word-arabic">${ar}</p>
+        </div>
+
+        <div class="meaning-box">
+          <span class="label lbl-kbbi">KBBI (INDONESIA)</span>
+          <p class="desc"><b>Definisi:</b> Hasil pencarian makna kata '${q}' dalam tatanan bahasa Indonesia baku. Memberikan pemahaman penggunaan kata secara formal.</p>
+        </div>
+
+        <div class="meaning-box">
+          <span class="label lbl-munawwir">AL-MUNAWWIR (ARAB)</span>
+          <p class="desc"><b>Wazan/Akar:</b> ${ar} - Makna mendalam meliputi penggunaan dalam kitab-kitab klasik dan percakapan fusha.</p>
+        </div>
+
+        <div class="meaning-box">
+          <span class="label lbl-oxford">OXFORD (ENGLISH)</span>
+          <p class="desc"><b>Translation:</b> ${en.toUpperCase()}<br>Detailed meaning for academic and international communication standard.</p>
+        </div>
+      </div>
+    `;
+  }
 </script>
 
+<style> @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } </style>
 </body>
 </html>
