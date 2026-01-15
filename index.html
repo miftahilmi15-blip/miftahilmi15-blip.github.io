@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="logo-assunnah.png">
 <link rel="apple-touch-icon" href="logo-assunnah.png">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
@@ -60,27 +60,17 @@
     width: 100px; height: 100px; margin: 0 auto 10px;
     background: white; padding: 12px; border-radius: 28px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    /* Efek Logo Timbul */
     filter: drop-shadow(0 5px 15px rgba(31, 111, 81, 0.2));
   }
   .logo { width: 100%; height: 100%; object-fit: contain; }
 
-  /* TULISAN E-SANTRI 4D ANIMATED */
   .title { 
     font-family: 'Montserrat', sans-serif;
-    font-size: 34px; 
-    font-weight: 900; 
-    color: #ffffff; /* Putih */
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    font-size: 34px; font-weight: 900; color: #ffffff;
+    letter-spacing: 2px; text-transform: uppercase;
     display: inline-block;
-    /* Outline Hijau Elegan */
     -webkit-text-stroke: 1.5px var(--primary);
-    /* Shadow 4D */
-    text-shadow: 
-        0 5px 15px rgba(31, 111, 81, 0.3),
-        0 10px 10px rgba(0, 0, 0, 0.1);
-    /* Animasi Melayang */
+    text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3), 0 10px 10px rgba(0, 0, 0, 0.1);
     animation: floatAnim 3s ease-in-out infinite;
   }
 
@@ -88,6 +78,20 @@
     0%, 100% { transform: translateY(0px) scale(1); }
     50% { transform: translateY(-10px) scale(1.03); }
   }
+
+  /* MAHFUZAT DAY HOME CARD */
+  .home-mahfuzat {
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+    margin-bottom: 25px; padding: 25px; border-radius: 24px; color: white;
+    text-align: center; position: relative; overflow: hidden;
+    box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2); cursor: pointer;
+  }
+  .home-mahfuzat::after {
+    content: "❞"; font-size: 70px; position: absolute; right: 10px; bottom: -15px; opacity: 0.1;
+  }
+  .mahfuzat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-bottom: 10px; display: block; }
+  #homeArab { font-family: 'Noto Naskh Arabic', serif; font-size: 22px; margin-bottom: 8px; direction: rtl; }
+  #homeIndo { font-size: 12px; font-style: italic; opacity: 0.9; line-height: 1.4; }
 
   /* CARD */
   .card {
@@ -206,8 +210,14 @@
   </div>
 
   <section id="dashboard" class="hidden">
-    <div class="card" style="padding: 20px; text-align: center; border-left: 6px solid var(--primary);">
+    <div class="card" style="padding: 20px; text-align: center; border-left: 6px solid var(--primary); margin-bottom:15px;">
         <h3 id="welcome-msg" style="color: var(--primary); font-weight:800;">Selamat Datang</h3>
+    </div>
+
+    <div class="home-mahfuzat" onclick="goTo('mahfuzat.html')">
+        <span class="mahfuzat-label">Mahfuzat Day</span>
+        <div id="homeArab">...</div>
+        <div id="homeIndo">...</div>
     </div>
     
     <div class="menu-grid">
@@ -231,6 +241,25 @@
     projectId:"e-santri-ed555"
   });
   const auth = firebase.auth();
+
+  // MAHFUZAT ENGINE
+  const daftarMahfuzat = [
+    { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
+    { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
+    { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
+    { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." },
+    { ar: "مَنْ سَارَ عَلَى الدَّرْبِ وَصَلَ", id: "Barang siapa berjalan pada jalannya, sampailah ia." },
+    { ar: "آفَةُ الْعِلْمِ النِّسْيَانُ", id: "Penyakit ilmu adalah lupa." },
+    { ar: "خَيْرُ جَلِيْسٍ فِي الزَّمانِ كِتابٌ", id: "Sebaik-baik teman duduk adalah buku." }
+  ];
+
+  function updateMahfuzatHome() {
+    const tgl = new Date().getDate();
+    const index = tgl % daftarMahfuzat.length;
+    const data = daftarMahfuzat[index];
+    document.getElementById('homeArab').innerText = data.ar;
+    document.getElementById('homeIndo').innerText = `"${data.id}"`;
+  }
 
   function hideLoading() {
     const ls = document.getElementById("loading-screen");
@@ -285,6 +314,7 @@
       document.getElementById("sidebar-name").innerText=user.displayName||"Santri";
       document.getElementById("user-photo").src=user.photoURL||"assets/default-avatar.png";
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
+      updateMahfuzatHome();
     } else {
       loginCard.classList.remove("hidden");
       dashboard.classList.add("hidden");
