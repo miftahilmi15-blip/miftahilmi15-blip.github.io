@@ -4,170 +4,224 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>E-Santri | Premium Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="logo-assunnah.png">
+<link rel="apple-touch-icon" href="logo-assunnah.png">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
-    --soft: rgba(31, 111, 81, 0.08);
-    --glass: rgba(255, 255, 255, 0.95);
+    --primary-hover: #16503a;
+    --accent: #d4b96a;      
+    --text: #2d3436;
+    --muted: #636e72;
+    --glass: rgba(255, 255, 255, 0.9);
+    --soft: rgba(31, 111, 81, 0.1);
     --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  
-  body {
-    background: #f3fbf7;
-    overflow-x: hidden;
-    min-height: 100vh;
-  }
-
-  /* --- ANIMASI PEMBUKA (ENTRANCE) --- */
+  /* --- ANIMASI PLAYSTORE STYLE --- */
   @keyframes slideUpFade {
-    from { opacity: 0; transform: translateY(40px); }
+    from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes revealCircle {
-    from { clip-path: circle(0% at 50% 50%); }
-    to { clip-path: circle(150% at 50% 50%); }
-  }
+  /* Efek Muncul Bertahap untuk Menu */
+  .stagger { opacity: 0; animation: slideUpFade 0.6s ease forwards; }
+  .stagger:nth-child(1) { animation-delay: 0.1s; }
+  .stagger:nth-child(2) { animation-delay: 0.2s; }
+  .stagger:nth-child(3) { animation-delay: 0.3s; }
+  .stagger:nth-child(4) { animation-delay: 0.4s; }
+  .stagger:nth-child(5) { animation-delay: 0.5s; }
+  .stagger:nth-child(6) { animation-delay: 0.6s; }
 
-  /* --- LAYOUT UTAMA --- */
-  .page {
-    width: 100%; max-width: 420px; margin: auto; padding: 20px;
-    animation: slideUpFade 0.8s ease;
-  }
-
-  .header-box { text-align: center; padding: 30px 0; }
-  .logo-box { width: 80px; margin: 0 auto 10px; animation: slideUpFade 1s ease; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   
-  /* --- MENU GRID --- */
+  body {
+    background: #f3fbf7;
+    background-image: radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.15) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(212, 185, 106, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text); padding: 20px; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
+  }
+
+  /* LOADING SCREEN */
+  #loading-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #f3fbf7; display: flex; align-items: center; justify-content: center;
+    z-index: 9999; transition: opacity 0.5s ease;
+  }
+  .spinner { width: 45px; height: 45px; border: 4px solid var(--soft); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  .container { width: 100%; max-width: 420px; z-index: 1; }
+
+  /* HEADER & LOGO */
+  .header-box { text-align: center; padding: 40px 0 20px; }
+  .logo-box { width: 100px; height: 100px; margin: 0 auto 10px; background: white; padding: 12px; border-radius: 28px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); animation: slideUpFade 0.8s ease; }
+  .title { font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: #ffffff; -webkit-text-stroke: 1.5px var(--primary); text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3); animation: floatAnim 3s ease-in-out infinite; }
+  @keyframes floatAnim { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
+  /* WIDGET JADWAL (SMOOTH) */
+  .schedule-card {
+    background: white; border-radius: 20px; padding: 15px; margin-bottom: 15px;
+    display: flex; align-items: center; gap: 15px; border: 1px solid rgba(31,111,81,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.03); animation: slideUpFade 0.8s ease;
+  }
+
+  /* MAHFUZAT TICKER */
+  .mahfuzat-ticker { background: white; margin-bottom: 25px; padding: 8px 12px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; align-items: center; overflow: hidden; border: 1px solid rgba(31, 111, 81, 0.1); cursor: pointer; animation: slideUpFade 1s ease; }
+  .ticker-label { background: var(--primary); color: white; font-size: 8px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 12px; }
+  .ticker-content marquee { font-size: 13px; color: var(--text); line-height: 24px; }
+  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 8px; font-size: 15px; }
+
+  /* MENU GRID 3 KOLOM (ASLI) */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-  
-  .menu-item {
-    background: white; border-radius: 24px; padding: 20px 10px;
-    text-align: center; cursor: pointer; transition: var(--transition);
-    border: 1px solid rgba(0,0,0,0.02);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-  }
-
+  .menu-item { background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer; }
   .menu-item:active { transform: scale(0.9); background: var(--soft); }
-
-  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
+  .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; transition: transform 0.3s ease; }
+  .menu-item:hover .menu-icon { transform: scale(1.1); }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* --- MODAL / OVERLAY FITUR (KAYA PLAYSTORE) --- */
-  .feature-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #f3fbf7; z-index: 2000; display: none;
-    padding: 20px; overflow-y: auto;
-  }
-
-  .feature-overlay.active {
-    display: block;
-    animation: revealCircle 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-  }
-
-  /* Animasi Konten di Dalam Fitur */
-  .feature-content > * {
-    opacity: 0; transform: translateY(20px);
-  }
-
-  .feature-overlay.active .feature-content > * {
-    animation: slideUpFade 0.6s ease forwards;
-  }
-
-  /* Delay animasi agar muncul satu-satu (Staggered) */
-  .delay-1 { animation-delay: 0.2s !important; }
-  .delay-2 { animation-delay: 0.3s !important; }
-  .delay-3 { animation-delay: 0.4s !important; }
-
-  .back-btn {
-    background: var(--soft); border: none; padding: 10px 20px;
-    border-radius: 50px; color: var(--primary); font-weight: 700;
-    margin-bottom: 30px; cursor: pointer;
-  }
-
-  .feature-header { font-size: 24px; font-weight: 900; color: var(--primary); margin-bottom: 10px; }
+  /* SIDEBAR & TRIGGER (ASLI) */
+  .menu-trigger { position: fixed; top: 25px; right: 25px; z-index: 1300; background: var(--primary); color: #fff; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3); transition: 0.3s; }
+  .sidebar { position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: white; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1200; display: flex; flex-direction: column; padding: 50px 25px; border-radius: 30px 0 0 30px; }
+  .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
+  .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
+  .overlay.show { display: block; }
+  .hidden { display:none !important; }
+  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
 
-<div class="page" id="main-page">
-  <header class="header-box">
-    <div class="logo-box"><img src="logo-assunnah.png" style="width:100%"></div>
-    <h1 style="font-family:'Montserrat'; color:var(--primary); font-size:30px;">E-SANTRI</h1>
-  </header>
+<div id="loading-screen"><div class="spinner"></div></div>
+<div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
 
-  <div class="menu-grid">
-    <div class="menu-item" onclick="openFeature('Absensi', 'Sesi kehadiran hari ini')">
-      <img src="icons/absensi.png" class="menu-icon"><span>Absensi</span>
-    </div>
-    <div class="menu-item" onclick="openFeature('Tahfidz', 'Setoran hafalan santri')">
-      <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
-    </div>
-    <div class="menu-item" onclick="openFeature('Al-Quran', 'Bacaan & Tajwid')">
-      <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
-    </div>
-    <div class="menu-item" onclick="openFeature('Kamus', 'Kosakata Bahasa Arab')">
-      <img src="icons/kamus.png" class="menu-icon"><span>Kamus</span>
-    </div>
-    <div class="menu-item" onclick="openFeature('Perpus', 'E-Library Santri')">
-      <img src="icons/perpustakaan.png" class="menu-icon"><span>Perpus</span>
-    </div>
-    <div class="menu-item" onclick="openFeature('Izin', 'Form Perizinan')">
-      <img src="icons/izin.png" class="menu-icon"><span>Izin</span>
-    </div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header" style="text-align: center; margin-bottom: 30px;">
+    <img id="user-photo" src="assets/default-avatar.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover;">
+    <div id="sidebar-name" style="font-weight: 800; color: var(--primary); margin-top:10px;">Santri</div>
+    <div id="sidebar-email" style="font-size: 12px; color: var(--muted);">email@santri.com</div>
+  </div>
+  <div class="sidebar-nav" style="display: flex; flex-direction: column; gap: 5px;">
+    <a href="#" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px; background:var(--soft); border-radius:10px;">🏠 Dashboard</a>
+    <a href="#" onclick="smoothGoTo('waktu-sholat.html')" style="text-decoration:none; color:var(--text); font-weight:600; padding:12px;">🕌 Waktu Sholat</a>
+    <a href="#" onclick="logout()" style="text-decoration:none; color: #d63031; padding:12px; font-weight:700;">🚪 Keluar</a>
   </div>
 </div>
 
-<div id="feature-overlay" class="feature-overlay">
-  <button class="back-btn" onclick="closeFeature()">← Kembali</button>
-  
-  <div class="feature-content">
-    <h1 id="feat-title" class="feature-header">Title</h1>
-    <p id="feat-desc" style="color:var(--muted); margin-bottom: 30px;">Subtitle description.</p>
-    
-    <div class="delay-1" style="background:white; padding:20px; border-radius:20px; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,0.02);">
-      <b>📋 Status Terbaru</b>
-      <p style="font-size:12px; color:#888;">Data akan diperbarui secara real-time.</p>
-    </div>
-    
-    <div class="delay-2" style="background:white; padding:20px; border-radius:20px; margin-bottom:15px; box-shadow:0 5px 15px rgba(0,0,0,0.02);">
-      <b>⚙️ Pengaturan Fitur</b>
-      <p style="font-size:12px; color:#888;">Klik untuk memodifikasi preferensi.</p>
+<div class="overlay" id="overlay"></div>
+
+<header class="header-box">
+  <div class="logo-box"><img src="logo-assunnah.png" style="width:100%"></div>
+  <h1 class="title">E-SANTRI</h1>
+</header>
+
+<main class="container" id="main-container">
+  <div id="login-card" class="card login hidden">
     </div>
 
-    <div class="delay-3" style="background:var(--primary); padding:20px; border-radius:20px; color:white; text-align:center;">
-      <b>MULAI SEKARANG</b>
+  <section id="dashboard" class="hidden">
+    <div style="margin-bottom: 15px; padding-left: 10px; animation: slideUpFade 0.6s ease;">
+        <h3 id="welcome-msg" style="color: var(--primary); font-weight:800; font-size: 18px;">Ahlan, Santri!</h3>
     </div>
-  </div>
-</div>
+
+    <div class="schedule-card stagger">
+      <div style="background:var(--primary); color:white; padding:10px; border-radius:12px; font-weight:800; min-width:60px; text-align:center;" id="live-jam">00:00</div>
+      <div>
+        <div id="info-sesi" style="font-weight:700; color:var(--primary); font-size:14px;">Mengecek...</div>
+        <div id="info-sub" style="font-size:11px; color:var(--muted);">Tunggu sebentar...</div>
+      </div>
+    </div>
+
+    <div class="mahfuzat-ticker stagger" onclick="smoothGoTo('mahfuzat.html')">
+        <div class="ticker-label">MAHFUZAT</div>
+        <div class="ticker-content">
+            <marquee id="mahfuzat-marquee" scrollamount="4">
+                <span class="ar-run" id="runArab">...</span> 
+                <span id="runIndo" style="color: var(--muted); font-weight: 600;">...</span>
+            </marquee>
+        </div>
+    </div>
+    
+    <div class="menu-grid">
+      <div class="menu-item stagger" onclick="smoothGoTo('absensi.html')">
+        <img src="icons/absensi.png" class="menu-icon"><span>Absensi</span>
+      </div>
+      <div class="menu-item stagger" onclick="smoothGoTo('tahfidz.html')">
+        <img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span>
+      </div>
+      <div class="menu-item stagger" onclick="smoothGoTo('alquran.html')">
+        <img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span>
+      </div>
+      <div class="menu-item stagger" onclick="smoothGoTo('kamus.html')">
+        <img src="icons/kamus.png" class="menu-icon"><span>Kamus</span>
+      </div>
+      <div class="menu-item stagger" onclick="smoothGoTo('perpustakaan.html')">
+        <img src="icons/perpustakaan.png" class="menu-icon"><span>Perpus</span>
+      </div>
+      <div class="menu-item stagger" onclick="smoothGoTo('izin.html')">
+        <img src="icons/izin.png" class="menu-icon"><span>Izin</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>JANGAN TINGGALKAN SHOLAT</footer>
 
 <script>
-  function openFeature(title, desc) {
-    const overlay = document.getElementById('feature-overlay');
-    document.getElementById('feat-title').innerText = title;
-    document.getElementById('feat-desc').innerText = desc;
-    
-    overlay.style.display = 'block';
-    setTimeout(() => {
-      overlay.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Stop scroll dashboard
-    }, 10);
+  // FIREBASE CONFIG (SAMA)
+  firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
+  const auth = firebase.auth();
+
+  // FUNGSI ANIMASI PINDAH HALAMAN (SMOOTH PLAYSTORE)
+  function smoothGoTo(url) {
+    document.getElementById('main-container').style.transition = "all 0.5s ease";
+    document.getElementById('main-container').style.opacity = "0";
+    document.getElementById('main-container').style.transform = "scale(0.9)";
+    setTimeout(() => { window.location.href = url; }, 500);
   }
 
-  function closeFeature() {
-    const overlay = document.getElementById('feature-overlay');
-    overlay.style.animation = "slideUpFade 0.5s ease reverse forwards";
-    
-    setTimeout(() => {
-      overlay.classList.remove('active');
-      overlay.style.display = 'none';
-      overlay.style.animation = ""; // Reset animasi
-      document.body.style.overflow = 'auto';
-    }, 500);
+  // UPDATE JADWAL
+  function updateJadwal() {
+    const h = new Date().getHours();
+    const m = String(new Date().getMinutes()).padStart(2, '0');
+    document.getElementById('live-jam').innerText = h + ":" + m;
+    let s = "Waktu Belajar", b = "Semangat menuntut ilmu!";
+    if(h >= 5 && h <= 7) { s = "Absen Pagi"; b = "Sesi Pagi Dibuka"; }
+    else if(h >= 12 && h <= 14) { s = "Absen Siang"; b = "Sesi Siang Dibuka"; }
+    else if(h >= 18 && h <= 20) { s = "Absen Malam"; b = "Sesi Malam Dibuka"; }
+    document.getElementById('info-sesi').innerText = s;
+    document.getElementById('info-sub').innerText = b;
   }
+  setInterval(updateJadwal, 1000);
+
+  // AUTH STATE
+  auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card");
+    const dashboard=document.getElementById("dashboard");
+    const menuBtn=document.getElementById("menu-btn");
+    if(user){
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display="flex";
+      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
+      updateJadwal();
+    } else {
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+    }
+    setTimeout(() => { document.getElementById("loading-screen").style.opacity="0"; setTimeout(()=>document.getElementById("loading-screen").style.display="none",500); }, 1000);
+  });
+
+  // SIDEBAR LOGIC (SAMA)
+  const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
+  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
+  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+  function logout(){ auth.signOut().then(()=>location.reload()); }
 </script>
 </body>
 </html>
