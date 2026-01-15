@@ -14,6 +14,8 @@
   .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
   label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-left: 5px; }
   select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; }
+  .btn-all { width: 100%; margin-top: 10px; padding: 8px; border-radius: 8px; border: 1px solid var(--hadir); color: var(--hadir); background: none; font-weight: 700; cursor: pointer; font-size: 12px; transition: 0.3s; }
+  .btn-all:hover { background: var(--hadir); color: white; }
   .santri-list { margin-bottom: 180px; }
   .santri-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
   .btn-group { display: flex; gap: 4px; }
@@ -54,6 +56,7 @@
       </optgroup>
     </select>
     <input type="text" id="cari" class="search-box" placeholder="Cari nama siswa..." onkeyup="filter()">
+    <button class="btn-all" onclick="hadirSemua()">✅ TANDAI HADIR SEMUA</button>
   </div>
 
   <div id="list" class="santri-list">
@@ -67,29 +70,35 @@
 </div>
 
 <script>
-  // PENGATURAN UTAMA
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybJivvBR-ZiHPeDPS9MA4DVGLmkfblI9JfLQUAwQ9Cr6riFa-4cjPMdo_7SAyOBtlaug/exec";
-const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc"; 
-const GID_CETAK = "196349453";
+  // Ganti URL ini dengan URL Web App terbaru Anda
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybJivvBR-ZiHPeDPS9MA4DVGLmkfblI9JfLQUAwQ9Cr6riFa-4cjPMdo_7SAyOBtlaug/exec";
+  const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc"; 
+  const GID_CETAK = "196349453";
 
-  // Ambil data siswa dari Spreadsheet
+  // 1. Ambil data siswa
   document.getElementById('pilih-kelas').onchange = function() {
     if(!this.value) return;
     document.getElementById('loading').style.display = 'flex';
     const s = document.createElement('script');
     s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
     s.onerror = function() {
-      alert("Gagal memuat data. Periksa koneksi atau URL Script Anda.");
+      alert("Gagal memuat data. Periksa koneksi.");
       document.getElementById('loading').style.display = 'none';
     };
     document.body.appendChild(s);
   };
 
-  // Tampilkan data siswa di layar
+  // 2. Tampilkan data ke layar
   function render(data) {
     document.getElementById('loading').style.display = 'none';
     const cont = document.getElementById('list');
-    cont.innerHTML = data.length ? '' : '<p style="text-align:center;padding:20px;color:#888">Data kelas ini tidak ditemukan di Sheet1.</p>';
+    
+    if (data.error) {
+       cont.innerHTML = `<p style="text-align:center;padding:20px;color:red">${data.error}</p>`;
+       return;
+    }
+
+    cont.innerHTML = data.length ? '' : '<p style="text-align:center;padding:20px;color:#888">Tidak ada data di tab kelas ini.</p>';
     
     data.forEach(x => {
       const d = document.createElement('div');
@@ -106,7 +115,17 @@ const GID_CETAK = "196349453";
     });
   }
 
-  // Logika pilih status (Hadir, Sakit, Izin, Alpha)
+  // 3. Fungsi Hadir Semua
+  function hadirSemua() {
+    const items = document.querySelectorAll('.santri-item');
+    if (items.length === 0) return alert("Pilih kelas terlebih dahulu!");
+    items.forEach(item => {
+      const btnHadir = item.querySelector('.btn-status:nth-child(1)');
+      set(btnHadir, 'H');
+    });
+  }
+
+  // 4. Logika pilih status
   function set(btn, stat) {
     btn.parentElement.querySelectorAll('button').forEach(b => { 
       b.className = 'btn-status'; 
@@ -117,7 +136,7 @@ const GID_CETAK = "196349453";
     btn.setAttribute('data-st', stat);
   }
 
-  // Fitur Pencarian Nama
+  // 5. Fitur Pencarian
   function filter() {
     const val = document.getElementById('cari').value.toLowerCase();
     document.querySelectorAll('.santri-item').forEach(i => {
@@ -125,7 +144,7 @@ const GID_CETAK = "196349453";
     });
   }
 
-  // Kirim data ke Spreadsheet
+  // 6. Simpan data
   async function simpan() {
     const res = [];
     const kls = document.getElementById('pilih-kelas').value;
@@ -135,11 +154,11 @@ const GID_CETAK = "196349453";
         kelas: kls, 
         nipd: g.dataset.nipd, 
         nama: g.dataset.nama, 
-        status: st.dataset.st 
+        status: st.getAttribute('data-st') 
       });
     });
     
-    if(!res.length) return alert("Pilih status absen (H/S/I/A) untuk setidaknya satu siswa!");
+    if(!res.length) return alert("Mohon isi absen minimal satu siswa!");
     
     document.getElementById('loading').style.display = 'flex';
     try {
@@ -147,17 +166,16 @@ const GID_CETAK = "196349453";
       alert("✅ Data Absensi Berhasil Disimpan!"); 
       location.reload();
     } catch(e) { 
-      alert("Terjadi kesalahan saat menyimpan data."); 
+      alert("Gagal menyimpan data."); 
     } finally { 
       document.getElementById('loading').style.display = 'none'; 
     }
   }
 
-  // Fitur Download PDF (Tab SIAP_CETAK)
+  // 7. Download PDF
   function cetak() {
     const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&gid=${GID_CETAK}&size=A4&portrait=true&fitw=true&gridlines=false`;
-    const konfirmasi = confirm("Download laporan PDF dari tab SIAP_CETAK?");
-    if(konfirmasi) window.open(url, '_blank');
+    if(confirm("Download laporan PDF?")) window.open(url, '_blank');
   }
 </script>
 </body>
