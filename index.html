@@ -242,25 +242,45 @@
   });
   const auth = firebase.auth();
 
-  // MAHFUZAT ENGINE
-  const daftarMahfuzat = [
-    { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
-    { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
-    { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
-    { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." },
-    { ar: "مَنْ سَارَ عَلَى الدَّرْبِ وَصَلَ", id: "Barang siapa berjalan pada jalannya, sampailah ia." },
-    { ar: "آفَةُ الْعِلْمِ النِّسْيَانُ", id: "Penyakit ilmu adalah lupa." },
-    { ar: "خَيْرُ جَلِيْسٍ فِي الزَّمانِ كِتابٌ", id: "Sebaik-baik teman duduk adalah buku." }
-  ];
-
-  function updateMahfuzatHome() {
-    const tgl = new Date().getDate();
-    const index = tgl % daftarMahfuzat.length;
-    const data = daftarMahfuzat[index];
-    document.getElementById('homeArab').innerText = data.ar;
-    document.getElementById('homeIndo').innerText = `"${data.id}"`;
+/* MAHFUZAT MINIMALIS */
+  .home-mahfuzat {
+    background: white;
+    margin-bottom: 20px; 
+    padding: 15px 20px; 
+    border-radius: 18px; 
+    border-left: 5px solid var(--primary);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
-
+  .mahfuzat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .mahfuzat-label { 
+    font-size: 9px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    color: var(--primary); 
+    font-weight: 800;
+  }
+  #homeArab { 
+    font-family: 'Noto Naskh Arabic', serif; 
+    font-size: 18px; 
+    color: #333; 
+    direction: rtl; 
+    text-align: right;
+  }
+  #homeIndo { 
+    font-size: 11px; 
+    color: var(--muted); 
+    font-style: italic; 
+    text-align: right;
+  }
   function hideLoading() {
     const ls = document.getElementById("loading-screen");
     ls.style.opacity = "0";
