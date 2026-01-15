@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahfuzat Day - E-Santri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1f6f51; --accent: #d4b96a; }
+        body { font-family: 'Poppins', sans-serif; background: #f3fbf7; margin: 0; padding: 20px; }
+
+        .mahfuzat-container {
+            max-width: 450px; margin: 0 auto;
+        }
+
+        .mahfuzat-card {
+            background: linear-gradient(135deg, var(--primary), #16503a);
+            border-radius: 30px; padding: 30px; color: white;
+            box-shadow: 0 15px 35px rgba(31, 111, 81, 0.2);
+            position: relative; overflow: hidden;
+            text-align: center;
+        }
+
+        .mahfuzat-card::before {
+            content: "❞"; position: absolute; top: 10px; left: 20px;
+            font-size: 80px; opacity: 0.1; color: white;
+        }
+
+        .label-top {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+            background: rgba(255,255,255,0.2); padding: 5px 15px;
+            border-radius: 20px; display: inline-block; margin-bottom: 30px;
+        }
+
+        .text-arab {
+            font-family: 'Noto Naskh Arabic', serif; font-size: 28px;
+            line-height: 2; margin-bottom: 20px; direction: rtl;
+        }
+
+        .text-indo {
+            font-style: italic; font-size: 15px; opacity: 0.9;
+            line-height: 1.6; margin-bottom: 30px;
+        }
+
+        .btn-action {
+            display: flex; justify-content: center; gap: 15px;
+        }
+
+        .btn {
+            background: white; border: none; color: var(--primary);
+            padding: 10px 20px; border-radius: 12px; font-weight: 600;
+            font-size: 12px; cursor: pointer; transition: 0.3s;
+        }
+
+        .btn:active { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+<div class="mahfuzat-container">
+    <div class="mahfuzat-card">
+        <div class="label-top">Mahfuzat Hari Ini</div>
+        
+        <div class="text-arab" id="displayArab">...</div>
+        <div class="text-indo" id="displayIndo">...</div>
+
+        <div class="btn-action">
+            <button class="btn" onclick="copyText()">📋 Salin</button>
+            <button class="btn" onclick="shareWa()">📲 Share WA</button>
+        </div>
+    </div>
+    
+    <p style="text-align:center; font-size:11px; color:#888; margin-top:20px;">
+        Ganti otomatis setiap hari untuk motivasi santri
+    </p>
+</div>
+
+<script>
+    // Koleksi Mahfuzat Lengkap
+    const daftarMahfuzat = [
+        { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
+        { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
+        { ar: "مَنْ سَارَ عَلَى الدَّرْبِ وَصَلَ", id: "Barang siapa berjalan pada jalannya, sampailah ia." },
+        { ar: "مَنْ قَلَّ صِدْقُهُ قَلَّ صَدِيْقُهُ", id: "Barang siapa sedikit jujurnya, sedikit pulalah temannya." },
+        { ar: "جَالِسْ أَهْلَ الصِّدْقِ وَالْوَفَاءِ", id: "Bergaullah dengan orang yang jujur dan menepati janji." },
+        { ar: "مَوَدَّةُ الصَّدِيْقِ تَظْهَرُ وَقْتَ الضِّيْقِ", id: "Kasih sayang seorang teman itu tampak pada waktu kesempitan." },
+        { ar: "وَمَا اللَّذَّةُ إِلاَّ بَعْدَ التَّعَبِ", id: "Tidak ada kenikmatan kecuali setelah kelelahan." },
+        { ar: "اَلصَّبْرُ يُعِيْنُ عَلَى كُلِّ عَمَلٍ", id: "Kesabaran itu membantu segala pekerjaan." },
+        { ar: "جَرِّبْ وَلاَحِظْ تَكُنْ عَارِفًا", id: "Cobalah dan perhatikanlah, niscaya kau akan jadi orang yang tahu." },
+        { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." },
+        { ar: "اَلآدَابُ فَوْقَ الْعِلْمِ", id: "Adab itu di atas ilmu." },
+        { ar: "بَيْضَةُ الْيَوْمِ خَيْرٌ مِنْ دَجَاجَةِ الْغَدِ", id: "Telur hari ini lebih baik daripada ayam esok hari." },
+        { ar: "الْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
+        { ar: "خَيْرُ جَلِيْسٍ فِي الزَّمَانِ كِتَابٌ", id: "Sebaik-baik teman duduk setiap waktu adalah buku." }
+    ];
+
+    function tampilkanMahfuzat() {
+        const tgl = new Date();
+        const index = tgl.getDate() % daftarMahfuzat.length; // Otomatis pilih berdasarkan tanggal hari ini
+        
+        const data = daftarMahfuzat[index];
+        document.getElementById('displayArab').innerText = data.ar;
+        document.getElementById('displayIndo').innerText = `"${data.id}"`;
+    }
+
+    function copyText() {
+        const ar = document.getElementById('displayArab').innerText;
+        const id = document.getElementById('displayIndo').innerText;
+        navigator.clipboard.writeText(ar + "\n" + id);
+        alert("Mahfuzat berhasil disalin!");
+    }
+
+    function shareWa() {
+        const ar = document.getElementById('displayArab').innerText;
+        const id = document.getElementById('displayIndo').innerText;
+        const text = encodeURIComponent("*Mahfuzat Hari Ini*\n\n" + ar + "\n" + id);
+        window.open(`https://wa.me/?text=${text}`);
+    }
+
+    // Jalankan saat halaman dibuka
+    tampilkanMahfuzat();
+</script>
+
+</body>
+</html>
