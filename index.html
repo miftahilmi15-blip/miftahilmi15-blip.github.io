@@ -10,114 +10,125 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #1b5e20; /* Emerald Deep */
-    --primary-light: #2e7d32;
-    --accent: #c5a059; /* Gold Metallic */
-    --text: #2c3e50;
-    --glass: rgba(255, 255, 255, 0.7);
-    --shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
+    --primary: #1b5e20;
+    --primary-hover: #16503a;
+    --accent: #c5a059;      
+    --text: #2d3436;
+    --muted: #636e72;
+    --glass: rgba(255, 255, 255, 0.85);
+    --soft: rgba(27, 94, 32, 0.05);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-body {
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
+  
+  body {
     background: #f8fbf9;
     background-image: 
-        radial-gradient(circle at 0% 0%, rgba(27, 94, 32, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 0% 0%, rgba(27, 94, 32, 0.08) 0%, transparent 40%),
         radial-gradient(circle at 100% 100%, rgba(197, 160, 89, 0.1) 0%, transparent 40%);
-}
+    background-attachment: fixed;
+    color: var(--text);
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-/* Re-design Logo & Title */
-.logo-box {
-    width: 85px; height: 85px;
-    border-radius: 22px;
-    background: #fff;
-    border: 1px solid rgba(197, 160, 89, 0.3);
-    padding: 12px;
+  /* LOADING SCREEN */
+  #loading-screen {
+    position: fixed; inset: 0; background: #f8fbf9; 
+    display: flex; align-items: center; justify-content: center; z-index: 9999;
+  }
+  .spinner {
+    width: 40px; height: 40px; border: 4px solid var(--soft);
+    border-top: 4px solid var(--primary); border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  .container { width: 100%; max-width: 420px; z-index: 1; }
+
+  /* HEADER */
+  .header-box { text-align: center; padding: 30px 0 10px; }
+  .logo-box { 
+    width: 85px; height: 85px; margin: 0 auto 15px;
+    background: white; padding: 12px; border-radius: 22px;
     box-shadow: 0 10px 25px rgba(27, 94, 32, 0.1);
-}
+    border: 1px solid rgba(197, 160, 89, 0.2);
+  }
+  .logo { width: 100%; height: 100%; object-fit: contain; }
+  .title { 
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px; font-weight: 900; color: var(--primary);
+    letter-spacing: 4px; text-transform: uppercase;
+  }
 
-.title {
-    font-size: 26px;
-    letter-spacing: 5px;
-    color: var(--primary);
-    -webkit-text-stroke: 0;
-    text-shadow: none;
-    font-weight: 800;
-}
+  /* WELCOME INFO */
+  .welcome-card { padding: 0 10px 20px; text-align: left; width: 100%; }
+  .welcome-card p { font-size: 13px; color: var(--muted); }
+  .welcome-card h3 { font-size: 20px; color: var(--primary); font-weight: 700; }
 
-/* Welcome Section */
-.welcome-card {
-    text-align: left;
-    width: 100%;
-    margin-bottom: 25px;
-    padding: 0 10px;
-}
-
-.welcome-card p { font-size: 14px; color: var(--muted); margin-bottom: 2px; }
-.welcome-card h3 { font-size: 22px; color: var(--primary); font-weight: 700; }
-
-/* Elegant Mahfuzat Ticker */
-.mahfuzat-ticker {
+  /* MAHFUZAT TICKER */
+  .mahfuzat-ticker {
     background: var(--glass);
     backdrop-filter: blur(10px);
+    margin-bottom: 25px; padding: 12px 18px;
+    border-radius: 20px; display: flex; align-items: center;
     border: 1px solid rgba(197, 160, 89, 0.2);
-    border-radius: 18px;
-    padding: 12px 18px;
-}
-
-/* Modern Menu Grid (2 Kolom agar lebih clean) */
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-    width: 100%;
-}
-
-.menu-item {
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 25px 15px;
-    border: 1px solid rgba(0,0,0,0.03);
     box-shadow: 0 8px 20px rgba(0,0,0,0.03);
-    position: relative;
-    overflow: hidden;
-}
+    cursor: pointer;
+  }
+  .ticker-label {
+    background: var(--accent); color: white;
+    font-size: 9px; font-weight: 800; padding: 4px 10px;
+    border-radius: 50px; margin-right: 12px;
+  }
+  .ticker-content { flex: 1; overflow: hidden; }
+  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; font-size: 15px; }
 
-.menu-item::after {
-    content: '';
-    position: absolute;
-    top: 0; right: 0;
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, transparent 50%, rgba(197, 160, 89, 0.1) 50%);
-    border-radius: 0 0 0 100%;
-}
+  /* MENU GRID */
+  .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; }
+  .menu-item { 
+    background: white; padding: 25px 15px; border-radius: 24px; text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.03);
+    transition: var(--transition); cursor: pointer;
+  }
+  .menu-item:active { transform: scale(0.95); background: var(--soft); }
+  .menu-icon { width: 45px; height: 45px; margin-bottom: 12px; }
+  .menu-item span { display: block; font-size: 13px; font-weight: 700; color: var(--text); }
 
-.menu-icon {
-    width: 45px; height: 45px;
-    margin-bottom: 12px;
-    filter: drop-shadow(0 4px 8px rgba(27, 94, 32, 0.2));
-}
+  /* KHUSUS ABSENSI TERKUNCI */
+  .menu-locked { filter: grayscale(1); opacity: 0.6; background: #f1f1f1 !important; }
 
-.menu-item span {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: 0.5px;
-}
+  /* SIDEBAR & OVERLAY */
+  .menu-trigger {
+    position: fixed; top: 25px; right: 25px; z-index: 1300;
+    background: white; color: var(--primary); width: 48px; height: 48px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 15px; cursor: pointer; box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.05); font-size: 20px;
+  }
+  .sidebar { 
+    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
+    background: white; transition: var(--transition); z-index: 1200; 
+    display: flex; flex-direction: column; padding: 50px 25px; border-radius: 30px 0 0 30px;
+  }
+  .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
+  .overlay.show { display: block; }
 
-/* Hover Effect */
-.menu-item:active {
-    transform: translateY(-5px);
-    border-color: var(--accent);
-    box-shadow: 0 12px 25px rgba(197, 160, 89, 0.15);
-}
-
-/* Locked State */
-.menu-locked {
-    filter: grayscale(1);
-    opacity: 0.6;
-    background: #f1f1f1;
-}
+  /* AUTH CARDS */
+  .card.login { background: white; border-radius: 30px; padding: 35px 25px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+  input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 15px; border: 1px solid #eee; background: #f9f9f9; outline: none; }
+  .btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; }
+  .btn.primary { background: var(--primary); color: #fff; }
+  .btn.outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); margin-top: 8px; }
+  .btn.google { background: white; color: #444; border: 1px solid #eee; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  
+  .hidden { display:none !important; }
+  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 10px; font-weight: 800; text-align: center; letter-spacing: 2px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -155,33 +166,28 @@ body {
   <div id="login-card" class="card login hidden">
     <h2 style="text-align:center; color:var(--primary); font-weight:800;">Ahlan wa Sahlan!</h2>
     <p style="text-align:center; color:var(--muted); font-size:12px; margin-bottom:25px;">Masuk ke akun Anda</p>
-    
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
-    
     <button class="btn primary" onclick="login()">MASUK</button>
-    
     <button class="btn outline" onclick="register()">DAFTAR AKUN BARU</button>
-    
     <div style="text-align: center; margin: 15px 0; color: var(--muted); font-size: 12px;">Atau</div>
-    
     <button class="btn google" onclick="loginGoogle()">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Masuk dengan Google
     </button>
   </div>
 
- <section id="dashboard" class="hidden">
+  <section id="dashboard" class="hidden">
     <div class="welcome-card">
         <p>Assalamu'alaikum,</p>
-        <h3 id="welcome-msg">Santri Pilihan</h3>
+        <h3 id="welcome-msg">Ahlan, Santri!</h3>
     </div>
 
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
-        <div class="ticker-label" style="background: var(--accent);">HIKMAH</div>
+        <div class="ticker-label">HIKMAH</div>
         <div class="ticker-content">
-            <marquee id="mahfuzat-marquee" scrollamount="3">
+            <marquee scrollamount="3">
                 <span class="ar-run" id="runArab">...</span> 
-                <span id="runIndo" style="color: var(--text); font-style: italic;">...</span>
+                <span id="runIndo" style="color: var(--muted); font-style: italic;">...</span>
             </marquee>
         </div>
     </div>
@@ -189,35 +195,15 @@ body {
     <div class="menu-grid">
       <div class="menu-item" id="menu-absensi" onclick="cekJamAbsen()">
         <img src="icons/absensi.png" class="menu-icon">
-        <span id="text-absensi">Kehadiran</span>
+        <span id="text-absensi">Absensi</span>
       </div>
-
-      <div class="menu-item" onclick="goTo('tahfidz.html')">
-        <img src="icons/tahfidz.png" class="menu-icon">
-        <span>Tahfidz</span>
-      </div>
-
-      <div class="menu-item" onclick="goTo('alquran.html')">
-        <img src="icons/alquran.png" class="menu-icon">
-        <span>Al-Qur'an</span>
-      </div>
-
-      <div class="menu-item" onclick="goTo('izin.html')">
-        <img src="icons/izin.png" class="menu-icon">
-        <span>Izin Santri</span>
-      </div>
-
-      <div class="menu-item" onclick="goTo('perpustakaan.html')">
-        <img src="icons/perpustakaan.png" class="menu-icon">
-        <span>Maktabah</span>
-      </div>
-
-      <div class="menu-item" onclick="goTo('kamus.html')">
-        <img src="icons/kamus.png" class="menu-icon">
-        <span>Lughoh</span>
-      </div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')"><img src="icons/tahfidz.png" class="menu-icon"><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="goTo('alquran.html')"><img src="icons/alquran.png" class="menu-icon"><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="goTo('kamus.html')"><img src="icons/kamus.png" class="menu-icon"><span>Kamus</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><img src="icons/perpustakaan.png" class="menu-icon"><span>Perpustakaan</span></div>
+      <div class="menu-item" onclick="goTo('izin.html')"><img src="icons/izin.png" class="menu-icon"><span>Izin</span></div>
     </div>
-</section>
+  </section>
 </main>
 
 <footer>JANGAN TINGGALKAN SHOLAT</footer>
@@ -230,7 +216,6 @@ body {
   });
   const auth = firebase.auth();
 
-  // DATA 30 MAHFUZAT (Agar berubah tiap hari)
   const daftarMahfuzat = [
         { ar: "مَنْ جَدَّ وَجَدَ", id: "Barang siapa bersungguh-sungguh, dapatlah ia." },
         { ar: "مَنْ صَبَرَ ظَفِرَ", id: "Barang siapa yang bersabar, beruntunglah ia." },
@@ -242,38 +227,43 @@ body {
         { ar: "خَيْرُ جَلِيْسٍ فِي الزَّمَانِ كِتَابٌ", id: "Sebaik-baik teman duduk setiap waktu adalah buku." },
         { ar: "لَوْلَا العِلْمُ لَكَانَ النَّاسُ كَالبَهَائِمِ", id: "Kalaulah tidak karena ilmu niscaya manusia itu seperti binatang." },
         { ar: "تَعَلَّمَنَّ صَغِيْرًا وَاعْمَلْ بِهِ كَبِيْرًا", id: "Belajarlah di waktu kecil dan amalkanlah di waktu besar." },
-        { ar: "اَلْعِلْمُ صَيْدٌ وَالْكِتَابَةُ قَيْدُهُ", id: "Ilmu adalah buruan dan tulisan adalah pengikatnya." },
-        { ar: "مَنْ كَثُرَ إِحْسَانُهُ كَثُرَ إِخْوَانُهُ", id: "Barang siapa banyak perbuatan baiknya, banyak pulalah temannya." },
-        { ar: "بَيْضَةُ اليَوْمِ خَيْرٌ مِنْ دَجَاجَةِ الغَدِ", id: "Telur hari ini lebih baik daripada ayam esok hari." },
-        { ar: "مَنْ حَفَرَ حُفْرَةً وَقَعَ فِيْهَا", id: "Barang siapa menggali lubang, maka ia akan terperosok ke dalamnya." },
-        { ar: "عَدُوٌّ عَاقِلٌ خَيْرٌ مِنْ صَدِيْقٍ جَاهِلٍ", id: "Musuh yang berakal lebih baik daripada teman yang bodoh." },
-        { ar: "مَنْ عَرَفَ بُعْدَ السَّفَرِ اِسْتَعَدَّ", id: "Barang siapa tahu jauhnya perjalanan, ia akan bersiap-siap." },
-        { ar: "مَنْ ظَلَمَ نَفْسَهُ فَهُوَ لِغَيْرِهِ أَظْلَمُ", id: "Barang siapa menzalimi dirinya sendiri, ia akan lebih zalim kepada orang lain." },
-        { ar: "فَكِّرْ قَبْلَ أَنْ تَعْزِمَ", id: "Berpikirlah sebelum bertekad." },
-        { ar: "مَنْ قَلَّ صِدْقُهُ قَلَّ صَدِيْقُهُ", id: "Barang siapa sedikit kejujurannya, sedikit pulalah temannya." },
-        { ar: "اِجْهَدْ وَلَا تَكْسَلْ وَلَا تَكُ غَافِلًا", id: "Bersungguh-sungguhlah, jangan malas, dan jangan jadi pelala." },
-        { ar: "مَنْ قَلَّ صِدْقُهُ قَلَّ صَدِيْقُهُ", id: "Barang siapa sedikit benarnya, sedikit pulalah temannya." },
-        { ar: "الصَّبْرُ يُعِيْنُ عَلَى كُلِّ عَمَلٍ", id: "Kesabaran itu menolong segala pekerjaan." },
-        { ar: "لَا تُؤَخِّرْ عَمَلَكَ إِلَى الغَدِ", id: "Jangan tunda pekerjaanmu hingga esok hari." },
-        { ar: "اُطْلُبِ العِلْمَ مِنَ المَهْدِ إِلَى اللَّحْدِ", id: "Tuntutlah ilmu dari buaian hingga liang lahat." },
-        { ar: "بِقَدْرِ الكَدِّ تُكْتَسَبُ المَعَالِي", id: "Setinggi apa usaha yang dilakukan, setinggi itu pula derajat yang didapat." },
-        { ar: "خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ", id: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya." },
-        { ar: "اَلْمَرْءُ عَلَى دِيْنِ خَلِيْلِهِ", id: "Seseorang itu tergantung pada agama teman dekatnya." },
-        { ar: "لِكُلِّ مَقَامٍ مَقَالٌ وَلِكُلِّ مَقَالٍ مَقَامٌ", id: "Tiap tempat ada bicaranya, dan tiap bicara ada tempatnya." },
-        { ar: "قُلِ الحَقَّ وَلَوْ كَانَ مُرًّا", id: "Katakanlah kebenaran itu walaupun pahit." },
         { ar: "سَلاَمَةُ الإِنْسَانِ فِي حِفْظِ اللِّسَانِ", id: "Keselamatan manusia itu dalam menjaga lidahnya." }
   ];
 
   function updateMahfuzatHome() {
     const tgl = new Date().getDate();
-    // Menggunakan Modulus agar index tidak error (1-30)
     const index = (tgl - 1) % daftarMahfuzat.length;
     const data = daftarMahfuzat[index];
-    
-    // Pastikan data ada sebelum di-set
     if (data) {
         document.getElementById('runArab').innerText = data.ar;
         document.getElementById('runIndo').innerText = " — " + data.id;
+    }
+  }
+
+  // LOGIKA PENGUNCIAN MENU ABSENSI
+  function updateTampilanMenu() {
+    const sekarang = new Date();
+    const waktuSekarang = (sekarang.getHours() * 100) + sekarang.getMinutes();
+    const menuAbsen = document.getElementById('menu-absensi');
+    const textAbsen = document.getElementById('text-absensi');
+
+    // Jam Absen: 06:30 - 08:00
+    if (waktuSekarang < 630 || waktuSekarang > 800) {
+        menuAbsen.classList.add('menu-locked');
+        textAbsen.innerText = "Absen Tutup";
+    } else {
+        menuAbsen.classList.remove('menu-locked');
+        textAbsen.innerText = "Absensi";
+    }
+  }
+
+  function cekJamAbsen() {
+    const sekarang = new Date();
+    const waktuSekarang = (sekarang.getHours() * 100) + sekarang.getMinutes();
+    if (waktuSekarang < 630 || waktuSekarang > 800) {
+        alert("⛔ MAAF\nAbsensi hanya dibuka pukul 06:30 - 08:00 WIB.");
+    } else {
+        goTo('absensi.html');
     }
   }
 
@@ -283,9 +273,7 @@ body {
     setTimeout(() => ls.style.display = "none", 400);
   }
 
-  function goTo(url) {
-    window.location.href = url;
-  }
+  function goTo(url) { window.location.href = url; }
 
   function login(){
     const email=document.getElementById("email").value;
@@ -296,10 +284,8 @@ body {
   function register() {
     const email=document.getElementById("email").value;
     const pass=document.getElementById("password").value;
-    if(!email || !pass) { alert("Isi email dan password untuk mendaftar"); return; }
-    auth.createUserWithEmailAndPassword(email, pass)
-      .then(() => alert("Berhasil mendaftar!"))
-      .catch(e => alert(e.message));
+    if(!email || !pass) { alert("Isi email dan password"); return; }
+    auth.createUserWithEmailAndPassword(email, pass).then(() => alert("Berhasil mendaftar!")).catch(e => alert(e.message));
   }
 
   function loginGoogle() {
@@ -310,21 +296,18 @@ body {
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user=>{
-    const loginCard=document.getElementById("login-card");
-    const dashboard=document.getElementById("dashboard");
-    const menuBtn=document.getElementById("menu-btn");
-
+    const loginCard=document.getElementById("login-card"), dashboard=document.getElementById("dashboard"), menuBtn=document.getElementById("menu-btn");
     if(user){
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
       menuBtn.style.display="flex";
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
-      
       document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
       document.getElementById("sidebar-email").innerText = user.email;
       if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
-
+      
       updateMahfuzatHome();
+      updateTampilanMenu();
     } else {
       loginCard.classList.remove("hidden");
       dashboard.classList.add("hidden");
