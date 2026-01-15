@@ -133,6 +133,7 @@
   .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .btn.primary { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: #fff; }
   .btn.google { background: white; color: #444; border: 1px solid #ddd; }
+  .link-text { color: var(--primary); font-weight: 700; text-decoration: none; font-size: 13px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -169,6 +170,10 @@
     <input type="password" id="password" placeholder="Password">
     <button class="btn primary" onclick="login()">MASUK</button>
     
+    <div style="text-align:center; margin: 10px 0;">
+        <p style="font-size: 12px; color: var(--muted);">Belum punya akun? <a href="daftar.html" class="link-text">Daftar Sekarang</a></p>
+    </div>
+
     <div style="text-align:center; margin: 15px 0; color: #ccc; font-size: 12px;">ATAU</div>
     
     <button class="btn google" onclick="loginGoogle()">
@@ -230,8 +235,7 @@
 
   function hideLoading() {
     const ls = document.getElementById("loading-screen");
-    ls.style.opacity = "0";
-    setTimeout(() => ls.style.display = "none", 400);
+    if(ls) { ls.style.opacity = "0"; setTimeout(() => ls.style.display = "none", 400); }
   }
 
   function goTo(url) {
@@ -246,7 +250,6 @@
     auth.signInWithEmailAndPassword(email,pass).catch(e=> alert(e.message));
   }
 
-  // FUNGSI LOGIN GOOGLE DIKEMBALIKAN
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider).catch(e => alert(e.message));
