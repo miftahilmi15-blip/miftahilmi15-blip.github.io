@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Absensi v2.2</title>
+<title>E-Absensi Siswa Premium</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
@@ -12,67 +12,90 @@
   .container { width: 100%; max-width: 450px; margin: auto; }
   header { text-align: center; padding: 20px 0; color: var(--primary); }
   .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
-  select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 10px; font-size: 14px; outline: none; }
+  label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-left: 5px; }
+  select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; }
   .santri-list { margin-bottom: 180px; }
   .santri-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
   .btn-group { display: flex; gap: 4px; }
-  .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; cursor: pointer; }
+  .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; cursor: pointer; transition: 0.2s; }
   .h-on { background: var(--hadir)!important; color: #fff!important; border: none; }
   .s-on { background: var(--sakit)!important; color: #fff!important; border: none; }
   .i-on { background: var(--izin)!important; color: #fff!important; border: none; }
   .a-on { background: var(--alpha)!important; color: #fff!important; border: none; }
-  .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-  .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
+  .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); }
+  .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 8px; font-size: 14px; transition: 0.2s; }
+  .btn-main:active { transform: scale(0.96); }
   .btn-save { background: var(--primary); color: #fff; }
   .btn-pdf { background: #475569; color: #fff; }
   #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
-  .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<div id="loading"><div class="spinner"></div><p style="margin-top:10px">Mohon tunggu...</p></div>
+<div id="loading"><div class="spinner"></div><p style="margin-top:10px; font-weight: 600; color: var(--primary);">Memproses data...</p></div>
 
 <div class="container">
   <header><h2>E-ABSENSI SISWA</h2></header>
+  
   <div class="card">
+    <label>Pilih Kelas</label>
     <select id="pilih-kelas">
       <option value="">-- Pilih Kelas --</option>
-      <optgroup label="KELAS 7"><option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option></optgroup>
-      <optgroup label="KELAS 8"><option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option></optgroup>
-      <optgroup label="KELAS 9"><option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option></optgroup>
+      <optgroup label="KELAS 7">
+        <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+      </optgroup>
+      <optgroup label="KELAS 8">
+        <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+      </optgroup>
+      <optgroup label="KELAS 9">
+        <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+      </optgroup>
     </select>
-    <input type="text" id="cari" class="search-box" placeholder="Cari nama..." onkeyup="filter()">
+    <input type="text" id="cari" class="search-box" placeholder="Cari nama siswa..." onkeyup="filter()">
   </div>
-  <div id="list" class="santri-list"></div>
+
+  <div id="list" class="santri-list">
+    <p style="text-align:center; padding:20px; color:#888;">Silakan pilih kelas terlebih dahulu.</p>
+  </div>
+
   <div class="footer">
-    <button class="btn-main btn-save" onclick="simpan()">SIMPAN ABSENSI SEKARANG</button>
+    <button class="btn-main btn-save" onclick="simpan()">💾 SIMPAN ABSENSI SEKARANG</button>
     <button class="btn-main btn-pdf" onclick="cetak()">📥 DOWNLOAD LAPORAN PDF</button>
   </div>
 </div>
 
 <script>
-  // GANTI INI DENGAN URL HASIL NEW DEPLOYMENT ANDA
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyRktFFf3zYfydVwSOYUa7-evyUKAgMQJUxyBu8S21fIxFTWudGLmIiq88eynhC3dVIxA/exec";
+  // PENGATURAN UTAMA
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvG31RvuqG6hWvlLXScL2gCCeuKqrk_3eX6cw1TUkPrGF1jMQq7C69MfreFpk99cIHnA/exec";
   const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc";
+  const GID_CETAK = "196349453"; // Tab SIAP_CETAK
 
+  // Ambil data siswa dari Spreadsheet
   document.getElementById('pilih-kelas').onchange = function() {
     if(!this.value) return;
-    document.getElementById('loading').style.display='flex';
+    document.getElementById('loading').style.display = 'flex';
     const s = document.createElement('script');
-    s.src = `${SCRIPT_URL}?kelas=${this.value}&callback=render`;
+    s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
+    s.onerror = function() {
+      alert("Gagal memuat data. Periksa koneksi atau URL Script Anda.");
+      document.getElementById('loading').style.display = 'none';
+    };
     document.body.appendChild(s);
   };
 
+  // Tampilkan data siswa di layar
   function render(data) {
-    document.getElementById('loading').style.display='none';
+    document.getElementById('loading').style.display = 'none';
     const cont = document.getElementById('list');
-    cont.innerHTML = data.length ? '' : '<p style="text-align:center;padding:20px">Data tidak ditemukan.</p>';
+    cont.innerHTML = data.length ? '' : '<p style="text-align:center;padding:20px;color:#888">Data kelas ini tidak ditemukan di Sheet1.</p>';
+    
     data.forEach(x => {
       const d = document.createElement('div');
       d.className = 'santri-item';
-      d.innerHTML = `<div><b style="font-size:13px">${x.nama}</b><br><small style="color:#999">${x.nipd}</small></div>
+      d.innerHTML = `
+        <div><b style="font-size:13px; color:#333;">${x.nama}</b><br><small style="color:#999">${x.nipd}</small></div>
         <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}">
           <button class="btn-status" onclick="set(this,'H')">H</button>
           <button class="btn-status" onclick="set(this,'S')">S</button>
@@ -83,12 +106,18 @@
     });
   }
 
+  // Logika pilih status (Hadir, Sakit, Izin, Alpha)
   function set(btn, stat) {
-    btn.parentElement.querySelectorAll('button').forEach(b => { b.className='btn-status'; b.removeAttribute('data-st'); });
+    btn.parentElement.querySelectorAll('button').forEach(b => { 
+      b.className = 'btn-status'; 
+      b.removeAttribute('data-st'); 
+    });
     const c = {'H':'h-on','S':'s-on','I':'i-on','A':'a-on'};
-    btn.classList.add(c[stat]); btn.setAttribute('data-st', stat);
+    btn.classList.add(c[stat]); 
+    btn.setAttribute('data-st', stat);
   }
 
+  // Fitur Pencarian Nama
   function filter() {
     const val = document.getElementById('cari').value.toLowerCase();
     document.querySelectorAll('.santri-item').forEach(i => {
@@ -96,23 +125,39 @@
     });
   }
 
+  // Kirim data ke Spreadsheet
   async function simpan() {
     const res = [];
+    const kls = document.getElementById('pilih-kelas').value;
     document.querySelectorAll('.btn-group').forEach(g => {
       const st = g.querySelector('[data-st]');
-      if(st) res.push({ kelas: document.getElementById('pilih-kelas').value, nipd: g.dataset.nipd, nama: g.dataset.nama, status: st.dataset.st });
+      if(st) res.push({ 
+        kelas: kls, 
+        nipd: g.dataset.nipd, 
+        nama: g.dataset.nama, 
+        status: st.dataset.st 
+      });
     });
-    if(!res.length) return alert("Pilih absen dulu!");
-    document.getElementById('loading').style.display='flex';
+    
+    if(!res.length) return alert("Pilih status absen (H/S/I/A) untuk setidaknya satu siswa!");
+    
+    document.getElementById('loading').style.display = 'flex';
     try {
-      await fetch(SCRIPT_URL, { method:'POST', mode:'no-cors', body: JSON.stringify(res) });
-      alert("Tersimpan!"); location.reload();
-    } catch(e) { alert("Gagal!"); } finally { document.getElementById('loading').style.display='none'; }
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
+      alert("✅ Data Absensi Berhasil Disimpan!"); 
+      location.reload();
+    } catch(e) { 
+      alert("Terjadi kesalahan saat menyimpan data."); 
+    } finally { 
+      document.getElementById('loading').style.display = 'none'; 
+    }
   }
 
+  // Fitur Download PDF (Tab SIAP_CETAK)
   function cetak() {
-    const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&size=A4&gridlines=false`;
-    window.open(url, '_blank');
+    const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&gid=${GID_CETAK}&size=A4&portrait=true&fitw=true&gridlines=false`;
+    const konfirmasi = confirm("Download laporan PDF dari tab SIAP_CETAK?");
+    if(konfirmasi) window.open(url, '_blank');
   }
 </script>
 </body>
