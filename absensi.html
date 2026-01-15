@@ -19,7 +19,7 @@
   
   .siswa-list { margin-bottom: 160px; width: 100%; }
   .siswa-item { background: white; border-radius: 15px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-  .siswa-info h3 { font-size: 13px; color: #333; font-weight: 600; text-transform: uppercase; }
+  .siswa-info h3 { font-size: 13px; color: #333; font-weight: 600; text-transform: uppercase; line-height: 1.2; }
   .siswa-info p { font-size: 10px; color: #999; }
   
   .btn-group { display: flex; gap: 5px; }
@@ -49,24 +49,15 @@
   <div class="card">
     <select id="pilih-kelas">
       <option value="">-- Pilih Kelas --</option>
-      <option value="7A">7A</option>
-      <option value="7B">7B</option>
-      <option value="7C">7C</option>
-      <option value="7D">7D</option>
-      <option value="8A">8A</option>
-      <option value="8B">8B</option>
-      <option value="8C">8C</option>
-      <option value="8D">8D</option>
-      <option value="9A">9A</option>
-      <option value="9B">9B</option>
-      <option value="9C">9C</option>
-      <option value="9D">9D</option>
+      <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+      <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+      <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
     </select>
     <input type="text" id="cari-nama" class="search-box" placeholder="Cari nama siswa..." onkeyup="filterNama()">
   </div>
 
   <div id="isi-tabel" class="siswa-list">
-    <p style="text-align:center; color:#999; padding-top:20px;">Pilih kelas untuk memulai absen</p>
+    <p style="text-align:center; color:#999; padding-top:20px;">Silakan pilih kelas...</p>
   </div>
 
   <div class="footer-actions">
@@ -76,47 +67,52 @@
 </div>
 
 <script>
-  // --- KONFIGURASI FINAL ---
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-6QWJeLX1zwdvvJ2avB9otFTBBdgcj5pCJLCoDeKHBpYhHuKmkl09FeZrOix7rvbRpg/exec";
-  const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc"; 
-  const GID_CETAK = "196349453"; 
+  // GUNAKAN LINK TERBARU ANDA
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx88bBR_nigwqBb-sC8tk44fpElh875fZuZBxlGFUOjZuwskmj14f2D1j5OoV9ZRVcSfw/exec";
+  const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc";
+  const GID_CETAK = "196349453";
 
+  // FUNGSI AMBIL DATA (Logika Fetch seperti Tahfidz)
   document.getElementById('pilih-kelas').onchange = function() {
     const kls = this.value;
     if(!kls) return;
+    
     document.getElementById('loading').style.display = 'flex';
-    
-    const script = document.createElement('script');
-    script.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(kls)}&callback=handleResponse`;
-    document.body.appendChild(script);
-  };
-
-  function handleResponse(data) {
-    document.getElementById('loading').style.display = 'none';
     const container = document.getElementById('isi-tabel');
-    container.innerHTML = '';
-    
-    if(data.error) {
-       container.innerHTML = `<p style="text-align:center; color:red; padding-top:20px;">${data.error}</p>`;
-       return;
-    }
+    container.innerHTML = '<p style="text-align:center; padding-top:20px;">Memuat nama siswa...</p>';
 
-    data.forEach(s => {
-      const div = document.createElement('div');
-      div.className = 'siswa-item';
-      div.setAttribute('data-nipd', s.nipd);
-      div.setAttribute('data-nama', s.nama.toLowerCase());
-      div.innerHTML = `
-        <div class="siswa-info"><h3>${s.nama}</h3><p>${s.nipd}</p></div>
-        <div class="btn-group">
-          <button class="btn-status" onclick="pilih(this,'H')">H</button>
-          <button class="btn-status" onclick="pilih(this,'S')">S</button>
-          <button class="btn-status" onclick="pilih(this,'I')">I</button>
-          <button class="btn-status" onclick="pilih(this,'A')">A</button>
-        </div>`;
-      container.appendChild(div);
-    });
-  }
+    fetch(`${SCRIPT_URL}?kelas=${kls}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('loading').style.display = 'none';
+        container.innerHTML = '';
+        
+        if(data.error) {
+          container.innerHTML = `<p style="color:red; text-align:center; padding-top:20px;">${data.error}</p>`;
+          return;
+        }
+
+        data.forEach(s => {
+          const div = document.createElement('div');
+          div.className = 'siswa-item';
+          div.setAttribute('data-nipd', s.nipd);
+          div.setAttribute('data-nama', s.nama.toLowerCase());
+          div.innerHTML = `
+            <div class="siswa-info"><h3>${s.nama}</h3><p>${s.nipd}</p></div>
+            <div class="btn-group">
+              <button class="btn-status" onclick="pilih(this,'H')">H</button>
+              <button class="btn-status" onclick="pilih(this,'S')">S</button>
+              <button class="btn-status" onclick="pilih(this,'I')">I</button>
+              <button class="btn-status" onclick="pilih(this,'A')">A</button>
+            </div>`;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        document.getElementById('loading').style.display = 'none';
+        alert("Gagal memuat data. Pastikan Script sudah di-Deploy ulang.");
+      });
+  };
 
   function filterNama() {
     const input = document.getElementById('cari-nama').value.toLowerCase();
@@ -156,16 +152,15 @@
     
     document.getElementById('loading').style.display = 'flex';
     try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataKirim) });
-      alert("✅ Absensi Berhasil Disimpan!");
+      await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(dataKirim) });
+      alert("✅ Berhasil Disimpan!");
       location.reload();
-    } catch (e) { alert("Gagal mengirim data."); } finally { document.getElementById('loading').style.display = 'none'; }
+    } catch (e) { alert("Gagal menyimpan."); } finally { document.getElementById('loading').style.display = 'none'; }
   }
 
   function downloadLaporan() {
     const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&gid=${GID_CETAK}&size=A4&portrait=true&fitw=true&gridlines=false`;
-    const konfirmasi = confirm("Pastikan Kelas & Bulan sudah dipilih di tab SIAP_CETAK Spreadsheet. Lanjutkan?");
-    if(konfirmasi) window.open(url, '_blank');
+    if(confirm("Download laporan PDF?")) window.open(url, '_blank');
   }
 </script>
 </body>
