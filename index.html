@@ -50,7 +50,8 @@
   }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  .container { width: 100%; max-width: 420px; z-index: 1; transition: var(--transition); opacity: 1; }
+  /* CONTAINER CLARITY */
+  .container { width: 100%; max-width: 420px; z-index: 1; transition: opacity 0.3s ease; }
 
   /* HEADER & LOGO */
   .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
@@ -88,9 +89,9 @@
   .ticker-label {
     background: var(--primary); color: white; font-size: 8px; font-weight: 800;
     padding: 4px 10px; border-radius: 50px; margin-right: 12px; white-space: nowrap;
+    z-index: 2;
   }
   .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; }
-  .ticker-content marquee { font-size: 13px; color: var(--text); }
   .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 5px; }
 
   /* CARD & GRID */
@@ -107,12 +108,13 @@
   .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* SIDEBAR & TRIGGER */
+  /* SIDEBAR TRIGGER (TITIK TIGA) */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
-    display: flex; align-items: center; justify-content: center;
+    display: none; align-items: center; justify-content: center;
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
+    font-size: 20px; font-weight: bold;
   }
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: white; 
@@ -125,7 +127,7 @@
   .hidden { display:none !important; }
   footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; letter-spacing: 1px; }
 
-  /* INPUTS & BUTTONS */
+  /* BUTTONS */
   input[type="email"], input[type="password"] {
     width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px;
     border: 1px solid rgba(0,0,0,0.05); background: #f8fafb;
@@ -142,7 +144,8 @@
 <body>
 
 <div id="loading-screen"><div class="spinner"></div></div>
-<div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
+
+<div class="menu-trigger" id="menu-btn" onclick="openSidebar()">&#x22EE;</div>
 
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header" style="text-align: center; margin-bottom: 30px;">
@@ -155,7 +158,7 @@
   </div>
 </div>
 
-<div class="overlay" id="overlay"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
 
 <header class="header-box">
   <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
@@ -189,7 +192,7 @@
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
         <div class="ticker-label">MAHFUZAT</div>
         <div class="ticker-content">
-            <marquee scrollamount="5" direction="left">
+            <marquee scrollamount="6" direction="left" behavior="scroll" onmouseover="this.stop();" onmouseout="this.start();">
                 <span class="ar-run" id="runArab">...</span> 
                 <span id="runIndo" style="color: var(--muted); opacity: 0.8;">...</span>
             </marquee>
@@ -235,13 +238,17 @@
 
   function hideLoading() {
     const ls = document.getElementById("loading-screen");
-    if(ls) { ls.style.opacity = "0"; setTimeout(() => ls.style.display = "none", 400); }
+    if(ls) {
+      ls.style.opacity = "0";
+      setTimeout(() => ls.style.display = "none", 400);
+    }
   }
 
+  // PERBAIKAN BUG KEMBALI (Menghapus opacity 0 saat navigasi)
   function goTo(url) {
     const container = document.getElementById('main-container');
     container.style.opacity = "0";
-    setTimeout(() => { window.location.href = url; }, 250);
+    setTimeout(() => { window.location.href = url; }, 300);
   }
 
   function login(){
@@ -257,16 +264,23 @@
 
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
+  // LOGIKA SIDEBAR
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const menuBtn = document.getElementById("menu-btn");
+
+  function openSidebar() { sidebar.classList.add("open"); overlay.classList.add("show"); }
+  function closeSidebar() { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+
   auth.onAuthStateChanged(user=>{
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
-    const menuBtn=document.getElementById("menu-btn");
     const userPhoto = document.getElementById("user-photo");
 
     if(user){
       loginCard.classList.add("hidden");
       dashboard.classList.remove("hidden");
-      menuBtn.style.display="flex";
+      menuBtn.style.display="flex"; // TITIK TIGA MUNCUL SAAT LOGIN
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
       document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
       if(user.photoURL) userPhoto.src = user.photoURL;
@@ -274,14 +288,10 @@
     } else {
       loginCard.classList.remove("hidden");
       dashboard.classList.add("hidden");
-      menuBtn.style.display="none";
+      menuBtn.style.display="none"; // TITIK TIGA HILANG SAAT LOGOUT
     }
     hideLoading();
   });
-
-  const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
-  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
-  overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
 </script>
 </body>
 </html>
