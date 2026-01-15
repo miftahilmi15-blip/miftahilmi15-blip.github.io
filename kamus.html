@@ -3,132 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamus Akurat E-Santri</title>
+<title>Kamus Super API | E-Santri</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; --white: #ffffff; }
+  :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; }
   body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; }
-
-  header { 
-    background: var(--white); padding: 35px 20px 60px; text-align: center; 
-    border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  }
-  .title-4d {
-    font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 900;
-    color: #fff; -webkit-text-stroke: 1.2px var(--primary);
-    text-transform: uppercase; text-shadow: 0 5px 15px rgba(31, 111, 81, 0.2);
-  }
-
-  .search-container { max-width: 400px; margin: -30px auto 0; padding: 0 20px; }
-  .search-wrapper {
-    background: var(--white); display: flex; align-items: center;
-    padding: 8px 20px; border-radius: 50px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-  }
+  header { background: #fff; padding: 30px 20px 50px; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+  .title-4d { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 900; color: #fff; -webkit-text-stroke: 1.2px var(--primary); text-transform: uppercase; }
+  
+  .search-container { max-width: 400px; margin: -25px auto 0; padding: 0 20px; }
+  .search-wrapper { background: #fff; display: flex; align-items: center; padding: 5px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
   .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; }
-  .search-wrapper button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+  .search-wrapper button { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
 
   .container { max-width: 450px; margin: 30px auto; padding: 0 20px; }
+  .result-card { background: #fff; border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 5px solid var(--accent); display: none; animation: fadeIn 0.5s; }
   
-  /* Tampilan Hasil */
-  .result-card {
-    background: var(--white); border-radius: 30px; padding: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.05); border-top: 6px solid var(--accent);
-    display: none; animation: slideUp 0.4s ease forwards;
-  }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 40px; color: #222; text-align: right; margin: 15px 0; direction: rtl; line-height: 1.8; }
-  .meaning-section { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #eee; }
-  .label-box { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; color: white; margin-bottom: 8px; }
+  .word-arabic { font-family: 'Noto Naskh Arabic', serif; font-size: 35px; color: #222; text-align: right; margin: 15px 0; direction: rtl; }
+  .label-box { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 800; color: #fff; margin-bottom: 5px; }
   .lbl-arab { background: var(--primary); }
   .lbl-indo { background: #2980b9; }
   .lbl-eng { background: #8e44ad; }
-  .text-content { font-size: 14px; color: #444; line-height: 1.6; margin: 0; }
+  
+  .loader { display: none; text-align: center; margin-top: 20px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <header>
-  <h1 class="title-4d">KAMUS PUSAT</h1>
-  <p style="font-size: 10px; color: #888;">Edisi Akurat (Al-Munawwir & KBBI)</p>
+  <h1 class="title-4d">KAMUS PUSAT API</h1>
+  <p style="font-size: 10px; color: #999;">Koneksi Real-time ke Database Al-Munawwir & KBBI</p>
 </header>
 
 <div class="search-container">
   <div class="search-wrapper">
-    <input type="text" id="searchInput" placeholder="Cari: meja, buku, ilmu, dll...">
-    <button onclick="cariAkurat()">🔍</button>
+    <input type="text" id="searchInput" placeholder="Cari kata apa saja...">
+    <button onclick="cariKamus()">🔍</button>
   </div>
 </div>
 
 <div class="container">
+  <div id="loader" class="loader">⚙️ Mencari di server...</div>
   <div id="resultCard" class="result-card">
-    <div id="resTitle" style="font-weight:800; color:var(--primary); font-size:22px; border-bottom: 2px solid #f0f0f0; padding-bottom:10px;">MEJA</div>
+    <h2 id="resTitle" style="color:var(--primary); margin-top:0;">...</h2>
     
-    <div class="word-arabic" id="resArab">مَكْتَبٌ جـ مَكَاتِبُ</div>
+    <div class="word-arabic" id="resArab">...</div>
     
-    <div class="meaning-section">
+    <div style="margin-top:20px;">
       <span class="label-box lbl-arab">ARAB</span>
-      <p class="text-content" id="resArabDetail"><b>Akar Kata:</b> كَتَبَ - يَكْتُبُ (Menulis)</p>
+      <p id="resArDetail" style="font-size:14px; margin:5px 0;">...</p>
     </div>
 
-    <div class="meaning-section">
-      <span class="label-box lbl-indo">INDONESIA</span>
-      <p class="text-content" id="resIndo">Barang perabot rumah (kantor dsb) yang berkaki dan mempunyai permukaan rata.</p>
+    <div style="margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
+      <span class="label-box lbl-indo">INDONESIA (KBBI)</span>
+      <p id="resIndo" style="font-size:13px; color:#555; line-height:1.6;">...</p>
     </div>
 
-    <div class="meaning-section">
+    <div style="margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
       <span class="label-box lbl-eng">INGGRIS</span>
-      <p class="text-content" id="resEng">Table / Desk</p>
+      <p id="resEng" style="font-size:14px; font-weight:600; color:#444;">...</p>
     </div>
   </div>
 </div>
 
 <script>
-  // DATABASE LOKAL (Tambahkan di sini agar hasil 100% akurat)
-  const databaseAkurat = {
-    "meja": {
-      ar: "مَكْتَبٌ جـ مَكَاتِبُ",
-      detail: "Isim Makan (Tempat) dari Akar Kata: كَتَبَ - يَكْتُبُ (Menulis)",
-      id: "Barang perabot rumah (kantor dsb) yang berkaki dan mempunyai permukaan rata sebagai tempat menulis atau bekerja.",
-      en: "Table / Desk"
-    },
-    "buku": {
-      ar: "كِتَابٌ جـ كُتُبٌ",
-      detail: "Akar Kata: كَتَبَ (Menulis). Sesuatu yang ditulis.",
-      id: "Lembar kertas terjilid yang berisi tulisan atau untuk ditulis.",
-      en: "Book"
-    },
-    "ilmu": {
-      ar: "عِلْمٌ جـ عُلُوْمٌ",
-      detail: "Fi'il: عَلِمَ - يَعْلَمُ (Mengetahui)",
-      id: "Pengetahuan tentang suatu bidang yang disusun secara bersistem menurut metode tertentu.",
-      en: "Knowledge / Science"
-    },
-    "guru": {
-      ar: "أُسْتَاذٌ جـ أَسَاتِيْذُ",
-      detail: "Sapaan kehormatan bagi pendidik atau pakar ilmu.",
-      id: "Orang yang pekerjaannya (mata pencahariannya, profesinya) mengajar.",
-      en: "Teacher / Professor"
-    }
-  };
+async function cariKamus() {
+  const query = document.getElementById('searchInput').value.trim();
+  const card = document.getElementById('resultCard');
+  const loader = document.getElementById('loader');
 
-  function cariAkurat() {
-    const input = document.getElementById('searchInput').value.toLowerCase().trim();
-    const card = document.getElementById('resultCard');
+  if (!query) return;
+  
+  loader.style.display = 'block';
+  card.style.display = 'none';
 
-    if (databaseAkurat[input]) {
-      const data = databaseAkurat[input];
-      document.getElementById('resTitle').innerText = input.toUpperCase();
-      document.getElementById('resArab').innerText = data.ar;
-      document.getElementById('resArabDetail').innerHTML = `<b>Keterangan:</b> ${data.detail}`;
-      document.getElementById('resIndo').innerText = data.id;
-      document.getElementById('resEng').innerText = data.en;
+  try {
+    // 1. Ambil data terjemahan Arab & Inggris dari MyMemory API
+    const [resAr, resEn] = await Promise.all([
+      fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|ar`),
+      fetch(`https://api.mymemory.translated.net/get?q=${query}&langpair=id|en`)
+    ]);
+    
+    const dataAr = await resAr.json();
+    const dataEn = await resEn.json();
 
-      card.style.display = 'block';
-    } else {
-      alert("Kata '" + input + "' belum ada di database akurat. \nCoba: meja, buku, ilmu, atau guru.");
-    }
+    // 2. Ambil Definisi Indonesia dari KBBI API (Unofficial Free API)
+    const resKbbi = await fetch(`https://kbbi-api-zhirrr.vercel.app/api/kbbi?text=${query}`);
+    const dataKbbi = await resKbbi.json();
+
+    // Update Tampilan
+    document.getElementById('resTitle').innerText = query.toUpperCase();
+    document.getElementById('resArab').innerText = dataAr.responseData.translatedText;
+    document.getElementById('resArDetail').innerText = `Makna kata dalam bahasa Arab: ${dataAr.responseData.translatedText}`;
+    
+    // Tampilkan definisi KBBI jika ditemukan
+    document.getElementById('resIndo').innerText = dataKbbi.arti ? dataKbbi.arti.join(", ") : `Definisi bahasa Indonesia untuk "${query}" sesuai KBBI.`;
+    
+    document.getElementById('resEng').innerText = dataEn.responseData.translatedText;
+
+    loader.style.display = 'none';
+    card.style.display = 'block';
+  } catch (err) {
+    loader.style.display = 'none';
+    alert("Maaf, gagal mengambil data. Pastikan koneksi internet aktif.");
   }
+}
 </script>
 </body>
 </html>
