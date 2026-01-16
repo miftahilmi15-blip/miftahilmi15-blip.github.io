@@ -1,208 +1,188 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Absensi Hybrid | Manual & NFC Auto-Save</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  body { background: #f0f4f3; padding: 15px; }
-  .container { width: 100%; max-width: 450px; margin: auto; }
-  
-  .nav-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-  .btn-back { background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 700; color: var(--primary); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-  #nfc-status { font-size: 10px; padding: 6px 12px; border-radius: 20px; background: #ddd; color: #777; font-weight: 800; border: 1px solid transparent; transition: 0.3s; }
-  .nfc-active { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #22c55e !important; }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>E-Santri Absensi | Hybrid Mode</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: #f0f4f3; padding: 15px; }
+        .container { width: 100%; max-width: 450px; margin: auto; }
+        
+        /* Header & Nav */
+        .nav-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+        .btn-back { background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 700; color: var(--primary); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        #nfc-status { font-size: 10px; padding: 6px 12px; border-radius: 20px; background: #ddd; color: #777; font-weight: 800; }
+        .nfc-active { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #22c55e !important; }
 
-  header { text-align: center; padding: 10px 0; color: var(--primary); }
-  .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
-  label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-left: 5px; }
-  select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; }
-  
-  .santri-list { margin-bottom: 180px; }
-  .santri-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; transition: 0.3s; }
-  .scan-success { animation: flashGreen 1.5s; border: 2px solid var(--hadir); }
-  @keyframes flashGreen { 0% { background: #dcfce7; } 100% { background: white; } }
+        .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-left: 5px; }
+        select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; }
+        
+        /* List */
+        .santri-list { margin-bottom: 180px; }
+        .santri-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; transition: 0.3s; }
+        .scan-success { animation: flashGreen 1.5s; border: 2px solid var(--hadir); }
+        @keyframes flashGreen { 0% { background: #dcfce7; } 100% { background: white; } }
 
-  .btn-group { display: flex; gap: 4px; }
-  .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; cursor: pointer; }
-  .h-on { background: var(--hadir)!important; color: #fff!important; border: none; }
-  .s-on { background: var(--sakit)!important; color: #fff!important; border: none; }
-  .i-on { background: var(--izin)!important; color: #fff!important; border: none; }
-  .a-on { background: var(--alpha)!important; color: #fff!important; border: none; }
-  
-  .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); text-align: center; }
-  .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
-  .btn-save { background: var(--primary); color: #fff; }
+        .btn-group { display: flex; gap: 4px; }
+        .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; cursor: pointer; }
+        .h-on { background: var(--hadir)!important; color: #fff!important; border: none; }
+        .s-on { background: var(--sakit)!important; color: #fff!important; border: none; }
+        .i-on { background: var(--izin)!important; color: #fff!important; border: none; }
+        .a-on { background: var(--alpha)!important; color: #fff!important; border: none; }
+        
+        /* Footer */
+        .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); text-align: center; }
+        .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 8px; font-size: 14px; background: var(--primary); color: #fff; }
 
-  #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
-  .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-</style>
+        /* Loading Overlay */
+        #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
 
-<div id="loading"><div class="spinner"></div><p id="load-text" style="margin-top:10px; font-weight:600;">Memproses...</p></div>
+<div id="loading">
+    <div class="spinner"></div>
+    <p id="load-text" style="margin-top:10px; font-weight:600;">Memproses...</p>
+</div>
 
 <div class="container">
-  <div class="nav-top">
-    <button class="btn-back" onclick="location.href='index.html'">← DASHBOARD</button>
-    <div id="nfc-status">NFC NON-AKTIF</div>
-  </div>
+    <div class="nav-top">
+        <button class="btn-back" onclick="location.href='index.html'">← DASHBOARD</button>
+        <div id="nfc-status">NFC STANDBY</div>
+    </div>
 
-  <header><h2>E-ABSENSI HYBRID</h2></header>
-  
-  <div class="card">
-    <label>Pilih Kelas</label>
-    <select id="pilih-kelas">
-      <option value="">-- Pilih Kelas --</option>
-      <optgroup label="KELAS 7">
-        <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-      </optgroup>
-      <optgroup label="KELAS 8">
-        <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-      </optgroup>
-      <optgroup label="KELAS 9">
-        <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-      </optgroup>
-    </select>
-    <input type="text" id="cari" class="search-box" placeholder="Cari nama atau scan kartu..." onkeyup="filter()">
-  </div>
+    <header style="text-align:center; padding:10px; color:var(--primary);">
+        <h2>ABSENSI E-SANTRI</h2>
+    </header>
+    
+    <div class="card">
+        <label>Pilih Kelas (Sheet)</label>
+        <select id="pilih-kelas">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="7A">7A</option><option value="7B">7B</option>
+            <option value="7C">7C</option><option value="7D">7D</option>
+            <option value="8A">8A</option><option value="8B">8B</option>
+            <option value="8C">8C</option><option value="8D">8D</option>
+            <option value="9A">9A</option><option value="9B">9B</option>
+            <option value="9C">9C</option><option value="9D">9D</option>
+        </select>
+        <input type="text" id="cari" class="search-box" placeholder="Cari nama santri..." onkeyup="filter()">
+    </div>
 
-  <div id="list" class="santri-list">
-    <p style="text-align:center; padding:20px; color:#888;">Silakan pilih kelas.</p>
-  </div>
+    <div id="list" class="santri-list">
+        <p style="text-align:center; padding:20px; color:#888;">Pilih kelas untuk melihat daftar nama.</p>
+    </div>
 
-  <div class="footer">
-    <button class="btn-main btn-save" onclick="simpanManual()">💾 SIMPAN MANUAL (S/I/A)</button>
-    <p style="font-size:10px; color:#aaa;">TAP NFC = AUTO SAVE HADIR</p>
-  </div>
+    <div class="footer">
+        <button class="btn-main" onclick="simpanManual()">💾 SIMPAN PERUBAHAN MANUAL</button>
+        <p style="font-size:10px; color:#aaa;">Link NFC akan otomatis tersimpan ke Sheet Kelas</p>
+    </div>
 </div>
 
 <script>
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOQ96h0-ZmRv6Nq2SB3567EfzeCZD_1NgH3nsV8L5q8MGMKeSWKN848IJTMp2gvFDCEA/exec";
+    // GANTI DENGAN URL APPS SCRIPT ANDA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOQ96h0-ZmRv6Nq2SB3567EfzeCZD_1NgH3nsV8L5q8MGMKeSWKN848IJTMp2gvFDCEA/exec";
 
-  // 1. AMBIL DATA KELAS
-  document.getElementById('pilih-kelas').onchange = function() {
-    if(!this.value) return;
-    document.getElementById('loading').style.display = 'flex';
-    document.getElementById('load-text').innerText = "Memuat data kelas...";
-    const s = document.createElement('script');
-    s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
-    document.body.appendChild(s);
-  };
+    // --- 1. FUNGSI AUTO-RUN (DARI LINK NFC) ---
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const nfcId = urlParams.get('scan');
+        const kelasLink = urlParams.get('kls');
 
-  function render(data) {
-    document.getElementById('loading').style.display = 'none';
-    const cont = document.getElementById('list');
-    cont.innerHTML = '';
-    data.forEach(x => {
-      const d = document.createElement('div');
-      d.className = 'santri-item';
-      d.innerHTML = `
-        <div><b style="font-size:13px;">${x.nama}</b><br><small style="color:#999">${x.nipd}</small></div>
-        <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}"> 
-          <button class="btn-status" onclick="setManual(this,'H')">H</button>
-          <button class="btn-status" onclick="setManual(this,'S')">S</button>
-          <button class="btn-status" onclick="setManual(this,'I')">I</button>
-          <button class="btn-status" onclick="setManual(this,'A')">A</button>
-        </div>`;
-      cont.appendChild(d);
-    });
-    startNFC();
-  }
+        if (nfcId && kelasLink) {
+            autoAbsen(nfcId, kelasLink);
+        }
+    };
 
-  // 2. LOGIKA MANUAL (HANYA GANTI WARNA, TIDAK AUTO SAVE)
-  function setManual(btn, stat) {
-    btn.parentElement.querySelectorAll('button').forEach(b => { 
-      b.className = 'btn-status'; 
-      b.removeAttribute('data-st'); 
-    });
-    const c = {'H':'h-on','S':'s-on','I':'i-on','A':'a-on'};
-    btn.classList.add(c[stat]); 
-    btn.setAttribute('data-st', stat);
-  }
+    async function autoAbsen(id, kls) {
+        showLoading("Mencatat Absen Otomatis...");
+        const data = [{ kelas: kls, nipd: id, status: 'H' }];
+        
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+            hideLoading();
+            alert("✅ BERHASIL!\nSiswa ID: " + id + " di Sheet " + kls + " sudah diabsen Hadir.");
+            speak("Absen Berhasil");
+        } catch (e) {
+            hideLoading();
+            alert("Gagal koneksi server!");
+        }
+    }
 
-  // 3. LOGIKA NFC (LANGSUNG AUTO SAVE)
-  async function startNFC() {
-    const statusTag = document.getElementById('nfc-status');
-    if ("NDEFReader" in window) {
-      try {
-        const ndef = new NDEFReader();
-        await ndef.scan();
-        statusTag.innerText = "📡 NFC AUTO-SAVE AKTIF";
-        statusTag.classList.add('nfc-active');
-        ndef.onreading = event => {
-          const idKartu = event.serialNumber.replace(/:/g, "").toUpperCase();
-          processNfcAutoSave(idKartu);
-        };
-      } catch (e) { statusTag.innerText = "❌ IZIN NFC DITOLAK"; }
-    } else { statusTag.innerText = "🚫 TIDAK SUPPORT NFC"; }
-  }
+    // --- 2. MUAT DATA KELAS (MANUAL MODE) ---
+    document.getElementById('pilih-kelas').onchange = function() {
+        if(!this.value) return;
+        showLoading("Mengambil Data Sheet " + this.value + "...");
+        const s = document.createElement('script');
+        s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
+        document.body.appendChild(s);
+    };
 
-  async function processNfcAutoSave(nfcId) {
-    const group = document.querySelector(`[data-nipd="${nfcId}"]`);
-    if (!group) return alert("Kartu " + nfcId + " tidak terdaftar di kelas ini!");
+    function render(data) {
+        hideLoading();
+        const cont = document.getElementById('list');
+        cont.innerHTML = '';
+        if(!data.length) { cont.innerHTML = '<p style="text-align:center;padding:20px;">Sheet kosong atau tidak ditemukan.</p>'; return; }
 
-    const nama = group.getAttribute('data-nama');
-    const kelas = document.getElementById('pilih-kelas').value;
-    const btnHadir = group.querySelector('.btn-status:nth-child(1)');
+        data.forEach(x => {
+            const d = document.createElement('div');
+            d.className = 'santri-item';
+            d.innerHTML = `
+                <div><b style="font-size:13px;">${x.nama}</b><br><small style="color:#999">${x.nipd}</small></div>
+                <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}"> 
+                    <button class="btn-status" onclick="setStatus(this,'H')">H</button>
+                    <button class="btn-status" onclick="setStatus(this,'S')">S</button>
+                    <button class="btn-status" onclick="setStatus(this,'I')">I</button>
+                    <button class="btn-status" onclick="setStatus(this,'A')">A</button>
+                </div>`;
+            cont.appendChild(d);
+        });
+    }
 
-    // Visual Feedback
-    setManual(btnHadir, 'H');
-    const row = group.closest('.santri-item');
-    row.classList.add('scan-success');
-    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // --- 3. FUNGSI PENDUKUNG ---
+    function setStatus(btn, stat) {
+        btn.parentElement.querySelectorAll('button').forEach(b => { b.className = 'btn-status'; b.removeAttribute('data-st'); });
+        const colors = {'H':'h-on','S':'s-on','I':'i-on','A':'a-on'};
+        btn.classList.add(colors[stat]); 
+        btn.setAttribute('data-st', stat);
+    }
 
-    // Kirim Data Otomatis
-    document.getElementById('loading').style.display = 'flex';
-    document.getElementById('load-text').innerText = "Auto-Saving " + nama + "...";
-    
-    const dataKirim = [{ kelas: kelas, nipd: nfcId, nama: nama, status: 'H' }];
-    
-    try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataKirim) });
-      const utter = new SpeechSynthesisUtterance(nama + " hadir");
-      utter.lang = 'id-ID';
-      window.speechSynthesis.speak(utter);
-    } catch (e) { alert("Gagal Simpan NFC!"); }
+    async function simpanManual() {
+        const kls = document.getElementById('pilih-kelas').value;
+        if(!kls) return alert("Pilih kelas dulu!");
+        
+        const res = [];
+        document.querySelectorAll('.btn-group').forEach(g => {
+            const st = g.querySelector('[data-st]'); 
+            if(st) res.push({ kelas: kls, nipd: g.getAttribute('data-nipd'), status: st.getAttribute('data-st') });
+        });
 
-    document.getElementById('loading').style.display = 'none';
-    setTimeout(() => row.classList.remove('scan-success'), 2000);
-  }
+        if(!res.length) return alert("Tidak ada data manual yang dipilih!");
+        showLoading("Menyimpan ke Sheet " + kls + "...");
+        
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
+            alert("✅ Berhasil Simpan Manual!");
+            location.reload();
+        } catch(e) { alert("Gagal Simpan!"); hideLoading(); }
+    }
 
-  // 4. SIMPAN SEMUA (UNTUK INPUT MANUAL)
-  async function simpanManual() {
-    const res = [];
-    const kls = document.getElementById('pilih-kelas').value;
-    if(!kls) return alert("Pilih kelas!");
+    function filter() {
+        const val = document.getElementById('cari').value.toLowerCase();
+        document.querySelectorAll('.santri-item').forEach(i => {
+            i.style.display = i.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
+        });
+    }
 
-    document.querySelectorAll('.btn-group').forEach(g => {
-      const st = g.querySelector('[data-st]'); 
-      if(st) {
-        res.push({ kelas: kls, nipd: g.getAttribute('data-nipd'), nama: g.getAttribute('data-nama'), status: st.getAttribute('data-st') });
-      }
-    });
-
-    if(!res.length) return alert("Belum ada data manual!");
-    document.getElementById('loading').style.display = 'flex';
-    document.getElementById('load-text').innerText = "Menyimpan Data Manual...";
-    
-    try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
-      alert("✅ Data Manual Berhasil Disimpan!"); 
-      location.reload();
-    } catch(e) { alert("Gagal Simpan!"); }
-    document.getElementById('loading').style.display = 'none';
-  }
-
-  function filter() {
-    const val = document.getElementById('cari').value.toLowerCase();
-    document.querySelectorAll('.santri-item').forEach(i => {
-      i.style.display = i.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
-    });
-  }
+    function showLoading(txt) { document.getElementById('loading').style.display = 'flex'; document.getElementById('load-text').innerText = txt; }
+    function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+    function speak(msg) { const u = new SpeechSynthesisUtterance(msg); u.lang = 'id-ID'; window.speechSynthesis.speak(u); }
 </script>
 </body>
 </html>
