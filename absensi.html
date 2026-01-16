@@ -167,47 +167,51 @@
 </div>
 
 <script>
-    // URL Web App Google Apps Script
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybFZnSVot87x8HNSe8gMqHGe6uk1Sy40ZQ692HqjrR4mFjG2gay3QqcJ4LkybJ7rTJ9w/exec";
 
-    // SISTEM 1: PENGUATAN AUTO-NFC DETECT
-    window.onload = function() {
+    // SISTEM NFC OTOMATIS (DIPERKUAT)
+    window.addEventListener('load', async () => {
         const p = new URLSearchParams(window.location.search);
         const scanId = p.get('scan');
         const kelas = p.get('kls');
 
-        if (scanId) {
-            // Validasi kelas jika link NFC tidak memiliki parameter kls
-            if (!kelas) {
-                alert("Scan gagal: Parameter kelas tidak ditemukan di kartu.");
-                return;
-            }
-            showOverlay("📲 Mengirim Data NFC...");
-            const data = JSON.stringify([{ kelas: kelas, nipd: scanId, status: 'H' }]);
+        if (scanId && kelas) {
+            showOverlay("📲 NFC TERDETEKSI...");
             
-            // Penggunaan Beacon untuk durabilitas pengiriman data saat redirect
-            const success = navigator.sendBeacon(SCRIPT_URL, data);
-            
-            if (success) {
-                document.getElementById('msg').innerText = "✅ DATA TERKIRIM!";
-                setTimeout(() => location.href="index.html", 1500);
-            } else {
-                // Fallback jika beacon gagal
-                fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: data })
-                .then(() => {
-                    document.getElementById('msg').innerText = "✅ BERHASIL!";
-                    setTimeout(() => location.href="index.html", 1500);
+            const dataAbsen = [{ 
+                kelas: kelas, 
+                nipd: scanId, 
+                status: 'H', // Otomatis Hadir
+                method: 'NFC'
+            }];
+
+            try {
+                // Gunakan fetch dengan mode no-cors untuk bypass Google Apps Script security
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    body: JSON.stringify(dataAbsen)
                 });
+
+                document.getElementById('msg').innerText = "✅ ABSEN BERHASIL!";
+                setTimeout(() => {
+                    // Redirect ke halaman bersih tanpa parameter agar tidak absen berulang kali
+                    window.location.href = window.location.pathname; 
+                }, 2000);
+
+            } catch (error) {
+                console.error("NFC Error:", error);
+                alert("Gagal mengirim data NFC. Cek koneksi.");
+                hideOverlay();
             }
         }
-    };
+    });
 
-    // SISTEM 2: PENGUATAN LOAD DATA KELAS (JSONP)
+    // SISTEM LOAD DATA KELAS
     document.getElementById('kls').onchange = function() {
         if(!this.value) return;
         showOverlay("Memuat Data...");
-        
-        // Hapus script lama jika ada untuk mencegah memory leak
         const oldScript = document.getElementById('jsonp-script');
         if(oldScript) oldScript.remove();
 
@@ -221,24 +225,16 @@
         hideOverlay();
         const cont = document.getElementById('list');
         cont.innerHTML = '';
-
         if (data.error) {
-            cont.innerHTML = `<div style="text-align:center; padding:50px; color:var(--alpha)">
-                <b>Error:</b> ${data.error}<br><small>Pastikan nama sheet sesuai.</small>
-            </div>`;
+            cont.innerHTML = `<div style="text-align:center;color:red;padding:20px;">${data.error}</div>`;
             return;
         }
-        
         document.getElementById('count-total').innerText = data.length;
-        
         data.forEach(x => {
             const d = document.createElement('div');
             d.className = 'santri-item';
             d.innerHTML = `
-                <div class="santri-info">
-                    <b>${x.nama}</b>
-                    <small>NIPD: ${x.nipd}</small>
-                </div>
+                <div class="santri-info"><b>${x.nama}</b><small>NIPD: ${x.nipd}</small></div>
                 <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}">
                     <button class="btn-st" onclick="st(this,'H')">H</button>
                     <button class="btn-st" onclick="st(this,'S')">S</button>
@@ -247,10 +243,8 @@
                 </div>`;
             cont.appendChild(d);
         });
-        updateCount();
     }
 
-    // SISTEM 3: LOGIKA STATUS TOMBOL
     function st(btn, s) {
         btn.parentElement.querySelectorAll('button').forEach(b => b.className = 'btn-st');
         const c = {H:'h-active',S:'s-active',I:'i-active',A:'a-active'};
@@ -260,65 +254,31 @@
     }
 
     function updateCount() {
-        const sudah = document.querySelectorAll('[data-s]').length;
-        document.getElementById('count-absen').innerText = sudah;
+        document.getElementById('count-absen').innerText = document.querySelectorAll('[data-s]').length;
     }
 
-    // SISTEM 4: PENGUATAN SIMPAN DATA (ROBUST FETCH)
     async function simpan() {
         const k = document.getElementById('kls').value;
         const res = [];
         document.querySelectorAll('.btn-group').forEach(g => {
             const s = g.querySelector('[data-s]');
-            if(s) {
-                res.push({ 
-                    kelas: k, 
-                    nipd: g.dataset.nipd, 
-                    nama: g.dataset.nama, 
-                    status: s.getAttribute('data-s') 
-                });
-            }
+            if(s) res.push({ kelas: k, nipd: g.dataset.nipd, nama: g.dataset.nama, status: s.getAttribute('data-s') });
         });
-
         if(!res.length) return alert("Pilih minimal satu siswa!");
-        
-        showOverlay("Menyimpan ke Cloud...");
-        
+        showOverlay("Menyimpan...");
         try {
-            // Menggunakan keepalive agar request tidak putus saat user tidak sengaja menutup tab
-            await fetch(SCRIPT_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                keepalive: true,
-                body: JSON.stringify(res) 
-            });
-            
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
             document.getElementById('msg').innerText = "✅ TERSIMPAN!";
             setTimeout(() => location.reload(), 1500);
-        } catch(e) { 
-            alert("Gagal Terhubung ke Server. Periksa Koneksi Internet."); 
-            hideOverlay(); 
-        }
+        } catch(e) { alert("Gagal Simpan!"); hideOverlay(); }
     }
 
-    function download() { 
-        window.open(SCRIPT_URL + "?action=download", '_blank'); 
-    }
-
-    function showOverlay(t) { 
-        document.getElementById('overlay').style.display = 'flex'; 
-        document.getElementById('msg').innerText = t; 
-    }
-
-    function hideOverlay() { 
-        document.getElementById('overlay').style.display = 'none'; 
-    }
-
+    function download() { window.open(SCRIPT_URL + "?action=download", '_blank'); }
+    function showOverlay(t) { document.getElementById('overlay').style.display = 'flex'; document.getElementById('msg').innerText = t; }
+    function hideOverlay() { document.getElementById('overlay').style.display = 'none'; }
     function filter() {
         const v = document.getElementById('cari').value.toLowerCase();
-        document.querySelectorAll('.santri-item').forEach(i => {
-            i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none';
-        });
+        document.querySelectorAll('.santri-item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none');
     }
 </script>
 </body>
