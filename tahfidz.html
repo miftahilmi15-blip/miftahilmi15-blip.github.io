@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Database Tahfidz</title>
+    <title>E-SANTRI | Database Tahfidz & Qiraati</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; }
@@ -51,13 +51,26 @@
     </div>
 
     <div class="form-grup">
-        <label>Materi (Surah / Jilid)</label>
-        <input type="text" id="materi" placeholder="Contoh: Al-Mulk / Jilid 3A">
+        <label>Kategori Materi</label>
+        <select id="kategori-materi" onchange="updateSubMateri()">
+            <option value="">-- Pilih Kategori --</option>
+            <option value="Jilid">Qiraati (Jilid 1-4)</option>
+            <option value="Tadarus27">Tadarus Juz 27</option>
+            <option value="Tadarus30">Tadarus Al-Qur'an 30 Juz</option>
+            <option value="Ghorib">Materi Ghorib</option>
+            <option value="Tajwid">Materi Tajwid</option>
+            <option value="Tahfidz">Tahfidz 30 Juz</option>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Detail Materi</label>
+        <select id="materi"><option value="">-- Pilih Kategori Dulu --</option></select>
     </div>
 
     <div class="grid-2">
-        <div class="form-grup"><label>Dari (Ayat/Hal)</label><input type="number" id="awal"></div>
-        <div class="form-grup"><label>Sampai (Ayat/Hal)</label><input type="number" id="akhir"></div>
+        <div class="form-grup"><label>Dari (Hal/Ayat)</label><input type="number" id="awal"></div>
+        <div class="form-grup"><label>Sampai (Hal/Ayat)</label><input type="number" id="akhir"></div>
     </div>
 
     <div class="form-grup">
@@ -75,10 +88,10 @@
 
     <div class="form-grup">
         <label>Catatan Ustadz</label>
-        <textarea id="catatan" rows="2" placeholder="Contoh: Perbaiki panjang mad thabi'i..."></textarea>
+        <textarea id="catatan" rows="2" placeholder="Evaluasi makhraj/tajwid..."></textarea>
     </div>
 
-    <div id="loading">⏳ Menyimpan ke Spreadsheet...</div>
+    <div id="loading">⏳ Menyimpan...</div>
     <button class="btn-simpan" onclick="simpan()">SIMPAN PENCAPAIAN</button>
 
     <div class="menu-rekap">
@@ -87,9 +100,29 @@
 </div>
 
 <script>
-    // PASTIKAN URL SCRIPT DAN ID SPREADSHEET SUDAH BENAR
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
     const SS_ID = "1fF8DzW7pNuSDefq_tHMvWlocg_KQieWEP7m1g6FIB4A";
+
+    // DATABASE MATERI SESUAI PERMINTAAN
+    const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
+
+    const subMateri = {
+        "Jilid": ["Jilid 1A (1-30)", "Jilid 1B (31-60)", "Jilid 2A (1-31)", "Jilid 2B (32-60)", "Jilid 3A (1-31)", "Jilid 3B (32-60)", "Jilid 4A (1-34)", "Jilid 4B (35-60)"],
+        "Tadarus27": ["Adz-Dzariyat 31-60", "Ath-Thur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid"],
+        "Tadarus30": surah30Juz,
+        "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`),
+        "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`),
+        "Tahfidz": surah30Juz
+    };
+
+    function updateSubMateri() {
+        const kat = document.getElementById('kategori-materi').value;
+        const sub = document.getElementById('materi');
+        sub.innerHTML = '<option value="">-- Pilih Detail --</option>';
+        if (subMateri[kat]) {
+            subMateri[kat].forEach(x => sub.options.add(new Option(x, x)));
+        }
+    }
 
     function setStar(n) {
         document.getElementById('nilai-bintang').value = n;
@@ -100,34 +133,27 @@
         const kelas = document.getElementById('pilih-kelas').value;
         const sel = document.getElementById('pilih-santri');
         if(!kelas) return;
-        
-        sel.innerHTML = '<option>Memuat nama...</option>';
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
-            const data = await res.json();
-            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
-        } catch(e) {
-            alert("Gagal mengambil nama. Pastikan sheet kelas " + kelas + " tersedia.");
-            sel.innerHTML = '<option value="">Gagal Memuat</option>';
-        }
+        sel.innerHTML = '<option>Memuat...</option>';
+        const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
+        const data = await res.json();
+        sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+        data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
     }
 
     async function simpan() {
         const s = document.getElementById('pilih-santri');
         const kls = document.getElementById('pilih-kelas').value;
         const mat = document.getElementById('materi').value;
+        const kat = document.getElementById('kategori-materi').value;
         const bin = document.getElementById('nilai-bintang').value;
 
-        if(!s.value || !kls || !mat || bin == "0") {
-            return alert("Lengkapi data: Kelas, Nama, Materi, dan Bintang wajib diisi!");
-        }
+        if(!s.value || !kls || !mat || bin == "0") return alert("Lengkapi data!");
 
         const payload = {
             nipd: s.value,
             nama: s.options[s.selectedIndex].text,
             kelas: kls,
-            surah: mat,
+            surah: `${kat}: ${mat}`, // Menggabungkan kategori agar jelas di sheet
             juz: "-", 
             ayat: document.getElementById('awal').value + "-" + document.getElementById('akhir').value,
             status: document.getElementById('status').value,
@@ -136,23 +162,16 @@
         };
 
         document.getElementById('loading').style.display = 'block';
-        
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Data " + payload.nama + " Berhasil Disimpan!");
+            alert("✅ Berhasil Disimpan!");
             location.reload();
-        } catch(e) {
-            alert("Gagal menyimpan data. Periksa koneksi.");
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
+        } catch(e) { alert("Gagal!"); }
     }
 
     function downloadPDF() {
-        if(confirm("Download Rekap PDF sekarang? Pastikan tampilan di Spreadsheet sudah rapi.")) {
-            const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&size=A4&portrait=true&fitw=true&gridlines=false`;
-            window.open(url, '_blank');
-        }
+        const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&size=A4&portrait=true&fitw=true&gridlines=false`;
+        window.open(url, '_blank');
     }
 </script>
 </body>
