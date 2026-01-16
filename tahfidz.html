@@ -6,59 +6,42 @@
     <title>E-SANTRI | Database Tahfidz</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --danger: #ef4444; --blue: #2563eb; }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
         .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
-        
         .form-grup { margin-bottom: 15px; }
         label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        select, input, textarea { 
-            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; 
-            background: #f9f9f9; font-size: 14px; outline: none; transition: 0.3s;
-        }
-        select:focus, input:focus { border-color: var(--primary); background: #fff; }
-        
+        select, input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; outline: none; }
         .grid-2 { display: flex; gap: 10px; }
         .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
         .star { cursor: pointer; font-size: 26px; color: #ddd; transition: 0.2s; }
-        
-        .btn-simpan { 
-            width: 100%; background: var(--primary); color: white; border: none; 
-            padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px;
-        }
-        
-        /* TOMBOL DOWNLOAD / CETAK */
-        .menu-rekap {
-            margin-top: 25px;
-            padding-top: 15px;
-            border-top: 2px dashed #eee;
-            text-align: center;
-        }
-        .btn-cetak {
-            width: 100%; background: var(--blue); color: white; border: none;
-            padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        
-        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; font-size: 12px; }
+        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .menu-rekap { margin-top: 25px; padding-top: 15px; border-top: 2px dashed #eee; text-align: center; }
+        .btn-cetak { width: 100%; background: var(--blue); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
     </style>
 </head>
 <body>
 
 <div class="wadah">
-    <header>
-        <h1>CATAT TAHFIDZ</h1>
-        <p style="font-size: 11px; color: #777;">Database Hafalan Otomatis</p>
-    </header>
+    <header><h1>CATAT TAHFIDZ</h1></header>
 
     <div class="form-grup">
         <label>Pilih Kelas</label>
-        <select id="pilih-kelas">
+        <select id="pilih-kelas" onchange="loadSantri()">
             <option value="">-- Pilih Kelas --</option>
-            <option value="7A">7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="9A">9A</option>
+            <optgroup label="KELAS 7">
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+            </optgroup>
+            <optgroup label="KELAS 8">
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+            </optgroup>
+            <optgroup label="KELAS 9">
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+            </optgroup>
         </select>
     </div>
 
@@ -68,20 +51,18 @@
     </div>
 
     <div class="form-grup">
-        <label>Materi Hafalan</label>
-        <select id="surah">
-            <option value="">-- Pilih Surah / Jilid --</option>
-            <optgroup label="JILID">
-                <option value="Jilid 1A">Jilid 1A</option><option value="Jilid 1B">Jilid 1B</option>
-                <option value="Jilid 2A">Jilid 2A</option><option value="Jilid 2B">Jilid 2B</option>
-            </optgroup>
-            <optgroup label="AL-QURAN" id="list-surah"></optgroup>
-        </select>
+        <label>Materi (Surah / Jilid)</label>
+        <input type="text" id="materi" placeholder="Contoh: Al-Mulk / Jilid 3A">
     </div>
 
     <div class="grid-2">
-        <div class="form-grup"><label>Awal (Ayat/Hal)</label><input type="number" id="ayat-awal"></div>
-        <div class="form-grup"><label>Akhir (Ayat/Hal)</label><input type="number" id="ayat-akhir"></div>
+        <div class="form-grup"><label>Dari (Ayat/Hal)</label><input type="number" id="awal"></div>
+        <div class="form-grup"><label>Sampai (Ayat/Hal)</label><input type="number" id="akhir"></div>
+    </div>
+
+    <div class="form-grup">
+        <label>Status</label>
+        <select id="status"><option value="Lulus">✅ Lulus</option><option value="Sabaq">🔄 Sabaq</option></select>
     </div>
 
     <div class="form-grup">
@@ -94,41 +75,84 @@
 
     <div class="form-grup">
         <label>Catatan Ustadz</label>
-        <textarea id="catatan" rows="2" placeholder="Contoh: Makhraj huruf 'Ain diperjelas..."></textarea>
+        <textarea id="catatan" rows="2" placeholder="Contoh: Perbaiki panjang mad thabi'i..."></textarea>
     </div>
 
-    <div id="loading">⏳ Menyimpan ke Database...</div>
-    <button class="btn-simpan" onclick="simpanTahfidz()">SIMPAN PENCAPAIAN</button>
+    <div id="loading">⏳ Menyimpan ke Spreadsheet...</div>
+    <button class="btn-simpan" onclick="simpan()">SIMPAN PENCAPAIAN</button>
 
     <div class="menu-rekap">
-        <p style="font-size: 10px; color: #999; margin-bottom: 8px;">LAPORAN SIAP CETAK</p>
-        <button class="btn-cetak" onclick="downloadRekap()">
-            <span>📥</span> DOWNLOAD REKAP (PDF)
-        </button>
+        <button class="btn-cetak" onclick="downloadPDF()">📥 DOWNLOAD REKAP SIAP CETAK</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec"; 
-    const SPREADSHEET_ID = "1fF8DzW7pNuSDefq_tHMvWlocg_KQieWEP7m1g6FIB4A";
+    // PASTIKAN URL SCRIPT DAN ID SPREADSHEET SUDAH BENAR
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+    const SS_ID = "1fF8DzW7pNuSDefq_tHMvWlocg_KQieWEP7m1g6FIB4A";
 
-    // Fungsi Download Rekap Otomatis
-    function downloadRekap() {
-        // Link ini akan mengekspor sheet pertama/aktif menjadi PDF A4 Tanpa Garis Kisi (Gridlines Off)
-        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=pdf&size=A4&portrait=true&fitw=true&gridlines=false&printtitle=false&sheetnames=false`;
-        window.open(url, '_blank');
-    }
-
-    // ... (Script Sisanya: setStar, loadSantri, simpanTahfidz tetap sama) ...
     function setStar(n) {
         document.getElementById('nilai-bintang').value = n;
-        const stars = document.querySelectorAll('.star');
-        stars.forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
+        document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
     }
 
-    async function simpanTahfidz() {
-        // Logika simpan Anda yang sudah ada
-        alert("Data Berhasil disimpan!");
+    async function loadSantri() {
+        const kelas = document.getElementById('pilih-kelas').value;
+        const sel = document.getElementById('pilih-santri');
+        if(!kelas) return;
+        
+        sel.innerHTML = '<option>Memuat nama...</option>';
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
+            const data = await res.json();
+            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
+        } catch(e) {
+            alert("Gagal mengambil nama. Pastikan sheet kelas " + kelas + " tersedia.");
+            sel.innerHTML = '<option value="">Gagal Memuat</option>';
+        }
+    }
+
+    async function simpan() {
+        const s = document.getElementById('pilih-santri');
+        const kls = document.getElementById('pilih-kelas').value;
+        const mat = document.getElementById('materi').value;
+        const bin = document.getElementById('nilai-bintang').value;
+
+        if(!s.value || !kls || !mat || bin == "0") {
+            return alert("Lengkapi data: Kelas, Nama, Materi, dan Bintang wajib diisi!");
+        }
+
+        const payload = {
+            nipd: s.value,
+            nama: s.options[s.selectedIndex].text,
+            kelas: kls,
+            surah: mat,
+            juz: "-", 
+            ayat: document.getElementById('awal').value + "-" + document.getElementById('akhir').value,
+            status: document.getElementById('status').value,
+            nilai: bin,
+            catatan: document.getElementById('catatan').value
+        };
+
+        document.getElementById('loading').style.display = 'block';
+        
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("✅ Data " + payload.nama + " Berhasil Disimpan!");
+            location.reload();
+        } catch(e) {
+            alert("Gagal menyimpan data. Periksa koneksi.");
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    function downloadPDF() {
+        if(confirm("Download Rekap PDF sekarang? Pastikan tampilan di Spreadsheet sudah rapi.")) {
+            const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&size=A4&portrait=true&fitw=true&gridlines=false`;
+            window.open(url, '_blank');
+        }
     }
 </script>
 </body>
