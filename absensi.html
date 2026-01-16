@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>E-Santri | Sistem Absensi Terpadu</title>
+    <title>E-Santri | Absensi 7A - 9D</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
@@ -19,8 +19,7 @@
         select, .search-box { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; margin-top: 8px; font-size: 14px; outline: none; }
 
         .santri-list { margin-bottom: 150px; min-height: 100px; }
-        .santri-item { background: white; border-radius: 15px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0f0f0; transition: 0.3s; }
-        .scan-success { border: 2px solid var(--hadir); background: #f0fff4; }
+        .santri-item { background: white; border-radius: 15px; padding: 12px 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0f0f0; }
 
         .btn-group { display: flex; gap: 5px; }
         .btn-st { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #eee; background: #fff; font-weight: 700; cursor: pointer; color: #ccc; }
@@ -55,28 +54,35 @@
     <div class="card">
         <label>Pilih Kelas</label>
         <select id="pilih-kelas">
-            <option value="">-- Pilih Tab Sheet --</option>
-            <option value="7A">7A</option><option value="7B">7B</option>
-            <option value="8A">8A</option><option value="8B">8B</option>
-            <option value="9A">9A</option><option value="9B">9B</option>
+            <option value="">-- Pilih Kelas --</option>
+            <optgroup label="KELAS 7">
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+            </optgroup>
+            <optgroup label="KELAS 8">
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+            </optgroup>
+            <optgroup label="KELAS 9">
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+            </optgroup>
         </select>
-        <input type="text" id="cari" class="search-box" placeholder="Cari nama..." onkeyup="filter()">
+        <input type="text" id="cari" class="search-box" placeholder="Cari nama santri..." onkeyup="filter()">
     </div>
 
     <div id="list" class="santri-list">
-        <p style="text-align:center; padding:30px; color:#999;">Pilih kelas atau scan kartu NFC.</p>
+        <p style="text-align:center; padding:30px; color:#999;">Silakan pilih kelas atau tempel kartu NFC.</p>
     </div>
 
     <div class="footer">
-        <button class="btn-footer btn-dl" onclick="downloadRekap()">📥 REKAP</button>
-        <button class="btn-footer btn-save" onclick="simpanManual()">💾 SIMPAN</button>
+        <button class="btn-footer btn-dl" onclick="downloadRekap()">📥 DOWNLOAD REKAP</button>
+        <button class="btn-footer btn-save" onclick="simpanManual()">💾 SIMPAN MANUAL</button>
     </div>
 </div>
 
 <script>
+    // URL Script Anda yang sudah benar
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybFZnSVot87x8HNSe8gMqHGe6uk1Sy40ZQ692HqjrR4mFjG2gay3QqcJ4LkybJ7rTJ9w/exec";
 
-    // 1. CEK PARAMETER URL (NFC DIRECT LINK)
+    // 1. AUTO-SAVE DARI LINK NFC
     window.onload = function() {
         const urlParams = new URLSearchParams(window.location.search);
         const nfcId = urlParams.get('scan');
@@ -85,20 +91,20 @@
     };
 
     async function autoSimpanNFC(id, kls) {
-        showOverlay("Mencatat NFC...");
+        showOverlay("Mencatat Kehadiran...");
         const data = [{ kelas: kls, nipd: id, status: 'H' }];
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', keepalive: true, body: JSON.stringify(data) });
             speak("Absen Berhasil");
-            document.getElementById('overlay-text').innerText = "✅ BERHASIL!";
-            setTimeout(() => { window.location.href = "index.html"; }, 2000);
-        } catch (e) { alert("Error!"); hideOverlay(); }
+            document.getElementById('overlay-text').innerHTML = "✅ BERHASIL!<br>Data Tersimpan.";
+            setTimeout(() => { window.location.href = "index.html"; }, 2500);
+        } catch (e) { alert("Koneksi Gagal!"); hideOverlay(); }
     }
 
     // 2. MUAT DATA KELAS (MANUAL)
     document.getElementById('pilih-kelas').onchange = function() {
         if(!this.value) return;
-        showOverlay("Memuat Nama...");
+        showOverlay("Memuat Daftar Nama...");
         const s = document.createElement('script');
         s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
         document.body.appendChild(s);
@@ -108,11 +114,13 @@
         hideOverlay();
         const cont = document.getElementById('list');
         cont.innerHTML = '';
+        if (data.error) { cont.innerHTML = `<p style="color:red;text-align:center;padding:20px;">${data.error}</p>`; return; }
+        
         data.forEach(x => {
             const d = document.createElement('div');
             d.className = 'santri-item';
             d.innerHTML = `
-                <div><b>${x.nama}</b><br><small>${x.nipd}</small></div>
+                <div><b>${x.nama}</b><br><small style="color:#aaa">${x.nipd}</small></div>
                 <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}"> 
                     <button class="btn-st" onclick="setSt(this,'H')">H</button>
                     <button class="btn-st" onclick="setSt(this,'S')">S</button>
@@ -123,30 +131,42 @@
         });
     }
 
-    // 3. LOGIKA TOMBOL & SIMPAN
+    // 3. LOGIKA BUTTON & SIMPAN MANUAL
     function setSt(btn, st) {
         btn.parentElement.querySelectorAll('button').forEach(b => { b.className = 'btn-st'; b.removeAttribute('data-st'); });
         const c = {'H':'h-active','S':'s-active','I':'i-active','A':'a-active'};
-        btn.classList.add(c[st]); btn.setAttribute('data-st', st);
+        btn.classList.add(c[st]); 
+        btn.setAttribute('data-st', st);
     }
 
     async function simpanManual() {
         const kls = document.getElementById('pilih-kelas').value;
-        if(!kls) return alert("Pilih kelas!");
+        if(!kls) return alert("Pilih kelas dulu!");
+        
         const payload = [];
         document.querySelectorAll('.btn-group').forEach(g => {
             const s = g.querySelector('[data-st]');
-            if(s) payload.push({ kelas: kls, nipd: g.getAttribute('data-nipd'), nama: g.getAttribute('data-nama'), status: s.getAttribute('data-st') });
+            if(s) {
+                payload.push({ 
+                    kelas: kls, 
+                    nipd: g.getAttribute('data-nipd'), 
+                    nama: g.getAttribute('data-nama'), 
+                    status: s.getAttribute('data-st') 
+                });
+            }
         });
-        if(!payload.length) return alert("Pilih status dulu!");
-        showOverlay("Menyimpan...");
+
+        if(!payload.length) return alert("Pilih status absen minimal satu siswa!");
+        showOverlay("Menyimpan ke Google Sheets...");
+        
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', keepalive: true, body: JSON.stringify(payload) });
-            alert("Tersimpan!"); location.reload();
+            alert("✅ Berhasil Disimpan!");
+            location.reload();
         } catch(e) { alert("Gagal!"); hideOverlay(); }
     }
 
-    // 4. FITUR DOWNLOAD
+    // 4. DOWNLOAD REKAP
     function downloadRekap() {
         window.open(SCRIPT_URL + "?action=download", '_blank');
     }
