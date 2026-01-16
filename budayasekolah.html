@@ -3,130 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Database Budaya Sekolah</title>
+    <title>E-SANTRI | Budaya Sekolah</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; --danger: #dc2626; }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --danger: #dc2626; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
+        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
+        
+        /* Wadah Utama */
         .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
-        header h1 { color: var(--primary); font-size: 20px; font-weight: 800; text-transform: uppercase; }
+        header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
+        
+        /* Form Styling */
         .form-grup { margin-bottom: 15px; }
         label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        select, input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; outline: none; }
+        select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; outline: none; }
         
-        /* Style Khusus Penilaian Karakter */
-        .grid-karakter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 5px; }
-        .btn-skor { 
-            padding: 10px; border: 2px solid #eee; border-radius: 12px; background: white; 
-            font-weight: 700; cursor: pointer; text-align: center; transition: 0.3s;
-        }
-        .btn-skor.active { background: var(--primary); color: white; border-color: var(--primary); }
-        #label-kategori { 
-            text-align: center; margin-top: 8px; font-size: 13px; font-weight: 700; 
-            padding: 5px; border-radius: 8px; display: none;
-        }
+        /* Bintang */
+        .rating { display: flex; gap: 10px; justify-content: center; background: #f9f9f9; padding: 15px; border-radius: 12px; }
+        .star { cursor: pointer; font-size: 35px; color: #ddd; transition: 0.2s; }
+        #label-kategori { text-align: center; font-weight: 700; font-size: 14px; margin-top: 10px; height: 20px; }
 
         .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .menu-rekap { margin-top: 25px; padding-top: 15px; border-top: 2px dashed #eee; text-align: center; }
-        .btn-cetak { width: 100%; background: var(--blue); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
         #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
+        
+        /* Layer Pengunci (Lock Screens) */
+        .overlay { position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        #lock-screen { background: var(--primary); color: white; }
+        #date-lock { background: white; z-index: 10000; display: none; }
     </style>
 </head>
 <body>
 
-<div id="lock-screen" style="position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
-    <h2 style="margin-bottom:20px;">🔒 AKSES KARAKTER</h2>
-    <p style="margin-bottom:10px; font-size:12px;">Masukkan Kode Keamanan Ustadz/Ustadzah:</p>
-    <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
-    <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA DATABASE</button>
+<div id="lock-screen" class="overlay">
+    <h2 style="margin-bottom:20px;">🔒 AKSES TERBATAS</h2>
+    <p style="margin-bottom:10px; font-size:12px;">Masukkan Kode Keamanan:</p>
+    <input type="password" id="passcode" style="width:200px; text-align:center; padding:12px; border-radius:12px; border:none; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
+    <button onclick="cekAkses()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
+</div>
+
+<div id="date-lock" class="overlay">
+    <span style="font-size: 60px; margin-bottom: 10px;">⏳</span>
+    <h2 style="color: var(--danger); font-weight: 800;">WAKTU INPUT BERAKHIR</h2>
+    <p id="lock-message" style="margin-top:10px; color:#555; font-size: 14px; max-width: 300px;"></p>
+    <button onclick="location.reload()" style="margin-top:20px; padding:8px 20px; border-radius:8px; border:1px solid #ccc; background:none; cursor:pointer;">Cek Ulang Tanggal</button>
 </div>
 
 <div class="wadah">
-    <header><h1>INPUT BUDAYA SEKOLAH</h1></header>
+    <header><h1>BUDAYA SEKOLAH</h1></header>
 
     <div class="form-grup">
-        <label>Pilih Kelas</label>
-        <select id="pilih-kelas" onchange="loadSantri()">
-            <option value="">-- Pilih Kelas --</option>
-            <option value="7B">Kelas 7B (Guru: Riani Rizki Astuti)</option>
-            <option value="7A">Kelas 7A</option>
-            <option value="7C">Kelas 7C</option>
+        <label>Nama Santri (Kelas 7B)</label>
+        <select id="pilih-santri" onfocus="loadSantriOnce()">
+            <option value="">-- Pilih Nama --</option>
         </select>
     </div>
 
     <div class="form-grup">
-        <label>Nama Santri</label>
-        <select id="pilih-santri"><option value="">-- Pilih Nama --</option></select>
-    </div>
-
-    <div class="form-grup">
-        <label>Aspek Karakter</label>
-        <select id="aspek-karakter">
-            <option value="">-- Pilih Aspek Budaya --</option>
-            <option value="Tertib">📏 TERTIB</option>
-            <option value="Disiplin">⏰ DISIPLIN</option>
-            <option value="Tanggung Jawab">🔑 TANGGUNG JAWAB</option>
-            <option value="Jujur">🛡️ JUJUR</option>
-            <option value="Ramah">😊 RAMAH</option>
+        <label>Aspek Budaya</label>
+        <select id="aspek">
+            <option value="Tertib">📏 Tertib</option>
+            <option value="Disiplin">⏰ Disiplin</option>
+            <option value="Tanggung Jawab">🔑 Tanggung Jawab</option>
+            <option value="Jujur">🛡️ Jujur</option>
+            <option value="Ramah">😊 Ramah</option>
         </select>
     </div>
 
     <div class="form-grup">
-        <label>Penilaian (Skala 1-4)</label>
-        <div class="grid-karakter">
-            <div class="btn-skor" onclick="setSkor(1)">1</div>
-            <div class="btn-skor" onclick="setSkor(2)">2</div>
-            <div class="btn-skor" onclick="setSkor(3)">3</div>
-            <div class="btn-skor" onclick="setSkor(4)">4</div>
+        <label>Penilaian Karakter</label>
+        <div class="rating">
+            <span class="star" onclick="setStar(1)">★</span>
+            <span class="star" onclick="setStar(2)">★</span>
+            <span class="star" onclick="setStar(3)">★</span>
+            <span class="star" onclick="setStar(4)">★</span>
         </div>
-        <div id="label-kategori"></div>
-        <input type="hidden" id="nilai-skor" value="0">
+        <div id="label-kategori" style="color: var(--primary);">Pilih Bintang</div>
+        <input type="hidden" id="nilai-bintang" value="0">
     </div>
 
     <div class="form-grup">
         <label>Catatan Observasi</label>
-        <textarea id="catatan" rows="3" placeholder="Contoh: Sangat sopan saat bertemu guru..."></textarea>
+        <textarea id="catatan" rows="2" placeholder="Tulis catatan tambahan..."></textarea>
     </div>
 
-    <div id="loading">⏳ Menyimpan ke Database...</div>
-    <button class="btn-simpan" onclick="simpan()">SIMPAN DATA KARAKTER</button>
-
-    <div class="menu-rekap">
-        <button class="btn-cetak" onclick="downloadPDF()">📥 DOWNLOAD REKAP BUDAYA SEKOLAH</button>
-    </div>
+    <div id="loading">⏳ Menyimpan...</div>
+    <button class="btn-simpan" onclick="simpan()">SIMPAN KARAKTER</button>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+    // --- KONFIGURASI ADMIN ---
     const KODE_RAHASIA = "152003";
+    const TGL_MULAI = "2026-01-16";  // Tahun-Bulan-Tanggal
+    const TGL_SELESAI = "2026-01-20"; // Sesuaikan dengan periode penilaian
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
-    function setSkor(n) {
-        document.getElementById('nilai-skor').value = n;
-        const btns = document.querySelectorAll('.btn-skor');
-        const label = document.getElementById('label-kategori');
-        
-        btns.forEach((btn, i) => {
-            btn.classList.toggle('active', i === n - 1);
-        });
+    // Fungsi Cek Tanggal & Passcode
+    function cekAkses() {
+        const inputPass = document.getElementById('passcode').value;
+        const hariIni = new Date().toISOString().split('T')[0];
 
-        const kategori = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
-        const warna = ["", "#dc2626", "#eab308", "#2563eb", "#1f6f51"];
-        
-        label.style.display = "block";
-        label.innerText = kategori[n];
-        label.style.color = "white";
-        label.style.backgroundColor = warna[n];
+        // 1. Cek Passcode dulu
+        if (inputPass !== KODE_RAHASIA) {
+            alert("Kode Keamanan Salah!");
+            return;
+        }
+
+        // 2. Cek apakah sudah masuk rentang tanggal
+        if (hariIni < TGL_MULAI || hariIni > TGL_SELESAI) {
+            document.getElementById('date-lock').style.display = 'flex';
+            document.getElementById('lock-message').innerText = `Akses hanya dibuka pada periode penilaian: \n ${TGL_MULAI} s/d ${TGL_SELESAI}`;
+            return; // Berhenti di sini, wadah input tetap tertutup
+        }
+
+        // 3. Jika semua lolos, buka aplikasi
+        document.getElementById('lock-screen').style.display = 'none';
+        alert("Selamat bertugas, Ustadz/Ustadzah! 🥰");
     }
 
-    async function loadSantri() {
-        const kelas = document.getElementById('pilih-kelas').value;
+    function setStar(n) {
+        document.getElementById('nilai-bintang').value = n;
+        const labels = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
+        const colors = ["", "#dc2626", "#eab308", "#2563eb", "#1f6f51"];
+        
+        document.querySelectorAll('.star').forEach((s, i) => {
+            s.style.color = i < n ? colors[n] : "#ddd";
+        });
+        
+        const lb = document.getElementById('label-kategori');
+        lb.innerText = labels[n];
+        lb.style.color = colors[n];
+    }
+
+    async function loadSantriOnce() {
         const sel = document.getElementById('pilih-santri');
-        if(!kelas) return;
-        sel.innerHTML = '<option>Memuat Nama...</option>';
+        if(sel.options.length > 1) return;
+        sel.innerHTML = '<option>Memuat data 7B...</option>';
         try {
-            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=7B`);
             const data = await res.json();
             sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
             data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
@@ -135,18 +150,15 @@
 
     async function simpan() {
         const s = document.getElementById('pilih-santri');
-        const kls = document.getElementById('pilih-kelas').value;
-        const aspek = document.getElementById('aspek-karakter').value;
-        const skor = document.getElementById('nilai-skor').value;
-
-        if(!s.value || !aspek || skor == "0") return alert("Mohon lengkapi semua penilaian!");
+        const bin = document.getElementById('nilai-bintang').value;
+        if(!s.value || bin == "0") return alert("Data belum lengkap!");
 
         const payload = {
             nipd: s.value,
             nama: s.options[s.selectedIndex].text,
-            kelas: kls,
-            aspek: aspek,
-            skor: skor,
+            kelas: "7B",
+            aspek: document.getElementById('aspek').value,
+            nilai: bin,
             kategori: document.getElementById('label-kategori').innerText,
             catatan: document.getElementById('catatan').value,
             tanggal: new Date().toLocaleDateString('id-ID')
@@ -155,22 +167,9 @@
         document.getElementById('loading').style.display = 'block';
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Data Budaya Sekolah Berhasil Dicatat!");
+            alert("✅ Berhasil Disimpan!");
             location.reload();
-        } catch(e) { alert("Gagal menyimpan data!"); }
-    }
-
-    function cekLogin() {
-        if (document.getElementById('passcode').value === KODE_RAHASIA) {
-            document.getElementById('lock-screen').style.display = 'none';
-        } else {
-            alert("Kode Salah!");
-        }
-    }
-
-    function downloadPDF() {
-        alert("Menyiapkan dokumen rekap karakter...");
-        window.open("https://docs.google.com/spreadsheets/d/1fF8DzW7pNuSDefq_tHMvWlocg_KQieWEP7m1g6FIB4A/export?format=pdf", '_blank');
+        } catch(e) { alert("Gagal Simpan!"); }
     }
 </script>
 </body>
