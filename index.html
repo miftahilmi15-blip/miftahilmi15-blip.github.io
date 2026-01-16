@@ -292,8 +292,7 @@ function goTo(url) {
     { ar: "خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ", id: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya." },
     { ar: "سَلاَمَةُ الإِنْسَانِ فِي حِفْظِ اللِّسَانِ", id: "Keselamatan manusia itu dalam menjaga lidahnya." }
   ];
-
-  function updateMahfuzatHome() {
+function updateMahfuzatHome() {
     const tgl = new Date().getDate();
     const index = (tgl - 1) % daftarMahfuzat.length;
     const data = daftarMahfuzat[index];
@@ -327,6 +326,49 @@ function goTo(url) {
     auth.signInWithPopup(provider).catch(e => alert(e.message));
   }
 
+  function logout(){ auth.signOut().then(()=>location.reload()); }
+
+  // LOGIKA AKSES (SUDAH TANPA PENGUNCIAN JAM)
+  auth.onAuthStateChanged(user=>{
+    const loginCard=document.getElementById("login-card");
+    const dashboard=document.getElementById("dashboard");
+    const menuBtn=document.getElementById("menu-btn");
+
+    if(user){
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+      menuBtn.style.display="flex";
+      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
+      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
+      document.getElementById("sidebar-email").innerText = user.email;
+      if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
+      updateMahfuzatHome();
+    } else {
+      loginCard.classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      menuBtn.style.display="none";
+    }
+    hideLoading();
+  });
+
+  // LOGIKA SIDEBAR & OVERLAY
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+  const menuBtn = document.getElementById("menu-btn");
+
+  if(menuBtn) {
+    menuBtn.onclick = () => { 
+      sidebar.classList.add("open"); 
+      overlay.classList.add("show"); 
+    };
+  }
+
+  if(overlay) {
+    overlay.onclick = () => { 
+      sidebar.classList.remove("open"); 
+      overlay.classList.remove("show"); 
+    };
+  }
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   // LOGIKA PROTEKSI AKSES
