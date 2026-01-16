@@ -234,15 +234,32 @@
   });
   const auth = firebase.auth();
 
-  // SMOOTH NAVIGATION
-  function goTo(url) {
-    const container = document.getElementById('main-container');
-    container.classList.add('fade-out'); // Efek halus keluar
-    setTimeout(() => {
-      window.location.href = url;
-    }, 400);
-  }
+ // SMOOTH NAVIGATION DENGAN PROTEKSI JAM ABSENSI
+function goTo(url) {
+    // CEK JIKA YANG DIKLIK ADALAH ABSENSI
+    if (url === 'absensi.html') {
+        const sekarang = new Date();
+        const jam = sekarang.getHours();
+        const menit = sekarang.getMinutes();
+        const waktuSekarang = (jam * 100) + menit;
 
+        // Atur Jam Buka: 06:30 (630) dan Jam Tutup: 08:00 (800)
+        const JAM_BUKA = 630;
+        const JAM_TUTUP = 800;
+
+        if (waktuSekarang < JAM_BUKA || waktuSekarang > JAM_TUTUP) {
+            alert("🔒 AKSES DITUTUP\n\nMohon maaf, menu Absensi hanya dapat diakses pada pukul 06:30 s/d 08:00 WIB.");
+            return; // Gagalkan navigasi
+        }
+    }
+
+    // Jika waktu sesuai atau membuka menu selain absensi, jalankan animasi
+    const container = document.getElementById('main-container');
+    container.classList.add('fade-out'); 
+    setTimeout(() => {
+        window.location.href = url;
+    }, 400);
+}
   // REVEAL ON BACK BUTTON (Agar saat kembali dari alquran, dashboard tidak hilang)
   window.addEventListener('pageshow', () => {
     document.getElementById('main-container').classList.remove('fade-out');
