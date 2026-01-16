@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Absensi Hybrid (NFC + Manual)</title>
+<title>E-Absensi Hybrid | NFC + Manual</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
@@ -11,36 +11,35 @@
   body { background: #f0f4f3; padding: 15px; }
   .container { width: 100%; max-width: 450px; margin: auto; }
   
-  .nav-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .btn-back { background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 700; color: var(--primary); cursor: pointer; }
-  
-  /* Status NFC */
-  #nfc-status { font-size: 10px; padding: 5px 10px; border-radius: 20px; background: #eee; color: #666; font-weight: 700; }
-  .nfc-active { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #22c55e; }
+  /* Navigation & Status */
+  .nav-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+  .btn-back { background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 700; color: var(--primary); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  #nfc-status { font-size: 10px; padding: 6px 12px; border-radius: 20px; background: #ddd; color: #777; font-weight: 800; border: 1px solid transparent; transition: 0.3s; }
+  .nfc-active { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #22c55e !important; box-shadow: 0 0 10px rgba(34, 197, 94, 0.2); }
 
   header { text-align: center; padding: 10px 0; color: var(--primary); }
   .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
   label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-left: 5px; }
   select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; }
   
+  /* List Santri */
   .santri-list { margin-bottom: 180px; }
   .santri-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; transition: 0.3s; }
-  
-  /* Efek Scan NFC Berhasil */
-  .scan-success { animation: flashGreen 1s; border: 2px solid var(--hadir); }
-  @keyframes flashGreen { from { background: #dcfce7; } to { background: white; } }
+  .scan-success { animation: flashGreen 1.5s; border: 2px solid var(--hadir); transform: scale(1.02); }
+  @keyframes flashGreen { 0% { background: #dcfce7; } 100% { background: white; } }
 
   .btn-group { display: flex; gap: 4px; }
-  .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; cursor: pointer; }
+  .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; cursor: pointer; transition: 0.2s; }
   .h-on { background: var(--hadir)!important; color: #fff!important; border: none; }
   .s-on { background: var(--sakit)!important; color: #fff!important; border: none; }
   .i-on { background: var(--izin)!important; color: #fff!important; border: none; }
   .a-on { background: var(--alpha)!important; color: #fff!important; border: none; }
   
-  .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); }
+  /* Footer */
+  .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); text-align: center; }
   .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
   .btn-save { background: var(--primary); color: #fff; }
-  
+
   #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
   .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -48,12 +47,12 @@
 </head>
 <body>
 
-<div id="loading"><div class="spinner"></div><p style="margin-top:10px; font-weight: 600;">Memproses data...</p></div>
+<div id="loading"><div class="spinner"></div><p style="margin-top:10px; font-weight:600;">Memuat Data...</p></div>
 
 <div class="container">
   <div class="nav-top">
     <button class="btn-back" onclick="location.href='index.html'">← DASHBOARD</button>
-    <div id="nfc-status">NFC TIDAK AKTIF</div>
+    <div id="nfc-status">NFC BELUM AKTIF</div>
   </div>
 
   <header><h2>E-ABSENSI HYBRID</h2></header>
@@ -66,76 +65,48 @@
       <option value="8A">8A</option><option value="8B">8B</option>
       <option value="9A">9A</option><option value="9B">9B</option>
     </select>
-    <input type="text" id="cari" class="search-box" placeholder="Cari nama atau tempel kartu..." onkeyup="filter()">
+    <input type="text" id="cari" class="search-box" placeholder="Cari nama atau scan kartu..." onkeyup="filter()">
   </div>
 
   <div id="list" class="santri-list">
-    <p style="text-align:center; padding:20px; color:#888;">Pilih kelas untuk memulai.</p>
+    <p style="text-align:center; padding:20px; color:#888;">Pilih kelas terlebih dahulu untuk mengaktifkan NFC.</p>
   </div>
 
   <div class="footer">
-    <button class="btn-main btn-save" onclick="simpan()">💾 SIMPAN SEMUA DATA</button>
-    <p style="text-align:center; font-size:10px; color:#aaa;">System v2.0 - NFC Ready</p>
+    <button class="btn-main btn-save" onclick="simpan()">💾 SIMPAN ABSENSI</button>
+    <p style="font-size:10px; color:#bbb;">Pastikan NFC HP Aktif & Menggunakan HTTPS</p>
   </div>
 </div>
 
 <script>
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOQ96h0-ZmRv6Nq2SB3567EfzeCZD_1NgH3nsV8L5q8MGMKeSWKN848IJTMp2gvFDCEA/exec";
-  
-  // --- LOGIKA NFC ---
-  async function startNFC() {
-    const statusTag = document.getElementById('nfc-status');
-    if ("NDEFReader" in window) {
-      try {
-        const ndef = new NDEFReader();
-        await ndef.scan();
-        statusTag.innerText = "📡 NFC READY: TEMPEL KARTU";
-        statusTag.classList.add('nfc-active');
 
-        ndef.onreading = event => {
-          const serialNumber = event.serialNumber; // Mengambil ID unik kartu
-          // Hapus angka nol di depan atau sesuaikan format jika perlu
-          processNfcScan(serialNumber.replace(/:/g, "").toUpperCase());
-        };
-      } catch (error) {
-        statusTag.innerText = "❌ NFC ERROR";
-      }
-    } else {
-      statusTag.innerText = "🚫 NFC TIDAK DIDUKUNG";
-    }
-  }
-
-  function processNfcScan(nfcId) {
-    // Cari elemen yang punya data-nipd sama dengan NFC ID
-    const row = document.querySelector(`[data-nipd="${nfcId}"]`);
-    if (row) {
-      const btnHadir = row.querySelector('.btn-status:nth-child(1)');
-      set(btnHadir, 'H');
-      
-      // Efek visual
-      const parent = row.closest('.santri-item');
-      parent.classList.add('scan-success');
-      parent.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(() => parent.classList.remove('scan-success'), 2000);
-    } else {
-      alert("Kartu tidak terdaftar di kelas ini: " + nfcId);
-    }
-  }
-
-  // --- LOGIKA DATA ---
+  // --- 1. AMBIL DATA KELAS ---
   document.getElementById('pilih-kelas').onchange = function() {
     if(!this.value) return;
     document.getElementById('loading').style.display = 'flex';
+    
+    // Indikator Loading NFC
+    const statusTag = document.getElementById('nfc-status');
+    statusTag.innerText = "MENUNGGU DATA...";
+    statusTag.classList.remove('nfc-active');
+
     const s = document.createElement('script');
     s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
     document.body.appendChild(s);
   };
 
+  // --- 2. TAMPILKAN DAFTAR SISWA ---
   function render(data) {
     document.getElementById('loading').style.display = 'none';
     const cont = document.getElementById('list');
     cont.innerHTML = '';
     
+    if (!data || data.length === 0) {
+      cont.innerHTML = '<p style="text-align:center;padding:20px;color:red">Data tidak ditemukan.</p>';
+      return;
+    }
+
     data.forEach(x => {
       const d = document.createElement('div');
       d.className = 'santri-item';
@@ -149,10 +120,60 @@
         </div>`;
       cont.appendChild(d);
     });
-    // Aktifkan NFC setelah data kelas dimuat
+
+    // Jalankan NFC setelah list muncul
     startNFC();
   }
 
+  // --- 3. LOGIKA NFC ---
+  async function startNFC() {
+    const statusTag = document.getElementById('nfc-status');
+    if ("NDEFReader" in window) {
+      try {
+        const ndef = new NDEFReader();
+        await ndef.scan();
+        statusTag.innerText = "📡 NFC AKTIF: SIAP SCAN";
+        statusTag.classList.add('nfc-active');
+
+        ndef.onreading = event => {
+          // Normalisasi ID Kartu (Hapus titik dua dan jadikan huruf besar)
+          const idKartu = event.serialNumber.replace(/:/g, "").toUpperCase();
+          processNfcScan(idKartu);
+        };
+      } catch (error) {
+        statusTag.innerText = "❌ IZIN NFC DITOLAK";
+        console.error(error);
+      }
+    } else {
+      statusTag.innerText = "🚫 HP TIDAK SUPPORT NFC";
+    }
+  }
+
+  // --- 4. PROSES SCAN KARTU ---
+  function processNfcScan(nfcId) {
+    const group = document.querySelector(`.btn-group[data-nipd="${nfcId}"]`);
+    
+    if (group) {
+      const btnHadir = group.querySelector('.btn-status:nth-child(1)');
+      set(btnHadir, 'H'); 
+      
+      const row = group.closest('.santri-item');
+      row.classList.add('scan-success');
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Suara Feedback
+      const synth = window.speechSynthesis;
+      const utter = new SpeechSynthesisUtterance("Hadir");
+      utter.lang = 'id-ID';
+      synth.speak(utter);
+
+      setTimeout(() => row.classList.remove('scan-success'), 2000);
+    } else {
+      alert("KARTU TIDAK TERDAFTAR!\nID: " + nfcId);
+    }
+  }
+
+  // --- 5. LOGIKA MANUAL & SIMPAN ---
   function set(btn, stat) {
     btn.parentElement.querySelectorAll('button').forEach(b => { 
       b.className = 'btn-status'; 
@@ -173,6 +194,8 @@
   async function simpan() {
     const res = [];
     const kls = document.getElementById('pilih-kelas').value;
+    if(!kls) return alert("Pilih kelas dulu!");
+
     document.querySelectorAll('.btn-group').forEach(g => {
       const st = g.querySelector('[data-st]'); 
       if(st) {
@@ -180,14 +203,16 @@
       }
     });
 
-    if(!res.length) return alert("Belum ada data absen!");
+    if(!res.length) return alert("Belum ada data absen yang diisi!");
     document.getElementById('loading').style.display = 'flex';
     
     try {
       await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
-      alert("✅ Data Berhasil Disimpan!"); 
+      alert("✅ Data Absensi Berhasil Disimpan!"); 
       location.reload();
-    } catch(e) { alert("Gagal!"); }
+    } catch(e) { 
+      alert("Terjadi kesalahan koneksi!"); 
+    }
     document.getElementById('loading').style.display = 'none';
   }
 </script>
