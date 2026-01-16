@@ -3,84 +3,115 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>E-Santri Fix</title>
+    <title>E-Santri Absensi v3</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --hadir: #22c55e; }
+        :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-        body { background: #f0f4f3; padding: 15px; text-align: center; }
+        body { background: #f0f4f3; padding: 15px; }
         .card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; margin-top: 8px; }
-        .btn-footer { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .btn-save { background: var(--primary); color: white; }
-        #overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
+        select, .search-box { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #eee; margin-top: 10px; outline: none; }
+        .santri-item { background: white; border-radius: 15px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0f0f0; }
+        .btn-st { width: 38px; height: 38px; border-radius: 10px; border: 1px solid #eee; background: white; font-weight: 700; color: #ccc; cursor: pointer; }
+        .h-active { background: var(--hadir)!important; color: white!important; border: none; }
+        .s-active { background: var(--sakit)!important; color: white!important; border: none; }
+        .i-active { background: var(--izin)!important; color: white!important; border: none; }
+        .a-active { background: var(--alpha)!important; color: white!important; border: none; }
+        .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: white; padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #eee; }
+        .btn-f { padding: 12px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; }
+        #overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-<div id="overlay">
-    <h2 id="overlay-text">Memproses...</h2>
-</div>
+<div id="overlay"><h2 id="msg">Memproses...</h2></div>
 
 <div class="card">
-    <h3>ABSENSI E-SANTRI</h3>
-    <p id="info-status" style="font-size: 12px; color: #666; margin-top: 10px;"></p>
-    <select id="pilih-kelas">
+    <h3 style="color:var(--primary)">E-SANTRI ABSENSI</h3>
+    <select id="kls">
         <option value="">-- Pilih Kelas --</option>
-        <option value="7A">7A</option><option value="7B">7B</option>
-        <option value="8A">8A</option><option value="8B">8B</option>
-        <option value="9A">9A</option><option value="9B">9B</option>
+        <optgroup label="Kelas 7"><option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option></optgroup>
+        <optgroup label="Kelas 8"><option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option></optgroup>
+        <optgroup label="Kelas 9"><option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option></optgroup>
     </select>
+    <input type="text" id="cari" class="search-box" placeholder="Cari nama..." onkeyup="filter()">
 </div>
 
 <div id="list" style="margin-bottom: 100px;"></div>
 
-<div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: white;">
-    <button class="btn-footer btn-save" onclick="simpanManual()">💾 SIMPAN MANUAL</button>
+<div class="footer">
+    <button class="btn-f" style="background:#f8f9fa; border:1px solid #ddd" onclick="download()">📥 REKAP</button>
+    <button class="btn-f" style="background:var(--primary); color:white" onclick="simpan()">💾 SIMPAN</button>
 </div>
 
 <script>
-    // MASUKKAN URL HASIL NEW DEPLOYMENT ANDA DI SINI
-    const SCRIPT_URL = "URL_SCRIPT_BARU_ANDA";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybFZnSVot87x8HNSe8gMqHGe6uk1Sy40ZQ692HqjrR4mFjG2gay3QqcJ4LkybJ7rTJ9w/exec";
 
     window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const nfcId = urlParams.get('scan');
-        const kls = urlParams.get('kls');
-
-        if (nfcId && kls) {
-            document.getElementById('info-status').innerText = "Mode NFC Terdeteksi: " + nfcId;
-            autoSimpanNFC(nfcId, kls);
+        const p = new URLSearchParams(window.location.search);
+        if (p.get('scan')) {
+            showOverlay("Mencatat NFC...");
+            const data = JSON.stringify([{ kelas: p.get('kls'), nipd: p.get('scan'), status: 'H' }]);
+            // TEKNIK ANTI GAGAL: navigator.sendBeacon
+            navigator.sendBeacon(SCRIPT_URL, data);
+            document.getElementById('msg').innerText = "✅ BERHASIL!";
+            setTimeout(() => location.href="index.html", 2000);
         }
     };
 
-    async function autoSimpanNFC(id, kls) {
-        showOverlay("Mencatat NFC: " + id);
-        // Kita kirim nama: "undefined" agar Script mencari nama sendiri di Sheet
-        const data = [{ kelas: kls, nipd: id, nama: "undefined", status: 'H' }];
-        
-        try {
-            await fetch(SCRIPT_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify(data) 
-            });
-            
-            document.getElementById('overlay-text').innerText = "✅ BERHASIL!";
-            setTimeout(() => { window.location.href = "index.html"; }, 2000);
-        } catch (e) { 
-            alert("Koneksi Gagal!"); 
-            hideOverlay(); 
-        }
+    document.getElementById('kls').onchange = function() {
+        if(!this.value) return;
+        showOverlay("Memuat data...");
+        const s = document.createElement('script');
+        s.src = `${SCRIPT_URL}?kelas=${this.value}&callback=render`;
+        document.body.appendChild(s);
+    };
+
+    function render(data) {
+        hideOverlay();
+        const cont = document.getElementById('list');
+        cont.innerHTML = '';
+        data.forEach(x => {
+            const d = document.createElement('div');
+            d.className = 'santri-item';
+            d.innerHTML = `
+                <div><b>${x.nama}</b><br><small>${x.nipd}</small></div>
+                <div class="btns" data-nipd="${x.nipd}" data-nama="${x.nama}">
+                    <button class="btn-st" onclick="st(this,'H')">H</button>
+                    <button class="btn-st" onclick="st(this,'S')">S</button>
+                    <button class="btn-st" onclick="st(this,'I')">I</button>
+                    <button class="btn-st" onclick="setSt(this,'A')">A</button>
+                </div>`;
+            cont.appendChild(d);
+        });
     }
 
-    function simpanManual() {
-        // Logika simpan manual sama seperti sebelumnya
-        alert("Fitur Manual Siap");
+    function st(btn, s) {
+        btn.parentElement.querySelectorAll('button').forEach(b => b.className = 'btn-st');
+        const c = {H:'h-active',S:'s-active',I:'i-active',A:'a-active'};
+        btn.classList.add(c[s]); btn.setAttribute('data-s', s);
     }
 
-    function showOverlay(t) { document.getElementById('overlay').style.display = 'flex'; document.getElementById('overlay-text').innerText = t; }
+    async function simpan() {
+        const k = document.getElementById('kls').value;
+        const res = [];
+        document.querySelectorAll('.btns').forEach(g => {
+            const s = g.querySelector('[data-s]');
+            if(s) res.push({ kelas: k, nipd: g.dataset.nipd, nama: g.dataset.nama, status: s.dataset.s });
+        });
+        if(!res.length) return alert("Pilih data!");
+        showOverlay("Menyimpan...");
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
+        alert("Tersimpan!"); location.reload();
+    }
+
+    function download() { window.open(SCRIPT_URL + "?action=download", '_blank'); }
+    function showOverlay(t) { document.getElementById('overlay').style.display = 'flex'; document.getElementById('msg').innerText = t; }
     function hideOverlay() { document.getElementById('overlay').style.display = 'none'; }
+    function filter() {
+        const v = document.getElementById('cari').value.toLowerCase();
+        document.querySelectorAll('.santri-item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none');
+    }
 </script>
 </body>
 </html>
