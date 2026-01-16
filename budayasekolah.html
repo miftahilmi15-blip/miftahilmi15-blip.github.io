@@ -3,126 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Budaya Sekolah 5 Aspek</title>
+    <title>E-SANTRI | Budaya Sekolah</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); padding: 10px; display: flex; justify-content: center; }
         .wadah { width: 100%; max-width: 500px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        
         header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         header h1 { color: var(--primary); font-size: 18px; font-weight: 800; }
-
         .form-grup { margin-bottom: 12px; }
         label { font-size: 10px; font-weight: 700; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; }
-        select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
-        
-        /* Baris Aspek */
-        .baris-aspek { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 15px; margin-bottom: 10px; transition: 0.3s; }
-        .judul-aspek { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
+        .baris-aspek { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 15px; margin-bottom: 10px; }
+        .judul-aspek { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
         .rating { display: flex; gap: 15px; justify-content: center; }
         .star { cursor: pointer; font-size: 32px; color: #ddd; transition: 0.2s; }
         .star.active { color: var(--accent); }
         .label-kategori { text-align: center; font-size: 11px; font-weight: 700; margin-top: 5px; color: #bbb; }
-
-        /* Tombol-tombol */
         .btn-fast { width: 100%; background: #e8f5e9; color: var(--primary); border: 2px dashed var(--primary); padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
-        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 14px; box-shadow: 0 4px 12px rgba(31,111,81,0.2); }
-        
-        .area-download { margin-top: 25px; padding-top: 15px; border-top: 2px dashed #eee; display: flex; gap: 10px; }
-        .btn-download { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: 600; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .pdf { background: #e11d48; }
-        .excel { background: #16a34a; }
-
-        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; font-size: 13px; }
+        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .area-download { margin-top: 25px; display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; }
+        .btn-download { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: 600; font-size: 11px; cursor: pointer; }
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
     </style>
 </head>
 <body>
 
 <div class="wadah">
-    <header><h1>INPUT 5 ASPEK BUDAYA</h1></header>
+    <header><h1>BUDAYA SEKOLAH</h1></header>
 
     <div class="form-grup">
-        <label>Guru Pengampu & Mapel</label>
+        <label>Guru & Mapel</label>
         <div style="display: flex; gap: 8px;">
             <select id="guru">
-                <option value="Ibu Riani Rizki Astuti">Ibu Riani Rizki Astuti</option>
-                <option value="Ustadz Ahmad Fauzi">Ustadz Ahmad Fauzi</option>
-                <option value="Ustadzah Siti Aminah">Ustadzah Siti Aminah</option>
+                <option value="Ibu Riani Rizki Astuti">Ibu Riani</option>
+                <option value="Ustadz Ahmad Fauzi">Ustadz Ahmad</option>
+                <option value="Ustadzah Siti Aminah">Ustadzah Siti</option>
             </select>
             <select id="mapel">
                 <option value="BK">BK</option>
                 <option value="PAI">PAI</option>
                 <option value="Tahfidz">Tahfidz</option>
-                <option value="Bahasa Arab">B. Arab</option>
             </select>
         </div>
     </div>
 
     <div class="form-grup">
-        <label>Pilih Nama Santri (7B)</label>
-        <select id="santri" onfocus="loadSantri()">
-            <option value="">-- Klik untuk muat data --</option>
-        </select>
+        <label>Data Santri</label>
+        <div style="display: flex; gap: 8px;">
+            <select id="pilih-kelas" onchange="loadSantri()">
+                <option value="">-- Kelas --</option>
+                <option value="7A">7A</option><option value="7B">7B</option>
+                <option value="7C">7C</option><option value="7D">7D</option>
+                <option value="8A">8A</option><option value="8B">8B</option>
+                <option value="8C">8C</option><option value="8D">8D</option>
+                <option value="9A">9A</option><option value="9B">9B</option>
+                <option value="9C">9C</option><option value="9D">9D</option>
+            </select>
+            <select id="pilih-santri">
+                <option value="">-- Pilih Nama --</option>
+            </select>
+        </div>
     </div>
 
-    <button class="btn-fast" onclick="semuaBintang4()">⚡ SEMUA SANGAT BAIK (SET 4★)</button>
+    <button class="btn-fast" onclick="semuaBintang4()">⚡ SEMUA SANGAT BAIK (4★)</button>
 
     <div id="area-aspek">
-        <div class="baris-aspek" data-aspek="Tertib">
-            <div class="judul-aspek">📏 1. TERTIB</div>
-            <div class="rating">
-                <span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span>
-            </div>
-            <div class="label-kategori">Belum Dinilai</div>
-        </div>
-
-        <div class="baris-aspek" data-aspek="Disiplin">
-            <div class="judul-aspek">⏰ 2. DISIPLIN</div>
-            <div class="rating">
-                <span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span>
-            </div>
-            <div class="label-kategori">Belum Dinilai</div>
-        </div>
-
-        <div class="baris-aspek" data-aspek="Tanggung Jawab">
-            <div class="judul-aspek">🔑 3. TANGGUNG JAWAB</div>
-            <div class="rating">
-                <span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span>
-            </div>
-            <div class="label-kategori">Belum Dinilai</div>
-        </div>
-
-        <div class="baris-aspek" data-aspek="Jujur">
-            <div class="judul-aspek">🛡️ 4. JUJUR</div>
-            <div class="rating">
-                <span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span>
-            </div>
-            <div class="label-kategori">Belum Dinilai</div>
-        </div>
-
-        <div class="baris-aspek" data-aspek="Ramah">
-            <div class="judul-aspek">😊 5. RAMAH</div>
-            <div class="rating">
-                <span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span>
-            </div>
-            <div class="label-kategori">Belum Dinilai</div>
-        </div>
+        <div class="baris-aspek" data-aspek="Tertib"><div class="judul-aspek">📏 1. TERTIB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+        <div class="baris-aspek" data-aspek="Disiplin"><div class="judul-aspek">⏰ 2. DISIPLIN</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+        <div class="baris-aspek" data-aspek="Tanggung Jawab"><div class="judul-aspek">🔑 3. T. JAWAB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+        <div class="baris-aspek" data-aspek="Jujur"><div class="judul-aspek">🛡️ 4. JUJUR</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+        <div class="baris-aspek" data-aspek="Ramah"><div class="judul-aspek">😊 5. RAMAH</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
     </div>
 
-    <div id="loading">⏳ Sedang memproses 5 data...</div>
+    <div id="loading">⏳ Menyimpan 5 Data...</div>
     <button class="btn-simpan" onclick="simpanKolektif()">💾 SIMPAN SEMUA ASPEK</button>
 
     <div class="area-download">
-        <button class="btn-download pdf" onclick="unduh('pdf')">📄 DOWNLOAD PDF</button>
-        <button class="btn-download excel" onclick="unduh('xlsx')">📊 DOWNLOAD EXCEL</button>
+        <button class="btn-download" style="background:#e11d48" onclick="unduh('pdf')">📄 PDF REKAP</button>
+        <button class="btn-download" style="background:#16a34a" onclick="unduh('xlsx')">📊 EXCEL REKAP</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOQ96h0-ZmRv6Nq2SB3567EfzeCZD_1NgH3nsV8L5q8MGMKeSWKN848IJTMp2gvFDCEA/exec";
-    const SS_ID = "1oa3wrlVP5nBjBBmhFN1dvEp5CbdjY4s79pQ2_jw0ecc"; // ID Spreadsheet Anda
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLmOPanCnEoAY2a80MSoicqalkmNmwSiNNTalVGtwXTBmTIf4t3tp-BcyRyXtJn5Qi7w/exec";
+    const SS_ID = "1M1SizjY7In13bMfjqec9mAHdRtvA38d5Tvg8tKD_1EI";
+    const GID_CETAK = "514667825"; // ID sheet Rekap_Cetak ustadz
     const kategoriArr = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
 
     function klikStar(el, n) {
@@ -130,8 +97,9 @@
         const stars = parent.querySelectorAll('.star');
         stars.forEach((s, i) => s.classList.toggle('active', i < n));
         parent.parentElement.setAttribute('data-nilai', n);
-        parent.nextElementSibling.innerText = kategoriArr[n];
-        parent.nextElementSibling.style.color = "#1f6f51";
+        const label = parent.nextElementSibling;
+        label.innerText = kategoriArr[n];
+        label.style.color = "#1f6f51";
     }
 
     function semuaBintang4() {
@@ -142,58 +110,52 @@
     }
 
     async function loadSantri() {
-        const sel = document.getElementById('santri');
-        if(sel.options.length > 1) return;
-        sel.innerHTML = '<option>Memuat data 7B...</option>';
+        const kelas = document.getElementById('pilih-kelas').value;
+        const sel = document.getElementById('pilih-santri');
+        if(!kelas) return;
+        sel.innerHTML = '<option>Memuat...</option>';
         try {
-            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=7B`);
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
             const data = await res.json();
             sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
             data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
-        } catch(e) { sel.innerHTML = '<option value="">Gagal muat data</option>'; }
+        } catch(e) { sel.innerHTML = '<option>Gagal!</option>'; }
     }
 
     async function simpanKolektif() {
-        const s = document.getElementById('santri');
-        if(!s.value) return alert("Silakan pilih nama santri!");
-
-        const payload = [];
-        let lengkap = true;
-
-        document.querySelectorAll('.baris-aspek').forEach(baris => {
-            const nilai = baris.getAttribute('data-nilai');
-            if(!nilai) lengkap = false;
-            payload.push({
-                guru: document.getElementById('guru').value,
-                mapel: document.getElementById('mapel').value,
-                nama: s.options[s.selectedIndex].text,
-                nipd: s.value,
-                aspek: baris.getAttribute('data-aspek'),
-                nilai: nilai,
-                kategori: kategoriArr[nilai],
-                tanggal: new Date().toLocaleDateString('id-ID')
-            });
-        });
-
-        if(!lengkap) return alert("Berikan bintang pada semua 5 aspek!");
+        const s = document.getElementById('pilih-santri');
+        const kelas = document.getElementById('pilih-kelas').value;
+        if(!s.value) return alert("Pilih santri dulu!");
 
         document.getElementById('loading').style.display = 'block';
+        const barisAspek = document.querySelectorAll('.baris-aspek');
+        
         try {
-            // Mengirim 5 baris data sekaligus
-            for(let data of payload) {
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+            for(let baris of barisAspek) {
+                const nilai = baris.getAttribute('data-nilai');
+                if(!nilai) continue;
+
+                const payload = {
+                    tanggal: new Date().toLocaleDateString('id-ID'),
+                    nipd: s.value,
+                    nama: s.options[s.selectedIndex].text,
+                    kelas: kelas,
+                    aspek: baris.getAttribute('data-aspek'),
+                    kategori: kategoriArr[nilai],
+                    nilai: nilai,
+                    guru: document.getElementById('guru').value
+                };
+
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             }
-            alert("✅ Berhasil! 5 Aspek karakter " + s.options[s.selectedIndex].text + " telah tercatat.");
+            alert("✅ Berhasil Simpan 5 Aspek!");
             location.reload();
-        } catch(e) { alert("Gagal mengirim ke database."); }
-        document.getElementById('loading').style.display = 'none';
+        } catch(e) { alert("Gagal!"); }
     }
 
     function unduh(format) {
-        const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=${format}`;
-        if(confirm(`Unduh rekap data dalam format ${format.toUpperCase()}?`)) {
-            window.open(url, '_blank');
-        }
+        const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=${format}&gid=${GID_CETAK}`;
+        window.open(url, '_blank');
     }
 </script>
 </body>
