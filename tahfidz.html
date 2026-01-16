@@ -25,7 +25,12 @@
     </style>
 </head>
 <body>
-
+<div id="lock-screen" style="position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
+    <h2 style="margin-bottom:20px;">🔒 AKSES TERBATAS</h2>
+    <p style="margin-bottom:10px; font-size:12px;">Masukkan Kode Keamanan Ustadz:</p>
+    <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
+    <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
+</div>
 <div class="wadah">
     <header><h1>CATAT TAHFIDZ</h1></header>
 
@@ -173,6 +178,19 @@
         const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&size=A4&portrait=true&fitw=true&gridlines=false`;
         window.open(url, '_blank');
     }
+    // Ganti "1234" dengan kode rahasia yang Anda inginkan
+const KODE_RAHASIA = "152003"; 
+
+function cekLogin() {
+    const input = document.getElementById('passcode').value;
+    if (input === KODE_RAHASIA) {
+        document.getElementById('lock-screen').style.display = 'none';
+        alert("Selamat bertugas, Ustadz!");
+    } else {
+        alert("Kode Salah! Akses Ditolak.");
+        document.getElementById('passcode').value = "";
+    }
+}
 </script>
 </body>
 </html>
