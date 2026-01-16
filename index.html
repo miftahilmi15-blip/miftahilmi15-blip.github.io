@@ -335,7 +335,23 @@
     }
     hideLoading();
   });
+// Cek saat halaman pertama kali dibuka
+window.onload = function() {
+    const jam = new Date().getHours();
+    const menit = new Date().getMinutes();
+    const waktu = (jam * 100) + menit;
 
+    if (waktu < 630 || waktu > 800) {
+        document.getElementById('pilih-kelas').disabled = true;
+        document.querySelector('.btn-all').style.display = 'none';
+        document.getElementById('list').innerHTML = `
+            <div style="text-align:center; padding:40px; color:#ef4444;">
+                <h1 style="font-size:40px;">🔒</h1>
+                <p><b>Sesi Absensi Belum Dibuka</b></p>
+                <small>Hanya tersedia pukul 06:30 - 08:00</small>
+            </div>`;
+    }
+};
   const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
   menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
   overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
