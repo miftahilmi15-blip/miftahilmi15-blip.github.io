@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Absensi Hybrid | 12 Kelas</title>
+<title>E-Absensi | NFC Auto-Save</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --primary: #1f6f51; --hadir: #22c55e; --sakit: #eab308; --izin: #3b82f6; --alpha: #ef4444; }
@@ -12,31 +12,23 @@
   .container { width: 100%; max-width: 450px; margin: auto; }
   
   .nav-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-  .btn-back { background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 700; color: var(--primary); cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-  #nfc-status { font-size: 10px; padding: 6px 12px; border-radius: 20px; background: #ddd; color: #777; font-weight: 800; border: 1px solid transparent; transition: 0.3s; }
-  .nfc-active { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #22c55e !important; box-shadow: 0 0 10px rgba(34, 197, 94, 0.2); }
+  .btn-back { background: white; border: none; padding: 8px 15px; border-radius: 10px; font-weight: 700; color: var(--primary); cursor: pointer; }
+  #nfc-status { font-size: 10px; padding: 6px 12px; border-radius: 20px; background: #ddd; color: #777; font-weight: 800; }
+  .nfc-active { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #22c55e; }
 
   header { text-align: center; padding: 10px 0; color: var(--primary); }
   .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
-  label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-left: 5px; }
-  select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; }
+  select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; }
   
-  .santri-list { margin-bottom: 180px; }
+  .santri-list { margin-bottom: 100px; }
   .santri-item { background: white; border-radius: 12px; padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; transition: 0.3s; }
-  .scan-success { animation: flashGreen 1.5s; border: 2px solid var(--hadir); transform: scale(1.02); }
+  .scan-success { animation: flashGreen 1.5s; border: 2px solid var(--hadir); }
   @keyframes flashGreen { 0% { background: #dcfce7; } 100% { background: white; } }
 
   .btn-group { display: flex; gap: 4px; }
-  .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; cursor: pointer; transition: 0.2s; }
+  .btn-status { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: 700; font-size: 11px; color: #bbb; }
   .h-on { background: var(--hadir)!important; color: #fff!important; border: none; }
-  .s-on { background: var(--sakit)!important; color: #fff!important; border: none; }
-  .i-on { background: var(--izin)!important; color: #fff!important; border: none; }
-  .a-on { background: var(--alpha)!important; color: #fff!important; border: none; }
   
-  .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); text-align: center; }
-  .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
-  .btn-save { background: var(--primary); color: #fff; }
-
   #loading { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; }
   .spinner { width: 40px; height: 40px; border: 4px solid #eee; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -44,202 +36,111 @@
 </head>
 <body>
 
-<div id="loading"><div class="spinner"></div><p id="load-text" style="margin-top:10px; font-weight:600;">Memuat Data...</p></div>
+<div id="loading"><div class="spinner"></div><p id="load-text" style="margin-top:10px; font-weight:600;">Mengirim Data...</p></div>
 
 <div class="container">
   <div class="nav-top">
-    <button class="btn-back" onclick="location.href='index.html'">← DASHBOARD</button>
-    <div id="nfc-status">NFC BELUM AKTIF</div>
+    <button class="btn-back" onclick="location.href='index.html'">← KEMBALI</button>
+    <div id="nfc-status">PILIH KELAS DULU</div>
   </div>
 
-  <header><h2>E-ABSENSI HYBRID</h2></header>
+  <header><h2>E-ABSENSI AUTO-SAVE</h2></header>
   
   <div class="card">
-    <label>Pilih Kelas</label>
+    <label style="font-size:11px; font-weight:700; color:#888;">PILIH KELAS</label>
     <select id="pilih-kelas">
       <option value="">-- Pilih Kelas --</option>
-      <optgroup label="KELAS 7">
-        <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option>
-        <option value="7C">Kelas 7C</option><option value="7D">Kelas 7D</option>
-      </optgroup>
-      <optgroup label="KELAS 8">
-        <option value="8A">Kelas 8A</option><option value="8B">Kelas 8B</option>
-        <option value="8C">Kelas 8C</option><option value="8D">Kelas 8D</option>
-      </optgroup>
-      <optgroup label="KELAS 9">
-        <option value="9A">Kelas 9A</option><option value="9B">Kelas 9B</option>
-        <option value="9C">Kelas 9C</option><option value="9D">Kelas 9D</option>
-      </optgroup>
+      <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option>
+      <option value="7C">Kelas 7C</option><option value="7D">Kelas 7D</option>
+      <option value="8A">Kelas 8A</option><option value="8B">Kelas 8B</option>
+      <option value="8C">Kelas 8C</option><option value="8D">Kelas 8D</option>
+      <option value="9A">Kelas 9A</option><option value="9B">Kelas 9B</option>
+      <option value="9C">Kelas 9C</option><option value="9D">Kelas 9D</option>
     </select>
-    <input type="text" id="cari" class="search-box" placeholder="Cari nama atau scan kartu..." onkeyup="filter()">
   </div>
 
-  <div id="list" class="santri-list">
-    <p style="text-align:center; padding:20px; color:#888;">Silakan pilih salah satu dari 12 kelas di atas.</p>
-  </div>
-
-  <div class="footer">
-    <button class="btn-main btn-save" onclick="simpan()">💾 SIMPAN ABSENSI SEKARANG</button>
-    <p style="font-size:10px; color:#bbb;">e-santri.vercel.app | NFC Ready</p>
-  </div>
+  <div id="list" class="santri-list"></div>
 </div>
 
 <script>
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOQ96h0-ZmRv6Nq2SB3567EfzeCZD_1NgH3nsV8L5q8MGMKeSWKN848IJTMp2gvFDCEA/exec";
 
-  // --- 1. AMBIL DATA KELAS ---
   document.getElementById('pilih-kelas').onchange = function() {
-    muatDataKelas(this.value);
+    if(!this.value) return;
+    document.getElementById('loading').style.display = 'flex';
+    document.getElementById('load-text').innerText = "Memuat data kelas...";
+    const s = document.createElement('script');
+    s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
+    document.body.appendChild(s);
   };
 
-  function muatDataKelas(kelas) {
-    if(!kelas) return;
-    document.getElementById('loading').style.display = 'flex';
-    document.getElementById('load-text').innerText = "Memuat Kelas " + kelas + "...";
-    
-    const statusTag = document.getElementById('nfc-status');
-    statusTag.innerText = "MENYIAPKAN NFC...";
-    statusTag.classList.remove('nfc-active');
-
-    const s = document.createElement('script');
-    s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(kelas)}&callback=render`;
-    document.body.appendChild(s);
-  }
-
-  // --- 2. TAMPILKAN DAFTAR SISWA ---
   function render(data) {
     document.getElementById('loading').style.display = 'none';
     const cont = document.getElementById('list');
     cont.innerHTML = '';
-    
-    if (!data || data.length === 0) {
-      cont.innerHTML = '<p style="text-align:center;padding:20px;color:red">Siswa tidak ditemukan.</p>';
-      return;
-    }
-
     data.forEach(x => {
       const d = document.createElement('div');
       d.className = 'santri-item';
       d.innerHTML = `
         <div><b style="font-size:13px;">${x.nama}</b><br><small style="color:#999">${x.nipd}</small></div>
-        <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}"> 
-          <button class="btn-status" onclick="set(this,'H')">H</button>
-          <button class="btn-status" onclick="set(this,'S')">S</button>
-          <button class="btn-status" onclick="set(this,'I')">I</button>
-          <button class="btn-status" onclick="set(this,'A')">A</button>
+        <div class="btn-group" id="group-${x.nipd}" data-nipd="${x.nipd}" data-nama="${x.nama}"> 
+          <button class="btn-status" id="btn-${x.nipd}">H</button>
         </div>`;
       cont.appendChild(d);
     });
-
     startNFC();
-    
-    // Cek jika ada scan tertunda dari URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const pendingScan = urlParams.get('scan');
-    if (pendingScan) processNfcScan(pendingScan);
   }
 
-  // --- 3. LOGIKA NFC ---
   async function startNFC() {
     const statusTag = document.getElementById('nfc-status');
     if ("NDEFReader" in window) {
       try {
         const ndef = new NDEFReader();
         await ndef.scan();
-        statusTag.innerText = "📡 NFC AKTIF: SIAP SCAN";
+        statusTag.innerText = "📡 NFC AKTIF: TEMPEL KARTU";
         statusTag.classList.add('nfc-active');
-
         ndef.onreading = event => {
           const idKartu = event.serialNumber.replace(/:/g, "").toUpperCase();
-          processNfcScan(idKartu);
+          processAutoSave(idKartu);
         };
-      } catch (error) {
-        statusTag.innerText = "❌ IZIN NFC DITOLAK";
-      }
-    } else {
-      statusTag.innerText = "🚫 NFC TIDAK SUPPORT";
-    }
+      } catch (e) { statusTag.innerText = "❌ IZIN NFC DITOLAK"; }
+    } else { statusTag.innerText = "🚫 TIDAK SUPPORT NFC"; }
   }
 
-  function processNfcScan(nfcId) {
-    const group = document.querySelector(`.btn-group[data-nipd="${nfcId}"]`);
-    
-    if (group) {
-      const btnHadir = group.querySelector('.btn-status:nth-child(1)');
-      set(btnHadir, 'H'); 
-      
-      const row = group.closest('.santri-item');
-      row.classList.add('scan-success');
-      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      const synth = window.speechSynthesis;
-      const utter = new SpeechSynthesisUtterance("Hadir");
-      utter.lang = 'id-ID';
-      synth.speak(utter);
+  // --- LOGIKA AUTO SAVE ---
+  async function processAutoSave(nfcId) {
+    const group = document.querySelector(`[data-nipd="${nfcId}"]`);
+    if (!group) return alert("Kartu " + nfcId + " tidak terdaftar di kelas ini!");
 
-      setTimeout(() => row.classList.remove('scan-success'), 2000);
-    } else {
-      alert("KARTU TIDAK TERDAFTAR DI KELAS INI!\nID: " + nfcId);
-    }
-  }
+    const nama = group.getAttribute('data-nama');
+    const kelas = document.getElementById('pilih-kelas').value;
+    const btn = document.getElementById('btn-' + nfcId);
 
-  // --- 4. LOGIKA MANUAL & SIMPAN ---
-  function set(btn, stat) {
-    btn.parentElement.querySelectorAll('button').forEach(b => { 
-      b.className = 'btn-status'; 
-      b.removeAttribute('data-st'); 
-    });
-    const c = {'H':'h-on','S':'s-on','I':'i-on','A':'a-on'};
-    btn.classList.add(c[stat]); 
-    btn.setAttribute('data-st', stat);
-  }
+    // Efek Visual
+    btn.classList.add('h-on');
+    const row = group.closest('.santri-item');
+    row.classList.add('scan-success');
 
-  function filter() {
-    const val = document.getElementById('cari').value.toLowerCase();
-    document.querySelectorAll('.santri-item').forEach(i => {
-      i.style.display = i.innerText.toLowerCase().includes(val) ? 'flex' : 'none';
-    });
-  }
-
-  async function simpan() {
-    const res = [];
-    const kls = document.getElementById('pilih-kelas').value;
-    if(!kls) return alert("Pilih kelas dulu!");
-
-    document.querySelectorAll('.btn-group').forEach(g => {
-      const st = g.querySelector('[data-st]'); 
-      if(st) {
-        res.push({ kelas: kls, nipd: g.getAttribute('data-nipd'), nama: g.getAttribute('data-nama'), status: st.getAttribute('data-st') });
-      }
-    });
-
-    if(!res.length) return alert("Isi minimal satu absen!");
+    // Tampilkan Loading kecil
     document.getElementById('loading').style.display = 'flex';
-    document.getElementById('load-text').innerText = "Mengirim Data...";
+    document.getElementById('load-text').innerText = "Auto-Saving " + nama + "...";
+
+    // Kirim Data Langsung
+    const dataKirim = [{ kelas: kelas, nipd: nfcId, nama: nama, status: 'H' }];
     
     try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
-      alert("✅ Absensi Berhasil Disimpan!"); 
-      location.reload();
-    } catch(e) { 
-      alert("Gagal mengirim data!"); 
-    }
+      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataKirim) });
+      
+      // Suara Berhasil
+      const utter = new SpeechSynthesisUtterance(nama + " hadir");
+      utter.lang = 'id-ID';
+      window.speechSynthesis.speak(utter);
+
+    } catch (e) { alert("Gagal Simpan!"); }
+
     document.getElementById('loading').style.display = 'none';
+    setTimeout(() => row.classList.remove('scan-success'), 2000);
   }
-
-  // --- 5. DETEKSI DIRECT TAP DARI LUAR ---
-  window.onload = function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const nfcId = urlParams.get('scan');
-    const kelasAuto = urlParams.get('kls'); // Opsional jika link di kartu menyertakan kelas
-
-    if (nfcId && kelasAuto) {
-      document.getElementById('pilih-kelas').value = kelasAuto;
-      muatDataKelas(kelasAuto);
-    } else if (nfcId) {
-       alert("Sistem mendeteksi kartu " + nfcId + ". Silakan pilih kelas siswa tersebut.");
-    }
-  };
 </script>
 </body>
 </html>
