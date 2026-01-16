@@ -31,6 +31,7 @@
     <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
     <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
 </div>
+
 <div class="wadah">
     <header><h1>CATAT TAHFIDZ</h1></header>
 
@@ -107,8 +108,8 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
     const SS_ID = "1fF8DzW7pNuSDefq_tHMvWlocg_KQieWEP7m1g6FIB4A";
+    const KODE_RAHASIA = "152003"; 
 
-    // DATABASE MATERI SESUAI PERMINTAAN
     const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
 
     const subMateri = {
@@ -119,6 +120,17 @@
         "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`),
         "Tahfidz": surah30Juz
     };
+
+    function cekLogin() {
+        const input = document.getElementById('passcode').value;
+        if (input === KODE_RAHASIA) {
+            document.getElementById('lock-screen').style.display = 'none';
+            alert("Selamat bertugas, Ustadz/Ustdzah! tetap semangatt yaa 🥰🥰🥰");
+        } else {
+            alert("Kode Salah! Akses Ditolak.");
+            document.getElementById('passcode').value = "";
+        }
+    }
 
     function updateSubMateri() {
         const kat = document.getElementById('kategori-materi').value;
@@ -139,10 +151,12 @@
         const sel = document.getElementById('pilih-santri');
         if(!kelas) return;
         sel.innerHTML = '<option>Memuat...</option>';
-        const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
-        const data = await res.json();
-        sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-        data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
+            const data = await res.json();
+            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
+        } catch(e) { alert("Gagal memuat nama santri"); }
     }
 
     async function simpan() {
@@ -158,7 +172,7 @@
             nipd: s.value,
             nama: s.options[s.selectedIndex].text,
             kelas: kls,
-            surah: `${kat}: ${mat}`, // Menggabungkan kategori agar jelas di sheet
+            surah: `${kat}: ${mat}`,
             juz: "-", 
             ayat: document.getElementById('awal').value + "-" + document.getElementById('akhir').value,
             status: document.getElementById('status').value,
@@ -167,30 +181,30 @@
         };
 
         document.getElementById('loading').style.display = 'block';
+        
         try {
             await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             alert("✅ Berhasil Disimpan!");
-            location.reload();
-        } catch(e) { alert("Gagal!"); }
+            
+            // RESET FORM TANPA RELOAD (Agar sandi tidak diminta lagi)
+            document.getElementById('pilih-santri').value = "";
+            document.getElementById('awal').value = "";
+            document.getElementById('akhir').value = "";
+            document.getElementById('catatan').value = "";
+            document.getElementById('nilai-bintang').value = "0";
+            document.querySelectorAll('.star').forEach(s => s.style.color = "#ddd");
+            
+        } catch(e) { 
+            alert("Terjadi kesalahan saat menyimpan!"); 
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
     }
 
     function downloadPDF() {
         const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&size=A4&portrait=true&fitw=true&gridlines=false`;
         window.open(url, '_blank');
     }
-    // Ganti "1234" dengan kode rahasia yang Anda inginkan
-const KODE_RAHASIA = "152003"; 
-
-function cekLogin() {
-    const input = document.getElementById('passcode').value;
-    if (input === KODE_RAHASIA) {
-        document.getElementById('lock-screen').style.display = 'none';
-        alert("Selamat bertugas, Ustadz/Ustdzah! tetap semangatt yaa 🥰🥰🥰");
-    } else {
-        alert("Kode Salah! Akses Ditolak.");
-        document.getElementById('passcode').value = "";
-    }
-}
 </script>
 </body>
 </html>
