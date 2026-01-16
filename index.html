@@ -50,7 +50,6 @@
   }
   @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-  /* TRANSISI HALAMAN */
   .container { 
     width: 100%; max-width: 420px; z-index: 1; 
     transition: opacity 0.4s ease, transform 0.4s ease; 
@@ -58,7 +57,6 @@
   }
   .fade-out { opacity: 0; transform: translateY(20px); pointer-events: none; }
 
-  /* HEADER & LOGO */
   .header-box { text-align: center; padding: 40px 0 20px; animation: fadeInDown 0.8s ease; }
   @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
   
@@ -85,7 +83,6 @@
     50% { transform: translateY(-10px) scale(1.03); }
   }
 
-  /* MAHFUZAT TICKER */
   .mahfuzat-ticker {
     background: white; margin-bottom: 25px; padding: 8px 12px;
     border-radius: 50px; box-shadow: 0 5px 15px rgba(0,0,0,0.03);
@@ -104,7 +101,6 @@
     font-weight: bold; margin-right: 8px; font-size: 15px;
   }
 
-  /* CARD & GRID */
   .card {
     background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border-radius: 24px; padding: 30px; margin-bottom: 25px;
@@ -121,7 +117,6 @@
   .menu-icon { width: 40px; height: 40px; margin-bottom: 8px; }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
 
-  /* SIDEBAR */
   .menu-trigger {
     position: fixed; top: 25px; right: 25px; z-index: 1300;
     background: var(--primary); color: #fff; width: 48px; height: 48px;
@@ -129,7 +124,6 @@
     border-radius: 16px; cursor: pointer; box-shadow: 0 8px 15px rgba(31, 111, 81, 0.3);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  .menu-trigger:active { transform: scale(0.85) rotate(90deg); }
 
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
@@ -181,7 +175,7 @@
 
 <div class="overlay" id="overlay"></div>
 
-<header class="header-box" id="main-header">
+<header class="header-box">
   <div class="logo-box"><img src="logo-assunnah.png" class="logo"></div>
   <h1 class="title">E-SANTRI</h1>
 </header>
@@ -207,7 +201,7 @@
     <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
         <div class="ticker-label">MAHFUZAT</div>
         <div class="ticker-content">
-            <marquee id="mahfuzat-marquee" scrollamount="4" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+            <marquee scrollamount="4" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
                 <span class="ar-run" id="runArab">...</span> 
                 <span id="runIndo" style="color: var(--muted); opacity: 0.9; font-weight: 600;">...</span>
             </marquee>
@@ -234,33 +228,13 @@
   });
   const auth = firebase.auth();
 
- // SMOOTH NAVIGATION DENGAN PROTEKSI JAM ABSENSI
-function goTo(url) {
-    // CEK JIKA YANG DIKLIK ADALAH ABSENSI
-    if (url === 'absensi.html') {
-        const sekarang = new Date();
-        const jam = sekarang.getHours();
-        const menit = sekarang.getMinutes();
-        const waktuSekarang = (jam * 100) + menit;
-
-        // Atur Jam Buka: 06:30 (630) dan Jam Tutup: 08:00 (800)
-        const JAM_BUKA = 630;
-        const JAM_TUTUP = 800;
-
-        if (waktuSekarang < JAM_BUKA || waktuSekarang > JAM_TUTUP) {
-            alert("🔒 AKSES DITUTUP\n\nMohon maaf, menu Absensi hanya dapat diakses pada pukul 06:30 s/d 08:00 WIB.");
-            return; // Gagalkan navigasi
-        }
-    }
-
-    // Jika waktu sesuai atau membuka menu selain absensi, jalankan animasi
+  // NAVIGASI BEBAS (PENGUNCIAN DIHAPUS)
+  function goTo(url) {
     const container = document.getElementById('main-container');
     container.classList.add('fade-out'); 
-    setTimeout(() => {
-        window.location.href = url;
-    }, 400);
-}
-  // REVEAL ON BACK BUTTON (Agar saat kembali dari alquran, dashboard tidak hilang)
+    setTimeout(() => { window.location.href = url; }, 400);
+  }
+
   window.addEventListener('pageshow', () => {
     document.getElementById('main-container').classList.remove('fade-out');
   });
@@ -271,28 +245,10 @@ function goTo(url) {
     { ar: "اَلْوَقْتُ أَثْمَنُ مِنَ الذَّهَبِ", id: "Waktu itu lebih berharga daripada emas." },
     { ar: "اَلْعِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id: "Ilmu tanpa amal bagaikan pohon tanpa buah." },
     { ar: "مَنْ سَارَ عَلَى الدَّرْبِ وَصَلَ", id: "Barang siapa berjalan pada jalannya, sampailah ia." },
-    { ar: "آفَةُ الْعِلْمِ النِّسْيَانُ", id: "Penyakit ilmu adalah lupa." },
-    { ar: "الآدَابُ فَوْقَ الْعِلْمِ", id: "Adab itu di atas ilmu." },
-    { ar: "خَيْرُ جَلِيْسٍ فِي الزَّمَانِ كِتَابٌ", id: "Sebaik-baik teman duduk setiap waktu adalah buku." },
-    { ar: "لَوْلَا العِلْمُ لَكَانَ النَّاسُ كَالبَهَائِمِ", id: "Kalaulah tidak karena ilmu niscaya manusia itu seperti binatang." },
-    { ar: "تَعَلَّمَنَّ صَغِيْرًا وَاعْمَلْ بِهِ كَبِيْرًا", id: "Belajarlah di waktu kecil dan amalkanlah di waktu besar." },
-    { ar: "اَلْعِلْمُ صَيْدٌ وَالْكِتَابَةُ قَيْدُهُ", id: "Ilmu adalah buruan dan tulisan adalah pengikatnya." },
-    { ar: "مَنْ كَثُرَ إِحْسَانُهُ كَثُرَ إِخْوَانُهُ", id: "Barang siapa banyak perbuatan baiknya, banyak pulalah temannya." },
-    { ar: "بَيْضَةُ اليَوْمِ خَيْرٌ مِنْ دَجَاجَةِ الغَدِ", id: "Telur hari ini lebih baik daripada ayam esok hari." },
-    { ar: "مَنْ حَفَرَ حُفْرَةً وَقَعَ فِيْهَا", id: "Barang siapa menggali lubang, maka ia akan terperosok ke dalamnya." },
-    { ar: "عَدُوٌّ عَاقِلٌ خَيْرٌ مِنْ صَدِيْقٍ جَاهِلٍ", id: "Musuh yang berakal lebih baik daripada teman yang bodoh." },
-    { ar: "مَنْ عَرَفَ بُعْدَ السَّفَرِ اِسْتَعَدَّ", id: "Barang siapa tahu jauhnya perjalanan, ia akan bersiap-siap." },
-    { ar: "مَنْ ظَلَمَ نَفْسَهُ فَهُوَ لِغَيْرِهِ أَظْلَمُ", id: "Barang siapa menzalimi dirinya sendiri, ia akan lebih zalim kepada orang lain." },
-    { ar: "فَكِّرْ قَبْلَ أَنْ تَعْزِمَ", id: "Berpikirlah sebelum bertekad." },
-    { ar: "مَنْ قَلَّ صِدْقُهُ قَلَّ صَدِيْقُهُ", id: "Barang siapa sedikit kejujurannya, sedikit pulalah temannya." },
-    { ar: "اِجْهَدْ وَلَا تَكْسَلْ وَلَا تَكُ غَافِلًا", id: "Bersungguh-sungguhlah, jangan malas, dan jangan jadi pelala." },
-    { ar: "الصَّبْرُ يُعِيْنُ عَلَى كُلِّ عَمَلٍ", id: "Kesabaran itu menolong segala pekerjaan." },
-    { ar: "لَا تُؤَخِّرْ عَمَلَكَ إِلَى الغَدِ", id: "Jangan tunda pekerjaanmu hingga esok hari." },
-    { ar: "اُطْلُبِ Al-Ilma مِنَ المَهْدِ إِلَى اللَّحْدِ", id: "Tuntutlah ilmu dari buaian hingga liang lahat." },
-    { ar: "خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ", id: "Sebaik-baik manusia adalah yang paling bermanfaat bagi manusia lainnya." },
     { ar: "سَلاَمَةُ الإِنْسَانِ فِي حِفْظِ اللِّسَانِ", id: "Keselamatan manusia itu dalam menjaga lidahnya." }
   ];
-function updateMahfuzatHome() {
+
+  function updateMahfuzatHome() {
     const tgl = new Date().getDate();
     const index = (tgl - 1) % daftarMahfuzat.length;
     const data = daftarMahfuzat[index];
@@ -328,7 +284,6 @@ function updateMahfuzatHome() {
 
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
-  // LOGIKA AKSES (SUDAH TANPA PENGUNCIAN JAM)
   auth.onAuthStateChanged(user=>{
     const loginCard=document.getElementById("login-card");
     const dashboard=document.getElementById("dashboard");
@@ -351,99 +306,12 @@ function updateMahfuzatHome() {
     hideLoading();
   });
 
-  // LOGIKA SIDEBAR & OVERLAY
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  const menuBtn = document.getElementById("menu-btn");
+  // SIDEBAR LOGIC
+  const sidebar=document.getElementById("sidebar"), 
+        overlay=document.getElementById("overlay"), 
+        mBtn=document.getElementById("menu-btn");
 
-  if(menuBtn) {
-    menuBtn.onclick = () => { 
-      sidebar.classList.add("open"); 
-      overlay.classList.add("show"); 
-    };
-  }
-
-  if(overlay) {
-    overlay.onclick = () => { 
-      sidebar.classList.remove("open"); 
-      overlay.classList.remove("show"); 
-    };
-  }
-  function logout(){ auth.signOut().then(()=>location.reload()); }
-
-  // LOGIKA PROTEKSI AKSES
-  auth.onAuthStateChanged(user=>{
-    const loginCard=document.getElementById("login-card");
-    const dashboard=document.getElementById("dashboard");
-    const menuBtn=document.getElementById("menu-btn");
-
-    if(user){
-      loginCard.classList.add("hidden");
-      dashboard.classList.remove("hidden");
-      menuBtn.style.display="flex";
-      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
-      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
-      document.getElementById("sidebar-email").innerText = user.email;
-      if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
-      updateMahfuzatHome();
-    } else {
-      // JIKA TIDAK LOGIN: KUNCI DI HALAMAN LOGIN
-      loginCard.classList.remove("hidden");
-      dashboard.classList.add("hidden");
-      menuBtn.style.display="none";
-    }
-    hideLoading();
-  });
-// --- LOGIKA PENGUNCIAN OTOMATIS ---
-function terapkanKunciAbsensi() {
-    const sekarang = new Date();
-    const jam = sekarang.getHours();
-    const menit = sekarang.getMinutes();
-    const waktuSekarang = (jam * 100) + menit;
-
-    // Setting Jam Buka & Tutup
-    const JAM_BUKA = 630;  // 06:30
-    const JAM_TUTUP = 800; // 08:00
-
-    if (waktuSekarang < JAM_BUKA || waktuSekarang > JAM_TUTUP) {
-        // 1. Matikan dropdown pilih kelas
-        const pilihKelas = document.getElementById('pilih-kelas');
-        if(pilihKelas) pilihKelas.disabled = true;
-
-        // 2. Sembunyikan tombol 'Tandai Hadir Semua'
-        const btnAll = document.querySelector('.btn-all');
-        if(btnAll) btnAll.style.display = 'none';
-
-        // 3. Tampilkan pesan terkunci di area list santri
-        const listArea = document.getElementById('list');
-        if(listArea) {
-            listArea.innerHTML = `
-                <div style="text-align:center; padding:60px 20px; color:#ef4444; background:white; border-radius:20px; border: 2px dashed #fcc">
-                    <h1 style="font-size:50px; margin-bottom:10px;">🔒</h1>
-                    <p style="font-size:18px; font-weight:800; margin-bottom:5px;">ABSENSI DIKUNCI</p>
-                    <p style="font-size:12px; color:#666; line-height:1.5;">
-                        Maaf, sesi absensi hanya dibuka pada pukul:<br>
-                        <b style="color:var(--primary)">06:30 - 08:00 WIB</b>
-                    </p>
-                    <button onclick="window.history.back()" style="margin-top:20px; padding:8px 20px; border-radius:50px; border:none; background:#f0f4f3; color:#555; font-weight:700; font-size:11px;">KEMBALI KE DASHBOARD</button>
-                </div>`;
-        }
-        
-        // 4. Sembunyikan footer (tombol simpan & pdf) agar tidak bisa diklik sama sekali
-        const footer = document.querySelector('.footer');
-        if(footer) footer.style.display = 'none';
-        
-        return true; // Status Terkunci
-    }
-    return false; // Status Terbuka
-}
-
-// Jalankan fungsi kunci saat halaman selesai dimuat
-window.addEventListener('DOMContentLoaded', () => {
-    terapkanKunciAbsensi();
-});
-  const sidebar=document.getElementById("sidebar"), overlay=document.getElementById("overlay"), menuBtn=document.getElementById("menu-btn");
-  menuBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
+  mBtn.onclick=()=>{ sidebar.classList.add("open"); overlay.classList.add("show"); }
   overlay.onclick=()=>{ sidebar.classList.remove("open"); overlay.classList.remove("show"); }
 </script>
 </body>
