@@ -3,105 +3,242 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>E-Santri Pro v4</title>
+    <title>E-Santri Pro | Absensi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f1f5f9; --primary: #10b981; --primary-dark: #059669; --hadir: #22c55e; --sakit: #f59e0b; --izin: #3b82f6; --alpha: #ef4444; }
+        :root { 
+            --bg: #f8fafc; 
+            --card: #ffffff;
+            --primary: #10b981; 
+            --primary-dark: #059669;
+            --hadir: #22c55e; 
+            --sakit: #f59e0b; 
+            --izin: #3b82f6; 
+            --alpha: #ef4444; 
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: #1e293b; padding-bottom: 100px; }
-        .app-header { background: white; padding: 20px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; text-align: center;}
-        .app-title { font-size: 18px; font-weight: 800; color: var(--primary-dark); letter-spacing: -0.5px; }
-        .card-controls { background: white; padding: 15px; margin: 15px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        select, .search-box { width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-size: 14px; margin-top: 10px; outline: none; }
-        .santri-item { background: white; border-radius: 16px; padding: 15px; margin: 0 15px 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
-        .btn-st { width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid #f1f5f9; background: #f8fafc; font-weight: 700; color: #cbd5e1; cursor: pointer; }
-        .h-active { background: var(--hadir)!important; color: white!important; border: none; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
-        .s-active { background: var(--sakit)!important; color: white!important; border: none; }
-        .i-active { background: var(--izin)!important; color: white!important; border: none; }
-        .a-active { background: var(--alpha)!important; color: white!important; border: none; }
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); display: flex; gap: 10px; border-top: 1px solid #e2e8f0; }
-        .btn-save { flex: 1; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 700; }
-        #overlay { display: none; position: fixed; inset: 0; background: white; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: var(--primary); border-radius: 50%; animation: rotation 1s linear infinite; }
-        @keyframes rotation { 0% { transform: rotate(0deg) } 100% { transform: rotate(360deg) } }
+        body { background: var(--bg); color: var(--text-main); padding-bottom: 100px; }
+
+        .app-header { 
+            background: var(--card); 
+            padding: 20px; 
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .app-title { font-size: 20px; font-weight: 800; color: var(--primary-dark); display: flex; align-items: center; gap: 10px; }
+        
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px; 
+            margin: 15px 0;
+        }
+        .stat-box { 
+            background: var(--bg); 
+            padding: 12px; 
+            border-radius: 12px; 
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .stat-box small { font-size: 10px; color: var(--text-sub); text-transform: uppercase; font-weight: 700; }
+        .stat-box p { font-size: 16px; font-weight: 700; }
+
+        .controls { background: var(--card); padding: 0 20px 20px; border-bottom: 1px solid #e2e8f0; }
+        select, .search-box { 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 14px; 
+            border: 1.5px solid #e2e8f0; 
+            font-size: 14px; 
+            margin-top: 10px;
+            transition: 0.3s;
+            background: #fff;
+        }
+        select:focus, .search-box:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
+
+        .list-container { padding: 15px; }
+        .santri-item { 
+            background: var(--card); 
+            border-radius: 18px; 
+            padding: 16px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #f1f5f9;
+            animation: slideUp 0.4s ease-out forwards;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .santri-info b { font-size: 14px; display: block; margin-bottom: 2px; }
+        .santri-info small { color: var(--text-sub); font-size: 12px; }
+
+        .btn-group { display: flex; gap: 6px; }
+        .btn-st { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 12px; 
+            border: 1.5px solid #f1f5f9; 
+            background: #fff; 
+            font-weight: 700; 
+            font-size: 13px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .h-active { background: var(--hadir)!important; color: white!important; border-color: var(--hadir)!important; box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3); }
+        .s-active { background: var(--sakit)!important; color: white!important; border-color: var(--sakit)!important; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+        .i-active { background: var(--izin)!important; color: white!important; border-color: var(--izin)!important; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+        .a-active { background: var(--alpha)!important; color: white!important; border-color: var(--alpha)!important; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+
+        .footer-action { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            padding: 20px; 
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            display: grid; 
+            grid-template-columns: 80px 1fr; 
+            gap: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn-circle { background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer;}
+        .btn-save { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            cursor: pointer;
+        }
+
+        #overlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; color: white; backdrop-filter: blur(4px); }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="overlay">
-    <span class="loader"></span>
-    <h3 id="msg" style="margin-top: 20px; color: #1e293b;">Memproses Absen...</h3>
-</div>
+<div id="overlay"><div class="spinner"></div><h3 id="msg">Memproses...</h3></div>
 
 <div class="app-header">
-    <div class="app-title">E-SANTRI SYSTEM v4</div>
+    <div class="app-title">🟢 E-SANTRI PRO</div>
+    <div class="stats-grid">
+        <div class="stat-box"><small>Total Siswa</small><p id="count-total">0</p></div>
+        <div class="stat-box"><small>Sudah Absen</small><p id="count-absen" style="color:var(--primary)">0</p></div>
+    </div>
 </div>
 
-<div class="card-controls">
-    <label style="font-size: 11px; font-weight: 700; color: #94a3b8;">PILIH KELAS</label>
+<div class="controls">
     <select id="kls">
-        <option value="">-- Pilih --</option>
-        <option value="7A">7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="8B">8B</option><option value="9A">9A</option><option value="9B">9B</option>
+        <option value="">Pilih Kelas...</option>
+        <optgroup label="KELAS 7">
+            <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+        </optgroup>
+        <optgroup label="KELAS 8">
+            <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+        </optgroup>
+        <optgroup label="KELAS 9">
+            <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+        </optgroup>
     </select>
-    <input type="text" id="cari" class="search-box" placeholder="Cari nama..." onkeyup="filter()">
+    <input type="text" id="cari" class="search-box" placeholder="Cari nama santri..." onkeyup="filter()">
 </div>
 
-<div id="list"></div>
+<div id="list" class="list-container">
+    <div style="text-align:center; padding:50px; color:var(--text-sub)">
+        <p>Silakan pilih kelas untuk menampilkan daftar nama.</p>
+    </div>
+</div>
 
-<div class="footer">
-    <button class="btn-save" onclick="simpan()">💾 SIMPAN PERUBAHAN</button>
+<div class="footer-action">
+    <button class="btn-circle" onclick="download()" title="Download Rekap">📥</button>
+    <button class="btn-save" onclick="simpan()">SIMPAN ABSENSI</button>
 </div>
 
 <script>
-    // 1. GANTI URL INI DENGAN URL WEB APP GOOGLE ANDA (PASTIKAN SUDAH NEW DEPLOYMENT)
-    const SCRIPT_URL = "MASUKKAN_URL_SCRIPT_BARU_DI_SINI";
+    // URL Web App Google Apps Script
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybFZnSVot87x8HNSe8gMqHGe6uk1Sy40ZQ692HqjrR4mFjG2gay3QqcJ4LkybJ7rTJ9w/exec";
 
-    // FUNGSI UTAMA NFC (LANGSUNG JALAN)
-    (function checkNFC() {
+    // SISTEM 1: PENGUATAN AUTO-NFC DETECT
+    window.onload = function() {
         const p = new URLSearchParams(window.location.search);
-        const id = p.get('scan');
-        const kls = p.get('kls');
+        const scanId = p.get('scan');
+        const kelas = p.get('kls');
 
-        if (id && kls) {
-            document.getElementById('overlay').style.display = 'flex';
-            const payload = JSON.stringify([{ kelas: kls, nipd: id, status: 'H' }]);
+        if (scanId) {
+            // Validasi kelas jika link NFC tidak memiliki parameter kls
+            if (!kelas) {
+                alert("Scan gagal: Parameter kelas tidak ditemukan di kartu.");
+                return;
+            }
+            showOverlay("📲 Mengirim Data NFC...");
+            const data = JSON.stringify([{ kelas: kelas, nipd: scanId, status: 'H' }]);
             
-            // Gunakan fetch dengan mode: 'no-cors' agar tidak diblokir browser
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: payload
-            }).then(() => {
-                document.getElementById('msg').innerText = "✅ BERHASIL DICATAT";
-                setTimeout(() => location.href = "index.html", 1500);
-            }).catch(() => {
-                alert("Gagal koneksi ke server!");
-                document.getElementById('overlay').style.display = 'none';
-            });
+            // Penggunaan Beacon untuk durabilitas pengiriman data saat redirect
+            const success = navigator.sendBeacon(SCRIPT_URL, data);
+            
+            if (success) {
+                document.getElementById('msg').innerText = "✅ DATA TERKIRIM!";
+                setTimeout(() => location.href="index.html", 1500);
+            } else {
+                // Fallback jika beacon gagal
+                fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: data })
+                .then(() => {
+                    document.getElementById('msg').innerText = "✅ BERHASIL!";
+                    setTimeout(() => location.href="index.html", 1500);
+                });
+            }
         }
-    })();
+    };
 
-    // LOAD DATA MANUAL
+    // SISTEM 2: PENGUATAN LOAD DATA KELAS (JSONP)
     document.getElementById('kls').onchange = function() {
         if(!this.value) return;
-        document.getElementById('overlay').style.display = 'flex';
-        document.getElementById('msg').innerText = "Mengambil Nama...";
+        showOverlay("Memuat Data...");
+        
+        // Hapus script lama jika ada untuk mencegah memory leak
+        const oldScript = document.getElementById('jsonp-script');
+        if(oldScript) oldScript.remove();
+
         const s = document.createElement('script');
-        s.src = `${SCRIPT_URL}?kelas=${this.value}&callback=render`;
+        s.id = 'jsonp-script';
+        s.src = `${SCRIPT_URL}?kelas=${encodeURIComponent(this.value)}&callback=render`;
         document.body.appendChild(s);
     };
 
     function render(data) {
-        document.getElementById('overlay').style.display = 'none';
+        hideOverlay();
         const cont = document.getElementById('list');
         cont.innerHTML = '';
-        if(data.error) { alert(data.error); return; }
+
+        if (data.error) {
+            cont.innerHTML = `<div style="text-align:center; padding:50px; color:var(--alpha)">
+                <b>Error:</b> ${data.error}<br><small>Pastikan nama sheet sesuai.</small>
+            </div>`;
+            return;
+        }
+        
+        document.getElementById('count-total').innerText = data.length;
         
         data.forEach(x => {
             const d = document.createElement('div');
             d.className = 'santri-item';
             d.innerHTML = `
-                <div><b style="font-size:14px;">${x.nama}</b><br><small style="color:#94a3b8">${x.nipd}</small></div>
+                <div class="santri-info">
+                    <b>${x.nama}</b>
+                    <small>NIPD: ${x.nipd}</small>
+                </div>
                 <div class="btn-group" data-nipd="${x.nipd}" data-nama="${x.nama}">
                     <button class="btn-st" onclick="st(this,'H')">H</button>
                     <button class="btn-st" onclick="st(this,'S')">S</button>
@@ -110,35 +247,78 @@
                 </div>`;
             cont.appendChild(d);
         });
+        updateCount();
     }
 
+    // SISTEM 3: LOGIKA STATUS TOMBOL
     function st(btn, s) {
         btn.parentElement.querySelectorAll('button').forEach(b => b.className = 'btn-st');
         const c = {H:'h-active',S:'s-active',I:'i-active',A:'a-active'};
         btn.classList.add(c[s]); 
         btn.setAttribute('data-s', s);
+        updateCount();
     }
 
+    function updateCount() {
+        const sudah = document.querySelectorAll('[data-s]').length;
+        document.getElementById('count-absen').innerText = sudah;
+    }
+
+    // SISTEM 4: PENGUATAN SIMPAN DATA (ROBUST FETCH)
     async function simpan() {
         const k = document.getElementById('kls').value;
         const res = [];
         document.querySelectorAll('.btn-group').forEach(g => {
             const s = g.querySelector('[data-s]');
-            if(s) res.push({ kelas: k, nipd: g.dataset.nipd, nama: g.dataset.nama, status: s.getAttribute('data-s') });
+            if(s) {
+                res.push({ 
+                    kelas: k, 
+                    nipd: g.dataset.nipd, 
+                    nama: g.dataset.nama, 
+                    status: s.getAttribute('data-s') 
+                });
+            }
         });
-        if(!res.length) return alert("Belum ada data yang dipilih!");
-        document.getElementById('overlay').style.display = 'flex';
-        document.getElementById('msg').innerText = "Menyimpan...";
+
+        if(!res.length) return alert("Pilih minimal satu siswa!");
+        
+        showOverlay("Menyimpan ke Cloud...");
+        
         try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(res) });
-            alert("✅ Berhasil disimpan!");
-            location.reload();
-        } catch(e) { alert("Gagal Simpan!"); }
+            // Menggunakan keepalive agar request tidak putus saat user tidak sengaja menutup tab
+            await fetch(SCRIPT_URL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                keepalive: true,
+                body: JSON.stringify(res) 
+            });
+            
+            document.getElementById('msg').innerText = "✅ TERSIMPAN!";
+            setTimeout(() => location.reload(), 1500);
+        } catch(e) { 
+            alert("Gagal Terhubung ke Server. Periksa Koneksi Internet."); 
+            hideOverlay(); 
+        }
+    }
+
+    function download() { 
+        window.open(SCRIPT_URL + "?action=download", '_blank'); 
+    }
+
+    function showOverlay(t) { 
+        document.getElementById('overlay').style.display = 'flex'; 
+        document.getElementById('msg').innerText = t; 
+    }
+
+    function hideOverlay() { 
+        document.getElementById('overlay').style.display = 'none'; 
     }
 
     function filter() {
         const v = document.getElementById('cari').value.toLowerCase();
-        document.querySelectorAll('.santri-item').forEach(i => i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none');
+        document.querySelectorAll('.santri-item').forEach(i => {
+            i.style.display = i.innerText.toLowerCase().includes(v) ? 'flex' : 'none';
+        });
     }
 </script>
 </body>
