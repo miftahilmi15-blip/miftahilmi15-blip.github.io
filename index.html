@@ -243,12 +243,12 @@ function goTo(url) {
         const menit = sekarang.getMinutes();
         const waktuSekarang = (jam * 100) + menit;
 
-        // Atur Jam Buka: 06:30 (630) dan Jam Tutup: 08:00 (800)
+        // Atur Jam Buka: 06:30 (630) dan Jam Tutup: 00:00 (000)
         const JAM_BUKA = 630;
-        const JAM_TUTUP = 800;
+        const JAM_TUTUP = 000;
 
         if (waktuSekarang < JAM_BUKA || waktuSekarang > JAM_TUTUP) {
-            alert("🔒 AKSES DITUTUP\n\nMohon maaf, menu Absensi hanya dapat diakses pada pukul 06:30 s/d 08:00 WIB.");
+            alert("🔒 AKSES DITUTUP\n\nMohon maaf, menu Absensi hanya dapat diakses pada pukul 06:30 s/d 00:00 WIB.");
             return; // Gagalkan navigasi
         }
     }
