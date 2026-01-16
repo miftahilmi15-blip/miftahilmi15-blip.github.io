@@ -83,23 +83,30 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybFZnSVot87x8HNSe8gMqHGe6uk1Sy40ZQ692HqjrR4mFjG2gay3QqcJ4LkybJ7rTJ9w/exec";
 
     // 1. AUTO-SAVE DARI LINK NFC
-    window.onload = function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const nfcId = urlParams.get('scan');
-        const kls = urlParams.get('kls');
-        if (nfcId && kls) autoSimpanNFC(nfcId, kls);
-    };
-
     async function autoSimpanNFC(id, kls) {
-        showOverlay("Mencatat Kehadiran...");
-        const data = [{ kelas: kls, nipd: id, status: 'H' }];
-        try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', keepalive: true, body: JSON.stringify(data) });
-            speak("Absen Berhasil");
-            document.getElementById('overlay-text').innerHTML = "✅ BERHASIL!<br>Data Tersimpan.";
-            setTimeout(() => { window.location.href = "index.html"; }, 2500);
-        } catch (e) { alert("Koneksi Gagal!"); hideOverlay(); }
+    showOverlay("Mencatat Kehadiran: " + id); // Tampilkan ID yang terbaca
+    
+    const data = [{ kelas: kls, nipd: id, status: 'H' }];
+    
+    try {
+        const response = await fetch(SCRIPT_URL, { 
+            method: 'POST', 
+            mode: 'no-cors', 
+            keepalive: true, 
+            body: JSON.stringify(data) 
+        });
+        
+        speak("Absen Berhasil");
+        document.getElementById('overlay-text').innerHTML = "✅ BERHASIL!<br>ID: " + id + "<br>Kelas: " + kls;
+        
+        setTimeout(() => { 
+            window.location.href = "index.html"; 
+        }, 3000);
+    } catch (e) { 
+        alert("Gagal mengirim data! Pastikan internet aktif."); 
+        hideOverlay(); 
     }
+}
 
     // 2. MUAT DATA KELAS (MANUAL)
     document.getElementById('pilih-kelas').onchange = function() {
