@@ -122,16 +122,34 @@
     async function simpanKolektif() {
         const s = document.getElementById('pilih-santri');
         const kelas = document.getElementById('pilih-kelas').value;
-        if(!s.value) return alert("Pilih santri dulu!");
-
-        document.getElementById('loading').style.display = 'block';
         const barisAspek = document.querySelectorAll('.baris-aspek');
+        
+        // 1. Validasi Nama Santri
+        if(!s.value) {
+            alert("⚠️ Pilih nama santri terlebih dahulu!");
+            return;
+        }
+
+        // 2. Validasi Semua Aspek (Wajib diisi)
+        let semuaTerisi = true;
+        barisAspek.forEach(baris => {
+            const nilai = baris.getAttribute('data-nilai');
+            if(!nilai || nilai === "") {
+                semuaTerisi = false;
+            }
+        });
+
+        if(!semuaTerisi) {
+            alert("⚠️ Gagal! Semua 5 aspek (Tertib s/d Ramah) harus diberi penilaian bintang sebelum simpan.");
+            return; // Berhenti di sini, tidak lanjut ke proses kirim
+        }
+
+        // 3. Jika lolos validasi, baru mulai proses simpan
+        document.getElementById('loading').style.display = 'block';
         
         try {
             for(let baris of barisAspek) {
                 const nilai = baris.getAttribute('data-nilai');
-                if(!nilai) continue;
-
                 const payload = {
                     tanggal: new Date().toLocaleDateString('id-ID'),
                     nipd: s.value,
@@ -143,16 +161,19 @@
                     guru: document.getElementById('guru').value
                 };
 
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                await fetch(SCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify(payload) 
+                });
             }
             alert("✅ Berhasil Simpan 5 Aspek!");
             location.reload();
-        } catch(e) { alert("Gagal!"); }
-    }
-
-    function unduh(format) {
-        const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=${format}&gid=${GID_CETAK}`;
-        window.open(url, '_blank');
+        } catch(e) { 
+            alert("❌ Terjadi kesalahan saat menyimpan."); 
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
     }
 </script>
 </body>
