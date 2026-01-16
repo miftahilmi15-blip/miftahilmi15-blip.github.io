@@ -1,181 +1,190 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-SANTRI | Budaya Sekolah</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root { --primary: #1f6f51; --accent: #eab308; --bg: #f0f4f3; }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  body { background: var(--bg); padding: 15px; }
-  .container { width: 100%; max-width: 450px; margin: auto; }
-  header { text-align: center; padding: 20px 0; color: var(--primary); }
-  .card { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; }
-  label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-left: 5px; }
-  select, .search-box { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-top: 5px; font-size: 14px; outline: none; background: #fff; }
-  
-  /* Status Bintang */
-  .santri-list { margin-bottom: 150px; }
-  .santri-item { background: white; border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #eee; }
-  .info-santri { margin-bottom: 10px; }
-  .star-group { display: flex; gap: 10px; justify-content: center; border-top: 1px solid #f5f5f5; padding-top: 10px; }
-  .star-btn { font-size: 28px; color: #ddd; cursor: pointer; transition: 0.2s; background: none; border: none; }
-  .star-btn.active { color: var(--accent); }
-  .label-status { text-align: center; font-size: 11px; font-weight: 700; margin-top: 5px; color: var(--primary); min-height: 15px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-SANTRI | Budaya Sekolah</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --danger: #dc2626; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
+        .form-grup { margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; outline: none; }
+        
+        /* Bintang Style */
+        .rating { display: flex; gap: 10px; justify-content: center; background: #f9f9f9; padding: 15px; border-radius: 12px; }
+        .star { cursor: pointer; font-size: 35px; color: #ddd; transition: 0.2s; }
+        #label-kategori { text-align: center; font-weight: 700; font-size: 14px; margin-top: 10px; height: 20px; }
 
-  /* Footer */
-  .footer { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 450px; background: #fff; padding: 15px; border-radius: 20px 20px 0 0; box-shadow: 0 -10px 20px rgba(0,0,0,0.05); }
-  .btn-main { width: 100%; padding: 14px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; font-size: 14px; background: var(--primary); color: #fff; }
-  
-  /* Lock Screen */
-  #lock-screen { position: fixed; inset: 0; background: white; z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; }
-</style>
+        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
+        
+        /* Overlays */
+        .overlay { position:fixed; inset:0; z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 20px; }
+        #lock-screen { background: var(--primary); color: white; }
+        #date-lock { background: rgba(255,255,255,0.98); display: none; }
+    </style>
 </head>
 <body>
 
-<div id="lock-screen">
-    <span style="font-size: 60px;">🔒</span>
-    <h2 style="color: #ef4444; margin-top: 20px;">AKSES TERKUNCI</h2>
-    <p id="lock-msg" style="color: #666; margin-top: 10px; font-size: 14px;"></p>
+<div id="lock-screen" class="overlay">
+    <h2 style="margin-bottom:20px;">🔒 AKSES TERBATAS</h2>
+    <input type="password" id="passcode" style="width:200px; text-align:center; padding:12px; border-radius:12px; border:none; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
+    <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
 </div>
 
-<div class="container" id="app-content">
-  <header><h2>BUDAYA SEKOLAH</h2></header>
-  
-  <div class="card">
-    <label>Pilih Guru Pengampu (Ustadz/ah)</label>
-    <select id="pilih-ustadz">
-      <option value="">-- Pilih Nama --</option>
-      <option value="Riani Rizki Astuti">Ibu Riani Rizki Astuti</option>
-      <option value="Ustadz Ahmad">Ustadz Ahmad Fauzi</option>
-      <option value="Ustadzah Siti">Ustadzah Siti Aminah</option>
-      <option value="Ustadz Yusuf">Ustadz Yusuf Mansur</option>
-    </select>
+<div id="date-lock" class="overlay">
+    <h1 style="font-size: 50px;">📅</h1>
+    <h2 style="color: var(--danger); font-weight: 800;">SESI INPUT DITUTUP</h2>
+    <p id="lock-message" style="margin-top:10px; color:#666; font-size: 13px;"></p>
+</div>
 
-    <label style="margin-top: 15px; display: block;">Aspek Penilaian</label>
-    <select id="pilih-aspek">
-      <option value="Tertib">📏 Tertib</option>
-      <option value="Disiplin">⏰ Disiplin</option>
-      <option value="Tanggung Jawab">🔑 Tanggung Jawab</option>
-      <option value="Jujur">🛡️ Jujur</option>
-      <option value="Ramah">😊 Ramah</option>
-    </select>
-  </div>
+<div class="wadah">
+    <header><h1>BUDAYA SEKOLAH</h1></header>
 
-  <div class="card">
-    <label>Cari Nama Santri 7B</label>
-    <input type="text" id="cari" class="search-box" placeholder="Ketik nama..." onkeyup="filter()">
-  </div>
-
-  <div id="list" class="santri-list">
+    <div class="form-grup">
+        <label>Guru Pengampu</label>
+        <select id="guru-pengampu">
+            <option value="">-- Pilih Guru --</option>
+            <option value="Ibu Riani Rizki Astuti">Ibu Riani Rizki Astuti</option>
+            <option value="Ustadz Ahmad Fauzi">Ustadz Ahmad Fauzi</option>
+            <option value="Ustadzah Siti Aminah">Ustadzah Siti Aminah</option>
+        </select>
     </div>
 
-  <div class="footer">
-    <button class="btn-main" onclick="simpan()">💾 SIMPAN PENILAIAN</button>
-  </div>
+    <div class="form-grup">
+        <label>Mata Pelajaran</label>
+        <select id="mata-pelajaran">
+            <option value="">-- Pilih Pelajaran --</option>
+            <option value="Bimbingan Konseling (BK)">Bimbingan Konseling (BK)</option>
+            <option value="PAI & Budi Pekerti">PAI & Budi Pekerti</option>
+            <option value="Tahfidz & Qiraati">Tahfidz & Qiraati</option>
+            <option value="Bahasa Arab">Bahasa Arab</option>
+            <option value="Matematika">Matematika</option>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Nama Santri (Kelas 7B)</label>
+        <select id="pilih-santri" onfocus="loadSantriOnce()">
+            <option value="">-- Pilih Nama --</option>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Aspek Budaya</label>
+        <select id="aspek">
+            <option value="Tertib">📏 Tertib</option>
+            <option value="Disiplin">⏰ Disiplin</option>
+            <option value="Tanggung Jawab">🔑 Tanggung Jawab</option>
+            <option value="Jujur">🛡️ Jujur</option>
+            <option value="Ramah">😊 Ramah</option>
+        </select>
+    </div>
+
+    <div class="form-grup">
+        <label>Penilaian Karakter (Bintang)</label>
+        <div class="rating">
+            <span class="star" onclick="setStar(1)">★</span>
+            <span class="star" onclick="setStar(2)">★</span>
+            <span class="star" onclick="setStar(3)">★</span>
+            <span class="star" onclick="setStar(4)">★</span>
+        </div>
+        <div id="label-kategori" style="color: var(--primary);">Pilih Skor</div>
+        <input type="hidden" id="nilai-bintang" value="0">
+    </div>
+
+    <div class="form-grup">
+        <label>Catatan Observasi</label>
+        <textarea id="catatan" rows="2" placeholder="Tulis alasan penilaian..."></textarea>
+    </div>
+
+    <div id="loading">⏳ Menyimpan...</div>
+    <button class="btn-simpan" onclick="simpan()">SIMPAN PENILAIAN</button>
 </div>
 
 <script>
-  // --- KONFIGURASI TANGGAL (Ubah di sini) ---
-  const TGL_MULAI = "2026-01-15"; // Format: TAHUN-BULAN-TANGGAL
-  const TGL_SELESAI = "2026-01-25";
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOQ96h0-ZmRv6Nq2SB3567EfzeCZD_1NgH3nsV8L5q8MGMKeSWKN848IJTMp2gvFDCEA/exec";
+    const KODE_RAHASIA = "152003";
+    const TGL_MULAI = "2026-01-15"; 
+    const TGL_SELESAI = "2026-01-25"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
-  // 1. Cek Penguncian Otomatis Saat Halaman Dibuka
-  window.onload = function() {
-    const hariIni = new Date().toISOString().split('T')[0];
-    if (hariIni < TGL_MULAI || hariIni > TGL_SELESAI) {
-        document.getElementById('app-content').style.display = 'none';
-        document.getElementById('lock-screen').style.display = 'flex';
-        document.getElementById('lock-msg').innerText = `Maaf, fitur input Budaya Sekolah hanya dibuka pada tanggal ${TGL_MULAI} sampai ${TGL_SELESAI}.`;
-    } else {
-        loadDataSiswa(); // Muat data otomatis jika terbuka
-    }
-  };
-
-  // 2. Simulasi Load Data Siswa (Sesuaikan dengan fetch SCRIPT_URL Anda)
-  function loadDataSiswa() {
-    const cont = document.getElementById('list');
-    cont.innerHTML = '<p style="text-align:center; color:#888;">Memuat data santri 7B...</p>';
-    
-    // Contoh data statis berdasarkan spreadsheet Anda (Ganti dengan fetch jika sudah siap)
-    const dataSantri = [
-        {nama: "Adisty Intan Farzana", nipd: "242507001"},
-        {nama: "Alya Talitha Athaya", nipd: "242507002"},
-        {nama: "Balqis", nipd: "242507003"},
-        {nama: "Deajeng Ayu Nawang Wulan", nipd: "242507004"}
-    ];
-
-    cont.innerHTML = '';
-    dataSantri.forEach(x => {
-        const div = document.createElement('div');
-        div.className = 'santri-item';
-        div.innerHTML = `
-            <div class="info-santri">
-                <b style="font-size:14px;">${x.nama}</b><br>
-                <small style="color:#999;">${x.nipd}</small>
-            </div>
-            <div class="star-group" data-nipd="${x.nipd}" data-nama="${x.nama}">
-                <button class="star-btn" onclick="setStar(this, 1)">★</button>
-                <button class="star-btn" onclick="setStar(this, 2)">★</button>
-                <button class="star-btn" onclick="setStar(this, 3)">★</button>
-                <button class="star-btn" onclick="setStar(this, 4)">★</button>
-            </div>
-            <div class="label-status">Belum Dinilai</div>
-        `;
-        cont.appendChild(div);
-    });
-  }
-
-  // 3. Logika Bintang
-  function setStar(btn, val) {
-    const parent = btn.parentElement;
-    const stars = parent.querySelectorAll('.star-btn');
-    const label = parent.nextElementSibling;
-    const kategori = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
-    
-    stars.forEach((s, i) => {
-        s.classList.toggle('active', i < val);
-    });
-    
-    parent.setAttribute('data-nilai', val);
-    label.innerText = kategori[val];
-  }
-
-  // 4. Fitur Pencarian
-  function filter() {
-    const val = document.getElementById('cari').value.toLowerCase();
-    document.querySelectorAll('.santri-item').forEach(i => {
-      i.style.display = i.innerText.toLowerCase().includes(val) ? 'block' : 'none';
-    });
-  }
-
-  // 5. Simpan Data
-  async function simpan() {
-    const ustadz = document.getElementById('pilih-ustadz').value;
-    const aspek = document.getElementById('pilih-aspek').value;
-    if(!ustadz) return alert("Pilih Nama Guru Pengampu!");
-
-    const results = [];
-    document.querySelectorAll('.star-group').forEach(g => {
-        const nilai = g.getAttribute('data-nilai');
-        if(nilai) {
-            results.push({
-                ustadz: ustadz,
-                aspek: aspek,
-                nama: g.getAttribute('data-nama'),
-                skor: nilai,
-                tanggal: new Date().toLocaleDateString()
-            });
+    function cekTanggal() {
+        const hariIni = new Date().toISOString().split('T')[0];
+        if (hariIni < TGL_MULAI || hariIni > TGL_SELESAI) {
+            document.getElementById('date-lock').style.display = 'flex';
+            document.getElementById('lock-message').innerText = `Akses hanya dibuka pada periode penilaian:\n${TGL_MULAI} s/d ${TGL_SELESAI}`;
         }
-    });
+    }
 
-    if(results.length === 0) return alert("Berikan penilaian minimal pada satu santri!");
+    function setStar(n) {
+        document.getElementById('nilai-bintang').value = n;
+        const labels = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
+        const colors = ["", "#dc2626", "#eab308", "#2563eb", "#1f6f51"];
+        
+        document.querySelectorAll('.star').forEach((s, i) => {
+            s.style.color = i < n ? colors[n] : "#ddd";
+        });
+        
+        const lb = document.getElementById('label-kategori');
+        lb.innerText = labels[n];
+        lb.style.color = colors[n];
+    }
 
-    alert(`Berhasil! ${results.length} data karakter telah tersimpan ke database Ibu ${ustadz}.`);
-    // Integrasikan fetch(SCRIPT_URL) di sini untuk kirim ke Google Sheets
-  }
+    async function loadSantriOnce() {
+        const sel = document.getElementById('pilih-santri');
+        if(sel.options.length > 1) return;
+        sel.innerHTML = '<option>Memuat data 7B...</option>';
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=7B`);
+            const data = await res.json();
+            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
+        } catch(e) { sel.innerHTML = '<option value="">Gagal muat data</option>'; }
+    }
+
+    async function simpan() {
+        const guru = document.getElementById('guru-pengampu').value;
+        const mapel = document.getElementById('mata-pelajaran').value;
+        const santri = document.getElementById('pilih-santri');
+        const bin = document.getElementById('nilai-bintang').value;
+
+        if(!guru || !mapel || !santri.value || bin == "0") return alert("Mohon lengkapi seluruh form!");
+
+        const payload = {
+            guru: guru,
+            mapel: mapel,
+            nipd: santri.value,
+            nama: santri.options[santri.selectedIndex].text,
+            kelas: "7B",
+            aspek: document.getElementById('aspek').value,
+            nilai: bin,
+            kategori: document.getElementById('label-kategori').innerText,
+            catatan: document.getElementById('catatan').value,
+            tanggal: new Date().toLocaleDateString('id-ID')
+        };
+
+        document.getElementById('loading').style.display = 'block';
+        try {
+            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("✅ Penilaian Berhasil Disimpan!");
+            location.reload();
+        } catch(e) { alert("Terjadi kesalahan sistem."); }
+    }
+
+    function cekLogin() {
+        if (document.getElementById('passcode').value === KODE_RAHASIA) {
+            document.getElementById('lock-screen').style.display = 'none';
+            cekTanggal();
+        } else {
+            alert("Kode Salah!");
+        }
+    }
 </script>
 </body>
 </html>
