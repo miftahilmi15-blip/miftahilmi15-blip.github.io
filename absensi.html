@@ -215,6 +215,24 @@
     }
     document.getElementById('loading').style.display = 'none';
   }
+  // Tambahkan ini di bagian paling bawah script absensi.html
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const nfcId = urlParams.get('scan');
+
+    if (nfcId) {
+        document.getElementById('loading').style.display = 'flex';
+        // Langsung cari data santri tanpa pilih kelas manual
+        // Kita modifikasi agar mencari ke seluruh database (opsional) 
+        // atau beri notifikasi "Mencatat kehadiran..."
+        
+        console.log("Mendeteksi absen otomatis untuk ID:", nfcId);
+        
+        // Panggil fungsi simpan otomatis jika data ditemukan
+        // (Anda perlu menyesuaikan backend Apps Script agar bisa menerima scan tunggal)
+        alert("Mendeteksi kartu: " + nfcId + ". Harap pilih kelas untuk memvalidasi.");
+    }
+};
 </script>
 </body>
 </html>
