@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Budaya Sekolah v7</title>
+    <title>E-SANTRI | Budaya Sekolah v8</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -23,12 +23,10 @@
         label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 4px; }
         select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 13px; }
         
-        /* DAFTAR NAMA TETAP KIRI & ASLI */
         #pilih-santri-box { width: 100%; max-height: 180px; overflow-y: auto; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; background: #fff; }
         .item-santri { display: flex; align-items: center; padding: 8px 12px; border-bottom: 1px solid #eee; cursor: pointer; }
         .item-santri span { margin-left: 10px; font-size: 13px; color: #333; text-align: left; flex: 1; }
 
-        /* ASPEK COMPACT - ANTI SCROLL */
         .baris-aspek { 
             display: flex; align-items: center; justify-content: space-between;
             background: #fafafa; padding: 8px 15px; border-radius: 10px; margin-bottom: 6px; border: 1px solid #eee; 
@@ -41,7 +39,7 @@
         .star[data-val="3"].active { color: #fbbf24; }
         .star[data-val="4"].active { color: #22c55e; }
 
-        .btn-aksi { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 8px; transition: 0.3s; }
+        .btn-aksi { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 8px; }
         .btn-simpan { background: var(--primary); color: white; }
         .btn-excel { background: #107c41; color: white; display: none; }
 
@@ -66,11 +64,33 @@
 
     <div id="page-input">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div class="form-grup"><label>Kelas</label><select id="pilih-kelas" onchange="loadSantri()"><option value="">--</option><option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option><option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option><option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option></select></div>
-            <div class="form-grup"><label>Guru Pengutus</label><select id="pilih-guru"><option value="">--</option><option value="Ahmad">Ahmad</option><option value="Miftah">Miftah</option><option value="Zainal">Zainal</option><option value="Umar">Umar</option></select></div>
+            <div class="form-grup">
+                <label>Kelas</label>
+                <select id="pilih-kelas" onchange="loadSantri()">
+                    <option value="">Pilih Kelas</option>
+                    <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                    <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                    <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+                </select>
+            </div>
+            <div class="form-grup">
+                <label>Guru Pengutus</label>
+                <select id="pilih-guru">
+                    <option value="">Pilih Guru</option>
+                    <option value="Ahmad">Ahmad</option>
+                    <option value="Miftah">Miftah</option>
+                    <option value="Zainal">Zainal</option>
+                    <option value="Umar">Umar</option>
+                </select>
+            </div>
         </div>
 
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+            <label>Daftar Anak</label>
+            <button onclick="pilihSemuaAnak(true)" style="border:none; background:none; color:var(--blue); font-weight:700; cursor:pointer; font-size:11px;">☑ PILIH SEMUA ANAK</button>
+        </div>
         <div id="pilih-santri-box"></div>
+        
         <button onclick="setSemua4()" style="width:100%; padding:8px; margin-bottom:10px; border-radius:8px; border:1px dashed var(--primary); color:var(--primary); font-weight:700; cursor:pointer; font-size: 11px; background: #fff;">⚡ SET SEMUA 4 BINTANG</button>
 
         <div id="area-aspek">
@@ -124,6 +144,10 @@
             d.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const c = d.querySelector('input'); c.checked = !c.checked; } };
             b.appendChild(d);
         });
+    }
+
+    function pilihSemuaAnak(v) { 
+        document.querySelectorAll('.cb-santri').forEach(c => c.checked = v); 
     }
 
     function klikStar(el, n) {
