@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Budaya Sekolah Pro</title>
+    <title>E-SANTRI | Budaya Sekolah v2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -11,40 +11,44 @@
         :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); padding: 10px; display: flex; justify-content: center; }
-        .wadah { width: 100%; max-width: 600px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .wadah { width: 100%; max-width: 700px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         
-        header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
-        header h1 { color: var(--primary); font-size: 18px; font-weight: 800; }
+        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 15px; }
+        header h1 { color: var(--primary); font-size: 20px; font-weight: 800; letter-spacing: 1px; }
         
-        .tabs { display: flex; gap: 10px; margin-bottom: 15px; background: #eee; padding: 5px; border-radius: 12px; }
-        .tab-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 600; font-size: 12px; cursor: pointer; color: #666; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 15px; background: #f1f1f1; padding: 5px; border-radius: 12px; }
+        .tab-btn { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; color: #666; transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        .form-grup { margin-bottom: 12px; }
-        label { font-size: 10px; font-weight: 700; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; }
-        select, input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
+        .form-grup { margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
         
-        #pilih-santri-box { width: 100%; max-height: 180px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; background: #f9f9f9; }
-        .item-santri { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f1f1f1; cursor: pointer; }
+        /* List Santri Rapi Ke Kiri */
+        #pilih-santri-box { width: 100%; max-height: 250px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; background: #fff; display: block; }
+        .item-santri { display: flex; align-items: center; gap: 12px; padding: 10px; font-size: 13px; border-bottom: 1px solid #f8f8f8; cursor: pointer; text-align: left; }
+        .item-santri:hover { background: #f0f7f4; }
+        .item-santri input { width: 18px; height: 18px; margin: 0; }
 
-        .baris-aspek { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 12px; margin-bottom: 8px; }
-        .judul-aspek { font-size: 11px; font-weight: 700; color: var(--primary); margin-bottom: 5px; }
-        .rating { display: flex; gap: 12px; justify-content: center; }
-        .star { cursor: pointer; font-size: 28px; color: #ddd; }
+        .btn-fast { width: 100%; background: #fff; color: var(--primary); border: 2px dashed var(--primary); padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
+        
+        .baris-aspek { background: #f9f9f9; padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #eee; }
+        .judul-aspek { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        .rating { display: flex; gap: 20px; justify-content: center; }
+        .star { cursor: pointer; font-size: 32px; color: #ddd; transition: 0.2s; }
         .star.active { color: var(--accent); }
-        .label-kategori { text-align: center; font-size: 10px; font-weight: 700; margin-top: 3px; color: #bbb; }
 
-        .btn-aksi { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s; }
-        .btn-simpan { background: var(--primary); color: white; margin-top: 10px; }
-        .btn-excel { background: #107c41; color: white; margin-top: 10px; display: none; }
-        .btn-cari { background: var(--blue); color: white; margin-top: 10px; }
+        .btn-aksi { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 10px; }
+        .btn-simpan { background: var(--primary); color: white; }
+        .btn-excel { background: #107c41; color: white; }
+        .btn-cari { background: var(--blue); color: white; }
 
-        .rekap-container { overflow-x: auto; margin-top: 15px; }
-        .rekap-table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 500px; }
-        .rekap-table th, .rekap-table td { border: 1px solid #eee; padding: 8px; text-align: center; }
-        .rekap-table th { background: #f8fafc; color: var(--primary); }
-        
-        .chart-box { margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 15px; display: none; }
+        .tabel-scroll { width: 100%; overflow-x: auto; margin-top: 20px; border-radius: 10px; }
+        .rekap-table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 600px; }
+        .rekap-table th { background: var(--primary); color: white; padding: 12px; border: 1px solid #ddd; }
+        .rekap-table td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+
+        .chart-box { margin-top: 25px; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 15px; }
     </style>
 </head>
 <body>
@@ -53,8 +57,8 @@
     <header><h1>BUDAYA SEKOLAH PRO</h1></header>
 
     <div class="tabs">
-        <button class="tab-btn active" id="tab-input-btn" onclick="switchTab('input')">INPUT NILAI</button>
-        <button class="tab-btn" id="tab-rekap-btn" onclick="switchTab('rekap')">REKAP & GRAFIK</button>
+        <button class="tab-btn active" id="btn-in" onclick="bukaTab('input')">INPUT DATA</button>
+        <button class="tab-btn" id="btn-re" onclick="bukaTab('rekap')">REKAP & GRAFIK</button>
     </div>
 
     <div id="page-input">
@@ -69,27 +73,32 @@
         </div>
 
         <div class="form-grup">
-            <label>Data Santri (Klik untuk memilih)</label>
-            <div id="pilih-santri-box"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <label>Daftar Santri</label>
+                <label style="color:var(--blue); cursor:pointer;" onclick="pilihSemua(true)">☑ Pilih Semua</label>
+            </div>
+            <div id="pilih-santri-box">
+                <p style="text-align:center; color:#ccc; padding:20px;">Silakan pilih kelas...</p>
+            </div>
         </div>
 
-        <button onclick="semuaBintang4()" style="width:100%; padding:8px; margin-bottom:10px; border-radius:8px; border:1px dashed var(--primary); font-weight:700; cursor:pointer; font-size:11px; color:var(--primary);">⚡ SET SEMUA SANGAT BAIK (4★)</button>
+        <button class="btn-fast" onclick="setSemua4()">⚡ SET SEMUA SANGAT BAIK (4★)</button>
 
         <div id="area-aspek">
-            <div class="baris-aspek" data-aspek="Tertib"><div class="judul-aspek">📏 1. TERTIB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">0/4</div></div>
-            <div class="baris-aspek" data-aspek="Disiplin"><div class="judul-aspek">⏰ 2. DISIPLIN</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">0/4</div></div>
-            <div class="baris-aspek" data-aspek="Tanggung_Jawab"><div class="judul-aspek">🔑 3. T. JAWAB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">0/4</div></div>
-            <div class="baris-aspek" data-aspek="Jujur"><div class="judul-aspek">🛡️ 4. JUJUR</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">0/4</div></div>
-            <div class="baris-aspek" data-aspek="Ramah"><div class="judul-aspek">😊 5. RAMAH</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">0/4</div></div>
+            <div class="baris-aspek" data-aspek="Tertib"><div class="judul-aspek">📏 1. TERTIB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div></div>
+            <div class="baris-aspek" data-aspek="Disiplin"><div class="judul-aspek">⏰ 2. DISIPLIN</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div></div>
+            <div class="baris-aspek" data-aspek="TJawab"><div class="judul-aspek">🔑 3. TANGGUNG JAWAB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div></div>
+            <div class="baris-aspek" data-aspek="Jujur"><div class="judul-aspek">🛡️ 4. JUJUR</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div></div>
+            <div class="baris-aspek" data-aspek="Ramah"><div class="judul-aspek">😊 5. RAMAH</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div></div>
         </div>
 
-        <button class="btn-aksi btn-simpan" onclick="simpanKolektif()">💾 SIMPAN DATA KE FIREBASE</button>
+        <button class="btn-aksi btn-simpan" onclick="simpanKolektif()">💾 SIMPAN DATA KOLEKTIF</button>
     </div>
 
     <div id="page-rekap" style="display:none;">
-        <div class="grid-2" style="display:flex; gap:10px;">
-            <div class="form-grup" style="flex:1;">
-                <label>Pilih Bulan</label>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="form-grup">
+                <label>Bulan</label>
                 <select id="bulan-rekap">
                     <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
                     <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
@@ -97,197 +106,188 @@
                     <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
                 </select>
             </div>
-            <div class="form-grup" style="flex:1;">
-                <label>Pilih Kelas</label>
-                <select id="kelas-rekap">
-                    <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-                    <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-                    <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+            <div class="form-grup">
+                <label>Opsi Tampilan</label>
+                <select id="opsi-rekap">
+                    <option value="perkelas">Per Kelas (Tabel Detail)</option>
+                    <option value="semua">Semua Kelas (Grafik Perbandingan)</option>
                 </select>
             </div>
         </div>
         
-        <button class="btn-aksi btn-cari" onclick="prosesRekapBudaya()">📊 TAMPILKAN REKAP & GRAFIK</button>
-        <button id="btnExcel" class="btn-aksi btn-excel" onclick="exportBudayaExcel()">📥 DOWNLOAD EXCEL PER KELAS</button>
-
-        <div class="chart-box" id="chartBox">
-            <canvas id="grafikBudaya"></canvas>
+        <div id="box-pilih-kelas-rekap" class="form-grup">
+            <label>Pilih Kelas</label>
+            <select id="kelas-rekap">
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+            </select>
         </div>
 
-        <div class="rekap-container" id="wadah-rekap"></div>
+        <button class="btn-aksi btn-cari" onclick="jalankanRekap()">📊 PROSES DATA</button>
+        <button id="btnDownload" class="btn-aksi btn-excel" style="display:none;" onclick="exportExcelBudaya()">📥 DOWNLOAD EXCEL BERSIH</button>
+
+        <div id="wadah-grafik" class="chart-box" style="display:none;">
+            <canvas id="chartBudaya"></canvas>
+        </div>
+
+        <div class="tabel-scroll" id="hasil-rekap"></div>
     </div>
 </div>
 
 <script>
     const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
-    let globalSantriList = [];
-    let myChart = null;
+    let listSiswa = [];
+    let chartInstance = null;
 
-    function switchTab(mode) {
-        document.getElementById('page-input').style.display = mode === 'input' ? 'block' : 'none';
-        document.getElementById('page-rekap').style.display = mode === 'rekap' ? 'block' : 'none';
-        document.getElementById('tab-input-btn').classList.toggle('active', mode === 'input');
-        document.getElementById('tab-rekap-btn').classList.toggle('active', mode === 'rekap');
-    }
-
-    function klikStar(el, n) {
-        const parent = el.parentElement;
-        parent.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n));
-        parent.parentElement.setAttribute('data-nilai', n);
-        parent.nextElementSibling.innerText = n + "/4";
-    }
-
-    function semuaBintang4() {
-        document.querySelectorAll('.baris-aspek').forEach(baris => {
-            const star4 = baris.querySelectorAll('.star')[3];
-            klikStar(star4, 4);
-        });
+    function bukaTab(n) {
+        document.getElementById('page-input').style.display = n === 'input' ? 'block' : 'none';
+        document.getElementById('page-rekap').style.display = n === 'rekap' ? 'block' : 'none';
+        document.getElementById('btn-in').classList.toggle('active', n==='input');
+        document.getElementById('btn-re').classList.toggle('active', n==='rekap');
     }
 
     async function loadSantri() {
-        const kelas = document.getElementById('pilih-kelas').value;
-        const box = document.getElementById('pilih-santri-box');
-        if(!kelas) return;
-        box.innerHTML = '<p style="font-size:11px; text-align:center;">Memuat data...</p>';
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
-            globalSantriList = await res.json();
-            box.innerHTML = ''; 
-            globalSantriList.forEach(x => {
-                const item = document.createElement('div');
-                item.className = 'item-santri';
-                item.innerHTML = `<input type="checkbox" value="${x.nipd}" data-nama="${x.nama}"> <span>${x.nama}</span>`;
-                item.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const cb = item.querySelector('input'); cb.checked = !cb.checked; } };
-                box.appendChild(item);
-            });
-        } catch(e) { box.innerHTML = 'Gagal!'; }
+        const k = document.getElementById('pilih-kelas').value;
+        const b = document.getElementById('pilih-santri-box');
+        if(!k) return;
+        b.innerHTML = '<p style="text-align:center; font-size:12px;">Memuat...</p>';
+        const r = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${k}`);
+        listSiswa = await r.json();
+        b.innerHTML = '';
+        listSiswa.forEach(s => {
+            const div = document.createElement('div');
+            div.className = 'item-santri';
+            div.innerHTML = `<input type="checkbox" class="cb-santri" value="${s.nipd}" data-nama="${s.nama}"> <span>${s.nama}</span>`;
+            div.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const c = div.querySelector('input'); c.checked = !c.checked; } };
+            b.appendChild(div);
+        });
+    }
+
+    function pilihSemua(v) {
+        document.querySelectorAll('.cb-santri').forEach(c => c.checked = v);
+    }
+
+    function klikStar(el, n) {
+        const p = el.parentElement;
+        p.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n));
+        p.parentElement.setAttribute('data-nilai', n);
+    }
+
+    function setSemua4() {
+        document.querySelectorAll('.baris-aspek').forEach(b => klikStar(b.querySelectorAll('.star')[3], 4));
     }
 
     async function simpanKolektif() {
-        const checkboxes = document.querySelectorAll('#pilih-santri-box input:checked');
+        const cbs = document.querySelectorAll('.cb-santri:checked');
         const kls = document.getElementById('pilih-kelas').value;
-        const aspek = document.querySelectorAll('.baris-aspek');
+        const asp = document.querySelectorAll('.baris-aspek');
+        if(cbs.length === 0) return alert("Pilih santri!");
         
-        if(checkboxes.length === 0) return alert("Pilih santri!");
-        
-        let valid = true;
-        aspek.forEach(a => { if(!a.getAttribute('data-nilai')) valid = false; });
-        if(!valid) return alert("Beri semua bintang!");
+        const t = new Date();
+        const bln = t.getMonth() + 1;
+        const path = `budaya/2026/${bln}`;
 
-        const tgl = new Date();
-        const path = `budaya/2026/${tgl.getMonth() + 1}`;
-
-        try {
-            for(let cb of checkboxes) {
-                const payload = {
-                    nama: cb.getAttribute('data-nama'),
-                    kelas: kls,
-                    tgl: tgl.toLocaleDateString('id-ID'),
-                    T: aspek[0].getAttribute('data-nilai'),
-                    D: aspek[1].getAttribute('data-nilai'),
-                    TJ: aspek[2].getAttribute('data-nilai'),
-                    J: aspek[3].getAttribute('data-nilai'),
-                    R: aspek[4].getAttribute('data-nilai')
-                };
-                await fetch(`${FIREBASE_URL}/${path}/${cb.value}.json`, { method: 'POST', body: JSON.stringify(payload) });
-            }
-            alert("✅ Berhasil Disimpan!");
-            location.reload();
-        } catch(e) { alert("Gagal Simpan!"); }
+        for(let c of cbs) {
+            const data = {
+                nama: c.getAttribute('data-nama'), kelas: kls, tgl: t.toLocaleDateString('id-ID'),
+                T: asp[0].getAttribute('data-nilai') || 0,
+                D: asp[1].getAttribute('data-nilai') || 0,
+                TJ: asp[2].getAttribute('data-nilai') || 0,
+                J: asp[3].getAttribute('data-nilai') || 0,
+                R: asp[4].getAttribute('data-nilai') || 0
+            };
+            await fetch(`${FIREBASE_URL}/${path}/${c.value}.json`, { method: 'POST', body: JSON.stringify(data) });
+        }
+        alert("Data Tersimpan!");
+        location.reload();
     }
 
-    async function prosesRekapBudaya() {
-        const bulan = document.getElementById('bulan-rekap').value;
-        const kelasTujuan = document.getElementById('kelas-rekap').value;
-        const wadah = document.getElementById('wadah-rekap');
+    async function jalankanRekap() {
+        const opsi = document.getElementById('opsi-rekap').value;
+        const bln = document.getElementById('bulan-rekap').value;
+        const wadah = document.getElementById('hasil-rekap');
+        const boxGrafik = document.getElementById('wadah-grafik');
         
-        wadah.innerHTML = "Menganalisis data...";
-        
-        try {
-            const res = await fetch(`${FIREBASE_URL}/budaya/2026/${bulan}.json`);
-            const db = await res.json();
-            if(!db) return wadah.innerHTML = "Belum ada data bulan ini.";
+        wadah.innerHTML = "Memproses...";
+        boxGrafik.style.display = 'none';
+        document.getElementById('btnDownload').style.display = 'none';
 
-            let html = '<table class="rekap-table" id="tabelBudaya"><tr><th>Nama</th><th>Tertib</th><th>Disiplin</th><th>T.Jawab</th><th>Jujur</th><th>Ramah</th><th>Rata★</th></tr>';
-            
-            let totalKelas = { T:0, D:0, TJ:0, J:0, R:0, count:0 };
+        const res = await fetch(`${FIREBASE_URL}/budaya/2026/${bln}.json`);
+        const db = await res.json();
+        if(!db) return wadah.innerHTML = "Tidak ada data.";
 
-            // Kita harus memuat santri kelas yang dipilih jika belum ada
-            if(globalSantriList.length === 0 || globalSantriList[0].kelas !== kelasTujuan) {
-                const resS = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelasTujuan}`);
-                globalSantriList = await resS.json();
-            }
+        if(opsi === 'perkelas') {
+            const kls = document.getElementById('kelas-rekap').value;
+            // Load santri jika belum ada
+            const rs = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+            const siswas = await rs.json();
 
-            globalSantriList.forEach(s => {
+            let h = `<table class="rekap-table" id="tableExcel"><tr><th>Nama Santri</th><th>Tertib</th><th>Disiplin</th><th>T.Jawab</th><th>Jujur</th><th>Ramah</th><th>Rata★</th></tr>`;
+            siswas.forEach(s => {
                 const logs = db[s.nipd] ? Object.values(db[s.nipd]) : [];
-                let sNilai = { T:0, D:0, TJ:0, J:0, R:0, c:0 };
-                
-                logs.forEach(l => {
-                    sNilai.T += parseInt(l.T); sNilai.D += parseInt(l.D); 
-                    sNilai.TJ += parseInt(l.TJ); sNilai.J += parseInt(l.J); sNilai.R += parseInt(l.R);
-                    sNilai.c++;
-                });
-
-                if(sNilai.c > 0) {
-                    const rT = (sNilai.T/sNilai.c).toFixed(1);
-                    const rD = (sNilai.D/sNilai.c).toFixed(1);
-                    const rTJ = (sNilai.TJ/sNilai.c).toFixed(1);
-                    const rJ = (sNilai.J/sNilai.c).toFixed(1);
-                    const rR = (sNilai.R/sNilai.c).toFixed(1);
-                    const avgS = ((parseFloat(rT)+parseFloat(rD)+parseFloat(rTJ)+parseFloat(rJ)+parseFloat(rR))/5).toFixed(1);
-                    
-                    html += `<tr><td>${s.nama}</td><td>${rT}</td><td>${rD}</td><td>${rTJ}</td><td>${rJ}</td><td>${rR}</td><td style="background:#f0f7f4"><b>${avgS}</b></td></tr>`;
-                    
-                    totalKelas.T += parseFloat(rT); totalKelas.D += parseFloat(rD);
-                    totalKelas.TJ += parseFloat(rTJ); totalKelas.J += parseFloat(rJ);
-                    totalKelas.R += parseFloat(rR); totalKelas.count++;
+                let n = {t:0, d:0, tj:0, j:0, r:0, c:0};
+                logs.forEach(l => { n.t+=parseInt(l.T); n.d+=parseInt(l.D); n.tj+=parseInt(l.TJ); n.j+=parseInt(l.J); n.r+=parseInt(l.R); n.c++; });
+                if(n.c > 0) {
+                    const r = [(n.t/n.c).toFixed(1), (n.d/n.c).toFixed(1), (n.tj/n.c).toFixed(1), (n.j/n.c).toFixed(1), (n.r/n.c).toFixed(1)];
+                    const avg = (r.reduce((a,b)=>parseFloat(a)+parseFloat(b),0)/5).toFixed(1);
+                    h += `<tr><td style="text-align:left">${s.nama}</td><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td style="background:#f0f7f4; font-weight:700;">${avg}</td></tr>`;
                 } else {
-                    html += `<tr><td>${s.nama}</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>`;
+                    h += `<tr><td style="text-align:left">${s.nama}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>`;
                 }
             });
-
-            wadah.innerHTML = html + '</table>';
-            document.getElementById('btnExcel').style.display = 'block';
+            wadah.innerHTML = h + "</table>";
+            document.getElementById('btnDownload').style.display = 'block';
+        } else {
+            // REKAP SELURUH KELAS (GRAFIK)
+            const semuaKelas = ["7A","7B","7C","7D","8A","8B","8C","8D","9A","9B","9C","9D"];
+            let skorKelas = [];
             
-            if(totalKelas.count > 0) {
-                const dataGrafik = [
-                    (totalKelas.T/totalKelas.count).toFixed(2),
-                    (totalKelas.D/totalKelas.count).toFixed(2),
-                    (totalKelas.TJ/totalKelas.count).toFixed(2),
-                    (totalKelas.J/totalKelas.count).toFixed(2),
-                    (totalKelas.R/totalKelas.count).toFixed(2)
-                ];
-                tampilkanGrafik(dataGrafik);
-            }
+            semuaKelas.forEach(k => {
+                let totalK = 0, countK = 0;
+                Object.values(db).forEach(siswaLogs => {
+                    const logs = Object.values(siswaLogs);
+                    if(logs[0].kelas === k) {
+                        logs.forEach(l => { 
+                            totalK += (parseInt(l.T)+parseInt(l.D)+parseInt(l.TJ)+parseInt(l.J)+parseInt(l.R))/5;
+                            countK++;
+                        });
+                    }
+                });
+                skorKelas.push(countK > 0 ? (totalK/countK).toFixed(2) : 0);
+            });
 
-        } catch(e) { wadah.innerHTML = "Gagal memuat rekap."; }
+            boxGrafik.style.display = 'block';
+            wadah.innerHTML = "<p style='text-align:center; font-weight:700; margin-top:10px;'>Grafik Perbandingan Budaya Sekolah Per Kelas</p>";
+            renderChart(semuaKelas, skorKelas);
+        }
     }
 
-    function tampilkanGrafik(dataNilai) {
-        document.getElementById('chartBox').style.display = 'block';
-        const ctx = document.getElementById('grafikBudaya').getContext('2d');
-        if(myChart) myChart.destroy();
-        
-        myChart = new Chart(ctx, {
+    function renderChart(labels, data) {
+        const ctx = document.getElementById('chartBudaya').getContext('2d');
+        if(chartInstance) chartInstance.destroy();
+        chartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Tertib', 'Disiplin', 'T.Jawab', 'Jujur', 'Ramah'],
+                labels: labels,
                 datasets: [{
                     label: 'Rata-rata Skor Karakter',
-                    data: dataNilai,
-                    backgroundColor: ['#1f6f51', '#2563eb', '#eab308', '#ef4444', '#8b5cf6']
+                    data: data,
+                    backgroundColor: '#1f6f51',
+                    borderRadius: 5
                 }]
             },
             options: { scales: { y: { beginAtZero: true, max: 4 } } }
         });
     }
 
-    function exportBudayaExcel() {
-        const table = document.getElementById("tabelBudaya");
-        const wb = XLSX.utils.table_to_book(table, {sheet: "Budaya Sekolah"});
-        XLSX.writeFile(wb, `Rekap_Budaya_${document.getElementById('kelas-rekap').value}.xlsx`);
+    function exportExcelBudaya() {
+        const kls = document.getElementById('kelas-rekap').value;
+        const table = document.getElementById("tableExcel");
+        const wb = XLSX.utils.table_to_book(table, {sheet: "Budaya"});
+        XLSX.writeFile(wb, `Budaya_Sekolah_${kls}_2026.xlsx`);
     }
 </script>
 </body>
-    </html>
+</html>
