@@ -3,24 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Real Koi Fish v20</title>
+<title>E-Santri | Koi Pond & Ocean Friends v21</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
     --primary-grad: linear-gradient(135deg, #1f6f51 0%, #2ecc71 100%);
-    --bg: #f0f9f6;
+    --bg: #e0f2f7; /* Warna latar belakang lebih ke biru muda air */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
 
-  /* --- EFEK IKAN KOI BERENANG --- */
-  .koi-fish {
+  /* --- EFEK IKAN & TEMAN-TEMANNYA BERENANG --- */
+  .sea-creature {
     position: absolute; font-size: 30px; z-index: 1;
-    transition: all 4s ease-in-out; pointer-events: none;
-    filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+    transition: all 8s ease-in-out; /* Durasi transisi lebih panjang, agar lebih smooth */
+    pointer-events: none; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
     user-select: none;
+    transform-origin: center center; /* Penting untuk rotasi */
   }
   
   /* EFEK MAKANAN IKAN */
@@ -108,8 +109,8 @@
       <div class="menu-item" onclick="location.href='tahfidz.html'">🏆<span>Tahfidz</span></div>
       <div class="menu-item" onclick="handleQuran()">📖<span>Al-Quran</span></div>
       <div class="menu-item" onclick="location.href='kamus.html'">📑<span>Kamus</span></div>
-      <div class="menu-item" onclick="location.href='perpus.html'">📚<span>Perpus</span></div>
-      <div class="menu-item" onclick="location.href='budaya.html'">🕌<span>Budaya</span></div>
+      <div class="menu-item" onclick="location.href='perpustakaan.html'">📚<span>Perpus</span></div>
+      <div class="menu-item" onclick="location.href='budayasekolah.html'">🕌<span>Budaya</span></div>
     </div>
   </section>
 </main>
@@ -127,36 +128,54 @@
 <script>
   firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
   
-  // --- LOGIKA IKAN KOI (EMOJI) ---
-  const fishIcons = ['🐠', '🐟', '🐡', '🐟'];
-  const fishes = [];
+  // --- DAFTAR IKAN & TEMAN-TEMANNYA ---
+  const seaCreatures = ['🐠', '🐟', '🐡', '🐬', '🐋', '🦐', '🐙']; // Tambahan emoji
+  const creatures = [];
 
   function initAquarium() {
-    for(let i=0; i<4; i++) {
-      const f = document.createElement('div');
-      f.className = 'koi-fish';
-      f.innerText = fishIcons[i];
-      f.style.left = Math.random() * 80 + 'vw';
-      f.style.top = Math.random() * 80 + 'vh';
-      document.body.appendChild(f);
-      fishes.push({ el: f, x: Math.random() * 80, y: Math.random() * 80 });
+    for(let i=0; i<6; i++) { // Jumlah makhluk laut yang muncul
+      const c = document.createElement('div');
+      c.className = 'sea-creature';
+      c.innerText = seaCreatures[Math.floor(Math.random() * seaCreatures.length)];
+      
+      // Ukuran bervariasi
+      const size = Math.random() * 20 + 25; // Antara 25px - 45px
+      c.style.fontSize = size + 'px';
+
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.top = Math.random() * 100 + 'vh';
+      document.body.appendChild(c);
+      creatures.push({ el: c, x: parseFloat(c.style.left), y: parseFloat(c.style.top) });
     }
-    moveFishes();
+    moveCreatures();
   }
 
-  function moveFishes() {
-    fishes.forEach(f => {
-      f.x = Math.random() * 90;
-      f.y = Math.random() * 90;
-      f.el.style.left = f.x + 'vw';
-      f.el.style.top = f.y + 'vh';
-      // Putar arah ikan
-      f.el.style.transform = `scaleX(${Math.random() > 0.5 ? 1 : -1})`;
+  function moveCreatures() {
+    creatures.forEach(c => {
+      // Posisi baru yang lebih random dan smooth
+      const newX = Math.random() * 100;
+      const newY = Math.random() * 100;
+      
+      // Hitung rotasi (arah gerak)
+      const deltaX = newX - c.x;
+      const deltaY = newY - c.y;
+      const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+
+      c.el.style.left = newX + 'vw';
+      c.el.style.top = newY + 'vh';
+      // Rotasi ikan dan sesuaikan flip horizontal
+      c.el.style.transform = `rotate(${angle}deg) scaleX(${deltaX < 0 ? -1 : 1})`;
+
+      c.x = newX;
+      c.y = newY;
     });
-    setTimeout(moveFishes, 4000);
+    setTimeout(moveCreatures, 8000); // Gerak tiap 8 detik
   }
 
   function kasihMakan(e) {
+    // Hanya berlaku saat di dashboard
+    if (document.getElementById('dashboard').classList.contains('hidden')) return;
+
     // Efek pelet
     const p = document.createElement('div');
     p.className = 'pelet';
@@ -165,10 +184,25 @@
     document.body.appendChild(p);
     setTimeout(() => p.remove(), 1000);
 
-    // Ikan mendekat ke makanan
-    fishes.forEach(f => {
-      f.el.style.left = (e.clientX - 15) + 'px';
-      f.el.style.top = (e.clientY - 15) + 'px';
+    // Makhluk laut mendekat ke makanan
+    creatures.forEach(c => {
+      // Arahkan ke posisi klik, tapi tidak terlalu presisi agar tetap natural
+      const targetX = e.clientX + (Math.random() * 40 - 20); // Sedikit menyebar
+      const targetY = e.clientY + (Math.random() * 40 - 20);
+
+      const deltaX = targetX - (c.el.offsetLeft + c.el.offsetWidth / 2);
+      const deltaY = targetY - (c.el.offsetTop + c.el.offsetHeight / 2);
+      const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+
+      c.el.style.transition = `all 2s ease-out`; // Lebih cepat ke makanan
+      c.el.style.left = targetX + 'px';
+      c.el.style.top = targetY + 'px';
+      c.el.style.transform = `rotate(${angle}deg) scaleX(${deltaX < 0 ? -1 : 1})`;
+      
+      // Reset transisi setelah bergerak ke makanan agar kembali ke gerakan acak
+      setTimeout(() => {
+        c.el.style.transition = `all 8s ease-in-out`;
+      }, 2000);
     });
   }
 
@@ -194,10 +228,10 @@
       document.getElementById("dashboard").classList.remove("hidden");
       document.getElementById("login-card").classList.add("hidden");
       document.getElementById("sidebar-name").innerText = user.displayName;
-      document.getElementById("user-photo").src = user.photoURL;
+      document.getElementById("user-photo").src = user.photoURL || 'https://via.placeholder.com/70/f0fdf4/1f6f51?text=A'; // Default avatar
       document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
       
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa sungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
+      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapatlah ia."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntunglah ia."}];
       const d = m[new Date().getDate() % m.length];
       document.getElementById('runArab').innerText = d.ar; document.getElementById('runIndo').innerText = " — " + d.id;
       
