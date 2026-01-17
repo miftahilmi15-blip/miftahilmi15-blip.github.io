@@ -3,134 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-SANTRI | Real Zen Pond</title>
+    <title>E-SANTRI | Premium Zen Pond</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --sage: #1b4d3e; --glass: rgba(255, 255, 255, 0.3); }
+        :root { --sage-dark: #1b4d3e; --sage-med: #4a7c6d; --sage-light: #d4e9e2; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { height: 100vh; background: #d4e9e2; overflow: hidden; font-family: sans-serif; }
-
-        /* BG KOLAM ASLI - LINK WIKIMEDIA (ANTI JALAN RAYA) */
-        #pond-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Koi_pond_at_the_Byodo-In_Temple_in_Oahu%2C_Hawaii.jpg/1280px-Koi_pond_at_the_Byodo-In_Temple_in_Oahu%2C_Hawaii.jpg') center/cover;
-            z-index: 1; filter: brightness(0.8);
-        }
-
-        /* LAYER INTERAKSI */
-        #touch-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; }
-        .pellet { position: absolute; width: 8px; height: 8px; background: #5d4037; border-radius: 50%; z-index: 6; animation: sink 1s forwards; }
-        .ripple { position: absolute; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; z-index: 6; animation: ripple-ani 0.8s linear; }
-        @keyframes sink { to { transform: translateY(20px); opacity: 0; } }
-        @keyframes ripple-ani { to { transform: scale(3); opacity: 0; } }
-
-        /* IKAN KOI */
-        .koi { position: absolute; width: 80px; z-index: 4; transition: all 3s ease-in-out; pointer-events: none; }
-
-        /* UI DASHBOARD - TERDEPAN */
-        .ui-main { position: relative; z-index: 100; height: 100vh; display: flex; flex-direction: column; padding: 20px; pointer-events: none; }
         
-        .header { display: flex; justify-content: space-between; pointer-events: auto; }
-        .card { background: var(--glass); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.4); display: flex; align-items: center; gap: 8px; color: white; }
-
-        .btn-side { position: absolute; top: 85px; right: 20px; width: 45px; height: 45px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--sage); pointer-events: auto; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-
-        /* MENU BATU MUNGIL */
-        .menu-grid { position: relative; flex-grow: 1; }
-        .stone { 
-            position: absolute; width: 70px; height: 70px; background: white; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); pointer-events: auto; cursor: pointer; border: 1px solid #ddd;
+        /* BACKGROUND AIR MURNI KODE (ANTI JALAN RAYA) */
+        body { 
+            height: 100vh; 
+            background: radial-gradient(circle at center, #5d8a7d 0%, #1b4d3e 100%);
+            overflow: hidden; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .stone i { font-size: 20px; color: var(--sage); margin-bottom: 3px; }
-        .stone span { font-size: 8px; font-weight: 900; color: var(--sage); }
 
+        /* EFEK RIAK AIR */
+        .ripple {
+            position: absolute; border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%; pointer-events: none; z-index: 5;
+            animation: ripple-out 1s ease-out forwards;
+        }
+        @keyframes ripple-out { from { transform: scale(0); opacity: 0.5; } to { transform: scale(4); opacity: 0; } }
+
+        /* PELET MAKANAN */
+        .pellet {
+            position: absolute; width: 10px; height: 10px; background: #3e2723;
+            border-radius: 50%; z-index: 6; pointer-events: none;
+            animation: sink 1s ease-in forwards;
+        }
+        @keyframes sink { to { transform: scale(0.5); opacity: 0; } }
+
+        /* IKAN KOI JEPANG */
+        .koi {
+            position: absolute; width: 100px; z-index: 4;
+            transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+            pointer-events: none;
+        }
+
+        /* UI LAYER (PALING DEPAN) */
+        .main-ui {
+            position: relative; z-index: 100; height: 100vh;
+            display: flex; flex-direction: column; padding: 20px;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; }
+        .glass-box {
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+            padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.3);
+            color: white; display: flex; align-items: center; gap: 10px;
+        }
+
+        /* TITIK TIGA / MENU NAV */
+        .nav-trigger {
+            position: absolute; top: 90px; right: 20px;
+            width: 45px; height: 45px; background: white; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--sage-dark); font-size: 20px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        /* MENU BATU MUNGIL (PLAY STORE STYLE) */
+        .pond-menu { flex-grow: 1; position: relative; }
+        .stone {
+            position: absolute; width: 75px; height: 75px;
+            background: white; border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); cursor: pointer;
+            transition: 0.3s; border: 1px solid #ddd;
+        }
+        .stone:active { transform: scale(0.85); }
+        .stone i { font-size: 24px; color: var(--sage-dark); margin-bottom: 4px; }
+        .stone span { font-size: 8px; font-weight: 800; color: var(--sage-dark); }
+
+        /* POSISI BATU RAPI */
         #m1 { top: 15%; left: 5%; }
-        #m2 { top: 15%; right: 5%; }
-        #m3 { top: 40%; left: 50%; transform: translateX(-50%); width: 90px; height: 90px; border: 2px solid var(--sage); }
-        #m4 { bottom: 25%; left: 5%; }
-        #m5 { bottom: 25%; right: 5%; }
-        #m6 { bottom: 12%; left: 50%; transform: translateX(-50%); }
-
-        /* MAHFUZAT */
-        footer { margin-top: auto; background: var(--sage); border-radius: 50px; padding: 10px; overflow: hidden; pointer-events: auto; }
-        .scroll { color: white; font-size: 10px; white-space: nowrap; animation: flow 15s linear infinite; }
-        @keyframes flow { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        #m2 { top: 18%; right: 5%; }
+        #m3 { top: 40%; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; border: 2px solid var(--sage-dark); }
+        #m4 { bottom: 25%; left: 10%; }
+        #m5 { bottom: 20%; right: 15%; }
+        #m6 { bottom: 35%; right: 5%; }
 
         /* SIDEBAR */
-        .sidebar { position: fixed; top: 0; right: -100%; width: 250px; height: 100%; background: white; z-index: 1000; transition: 0.4s; padding: 40px 20px; }
-        .sidebar.open { right: 0; }
-        .sidebar a { display: block; padding: 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; font-size: 13px; }
+        .sidebar {
+            position: fixed; top: 0; right: -100%; width: 280px; height: 100%;
+            background: white; z-index: 1000; transition: 0.5s;
+            padding: 50px 20px; border-radius: 30px 0 0 30px;
+        }
+        .sidebar.active { right: 0; }
+        .sidebar a { display: flex; align-items: center; padding: 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; font-size: 14px; }
+        .sidebar i { width: 30px; color: var(--sage-dark); }
+
+        /* FOOTER */
+        footer {
+            background: var(--sage-dark); padding: 12px; border-radius: 50px;
+            overflow: hidden; margin-top: auto;
+        }
+        .mahfuzat { color: white; font-size: 11px; white-space: nowrap; animation: move 15s linear infinite; }
+        @keyframes move { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
     </style>
 </head>
-<body onclick="feed(event)">
+<body onclick="interact(event)">
 
-<div id="pond-bg"></div>
-<div id="touch-layer"></div>
-
-<div class="ui-main">
-    <div class="header">
-        <div class="card"><img src="https://ui-avatars.com/api/?name=Zaki&background=1b4d3e&color=fff" style="width:30px; border-radius:50%"><b>AHMAD ZAKI</b></div>
-        <div class="card" style="flex-direction:column; align-items:flex-end">
-            <small style="font-size:7px">STREAK</small>
-            <b style="color:#ffd700">12 HARI ✨</b>
+    <div class="main-ui">
+        <div class="header">
+            <div class="glass-box">
+                <img src="https://ui-avatars.com/api/?name=Zaki&background=1b4d3e&color=fff" style="width:35px; border-radius:50%">
+                <div style="font-size:12px; font-weight:bold;">AHMAD ZAKI</div>
+            </div>
+            <div class="glass-box" style="flex-direction:column; padding: 5px 20px;">
+                <span style="font-size:8px; opacity:0.8;">STREAK QURAN</span>
+                <span style="color:#ffd700; font-weight:bold;">12 HARI ✨</span>
+            </div>
         </div>
+
+        <div class="nav-trigger" onclick="event.stopPropagation(); toggleSidebar()">
+            <i class="fa-solid fa-ellipsis-v"></i>
+        </div>
+
+        <div class="pond-menu">
+            <div class="stone" id="m1" onclick="alert('Buka Absensi')"><i class="fa-solid fa-fingerprint"></i><span>ABSENSI</span></div>
+            <div class="stone" id="m2" onclick="alert('Buka Tahfidz')"><i class="fa-solid fa-medal"></i><span>TAHFIDZ</span></div>
+            <div class="stone" id="m3" onclick="alert('Buka Quran')"><i class="fa-solid fa-book-quran"></i><span>AL-QURAN</span></div>
+            <div class="stone" id="m4" onclick="alert('Buka Aduan')"><i class="fa-solid fa-shield-heart"></i><span>ADUAN</span></div>
+            <div class="stone" id="m5" onclick="alert('Buka Kamus')"><i class="fa-solid fa-language"></i><span>KAMUS</span></div>
+            <div class="stone" id="m6" onclick="alert('Buka Perpus')"><i class="fa-solid fa-book-bookmark"></i><span>PERPUS</span></div>
+        </div>
+
+        <footer>
+            <div class="mahfuzat">مَنْ جَدَّ وَجَدَ — Barangsiapa bersungguh-sungguh maka ia akan berhasil. — مَنْ صَبَرَ ظَفِرَ — Barangsiapa bersabar maka ia akan beruntung.</div>
+        </footer>
     </div>
 
-    <div class="btn-side" onclick="toggleSide()"><i class="fa-solid fa-bars"></i></div>
-
-    <div class="menu-grid">
-        <div class="stone" id="m1" onclick="alert('Absensi')"><i class="fa-solid fa-fingerprint"></i><span>ABSENSI</span></div>
-        <div class="stone" id="m2" onclick="alert('Tahfidz')"><i class="fa-solid fa-medal"></i><span>TAHFIDZ</span></div>
-        <div class="stone" id="m3" onclick="alert('Quran')"><i class="fa-solid fa-book-quran"></i><span>AL-QURAN</span></div>
-        <div class="stone" id="m4" onclick="alert('Aduan')"><i class="fa-solid fa-shield-heart"></i><span>ADUAN</span></div>
-        <div class="stone" id="m5" onclick="alert('Kamus')"><i class="fa-solid fa-language"></i><span>KAMUS</span></div>
-        <div class="stone" id="m6" onclick="alert('Perpus')"><i class="fa-solid fa-book-bookmark"></i><span>PERPUS</span></div>
+    <div class="sidebar" id="sidebar">
+        <h2 style="color:var(--sage-dark); margin-bottom:25px;">Menu Utama</h2>
+        <a href="#"><i class="fa-solid fa-clock"></i> Jadwal Sholat</a>
+        <a href="#"><i class="fa-solid fa-calendar"></i> Kalender Hijriah</a>
+        <a href="#"><i class="fa-solid fa-gear"></i> Pengaturan</a>
+        <a href="#" style="color:red; margin-top:30px;"><i class="fa-solid fa-power-off"></i> Logout</a>
     </div>
 
-    <footer><div class="scroll">مَنْ جَدَّ وَجَدَ — Barangsiapa bersungguh-sungguh maka ia akan berhasil. — مَنْ صَبَرَ ظَفِرَ</div></footer>
-</div>
+    <script>
+        const fishCount = 12; // Sesuai streak
+        const fishes = [];
 
-<div class="sidebar" id="sb">
-    <h3>MENU</h3>
-    <a href="#"><i class="fa-solid fa-clock"></i> Waktu Sholat</a>
-    <a href="#"><i class="fa-solid fa-calendar"></i> Kalender</a>
-    <a href="#" style="color:red">Logout</a>
-</div>
-
-<script>
-    const streak = 12;
-    const fishList = [];
-    
-    // BIKIN IKAN SESUAI STREAK
-    function init() {
-        for(let i=0; i<Math.min(streak, 8); i++) {
-            const f = document.createElement('img');
-            f.src = 'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-Transparent-Background.png';
-            f.className = 'koi';
-            f.style.left = Math.random()*70+'vw'; f.style.top = Math.random()*70+'vh';
-            document.body.appendChild(f);
-            fishList.push(f);
+        function initPond() {
+            for(let i=0; i<8; i++) { // Max 8 ikan biar layar gak penuh
+                const f = document.createElement('img');
+                f.src = 'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-Transparent-Background.png';
+                f.className = 'koi';
+                f.style.left = Math.random()*80 + 'vw';
+                f.style.top = Math.random()*80 + 'vh';
+                document.body.appendChild(f);
+                fishes.push(f);
+            }
+            moveFishes();
         }
-    }
 
-    function feed(e) {
-        // Riak
-        const r = document.createElement('div'); r.className='ripple';
-        r.style.left=e.clientX+'px'; r.style.top=e.clientY+'px';
-        document.body.appendChild(r); setTimeout(()=>r.remove(),800);
-        // Pelet
-        const p = document.createElement('div'); p.className='pellet';
-        p.style.left=e.clientX+'px'; p.style.top=e.clientY+'px';
-        document.body.appendChild(p); setTimeout(()=>p.remove(),1000);
-        // Ikan Gerak
-        fishList.forEach(f => {
-            f.style.left = (e.clientX-40)+'px'; f.style.top = (e.clientY-40)+'px';
-            f.style.transform = `rotate(${Math.random()*360}deg)`;
-        });
-    }
+        function interact(e) {
+            // Buat Riak
+            const rip = document.createElement('div');
+            rip.className = 'ripple';
+            rip.style.left = e.clientX + 'px'; rip.style.top = e.clientY + 'px';
+            document.body.appendChild(rip);
+            setTimeout(() => rip.remove(), 1000);
 
-    function toggleSide() { document.getElementById('sb').classList.toggle('open'); }
-    window.onload = init;
-</script>
+            // Buat Pelet
+            const p = document.createElement('div');
+            p.className = 'pellet';
+            p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
+
+            // Ikan mengejar makanan
+            fishes.forEach(f => {
+                f.style.left = (e.clientX - 50) + 'px';
+                f.style.top = (e.clientY - 50) + 'px';
+                f.style.transform = `rotate(${Math.random()*360}deg)`;
+            });
+        }
+
+        function moveFishes() {
+            setInterval(() => {
+                fishes.forEach(f => {
+                    f.style.left = Math.random()*80 + 'vw';
+                    f.style.top = Math.random()*80 + 'vh';
+                    f.style.transform = `rotate(${Math.random()*360}deg)`;
+                });
+            }, 5000);
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        
+        window.onload = initPond;
+    </script>
 </body>
 </html>
