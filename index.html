@@ -3,286 +3,205 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Premium Aesthetic v24</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<title>E-SANTRI PREMIUM | v25 Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
-    --soft-green: #e9f5f0;
-    --text-dark: #2d3436;
-    --shadow: 0 10px 30px rgba(0,0,0,0.05);
+    --glass: rgba(255, 255, 255, 0.8);
+    --bg-water: #bce3db;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
-  
-  body { 
-    background: #f8faf9; 
-    color: var(--text-dark); 
-    min-height: 100vh; 
-    overflow: hidden; 
-    position: relative;
-  }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+  body { background: var(--bg-water); height: 100vh; overflow: hidden; position: relative; }
 
-  /* --- IKAN KOI REALISTIS (SVG ANIMATED) --- */
-  .fish-container {
-    position: absolute; width: 80px; height: 40px; z-index: 1;
-    transition: all 6s cubic-bezier(0.45, 0.05, 0.55, 0.95); pointer-events: none;
+  /* --- IKAN KOI 5D REALISTIS --- */
+  .koi-fish {
+    position: absolute; width: 100px; height: 50px; z-index: 1;
+    pointer-events: none; transition: all 5s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  
-  .koi-svg {
+  .koi-body {
     width: 100%; height: 100%;
-    filter: drop-shadow(4px 8px 10px rgba(0,0,0,0.1));
-    animation: swim-wiggle 0.8s infinite ease-in-out;
+    animation: meliuk 1.2s infinite ease-in-out;
+    filter: drop-shadow(15px 20px 12px rgba(0,0,0,0.15)); /* Bayangan dasar kolam */
+  }
+  @keyframes meliuk {
+    0%, 100% { transform: skewY(0deg) scaleX(1); }
+    50% { transform: skewY(6deg) scaleX(1.05); }
   }
 
-  @keyframes swim-wiggle {
-    0%, 100% { transform: scaleY(1) rotate(0deg); }
-    50% { transform: scaleY(0.9) rotate(2deg); }
+  /* --- UI INTERFACE --- */
+  .ui-wrapper {
+    position: relative; z-index: 10; height: 100vh;
+    padding: 25px; display: flex; flex-direction: column;
+    background: radial-gradient(circle at top, transparent, rgba(0,0,0,0.05));
   }
 
-  /* --- HEADER MODERN (SAGE GREEN) --- */
-  header {
-    background: var(--primary);
-    height: 180px;
-    padding: 50px 25px;
-    border-radius: 0 0 40px 40px;
-    position: relative;
-    z-index: 10;
-    color: white;
-  }
-  .header-content { display: flex; justify-content: space-between; align-items: center; }
-  .title-app { font-family: 'Montserrat'; font-size: 24px; letter-spacing: 1px; }
-  .menu-trigger { font-size: 28px; cursor: pointer; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+  .logo { font-family: 'Montserrat'; font-size: 24px; color: var(--primary); letter-spacing: 3px; }
+  .profile-trigger { width: 45px; height: 45px; border-radius: 15px; background: white; border: 2px solid var(--primary); overflow: hidden; cursor: pointer; }
 
-  /* --- CONTAINER UTAMA --- */
-  .container { 
-    width: 90%; 
-    max-width: 400px; 
-    margin: -40px auto 0; 
-    position: relative; 
-    z-index: 20; 
+  /* STREAK CARD */
+  .card-glass {
+    background: var(--glass); backdrop-filter: blur(15px);
+    border-radius: 25px; padding: 20px; border: 1px solid rgba(255,255,255,0.6);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px;
   }
+  .streak-title { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 1px; }
+  .streak-num { font-size: 26px; font-weight: 800; color: var(--primary); }
 
-  /* --- CARD AESTHETIC --- */
-  .card {
-    background: white;
-    border-radius: 24px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.8);
+  /* MENU GRID 2 KOLOM */
+  .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+  .menu-btn {
+    background: var(--glass); backdrop-filter: blur(10px);
+    height: 110px; border-radius: 25px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; cursor: pointer; transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.4);
   }
+  .menu-btn:active { transform: scale(0.92); background: white; }
+  .menu-btn i { font-size: 28px; margin-bottom: 8px; }
+  .menu-btn span { font-size: 13px; font-weight: 600; color: #444; }
 
-  .streak-card { display: flex; align-items: center; justify-content: space-between; }
-  .streak-val { color: var(--primary); font-weight: 700; font-size: 22px; }
+  /* MAHFUZAT BANNER */
+  .footer-banner {
+    margin-top: auto; background: var(--primary); border-radius: 20px;
+    padding: 12px; overflow: hidden; white-space: nowrap;
+  }
+  .scrolling-text { display: inline-block; color: white; font-size: 14px; animation: jalan 15s linear infinite; }
+  @keyframes jalan { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-  /* --- MAHFUZAT TICKER --- */
-  .mahfuzat-banner {
-    background: var(--soft-green);
-    border-radius: 20px;
-    padding: 15px;
-    overflow: hidden;
-    position: relative;
-    border-left: 5px solid var(--primary);
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed; top: 0; right: -80%; width: 80%; height: 100%;
+    background: white; z-index: 1000; padding: 50px 30px;
+    transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1); border-radius: 40px 0 0 40px;
   }
-  .m-scroll {
-    white-space: nowrap;
-    display: inline-block;
-    animation: moveText 20s linear infinite;
-  }
-  @keyframes moveText { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+  .sidebar.open { right: 0; box-shadow: -20px 0 50px rgba(0,0,0,0.1); }
+  .sidebar a { display: block; padding: 15px; color: #333; text-decoration: none; font-weight: 600; border-bottom: 1px solid #f0f0f0; }
 
-  /* --- MENU GRID 2 KOLOM (SEPERTI GAMBAR) --- */
-  .menu-grid { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 15px; 
-    margin-top: 10px;
-  }
-  .menu-item {
-    background: white;
-    padding: 25px 15px;
-    border-radius: 24px;
-    text-align: center;
-    box-shadow: var(--shadow);
-    transition: 0.3s;
-    border: 1px solid transparent;
-  }
-  .menu-item:active { transform: scale(0.95); background: var(--soft-green); }
-  .menu-item .icon { font-size: 30px; margin-bottom: 10px; display: block; }
-  .menu-item span { font-weight: 600; font-size: 13px; color: #444; }
-
-  /* --- SIDEBAR --- */
-  .sidebar { 
-    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; 
-    background: white; transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1); 
-    z-index: 1000; padding: 60px 30px; border-radius: 40px 0 0 40px; 
-  }
-  .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.1); }
-  .sidebar a { display: block; padding: 15px 0; color: #333; text-decoration: none; font-weight: 500; font-size: 16px; border-bottom: 1px solid #f0f0f0; }
-
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 900; }
-  .hidden { display: none !important; }
-
-  /* PELET MAKANAN */
-  .food {
-    position: absolute; width: 10px; height: 10px; background: #e67e22;
-    border-radius: 50%; z-index: 5; animation: drop 1s forwards;
-  }
-  @keyframes drop { to { opacity: 0; transform: scale(0.5); } }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); z-index: 900; }
+  .pelet { position: absolute; width: 10px; height: 10px; background: orange; border-radius: 50%; z-index: 5; animation: sink 1s forwards; }
+  @keyframes sink { to { transform: scale(0.5); opacity: 0; } }
 </style>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
-<body onclick="spawnFood(event)">
+<body onclick="kasihMakan(event)">
 
-<div class="overlay" id="overlay"></div>
+<div class="overlay" id="ovl"></div>
 
-<header id="app-header" class="hidden">
-  <div class="header-content">
-    <div class="title-app">E-SANTRI</div>
-    <div class="menu-trigger" id="menu-btn">☰</div>
-  </div>
-  <p id="welcome-msg" style="margin-top:10px; font-size:14px; opacity:0.9;"></p>
-</header>
-
-<main class="container">
-  <div id="login-card" class="card" style="margin-top:100px; text-align:center;">
-    <h2 style="color:var(--primary); margin-bottom:25px;">Marhaban</h2>
-    <button onclick="loginGoogle()" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--primary); color:white; font-weight:700; cursor:pointer; box-shadow: 0 5px 15px rgba(31,111,81,0.3);">LOGIN DENGAN GOOGLE</button>
-  </div>
-
-  <section id="dashboard" class="hidden">
-    <div class="card streak-card">
-      <div>
-        <p style="font-size:11px; color:#999; font-weight:600; margin-bottom:5px;">DAILY STREAK</p>
-        <div class="streak-val" id="streak-count">0 Hari</div>
-      </div>
-      <div style="font-size:35px;">🔥</div>
+<div class="ui-wrapper">
+  <header>
+    <div class="logo">E-SANTRI</div>
+    <div class="profile-trigger" id="open-menu">
+      <img id="u-img" src="https://via.placeholder.com/50" style="width:100%">
     </div>
+  </header>
 
-    <div class="mahfuzat-banner">
-      <div class="m-scroll">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:18px; font-weight:700;"></span>
-        <span id="runIndo" style="color:var(--text-dark); font-weight:500; margin-left:10px;"></span>
-      </div>
+  <div class="card-glass">
+    <p class="streak-title">DAILY QURAN STREAK</p>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span class="streak-num" id="s-count">0 Hari</span>
+      <span style="font-size:35px;">🔥</span>
     </div>
-
-    <div class="menu-grid">
-      <div class="menu-item" onclick="location.href='absensi.html'"><span class="icon">📍</span><span>Absensi</span></div>
-      <div class="menu-item" onclick="location.href='tahfidz.html'"><span class="icon">🏆</span><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="handleQuran()"><span class="icon">📖</span><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="location.href='kamus.html'"><span class="icon">📑</span><span>Kamus</span></div>
-      <div class="menu-item" onclick="location.href='perpustakaan.html'"><span class="icon">📚</span><span>Perpus</span></div>
-      <div class="menu-item" onclick="location.href='budayasekolah.html'"><span class="icon">🕌</span><span>Budaya</span></div>
-    </div>
-  </section>
-</main>
-
-<div class="sidebar" id="sidebar">
-  <div style="text-align:center; margin-bottom:30px;">
-    <img id="user-photo" src="" style="width:80px; height:80px; border-radius:24px; border:4px solid var(--soft-green); margin-bottom:10px;">
-    <h3 id="sidebar-name" style="color:var(--primary);">Santri</h3>
   </div>
+
+  <div class="menu-grid">
+    <div class="menu-btn" onclick="location.href='absensi.html'"><i>📍</i><span>Absensi</span></div>
+    <div class="menu-btn" onclick="location.href='tahfidz.html'"><i>🏆</i><span>Tahfidz</span></div>
+    <div class="menu-btn" onclick="location.href='alquran.html'"><i>📖</i><span>Al-Quran</span></div>
+    <div class="menu-btn" onclick="location.href='perpustakaan.html'"><i>📚</i><span>Perpus</span></div>
+    <div class="menu-btn" onclick="location.href='pengaduan.html'"><i>📣</i><span>Pengaduan</span></div>
+    <div class="menu-btn" onclick="location.href='budayasekolah.html'"><i>🕌</i><span>Budaya</span></div>
+  </div>
+
+  <div class="footer-banner">
+    <div class="scrolling-text" id="m-text">مَنْ جَدَّ وَجَدَ — Siapa yang bersungguh-sungguh akan berhasil.</div>
+  </div>
+</div>
+
+<div class="sidebar" id="sb">
+  <h2 style="color:var(--primary); margin-bottom:20px;">Menu Santri</h2>
   <a href="#" onclick="location.reload()">🏠 Dashboard</a>
   <a href="#" onclick="location.href='kalender.html'">📅 Kalender</a>
   <a href="#" onclick="location.href='sholat.html'">🕌 Waktu Sholat</a>
-  <a href="#" onclick="logout()" style="color:#eb4d4b; border:none; margin-top:30px;">🚪 Logout Akun</a>
+  <a href="#" onclick="location.href='pengaduan.html'">📣 Layanan Pengaduan</a>
+  <a href="#" onclick="logout()" style="color:red; margin-top:30px;">🚪 Logout Akun</a>
 </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
 <script>
   firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
 
-  // --- IKAN KOI PREMIUM SVG ---
+  // --- LOGIKA IKAN KOI 5D ---
   const koiSVG = `
-    <svg viewBox="0 0 100 50" class="koi-svg">
-      <path d="M10,25 Q30,5 65,25 Q30,45 10,25" fill="#f9ca24" />
-      <path d="M15,20 Q25,15 35,22 M15,30 Q25,35 35,28" fill="none" stroke="white" stroke-width="1" opacity="0.5"/>
-      <path d="M65,25 Q85,10 95,15 L85,25 L95,35 Q85,40 65,25" fill="#f0932b" />
-      <circle cx="22" cy="20" r="2.5" fill="white"/><circle cx="22" cy="20" r="1" fill="black"/>
+    <svg viewBox="0 0 120 60" class="koi-body">
+      <path d="M90,30 Q110,10 115,30 Q110,50 90,30" fill="#ff7675" opacity="0.8" />
+      <path d="M10,30 Q30,5 70,15 Q90,30 70,45 Q30,55 10,30" fill="white" />
+      <ellipse cx="40" cy="25" rx="15" ry="10" fill="#ff7675" />
+      <circle cx="20" cy="22" r="2" fill="black" />
+      <circle cx="20" cy="38" r="2" fill="black" />
     </svg>`;
 
   const fishes = [];
-  function initFish() {
-    for(let i=0; i<4; i++) {
+  function createFish() {
+    for(let i=0; i<5; i++) {
       const f = document.createElement('div');
-      f.className = 'fish-container';
+      f.className = 'koi-fish';
       f.innerHTML = koiSVG;
-      // Beri warna acak pada badan ikan
-      const colors = ['#f0932b', '#eb4d4b', '#ffffff', '#2d3436'];
-      f.querySelector('path').style.fill = colors[i];
-      
       f.x = Math.random() * 80; f.y = Math.random() * 80;
       f.style.left = f.x + 'vw'; f.style.top = f.y + 'vh';
       document.body.appendChild(f);
       fishes.push({ el: f, x: f.x, y: f.y });
     }
-    moveFish();
+    swim();
   }
 
-  function moveFish() {
+  function swim() {
     fishes.forEach(f => {
-      const nx = Math.random() * 90; const ny = Math.random() * 90;
+      const nx = Math.random() * 85; const ny = Math.random() * 85;
       const angle = Math.atan2(ny - f.y, nx - f.x) * 180 / Math.PI;
       f.el.style.left = nx + 'vw'; f.el.style.top = ny + 'vh';
       f.el.style.transform = `rotate(${angle}deg)`;
       f.x = nx; f.y = ny;
     });
-    setTimeout(moveFish, 6000);
+    setTimeout(swim, 5000);
   }
 
-  function spawnFood(e) {
-    if (document.getElementById('dashboard').classList.contains('hidden')) return;
-    const food = document.createElement('div');
-    food.className = 'food';
-    food.style.left = e.clientX + 'px'; food.style.top = e.clientY + 'px';
-    document.body.appendChild(food);
-    setTimeout(() => food.remove(), 1000);
+  function kasihMakan(e) {
+    if(e.target.closest('.menu-btn')) return;
+    const p = document.createElement('div');
+    p.className = 'pelet';
+    p.style.left = e.clientX + 'px'; p.style.top = e.clientY + 'px';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
 
     fishes.forEach(f => {
-      const tx = e.clientX - 40; const ty = e.clientY - 20;
+      const tx = e.clientX - 50; const ty = e.clientY - 25;
       const angle = Math.atan2(ty - (f.y * window.innerHeight/100), tx - (f.x * window.innerWidth/100)) * 180 / Math.PI;
       f.el.style.transition = 'all 1.5s ease-out';
       f.el.style.left = tx + 'px'; f.el.style.top = ty + 'px';
       f.el.style.transform = `rotate(${angle}deg)`;
-      setTimeout(() => f.el.style.transition = 'all 6s ease-in-out', 2000);
+      setTimeout(() => f.el.style.transition = 'all 5s ease-in-out', 2000);
     });
   }
 
-  // --- LOGIKA UTAMA ---
-  function handleQuran() {
-    const today = new Date().toDateString();
-    let s = parseInt(localStorage.getItem('q_streak') || "0");
-    if (localStorage.getItem('last_q_date') !== today) {
-      s++; localStorage.setItem('q_streak', s); localStorage.setItem('last_q_date', today);
-    }
-    location.href = 'alquran.html';
-  }
-
-  function loginGoogle(){ firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+  // --- LOGIKA AUTH ---
   function logout(){ firebase.auth().signOut().then(()=>location.reload()); }
-
   firebase.auth().onAuthStateChanged(user => {
     if(user){
-      document.getElementById("app-header").classList.remove("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("welcome-msg").innerText = "Ahlan, " + user.displayName;
-      document.getElementById("sidebar-name").innerText = user.displayName;
-      document.getElementById("user-photo").src = user.photoURL;
-      document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
-      
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa sungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
-      const d = m[new Date().getDate() % m.length];
-      document.getElementById('runArab').innerText = d.ar; document.getElementById('runIndo').innerText = " — " + d.id;
-      initFish();
+      document.getElementById("u-img").src = user.photoURL;
+      document.getElementById("s-count").innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
+      createFish();
+    } else {
+      firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
     }
   });
 
-  const sb=document.getElementById("sidebar"), ov=document.getElementById("overlay");
-  document.getElementById("menu-btn").onclick=()=>{ sb.classList.add("open"); ov.style.display="block"; }
-  ov.onclick=()=>{ sb.classList.remove("open"); ov.style.display="none"; }
+  // SIDEBAR CONTROL
+  const sbar = document.getElementById('sb'), ovl = document.getElementById('ovl');
+  document.getElementById('open-menu').onclick = () => { sbar.classList.add('open'); ovl.style.display = 'block'; }
+  ovl.onclick = () => { sbar.classList.remove('open'); ovl.style.display = 'none'; }
 </script>
 </body>
 </html>
