@@ -126,48 +126,60 @@
   <a href="#"><i class="fa-solid fa-circle-info"></i> Panduan Aplikasi</a>
   <a href="#" style="color: #d32f2f; margin-top: 20px;"><i class="fa-solid fa-right-from-bracket"></i> Keluar Akun</a>
 </div>
-
 <script>
-  const koiImages = [
-    'https://i.ibb.co/L6MByXG/koi-1.png', // Kak Gem asumsikan aset PNG transparan
-    'https://i.ibb.co/m0fH4L3/koi-2.png'
-  ];
+  // KODE IKAN KOI JEPANG PREMIUM (SVG BIAR PASTI MUNCUL)
+  function getKoiSVG(color) {
+    return `
+    <svg viewBox="0 0 120 60" style="width:100%; height:100%; transform: scale(1.2);">
+      <path d="M10,30 C10,5 95,5 95,30 C95,55 10,55 10,30" fill="black" opacity="0.1" transform="translate(10, 10)"/>
+      <path d="M85,30 L115,5 Q105,30 115,55 Z" fill="${color}" opacity="0.8"/>
+      <path d="M10,30 C10,5 95,5 95,30 C95,55 10,55 10,30" fill="white"/>
+      <path d="M25,20 Q45,5 70,15 T90,25" fill="${color}"/>
+      <path d="M40,35 Q60,50 85,35" fill="${color}"/>
+      <path d="M40,10 Q30,0 20,10" fill="white" opacity="0.6"/>
+      <path d="M40,50 Q30,60 20,50" fill="white" opacity="0.6"/>
+      <circle cx="15" cy="22" r="2.5" fill="#111"/>
+      <circle cx="15" cy="38" r="2.5" fill="#111"/>
+    </svg>`;
+  }
 
+  const fishes = [];
   function createFishes() {
-    for(let i=0; i<6; i++) {
-      const fish = document.createElement('img');
-      // Menggunakan placeholder ikan koi top-view yang realistis
-      fish.src = i % 2 === 0 ? 'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-Transparent-Background.png' : 'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-PNG-HD-Quality.png';
-      fish.className = 'koi-fish';
-      fish.style.left = Math.random() * 80 + 'vw';
-      fish.style.top = Math.random() * 80 + 'vh';
-      document.body.appendChild(fish);
-      animateFish(fish);
+    const colors = ['#d32f2f', '#f39c12', '#2d3436']; // Merah, Oranye, Hitam
+    for(let i=0; i<8; i++) {
+      const fishWrap = document.createElement('div');
+      fishWrap.className = 'koi-fish';
+      fishWrap.innerHTML = getKoiSVG(colors[i % 3]);
+      
+      // Posisi acak
+      fishWrap.x = Math.random() * 80;
+      fishWrap.y = Math.random() * 80;
+      fishWrap.style.left = fishWrap.x + 'vw';
+      fishWrap.style.top = fishWrap.y + 'vh';
+      
+      document.body.appendChild(fishWrap);
+      fishes.push({ el: fishWrap, x: fishWrap.x, y: fishWrap.y });
     }
+    moveFishes();
   }
 
-  function animateFish(el) {
-    const nx = Math.random() * 80 + 'vw';
-    const ny = Math.random() * 80 + 'vh';
-    const rotation = Math.random() * 360;
-    
-    el.style.left = nx;
-    el.style.top = ny;
-    el.style.transform = `rotate(${rotation}deg)`;
-    
-    setTimeout(() => animateFish(el), 7000 + Math.random() * 3000);
+  function moveFishes() {
+    fishes.forEach(f => {
+      const nx = Math.random() * 80;
+      const ny = Math.random() * 80;
+      const angle = Math.atan2(ny - f.y, nx - f.x) * 180 / Math.PI;
+      
+      f.el.style.left = nx + 'vw';
+      f.el.style.top = ny + 'vh';
+      f.el.style.transform = `rotate(${angle}deg)`;
+      
+      f.x = nx; f.y = ny;
+    });
+    setTimeout(moveFishes, 8000);
   }
-
-  // Logika Sidebar
-  const openBtn = document.getElementById('openBtn');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
-
-  openBtn.onclick = () => { sidebar.classList.add('open'); overlay.style.display = 'block'; }
-  overlay.onclick = () => { sidebar.classList.remove('open'); overlay.style.display = 'none'; }
 
   window.onload = createFishes;
-</script>
+                                     </script>
 
 </body>
 </html>
