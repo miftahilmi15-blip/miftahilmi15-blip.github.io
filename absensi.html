@@ -3,85 +3,116 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>E-Santri Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>E-Santri Pro v2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #10b981; --bg: #f8fafc; --text: #1e293b; }
+        :root { --primary: #10b981; --primary-dark: #059669; --bg: #f1f5f9; --white: #ffffff; --text: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding-bottom: 100px; }
-        header { background: #fff; padding: 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
-        .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
-        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
-        .list { padding: 15px; }
-        .item { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .btns { display: flex; gap: 5px; }
-        .btns button { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: bold; cursor: pointer; }
-        .h-active { background: #22c55e !important; color: #fff; }
-        .s-active { background: #f59e0b !important; color: #fff; }
-        .i-active { background: #3b82f6 !important; color: #fff; }
-        .a-active { background: #ef4444 !important; color: #fff; }
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; }
-        #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; z-index: 1000; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 120px; line-height: 1.5; }
+        
+        /* Header & Controls */
+        header { background: var(--white); padding: 20px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.9rem; outline: none; transition: 0.3s; }
+        select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+
+        /* Toolbar Fitur */
+        .toolbar { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; padding-bottom: 5px; }
+        .btn-tool { padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+        .btn-tool:active { transform: scale(0.95); }
+
+        /* List Siswa */
+        .list { padding: 15px; display: grid; gap: 12px; }
+        .item { background: var(--white); padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid transparent; transition: 0.2s; }
+        .item:hover { border-color: var(--primary); }
+        .student-info { display: flex; justify-content: space-between; align-items: flex-start; }
+        .student-info b { font-size: 1rem; color: #1e293b; display: block; }
+        .student-info small { color: #64748b; font-weight: 500; }
+
+        /* Status Buttons */
+        .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .status-grid button { padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9; background: #f8fafc; font-weight: 700; color: #64748b; cursor: pointer; transition: 0.2s; }
+        
+        .h-active { background: #dcfce7 !important; color: #15803d !important; border-color: #22c55e !important; }
+        .s-active { background: #fef9c3 !important; color: #a16207 !important; border-color: #eab308 !important; }
+        .i-active { background: #dbeafe !important; color: #1d4ed8 !important; border-color: #3b82f6 !important; }
+        .a-active { background: #fee2e2 !important; color: #b91c1c !important; border-color: #ef4444 !important; }
+
+        /* Footer Action */
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 10px; }
+        .footer-top { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 600; color: #64748b; }
+        .btn-save { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); cursor: pointer; }
+
+        /* Loading Overlay */
+        #overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 2000; }
+        .spinner { width: 48px; height: 48px; border: 5px solid rgba(255,255,255,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (min-width: 600px) { .list { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
 <body>
 
-<div id="overlay"><div class="spinner"></div><p id="loadingText">Mohon Tunggu...</p></div>
+<div id="overlay"><div class="spinner"></div><p id="loadingText">Menghubungkan...</p></div>
 
 <header>
-    <h2 style="color:var(--primary)">🟢 E-SANTRI PRO</h2>
+    <div class="brand">🟢 E-SANTRI PRO</div>
     <div class="controls">
         <select id="kelas">
-            <option value="">-- Pilih Kelas --</option>
-            <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option>
-            <option value="7C">Kelas 7C</option><option value="7D">Kelas 7D</option>
-            <option value="8A">Kelas 8A</option><option value="8B">Kelas 8B</option>
-            <option value="8C">Kelas 8C</option><option value="8D">Kelas 8D</option>
-            <option value="9A">Kelas 9A</option><option value="9B">Kelas 9B</option>
-            <option value="9C">Kelas 9C</option><option value="9D">Kelas 9D</option>
+            <option value="">-- Kelas --</option>
+            <optgroup label="Kelas 7">
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+            </optgroup>
+            <optgroup label="Kelas 8">
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+            </optgroup>
+            <optgroup label="Kelas 9">
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+            </optgroup>
         </select>
-        <input id="scan" placeholder="Ketik NIPD / Scan Kartu..." autofocus>
+        <input id="scan" placeholder="Scan Kartu / NIPD..." autofocus>
+    </div>
+    
+    <div class="toolbar">
+        <button class="btn-tool" onclick="setAll('H')">✅ Hadir Semua</button>
+        <button class="btn-tool" onclick="downloadData()">📥 Download Data</button>
+        <button class="btn-tool" onclick="location.reload()">🔄 Refresh</button>
     </div>
 </header>
 
-<div id="list" class="list"></div>
+<div id="list" class="list">
+    <div style="text-align:center; padding:50px; color:#64748b;">Pilih kelas untuk memulai absensi</div>
+</div>
 
 <div class="footer">
-    <input type="checkbox" id="selectAll" style="width:20px; height:20px;"> <label for="selectAll">Semua</label>
-    <button onclick="simpan()" style="flex:1; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-weight:bold;">SIMPAN ABSENSI</button>
+    <div class="footer-top">
+        <div style="display:flex; align-items:center; gap:5px;">
+            <input type="checkbox" id="selectAll" style="width:18px;height:18px;"> <label for="selectAll">Pilih Semua</label>
+        </div>
+        <div id="count">0 Siswa Terpilih</div>
+    </div>
+    <button onclick="simpan()" class="btn-save">SIMPAN ABSENSI SEKARANG</button>
 </div>
 
 <audio id="snd_ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
 <script>
-// URL WEB APP DARI GOOGLE APPS SCRIPT
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxDVU-zTNlNu41gv_vyxoFyOxPbPahUpkTFEnNzIjKsxLBXdcDyzwkbJD9nigQVEsL8yQ/exec";
-
-const kelasSelect = document.getElementById('kelas');
-const list = document.getElementById('list');
 const overlay = document.getElementById('overlay');
 const loadingText = document.getElementById('loadingText');
-const scanInput = document.getElementById('scan');
 
-// Fungsi pembantu untuk menampilkan loading
 function showLoading(text) {
     loadingText.innerText = text;
     overlay.style.display = 'flex';
 }
 
-// 1. FUNGSI LOAD DATA
-kelasSelect.onchange = () => {
-    if(!kelasSelect.value) return;
-    showLoading("Memuat Siswa...");
-    
-    const oldScript = document.getElementById('jsonp');
-    if(oldScript) oldScript.remove();
-
+// 1. LOAD DATA SISWA
+document.getElementById('kelas').onchange = function() {
+    if(!this.value) return;
+    showLoading("Memuat Daftar Siswa " + this.value + "...");
     const s = document.createElement('script');
-    s.id = 'jsonp';
-    s.src = `${SCRIPT_URL}?kelas=${kelasSelect.value}&callback=handleData`;
+    s.src = `${SCRIPT_URL}?kelas=${this.value}&callback=handleData`;
     document.body.appendChild(s);
 };
 
@@ -92,7 +123,10 @@ window.handleData = (res) => {
 };
 
 function render(data) {
-    list.innerHTML = data.length ? '' : 'Siswa tidak ditemukan.';
+    const container = document.getElementById('list');
+    container.innerHTML = "";
+    if(!data.length) { container.innerHTML = "Tidak ada data."; return; }
+
     data.forEach(x => {
         const div = document.createElement('div');
         div.className = 'item';
@@ -100,31 +134,67 @@ function render(data) {
         div.dataset.nama = x.nama;
         div.dataset.kelas = x.kelas;
         div.innerHTML = `
-            <div><b>${x.nama}</b><br><small>${x.nipd}</small></div>
-            <div style="display:flex; align-items:center; gap:10px">
-                <div class="btns">
-                    <button onclick="st(this,'H')">H</button>
-                    <button onclick="st(this,'S')">S</button>
-                    <button onclick="st(this,'I')">I</button>
-                    <button onclick="st(this,'A')">A</button>
-                </div>
-                <input type="checkbox" class="multi" style="width:18px;height:18px">
+            <div class="student-info">
+                <div><b>${x.nama}</b><small>${x.nipd}</small></div>
+                <input type="checkbox" class="multi" style="width:20px;height:20px">
+            </div>
+            <div class="status-grid">
+                <button onclick="st(this,'H')">H</button>
+                <button onclick="st(this,'S')">S</button>
+                <button onclick="st(this,'I')">I</button>
+                <button onclick="st(this,'A')">A</button>
             </div>`;
-        list.appendChild(div);
+        container.appendChild(div);
     });
+    updateCount();
 }
 
+// 2. LOGIKA TOMBOL
 function st(btn, s) {
     [...btn.parentElement.children].forEach(b => b.className = '');
     btn.className = s.toLowerCase() + '-active';
     btn.dataset.status = s;
+    btn.closest('.item').querySelector('.multi').checked = true;
+    updateCount();
+}
+
+function setAll(status) {
+    document.querySelectorAll('.item').forEach(el => {
+        const btn = el.querySelector(`.status-grid button:nth-child(${status === 'H'?1:status==='S'?2:status==='I'?3:4})`);
+        st(btn, status);
+    });
+}
+
+function updateCount() {
+    const checked = document.querySelectorAll('.multi:checked').length;
+    document.getElementById('count').innerText = checked + " Siswa Terpilih";
 }
 
 document.getElementById('selectAll').onclick = function() {
     document.querySelectorAll('.multi').forEach(c => c.checked = this.checked);
+    updateCount();
 };
 
-// 2. FUNGSI SIMPAN MANUAL
+// 3. FITUR DOWNLOAD (XLS)
+function downloadData() {
+    const kelas = document.getElementById('kelas').value;
+    if(!kelas) return alert("Pilih kelas dulu!");
+    
+    let html = "<table border='1'><tr><th>NIPD</th><th>Nama</th><th>Kelas</th></tr>";
+    document.querySelectorAll('.item').forEach(el => {
+        html += `<tr><td>${el.dataset.nipd}</td><td>${el.dataset.nama}</td><td>${el.dataset.kelas}</td></tr>`;
+    });
+    html += "</table>";
+
+    const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Daftar_Siswa_${kelas}.xls`;
+    a.click();
+}
+
+// 4. SIMPAN DATA
 async function simpan() {
     const kirim = [];
     document.querySelectorAll('.item').forEach(el => {
@@ -132,80 +202,56 @@ async function simpan() {
         const chk = el.querySelector('.multi');
         if(s && chk.checked) {
             kirim.push({
-                nipd: el.dataset.nipd,
-                nama: el.dataset.nama,
-                kelas: el.dataset.kelas,
-                status: s.dataset.status,
-                metode: 'Manual'
+                nipd: el.dataset.nipd, nama: el.dataset.nama,
+                kelas: el.dataset.kelas, status: s.dataset.status, metode: 'Manual'
             });
         }
     });
 
-    if(!kirim.length) return alert("Pilih siswa & status!");
+    if(!kirim.length) return alert("Pilih siswa dan tentukan statusnya!");
     
-    showLoading("Menyimpan...");
-
-    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(kirim) });
-    document.getElementById('snd_ok').play();
-    alert("Berhasil Disimpan!");
-    location.reload();
+    showLoading("Mengirim Data ke Server...");
+    try {
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(kirim) });
+        document.getElementById('snd_ok').play();
+        alert("✅ Absensi Berhasil Disimpan!");
+        location.reload();
+    } catch(e) {
+        alert("Gagal menyimpan!");
+    } finally {
+        overlay.style.display = 'none';
+    }
 }
 
-// 3. FUNGSI SCAN (KEYBOARD/ENTER)
-scanInput.onkeydown = async (e) => {
-    if(e.key === 'Enter' && scanInput.value && kelasSelect.value) {
-        showLoading("Menyimpan Absen...");
-        const dataScan = [{
-            nipd: scanInput.value,
-            nama: "Scan Otomatis",
-            kelas: kelasSelect.value,
-            status: 'H',
-            metode: 'Auto'
-        }];
+// 5. SCAN HANDLER
+document.getElementById('scan').onkeydown = async (e) => {
+    if(e.key === 'Enter' && e.target.value) {
+        const val = e.target.value;
+        const kls = document.getElementById('kelas').value;
+        if(!kls) return alert("Pilih kelas dulu sebelum scan!");
+        
+        showLoading("Mencatat NIPD: " + val);
+        const dataScan = [{ nipd: val, nama: "Scan Otomatis", kelas: kls, status: 'H', metode: 'Auto' }];
         await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataScan) });
         document.getElementById('snd_ok').play();
-        scanInput.value = '';
+        e.target.value = '';
         overlay.style.display = 'none';
-        alert("Scan Berhasil!");
     }
 };
 
-// 4. FUNGSI OTOMATIS (UNTUK MACRODROID/NFC)
+// 6. MACRODROID HANDLER
 window.onload = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const scanId = urlParams.get('scan');
-    const kelasId = urlParams.get('kls');
-
-    // Jika ada data scan dari URL (MacroDroid)
-    if (scanId && kelasId) {
-        showLoading("📲 MENYIMPAN ABSEN...");
-        
-        const dataScan = [{
-            nipd: scanId,
-            nama: "Scan NFC (MacroDroid)",
-            kelas: kelasId,
-            status: 'H',
-            metode: 'Auto'
-        }];
-
+    const params = new URLSearchParams(window.location.search);
+    const sId = params.get('scan'), kId = params.get('kls');
+    if (sId && kId) {
+        showLoading("📲 NFC TERDETEKSI...");
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
-            body: JSON.stringify(dataScan)
+            body: JSON.stringify([{ nipd: sId, nama: "NFC MacroDroid", kelas: kId, status: 'H', metode: 'Auto' }])
         }).then(() => {
-            // 1. Bunyikan suara sukses
             document.getElementById('snd_ok').play();
-            loadingText.innerHTML = "✅ BERHASIL!<br>Kembali ke Layar Utama...";
-
-            // 2. Tunggu sebentar lalu bersihkan halaman
-            setTimeout(() => {
-                // Mengosongkan URL agar tidak terjadi pengulangan scan yang sama
-                window.location.href = "about:blank"; 
-            }, 1500);
-            
-        }).catch((err) => {
-            alert("Gagal Kirim: " + err);
-            overlay.style.display = 'none';
+            setTimeout(() => { window.location.href = "about:blank"; }, 1500);
         });
     }
 };
