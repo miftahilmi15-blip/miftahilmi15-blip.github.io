@@ -2,18 +2,22 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>E-Santri Otomatis</title>
 <style>
-body{margin:0;font-family:sans-serif;background:#f8fafc;padding-bottom:100px}
-header{background:#fff;padding:16px;border-bottom:1px solid #ccc;position:sticky;top:0;}
+body{margin:0;font-family:sans-serif;background:#f8fafc;padding-bottom:120px}
+header{background:#fff;padding:16px;border-bottom:1px solid #ccc;position:sticky;top:0;z-index:100;}
 .list{padding:15px;}
-.item{display:flex;justify-content:space-between;padding:10px;background:#fff;margin-bottom:5px;border-radius:8px;}
-.btns button{width:35px;height:35px;margin-left:5px;border-radius:6px;border:none;color:#fff;font-weight:bold;}
+.item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#fff;margin-bottom:5px;border-radius:8px;}
+.btns button{width:35px;height:35px;margin-left:5px;border-radius:6px;border:none;color:#fff;font-weight:bold;cursor:pointer;}
 .h{background:#22c55e;} .s{background:#f59e0b;} .i{background:#3b82f6;} .a{background:#ef4444;}
+.multi{margin-left:10px;}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;color:#fff;font-size:18px;z-index:999;}
 </style>
 </head>
 <body>
+
+<div id="overlay">⏳ Menyimpan...</div>
 
 <header>
 <h1>🟢 E-Santri</h1>
@@ -27,33 +31,40 @@ header{background:#fff;padding:16px;border-bottom:1px solid #ccc;position:sticky
 </header>
 
 <div id="list" class="list"></div>
-<div class="multi-select">
+
+<div style="padding:15px;">
 <label><input type="checkbox" id="selectAll"> Pilih Semua</label>
 </div>
 
-<button onclick="simpan()">SIMPAN</button>
+<div style="padding:15px;">
+<button onclick="simpan()" style="padding:10px 20px;background:#10b981;color:#fff;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">SIMPAN</button>
+</div>
 
 <audio id="ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 <audio id="fail" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyQRAdn7rOZ4q2EZMheWVgf1IPxINl7yL3g4mEPBPPdNBVoOZqtGP54KDZZZ7gn0tTCOw/exec";
-const overlay = {style:{display:'none'}};
-
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwHeS1LbwRJgWKsnHkIyZGe_hrKUiCctpTBTtjjG9rSAtxKN28jguXDDdvS15U6kyFAOA/exec";
+const overlay=document.getElementById('overlay');
 const kelasSelect=document.getElementById('kelas');
 const scanInput=document.getElementById('scan');
+const list=document.getElementById('list');
 const ok=document.getElementById('ok');
 const fail=document.getElementById('fail');
-const list=document.getElementById('list');
 
-// Load siswa per kelas
-kelasSelect.onchange = async ()=>{
+// Load siswa ketika pilih kelas
+kelasSelect.onchange=async ()=>{
   if(!kelasSelect.value) return;
+  overlay.style.display='flex';
   try{
     const res = await fetch(`${SCRIPT_URL}?kelas=${kelasSelect.value}`);
     const data = await res.json();
-    render(data.data||[]);
-  }catch(err){ alert("Gagal load: "+err); }
+    overlay.style.display='none';
+    render(data.data || []);
+  }catch(err){
+    overlay.style.display='none';
+    alert('Gagal load siswa: '+err);
+  }
 };
 
 // Render list siswa
@@ -77,14 +88,14 @@ function render(data){
   });
 }
 
-// Set status absen
+// Set status H/S/I/A
 function setStatus(btn,status){
-  [...btn.parentElement.children].forEach(x=>x.className='');
+  [...btn.parentElement.children].forEach(b=>b.className='');
   btn.className=status.toLowerCase();
   btn.dataset.s=status;
 }
 
-// Multi-select
+// Pilih semua
 document.getElementById('selectAll').onchange=function(){
   document.querySelectorAll('.multi').forEach(chk=>chk.checked=this.checked);
 };
@@ -101,11 +112,12 @@ async function simpan(){
         nipd:div.dataset.nipd,
         nama: div.querySelector('b').innerText,
         status: statusBtn.dataset.s,
-        metode:"manual"
+        metode:'manual'
       });
     }
   });
-  if(data.length===0){ alert("Pilih siswa dan status"); return; }
+  if(data.length===0){ alert("Pilih siswa & status"); return; }
+  overlay.style.display='flex';
   try{
     const res = await fetch(SCRIPT_URL,{
       method:'POST',
@@ -113,24 +125,24 @@ async function simpan(){
       body:JSON.stringify(data)
     });
     const result=await res.json();
-    result.results.forEach(r=>r.status==="Sukses"?ok.play():fail.play());
-    setTimeout(()=>location.reload(),1000);
-  }catch(err){ alert("Gagal simpan: "+err); }
+    result.results.forEach(r=>r.status==='Sukses'?ok.play():fail.play());
+  }catch(err){ alert('Gagal simpan'); }
+  overlay.style.display='none';
+  setTimeout(()=>location.reload(),1000);
 }
 
-// Auto-save scan kartu/NFC
+// Auto-save scan kartu/NIPD
 scanInput.addEventListener('keydown',e=>{
   if(e.key==='Enter' && scanInput.value){
     const nipd=scanInput.value.trim();
-    if(!kelasSelect.value){ alert("Pilih kelas terlebih dahulu"); return; }
+    if(!kelasSelect.value){ alert("Pilih kelas dulu"); return; }
+    overlay.style.display='flex';
     fetch(SCRIPT_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify([{kelas:kelasSelect.value,nipd,status:'H',metode:'auto'}])
-    }).then(r=>{
-      ok.play();
-      scanInput.value='';
-    }).catch(()=>fail.play());
+    }).then(()=>ok.play()).catch(()=>fail.play()).finally(()=>overlay.style.display='none');
+    scanInput.value='';
   }
 });
 </script>
