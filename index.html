@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Royal v17</title>
+<title>E-Santri | Bubble Edition v18</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -14,18 +14,31 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   
-  body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow-x: hidden; }
+  body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow-x: hidden; position: relative; }
 
-  /* HEADER MEWAH */
+  /* EFEK GELEMBUNG TERBANG (BACKGROUND) */
+  .bubble-bg {
+    position: fixed; bottom: -50px; background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 50%;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+    pointer-events: none; z-index: 0; animation: rise 10s infinite ease-in;
+  }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    20% { opacity: 0.6; }
+    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
+  }
+
+  /* HEADER */
   header {
     background: var(--primary-grad); height: 180px; padding: 40px 25px;
     border-radius: 0 0 45px 45px; position: relative; text-align: center;
-    box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2);
+    box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2); z-index: 10;
   }
   .title-app { font-family: 'Montserrat', sans-serif; font-size: 30px; color: white; letter-spacing: 2px; }
 
   /* CONTAINER OVERLAP */
-  .container { width: 90%; max-width: 400px; margin: -60px auto 20px; z-index: 5; position: relative; }
+  .container { width: 90%; max-width: 400px; margin: -60px auto 20px; z-index: 20; position: relative; }
 
   /* STREAK CARD */
   .streak-card {
@@ -36,11 +49,19 @@
   .fire { font-size: 35px; animation: burn 1s infinite alternate; }
   @keyframes burn { from { transform: scale(1); filter: drop-shadow(0 0 2px orange); } to { transform: scale(1.2); filter: drop-shadow(0 0 10px red); } }
 
-  /* MAHFUZAT BOX */
+  /* MAHFUZAT BOX (INFINITE RUN) */
   .mahfuzat-box {
     background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
-    border-radius: 50px; padding: 10px 20px; margin-bottom: 20px;
-    border: 1px solid white; overflow: hidden;
+    border-radius: 50px; padding: 12px 20px; margin-bottom: 20px;
+    border: 1px solid white; overflow: hidden; display: flex; align-items: center;
+  }
+  .mahfuzat-text {
+    white-space: nowrap; display: inline-block; padding-left: 100%;
+    animation: marquee-infinite 15s linear infinite;
+  }
+  @keyframes marquee-infinite {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
   }
 
   /* MENU GRID */
@@ -48,36 +69,25 @@
   .menu-item { 
     background: white; padding: 25px 10px; border-radius: 25px; text-align: center; 
     box-shadow: 0 5px 15px rgba(0,0,0,0.02); cursor: pointer; position: relative; overflow: hidden;
-    transition: transform 0.2s;
+    transition: 0.3s;
   }
-  .menu-item:active { transform: scale(0.95); }
+  .menu-item:active { transform: scale(0.9); }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; margin-top: 8px; color: #444; }
-
-  /* EFEK GELEMBUNG SABUN */
-  .bubble {
-    position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.6); pointer-events: none;
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
-    animation: pop 0.6s ease-out forwards;
-  }
-  @keyframes pop {
-    0% { transform: scale(0); opacity: 1; }
-    100% { transform: scale(2.5); opacity: 0; }
-  }
 
   /* SIDEBAR */
   .menu-trigger { position: absolute; top: 40px; right: 25px; color: white; font-size: 24px; cursor: pointer; }
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: white; 
-    transition: 0.4s; z-index: 1200; padding: 50px 25px; border-radius: 40px 0 0 40px;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1200; padding: 50px 25px; border-radius: 40px 0 0 40px;
   }
   .sidebar.open { right: 0; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
-  .sidebar a { display: block; padding: 15px; color: #333; text-decoration: none; font-weight: 600; border-radius: 12px; }
+  .sidebar a { display: block; padding: 15px; color: #333; text-decoration: none; font-weight: 600; border-radius: 12px; margin-bottom: 5px; }
   .sidebar a:hover { background: #f0fdf4; color: var(--primary); }
 
   .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 1100; }
   .hidden { display: none !important; }
-  .auth-card { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+  .auth-card { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
   input { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid #eee; background: #f9f9f9; outline: none; }
   .btn-main { width: 100%; padding: 15px; border-radius: 15px; border: none; background: var(--primary-grad); color: white; font-weight: 700; cursor: pointer; }
 </style>
@@ -86,6 +96,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+
+<div id="bubble-container"></div>
 
 <div id="loading-screen" style="position:fixed; inset:0; background:white; display:flex; align-items:center; justify-content:center; z-index:9999;"><div style="width:40px; height:40px; border:3px solid #f3f3f3; border-top:3px solid #1f6f51; border-radius:50%; animation:spin 1s linear infinite;"></div></div>
 <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
@@ -98,11 +110,11 @@
 
 <main class="container">
   <div id="login-card" class="auth-card hidden">
-    <h2 style="text-align:center; color:var(--primary); margin-bottom:20px;">Ahlan wa Sahlan</h2>
+    <h2 style="color:var(--primary); margin-bottom:20px;">Ahlan wa Sahlan</h2>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
     <button class="btn-main" onclick="login()">MASUK</button>
-    <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:none; border:none; color:#777; font-weight:600;">Login with Google</button>
+    <button onclick="loginGoogle()" style="width:100%; margin-top:15px; background:none; border:none; color:#777; font-weight:600;">Login with Google</button>
   </div>
 
   <section id="dashboard" class="hidden">
@@ -112,10 +124,10 @@
     </div>
 
     <div class="mahfuzat-box">
-      <marquee scrollamount="4">
+      <div class="mahfuzat-text">
         <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-weight:bold; font-size:18px;"></span>
-        <span id="runIndo" style="color:#666; font-weight:600; margin-left:10px;"></span>
-      </marquee>
+        <span id="runIndo" style="color:#666; font-weight:600; margin-left:15px; margin-right:50px;"></span>
+      </div>
     </div>
 
     <div class="menu-grid">
@@ -132,35 +144,34 @@
 <div class="overlay" id="overlay"></div>
 <div class="sidebar" id="sidebar">
   <div style="text-align:center; margin-bottom:20px;">
-    <img id="user-photo" src="logo-assunnah.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover; border:3px solid #f0fdf4;">
+    <img id="user-photo" src="logo-assunnah.png" style="width:80px; height:80px; border-radius:25px; object-fit:cover; border:3px solid #f0fdf4;">
     <h3 id="sidebar-name" style="margin-top:10px;">Santri</h3>
   </div>
   <a href="#" onclick="location.reload()">🏠 Dashboard</a>
   <a href="#" onclick="goTo('waktu-sholat.html')">🕌 Waktu Sholat</a>
   <a href="#" onclick="goTo('pengaduan.html')">📣 Pengaduan</a>
   <a href="#" onclick="goTo('kalender.html')">📅 Kalender</a>
-  <a href="#" onclick="logout()" style="color:red; margin-top:20px;">🚪 Keluar Akun</a>
+  <a href="#" onclick="logout()" style="color:red; margin-top:20px; border-top:1px solid #eee;">🚪 Keluar Akun</a>
 </div>
 
 <script>
   firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
   const auth = firebase.auth();
 
-  // EFEK GELEMBUNG SABUN (BALON)
-  document.addEventListener('click', function(e) {
-    const target = e.target.closest('.menu-item, .btn-main');
-    if (target) {
-      for(let i=0; i<3; i++) { // Munculkan 3 gelembung kecil
-        const b = document.createElement('div');
-        b.className = 'bubble';
-        const rect = target.getBoundingClientRect();
-        b.style.left = (e.clientX - rect.left) + 'px';
-        b.style.top = (e.clientY - rect.top) + 'px';
-        target.appendChild(b);
-        setTimeout(() => b.remove(), 600);
-      }
-    }
-  });
+  // FUNGSI BUAT GELEMBUNG OTOMATIS
+  function createBubbles() {
+    const container = document.getElementById('bubble-container');
+    const b = document.createElement('div');
+    b.className = 'bubble-bg';
+    const size = Math.random() * 40 + 10 + "px";
+    b.style.width = size;
+    b.style.height = size;
+    b.style.left = Math.random() * 100 + "vw";
+    b.style.animationDuration = Math.random() * 5 + 5 + "s";
+    container.appendChild(b);
+    setTimeout(() => b.remove(), 10000);
+  }
+  setInterval(createBubbles, 500); // Muncul tiap 0.5 detik
 
   function handleQuran() {
     const today = new Date().toDateString();
@@ -190,7 +201,7 @@
       if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
       document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
       
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:" — Barangsiapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:" — Barangsiapa sabar, beruntung."}];
+      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:" — Barangsiapa bersungguh-sungguh, dapatlah ia."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:" — Barangsiapa sabar, beruntunglah ia."}];
       const d = m[new Date().getDate() % m.length];
       document.getElementById('runArab').innerText = d.ar; document.getElementById('runIndo').innerText = d.id;
     } else {
