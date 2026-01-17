@@ -271,19 +271,38 @@ document.getElementById('scan').onkeydown = async (e) => {
     }
 };
 
-// 6. MACRODROID HANDLER
 window.onload = () => {
-    const params = new URLSearchParams(window.location.search);
-    const sId = params.get('scan'), kId = params.get('kls');
-    if (sId && kId) {
-        showLoading("📲 NFC TERDETEKSI...");
+    const urlParams = new URLSearchParams(window.location.search);
+    const scanId = urlParams.get('scan');
+    const kelasId = urlParams.get('kls');
+
+    if (scanId && kelasId) {
+        showLoading("📲 PROSES ABSENSI...");
+        
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
-            body: JSON.stringify([{ nipd: sId, nama: "NFC MacroDroid", kelas: kId, status: 'H', metode: 'Auto' }])
+            body: JSON.stringify([{
+                nipd: scanId,
+                nama: "NFC MacroDroid",
+                kelas: kelasId,
+                status: 'H',
+                metode: 'Auto'
+            }])
         }).then(() => {
+            // Bunyikan suara
             document.getElementById('snd_ok').play();
-            setTimeout(() => { window.location.href = "about:blank"; }, 1500);
+            loadingText.innerHTML = "✅ BERHASIL!<br>Menutup Aplikasi...";
+            
+            // JURUS TERAKHIR: Alihkan ke halaman kosong
+            // Ini membuat browser 'reset' dan siap menerima perintah scan berikutnya
+            setTimeout(() => {
+                window.location.href = "about:blank"; 
+            }, 1500);
+            
+        }).catch((err) => {
+            alert("Koneksi Error: " + err);
+            overlay.style.display = 'none';
         });
     }
 };
