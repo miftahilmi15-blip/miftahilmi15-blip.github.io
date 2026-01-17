@@ -3,183 +3,222 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-SANTRI | Zen Imperial</title>
+<title>E-Santri | Imperial Zen Pond</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   :root {
+    --sage-bg: #d4e9e2;
     --sage-dark: #1b4d3e;
-    --sage-medium: #417d7a;
-    --sage-light: #d4e9e2;
-    --glass: rgba(255, 255, 255, 0.15);
+    --white: #ffffff;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-  
   body { 
-    background: var(--sage-light);
-    height: 100vh; overflow: hidden; position: relative;
+    background: var(--sage-bg); height: 100vh; overflow: hidden; position: relative;
     background-image: radial-gradient(circle at center, #ffffff 0%, #d4e9e2 100%);
   }
 
-  /* --- IKAN KOI JEPANG (REALISTIC TOP VIEW) --- */
+  /* --- IKAN KOI REALISTIK (TOP VIEW) --- */
   .koi-fish {
-    position: absolute; width: 100px; height: auto; z-index: 2;
-    pointer-events: none; transition: all 8s ease-in-out;
-    filter: drop-shadow(15px 25px 10px rgba(0,0,0,0.15));
+    position: absolute; width: 110px; height: auto; z-index: 2;
+    pointer-events: none; transition: all 4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    filter: drop-shadow(15px 25px 12px rgba(0,0,0,0.15));
   }
 
-  /* --- UI DASHBOARD --- */
-  .container { position: relative; z-index: 10; height: 100vh; display: flex; flex-direction: column; padding: 25px; }
+  /* --- MAKANAN IKAN (PELET) --- */
+  .pellet {
+    position: absolute; width: 8px; height: 8px; background: #8d6e63;
+    border-radius: 50%; z-index: 1; pointer-events: none;
+    animation: sink 2s forwards;
+  }
+  @keyframes sink { to { transform: translateY(20px); opacity: 0; } }
 
-  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .logo { font-family: 'Montserrat'; color: var(--sage-dark); letter-spacing: 4px; font-size: 20px; }
+  /* --- UI DASHBOARD SAGE GREEN --- */
+  .ui-wrapper { position: relative; z-index: 10; height: 100vh; padding: 25px; display: flex; flex-direction: column; }
   
-  .nav-dots { 
-    width: 45px; height: 45px; background: white; border-radius: 12px; 
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .logo-text { font-family: 'Montserrat'; color: var(--sage-dark); letter-spacing: 4px; font-size: 20px; }
+  
+  .nav-trigger { 
+    width: 45px; height: 45px; background: var(--white); border-radius: 12px; 
     display: flex; align-items: center; justify-content: center; 
-    cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    color: var(--sage-dark); font-size: 20px;
+    cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: var(--sage-dark);
   }
 
-  /* LOGO TENGAH GLASSMORPHISM */
-  .center-logo {
-    position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
-    width: 150px; height: 150px; background: rgba(255,255,255,0.25);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  /* STREAK CARD MEWAH */
+  .streak-card {
+    background: var(--white); border-radius: 20px; padding: 15px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px;
+    border-left: 5px solid var(--sage-dark);
+  }
+
+  /* LOGO TENGAH (PUSH-CENTER) */
+  .center-identity {
+    position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
+    width: 140px; height: 140px; background: rgba(255,255,255,0.3);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border-radius: 50%; border: 1px solid rgba(255,255,255,0.4);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 5; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    z-index: 5; pointer-events: none;
   }
-  .center-logo i { font-size: 40px; color: var(--sage-dark); margin-bottom: 5px; opacity: 0.8; }
-  .center-logo span { font-family: 'Montserrat'; font-size: 14px; color: var(--sage-dark); letter-spacing: 2px; }
+  .center-identity i { font-size: 35px; color: var(--sage-dark); opacity: 0.7; }
+  .center-identity span { font-family: 'Montserrat'; font-size: 13px; color: var(--sage-dark); letter-spacing: 2px; margin-top: 5px; }
 
   /* MENU BATU LONCATAN (NATURAL POSITION) */
   .stone-btn {
-    position: absolute; background: white; width: 90px; height: 90px;
+    position: absolute; background: var(--white); width: 85px; height: 85px;
     border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     box-shadow: 0 8px 20px rgba(0,0,0,0.06); cursor: pointer; transition: 0.3s;
-    border: 1px solid rgba(255,255,255,0.8); z-index: 6;
+    border: 1px solid rgba(255,255,255,0.8); z-index: 8;
   }
-  .stone-btn:active { transform: scale(0.9); }
-  .stone-btn i { font-size: 24px; color: var(--sage-medium); margin-bottom: 6px; }
-  .stone-btn span { font-size: 9px; font-weight: 700; color: var(--sage-dark); letter-spacing: 1px; }
+  .stone-btn:active { transform: scale(0.9) translateY(5px); }
+  .stone-btn i { font-size: 22px; color: var(--sage-dark); margin-bottom: 5px; }
+  .stone-btn span { font-size: 9px; font-weight: 700; color: var(--sage-dark); letter-spacing: 0.5px; }
 
-  /* POSISI BATU NATURAL */
-  #absensi { top: 15%; left: 10%; }
-  #tahfidz { top: 20%; right: 10%; }
-  #quran   { bottom: 35%; left: 8%; }
-  #aduan   { bottom: 30%; right: 12%; }
-  #kamus   { bottom: 12%; left: 25%; }
-  #perpus  { bottom: 10%; right: 28%; }
+  /* PENEMPATAN BATU NATURAL */
+  #btn-absensi { top: 18%; left: 8%; }
+  #btn-tahfidz { top: 12%; right: 15%; }
+  #btn-quran   { bottom: 38%; left: 12%; }
+  #btn-aduan   { bottom: 30%; right: 10%; }
+  #btn-kamus   { bottom: 12%; left: 28%; }
+  #btn-perpus  { bottom: 10%; right: 25%; }
 
-  /* SIDEBAR */
+  /* SIDEBAR CANGGIH */
   .sidebar {
     position: fixed; top: 0; right: -100%; width: 80%; height: 100%;
-    background: white; z-index: 1000; padding: 40px 25px;
+    background: var(--white); z-index: 1000; padding: 40px 25px;
     transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1); border-radius: 30px 0 0 30px;
   }
-  .sidebar.open { right: 0; box-shadow: -15px 0 40px rgba(0,0,0,0.1); }
-  .sidebar a { display: flex; align-items: center; padding: 15px; color: #444; text-decoration: none; font-weight: 500; border-bottom: 1px solid #f5f5f5; }
-  .sidebar a i { width: 30px; margin-right: 15px; color: var(--sage-medium); }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 900; }
+  .sidebar.open { right: 0; box-shadow: -20px 0 50px rgba(0,0,0,0.15); }
+  .sidebar a { display: flex; align-items: center; padding: 18px; color: #333; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
+  .sidebar i { width: 35px; color: var(--sage-dark); font-size: 18px; }
+  
+  .dimmer { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); z-index: 999; }
 
-  /* MAHFUZAT BANNER */
-  .footer-banner { margin-top: auto; background: var(--sage-dark); border-radius: 50px; padding: 12px; overflow: hidden; }
-  .scroll-text { display: inline-block; color: white; font-size: 12px; white-space: nowrap; animation: jalan 25s linear infinite; }
-  @keyframes jalan { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+  /* MAHFUZAT FOOTER */
+  .footer-scroll { margin-top: auto; background: var(--sage-dark); border-radius: 50px; padding: 12px; overflow: hidden; }
+  .text-move { display: inline-block; color: white; font-size: 12px; white-space: nowrap; animation: linearMove 20s linear infinite; }
+  @keyframes linearMove { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 </style>
 </head>
-<body>
+<body onclick="feedFish(event)">
 
-<div class="overlay" id="overlay"></div>
+<div class="dimmer" id="dimmer"></div>
 
-<div class="container">
+<div class="ui-wrapper">
   <header>
-    <div class="logo">E-SANTRI</div>
-    <div class="nav-dots" id="openBtn"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+    <div class="logo-text">E-SANTRI</div>
+    <div class="nav-trigger" id="menuOpen"><i class="fa-solid fa-ellipsis-v"></i></div>
   </header>
 
-  <div class="center-logo">
-    <i class="fa-solid fa-mosque"></i>
+  <div class="streak-card">
+    <div>
+      <p style="font-size: 9px; font-weight: 700; color: #aaa;">QURAN STREAK</p>
+      <h3 style="color: var(--sage-dark); font-size: 20px;">12 Hari ✨</h3>
+    </div>
+    <div style="text-align: right;">
+      <p style="font-size: 9px; font-weight: 700; color: #aaa;">KOI COLLECTION</p>
+      <h3 style="color: var(--sage-dark);">5 Ekor</h3>
+    </div>
+  </div>
+
+  <div class="center-identity">
+    <i class="fa-solid fa-kaaba"></i>
     <span>DAREEL</span>
   </div>
 
-  <div class="stone-btn" id="absensi" onclick="location.href='absensi.html'"><i class="fa-solid fa-fingerprint"></i><span>ABSENSI</span></div>
-  <div class="stone-btn" id="tahfidz" onclick="location.href='tahfidz.html'"><i class="fa-solid fa-award"></i><span>TAHFIDZ</span></div>
-  <div class="stone-btn" id="quran" onclick="location.href='quran.html'"><i class="fa-solid fa-book-quran"></i><span>QURAN</span></div>
-  <div class="stone-btn" id="aduan" onclick="location.href='pengaduan.html'"><i class="fa-solid fa-shield-heart"></i><span>ADUAN</span></div>
-  <div class="stone-btn" id="kamus" onclick="location.href='kamus.html'"><i class="fa-solid fa-language"></i><span>KAMUS</span></div>
-  <div class="stone-btn" id="perpus" onclick="location.href='perpus.html'"><i class="fa-solid fa-book-bookmark"></i><span>PERPUS</span></div>
+  <div class="stone-btn" id="btn-absensi" onclick="event.stopPropagation(); location.href='absensi.html'"><i class="fa-solid fa-fingerprint"></i><span>ABSENSI</span></div>
+  <div class="stone-btn" id="btn-tahfidz" onclick="event.stopPropagation(); location.href='tahfidz.html'"><i class="fa-solid fa-award"></i><span>TAHFIDZ</span></div>
+  <div class="stone-btn" id="btn-quran"   onclick="event.stopPropagation(); location.href='quran.html'"><i class="fa-solid fa-book-quran"></i><span>AL-QURAN</span></div>
+  <div class="stone-btn" id="btn-aduan"   onclick="event.stopPropagation(); location.href='pengaduan.html'"><i class="fa-solid fa-shield-halal"></i><span>ADUAN</span></div>
+  <div class="stone-btn" id="btn-kamus"   onclick="event.stopPropagation(); location.href='kamus.html'"><i class="fa-solid fa-language"></i><span>KAMUS</span></div>
+  <div class="stone-btn" id="btn-perpus"  onclick="event.stopPropagation(); location.href='perpus.html'"><i class="fa-solid fa-book-open-reader"></i><span>PERPUS</span></div>
 
-  <div class="footer-banner">
-    <div class="scroll-text">مَنْ جَدَّ وَجَدَ — Barangsiapa bersungguh-sungguh maka ia akan berhasil.</div>
+  <div class="footer-scroll">
+    <div class="text-move">مَنْ جَدَّ وَجَدَ — Barangsiapa bersungguh-sungguh maka ia akan berhasil. — مَنْ صَبَرَ ظَفِرَ — Barangsiapa bersabar maka ia akan beruntung.</div>
   </div>
 </div>
 
 <div class="sidebar" id="sidebar">
-  <h2 style="margin-bottom: 20px; color: var(--sage-dark);">Menu Navigasi</h2>
-  <a href="#"><i class="fa-solid fa-calendar-days"></i> Kalender Akademik</a>
-  <a href="#"><i class="fa-solid fa-clock"></i> Jadwal Sholat</a>
-  <a href="#"><i class="fa-solid fa-user-gear"></i> Pengaturan Profil</a>
-  <a href="#"><i class="fa-solid fa-circle-info"></i> Panduan Aplikasi</a>
-  <a href="#" style="color: #d32f2f; margin-top: 20px;"><i class="fa-solid fa-right-from-bracket"></i> Keluar Akun</a>
+  <div style="text-align: center; margin-bottom: 30px;">
+    <div style="width: 70px; height: 70px; background: var(--sage-bg); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--sage-dark);">👤</div>
+    <h3 style="color: var(--sage-dark);">Ustadz Dareel</h3>
+  </div>
+  <a href="#"><i class="fa-solid fa-calendar-check"></i> Kalender Pendidikan</a>
+  <a href="#"><i class="fa-solid fa-mosque"></i> Jadwal Sholat</a>
+  <a href="#"><i class="fa-solid fa-gear"></i> Pengaturan Akun</a>
+  <a href="#" style="color: #d32f2f; margin-top: 30px;"><i class="fa-solid fa-door-open"></i> Logout</a>
 </div>
+
+<audio id="waterBG" loop src="https://assets.mixkit.co/active_storage/sfx/1118/1118-preview.mp3"></audio>
+
 <script>
-  // KODE IKAN KOI JEPANG PREMIUM (SVG BIAR PASTI MUNCUL)
-  function getKoiSVG(color) {
-    return `
-    <svg viewBox="0 0 120 60" style="width:100%; height:100%; transform: scale(1.2);">
-      <path d="M10,30 C10,5 95,5 95,30 C95,55 10,55 10,30" fill="black" opacity="0.1" transform="translate(10, 10)"/>
-      <path d="M85,30 L115,5 Q105,30 115,55 Z" fill="${color}" opacity="0.8"/>
-      <path d="M10,30 C10,5 95,5 95,30 C95,55 10,55 10,30" fill="white"/>
-      <path d="M25,20 Q45,5 70,15 T90,25" fill="${color}"/>
-      <path d="M40,35 Q60,50 85,35" fill="${color}"/>
-      <path d="M40,10 Q30,0 20,10" fill="white" opacity="0.6"/>
-      <path d="M40,50 Q30,60 20,50" fill="white" opacity="0.6"/>
-      <circle cx="15" cy="22" r="2.5" fill="#111"/>
-      <circle cx="15" cy="38" r="2.5" fill="#111"/>
-    </svg>`;
-  }
-
   const fishes = [];
-  function createFishes() {
-    const colors = ['#d32f2f', '#f39c12', '#2d3436']; // Merah, Oranye, Hitam
-    for(let i=0; i<8; i++) {
-      const fishWrap = document.createElement('div');
-      fishWrap.className = 'koi-fish';
-      fishWrap.innerHTML = getKoiSVG(colors[i % 3]);
-      
-      // Posisi acak
-      fishWrap.x = Math.random() * 80;
-      fishWrap.y = Math.random() * 80;
-      fishWrap.style.left = fishWrap.x + 'vw';
-      fishWrap.style.top = fishWrap.y + 'vh';
-      
-      document.body.appendChild(fishWrap);
-      fishes.push({ el: fishWrap, x: fishWrap.x, y: fishWrap.y });
+  const koiPNGs = [
+    'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-Transparent-Background.png', // Kohaku
+    'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-PNG-HD-Quality.png' // Sanke
+  ];
+
+  function initPond() {
+    for(let i=0; i<5; i++) {
+      const f = document.createElement('img');
+      f.src = koiPNGs[i % 2];
+      f.className = 'koi-fish';
+      f.x = Math.random() * 80; f.y = Math.random() * 80;
+      f.style.left = f.x + 'vw'; f.style.top = f.y + 'vh';
+      document.body.appendChild(f);
+      fishes.push({ el: f, x: f.x, y: f.y, angle: Math.random() * 360 });
     }
-    moveFishes();
+    moveKoi();
   }
 
-  function moveFishes() {
-    fishes.forEach(f => {
-      const nx = Math.random() * 80;
-      const ny = Math.random() * 80;
-      const angle = Math.atan2(ny - f.y, nx - f.x) * 180 / Math.PI;
+  function moveKoi(targetX = null, targetY = null) {
+    fishes.forEach((f, index) => {
+      const nx = targetX !== null ? targetX + (Math.random()*10 - 5) : Math.random() * 85;
+      const ny = targetY !== null ? targetY + (Math.random()*10 - 5) : Math.random() * 85;
       
+      const distAngle = Math.atan2(ny - f.y, nx - f.x) * 180 / Math.PI;
       f.el.style.left = nx + 'vw';
       f.el.style.top = ny + 'vh';
-      f.el.style.transform = `rotate(${angle}deg)`;
+      f.el.style.transform = `rotate(${distAngle + 90}deg)`;
       
       f.x = nx; f.y = ny;
     });
-    setTimeout(moveFishes, 8000);
+    if(!targetX) setTimeout(moveKoi, 6000);
   }
 
-  window.onload = createFishes;
-                                     </script>
+  function feedFish(e) {
+    // Mulai musik kalau belum jalan
+    const bgm = document.getElementById('waterBG');
+    bgm.play().catch(() => {});
 
+    // Buat Pelet
+    const p = document.createElement('div');
+    p.className = 'pellet';
+    p.style.left = e.clientX + 'px';
+    p.style.top = e.clientY + 'px';
+    document.body.appendChild(p);
+    
+    // Ikan berebut ke arah makanan
+    const clickX = (e.clientX / window.innerWidth) * 100;
+    const clickY = (e.clientY / window.innerHeight) * 100;
+    moveKoi(clickX, clickY);
+
+    setTimeout(() => { p.remove(); }, 2000);
+  }
+
+  // Sidebar Logic
+  const menuBtn = document.getElementById('menuOpen');
+  const sb = document.getElementById('sidebar');
+  const dim = document.getElementById('dimmer');
+
+  menuBtn.onclick = (e) => { e.stopPropagation(); sb.classList.add('open'); dim.style.display = 'block'; }
+  dim.onclick = () => { sb.classList.remove('open'); dim.style.display = 'none'; }
+
+  window.onload = initPond;
+</script>
 </body>
 </html>
