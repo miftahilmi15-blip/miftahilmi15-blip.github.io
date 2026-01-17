@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>E-SANTRI ABSENSI v9</title>
+    <title>E-SANTRI ABSENSI v10</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -11,25 +11,24 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); padding-bottom: 120px; }
         
-        header { background: var(--white); padding: 20px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .brand { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; text-align: center; }
+        header { background: var(--white); padding: 15px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .brand { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; text-align: center; }
         
-        .nav-tabs { display: flex; gap: 8px; margin-bottom: 15px; background: #eee; padding: 4px; border-radius: 10px; }
-        .tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; color: #666; }
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 10px; background: #eee; padding: 4px; border-radius: 10px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; font-size: 11px; cursor: pointer; color: #666; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.9rem; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        select, input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 13px; outline: none; }
         
-        /* List Siswa */
-        .list { padding: 15px; display: grid; gap: 12px; }
-        .item { background: var(--white); padding: 15px; border-radius: 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .student-info { display: flex; justify-content: space-between; align-items: center; }
-        .student-info b { font-size: 0.95rem; text-transform: capitalize; }
+        /* List Siswa 2 Kolom */
+        .list { padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .item { background: var(--white); padding: 10px; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .student-info b { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 
-        /* Status Buttons */
-        .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .status-grid button { padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9; background: #f8fafc; font-weight: 700; color: #64748b; cursor: pointer; }
+        /* Status Buttons Compact */
+        .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .status-grid button { padding: 8px 0; border-radius: 6px; border: 1px solid #f1f5f9; background: #f8fafc; font-weight: 700; font-size: 11px; color: #64748b; cursor: pointer; }
         
         .h-active { background: #dcfce7 !important; color: #15803d !important; border-color: #22c55e !important; }
         .s-active { background: #fef9c3 !important; color: #a16207 !important; border-color: #eab308 !important; }
@@ -37,20 +36,21 @@
         .a-active { background: #fee2e2 !important; color: #b91c1c !important; border-color: #ef4444 !important; }
 
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); padding: 15px 20px; border-top: 1px solid #e2e8f0; }
-        .btn-save { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        .btn-save { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; }
 
         #overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 2000; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .spinner { width: 35px; height: 35px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 0.8rem; margin-top: 10px; }
-        th, td { padding: 10px; text-align: center; border: 1px solid #eee; }
-        th { background: #f8fafc; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 12px; margin-top: 10px; }
+        th, td { padding: 8px; text-align: center; border: 1px solid #eee; }
+        th { background: #f8fafc; font-weight: 700; }
+        .text-left { text-align: left; padding-left: 10px; }
     </style>
 </head>
 <body>
 
-<div id="overlay"><div class="spinner"></div><p style="margin-top:10px">Mohon Tunggu...</p></div>
+<div id="overlay"><div class="spinner"></div><p style="margin-top:10px">Sabar ya, Ustadz...</p></div>
 
 <header>
     <div class="brand">🟢 E-SANTRI ABSENSI</div>
@@ -69,14 +69,16 @@
             </select>
             <input type="date" id="tgl-absen">
         </div>
-        <button onclick="setSemua('H')" style="width:100%; margin-top:10px; padding:8px; border-radius:8px; border:1px dashed var(--primary); color:var(--primary); font-weight:700; background:none; cursor:pointer">✅ HADIRKAN SEMUA ANAK</button>
+        <button onclick="setSemua('H')" style="width:100%; margin-top:8px; padding:6px; border-radius:8px; border:1px dashed var(--primary); color:var(--primary); font-weight:700; background:none; cursor:pointer; font-size: 11px;">✅ HADIRKAN SEMUA ANAK</button>
     </div>
 
     <div id="filterRekap" style="display:none;">
         <div class="controls">
-            <select id="mode-rekap">
-                <option value="harian">Rekap Harian</option>
-                <option value="bulanan">Rekap Bulanan</option>
+            <select id="kelas-rekap">
+                <option value="">Pilih Kelas</option>
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
             </select>
             <select id="bulan-rekap">
                 <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
@@ -85,20 +87,26 @@
                 <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
         </div>
-        <div style="display:flex; gap:10px; margin-top:10px">
-            <button onclick="prosesRekap()" style="flex:2; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📊 TAMPILKAN</button>
-            <button onclick="exportExcel()" style="flex:1; padding:12px; background:#107c41; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📥 EXCEL</button>
+        <div class="controls" style="margin-top: 8px;">
+            <select id="mode-rekap">
+                <option value="harian">Rekap Harian</option>
+                <option value="bulanan">Rekap Bulanan</option>
+            </select>
+            <div style="display:flex; gap:5px">
+                <button onclick="prosesRekap()" style="flex:2; padding:10px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📊 LIHAT</button>
+                <button onclick="exportExcel()" style="flex:1; padding:10px; background:#107c41; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📥 XL</button>
+            </div>
         </div>
     </div>
 </header>
 
 <div id="areaAbsen">
-    <div id="list-siswa" class="list"><p style="text-align:center; padding:30px; color:#999;">Pilih kelas untuk memulai...</p></div>
+    <div id="list-siswa" class="list"><p style="grid-column: span 2; text-align:center; padding:30px; color:#999; font-size:12px;">Pilih kelas dulu ya...</p></div>
     <div class="footer"><button onclick="simpanKeFirebase()" class="btn-save">SIMPAN ABSENSI</button></div>
 </div>
 
-<div id="areaRekap" style="display:none; padding:15px;">
-    <div id="wadah-tabel" style="overflow-x:auto; background:white; border-radius:12px;"></div>
+<div id="areaRekap" style="display:none; padding:10px;">
+    <div id="wadah-tabel" style="overflow-x:auto; background:white; border-radius:12px; border: 1px solid #ddd;"></div>
 </div>
 
 <script>
@@ -128,7 +136,7 @@ async function muatSiswa() {
         const div = document.createElement('div');
         div.className = 'item';
         div.dataset.nipd = s.nipd; div.dataset.nama = s.nama;
-        div.innerHTML = `<div class="student-info"><b>${s.nama.toLowerCase()}</b><input type="checkbox" class="chk-pilih"></div>
+        div.innerHTML = `<div class="student-info"><b>${s.nama}</b></div>
             <div class="status-grid" data-pilihan="">
                 <button onclick="pilihStatus(this,'H')">H</button><button onclick="pilihStatus(this,'S')">S</button>
                 <button onclick="pilihStatus(this,'I')">I</button><button onclick="pilihStatus(this,'A')">A</button>
@@ -139,10 +147,10 @@ async function muatSiswa() {
 }
 
 function pilihStatus(btn, stat) {
-    [...btn.parentElement.children].forEach(b => b.className = "");
+    const parent = btn.parentElement;
+    [...parent.children].forEach(b => b.className = "");
     btn.className = stat.toLowerCase() + "-active";
-    btn.parentElement.dataset.pilihan = stat;
-    btn.closest('.item').querySelector('.chk-pilih').checked = true;
+    parent.dataset.pilihan = stat;
 }
 
 function setSemua(stat) {
@@ -160,28 +168,28 @@ async function simpanKeFirebase() {
     const kls = document.getElementById('pilih-kelas').value;
     
     const dataKirim = {};
-    let ada = false;
+    let count = 0;
     items.forEach(el => {
         const status = el.querySelector('.status-grid').dataset.pilihan;
-        if(status && el.querySelector('.chk-pilih').checked) {
+        if(status) {
             dataKirim[el.dataset.nipd] = { nama: el.dataset.nama, status: status };
-            ada = true;
+            count++;
         }
     });
 
-    if(!ada) return alert("Belum ada santri yang diabsen!");
+    if(count === 0) return alert("Belum ada santri yang diabsen!");
     document.getElementById('overlay').style.display = 'flex';
     await fetch(`${FIREBASE_URL}/absensi/${thn}/${parseInt(bln)}/${parseInt(tgl)}/${kls}.json`, { method: 'PUT', body: JSON.stringify(dataKirim) });
-    alert("Berhasil Disimpan!");
-    location.reload(); // AUTO REFRESH
+    alert("Berhasil! " + count + " santri tercatat.");
+    location.reload();
 }
 
 async function prosesRekap() {
     const mode = document.getElementById('mode-rekap').value;
-    const kls = document.getElementById('pilih-kelas').value;
+    const kls = document.getElementById('kelas-rekap').value;
     const bln = document.getElementById('bulan-rekap').value;
     const tglPilih = document.getElementById('tgl-absen').value;
-    if(!kls) return alert("Pilih kelas dulu!");
+    if(!kls) return alert("Pilih Kelas dulu!");
 
     document.getElementById('overlay').style.display = 'flex';
     const resSiswa = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
@@ -208,11 +216,12 @@ async function prosesRekap() {
 }
 
 function renderTabel(rekap, tipe) {
-    let html = `<table id="tabel-data"><thead><tr><th>Nama</th>${tipe==='harian'?'<th>Status</th>':'<th>H</th><th>S</th><th>I</th><th>A</th>'}</tr></thead><tbody>`;
+    let html = `<table id="tabel-data"><thead><tr><th>Nama Santri</th>${tipe==='harian'?'<th>Status</th>':'<th>H</th><th>S</th><th>I</th><th>A</th>'}</tr></thead><tbody>`;
     Object.values(rekap).forEach(r => {
-        html += `<tr><td style="text-align:left">${r.nama.toLowerCase()}</td>`;
+        html += `<tr><td class="text-left">${r.nama}</td>`;
         if(tipe === 'harian') {
-            html += `<td style="font-weight:bold; color:${r.statusHarian==='H'?'green':r.statusHarian==='A'?'red':'blue'}">${r.statusHarian}</td>`;
+            let color = r.statusHarian === 'H' ? 'green' : (r.statusHarian === '-' ? '#999' : 'red');
+            html += `<td style="font-weight:bold; color:${color}">${r.statusHarian}</td>`;
         } else {
             html += `<td>${r.H}</td><td>${r.S}</td><td>${r.I}</td><td>${r.A}</td>`;
         }
@@ -224,7 +233,7 @@ function renderTabel(rekap, tipe) {
 function exportExcel() {
     const t = document.getElementById("tabel-data");
     if(!t) return alert("Tampilkan data dulu!");
-    XLSX.writeFile(XLSX.utils.table_to_book(t), "Rekap_Absensi.xlsx");
+    XLSX.writeFile(XLSX.utils.table_to_book(t), "Rekap_Absensi_v10.xlsx");
 }
 </script>
 </body>
