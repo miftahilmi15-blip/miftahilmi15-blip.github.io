@@ -172,6 +172,36 @@ scanInput.onkeydown = async (e) => {
         alert("Scan Berhasil!");
     }
 };
+   // Tambahkan ini di paling bawah skrip HTML Anda
+window.onload = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const scanId = urlParams.get('scan');
+    const kelasId = urlParams.get('kls');
+
+    if (scanId && kelasId) {
+        showLoading("📲 NFC TERDETEKSI: Mengirim Absen...");
+        
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify([{
+                nipd: scanId,
+                nama: "Scan NFC (MacroDroid)",
+                kelas: kelasId,
+                status: 'H',
+                metode: 'Auto'
+            }])
+        }).then(() => {
+            document.getElementById('snd_ok').play();
+            alert("✅ ABSEN BERHASIL: " + scanId);
+            // Kembali ke halaman utama atau tutup jika perlu
+        }).catch(() => {
+            alert("❌ GAGAL MENGIRIM");
+        }).finally(() => {
+            overlay.style.display = 'none';
+        });
+    }
+}; 
 </script>
 </body>
 </html>
