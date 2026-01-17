@@ -13,7 +13,6 @@
         header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         header h1 { color: var(--primary); font-size: 18px; font-weight: 800; }
         
-        /* Navigasi Tab */
         .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
         .tab-btn { flex: 1; padding: 8px; border-radius: 10px; border: none; background: #eee; font-weight: 600; font-size: 12px; cursor: pointer; }
         .tab-btn.active { background: var(--primary); color: white; }
@@ -21,6 +20,20 @@
         .form-grup { margin-bottom: 12px; }
         label { font-size: 10px; font-weight: 700; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; }
         select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
+        
+        /* Gaya Box Pilihan Banyak Santri */
+        #pilih-santri-box { 
+            width: 100%; 
+            max-height: 150px; 
+            overflow-y: auto; 
+            border: 1px solid #eee; 
+            border-radius: 10px; 
+            padding: 10px; 
+            background: #f9f9f9;
+        }
+        .item-santri { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #f1f1f1; cursor: pointer; }
+        .item-santri input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+
         .baris-aspek { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 15px; margin-bottom: 10px; }
         .judul-aspek { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
         .rating { display: flex; gap: 15px; justify-content: center; }
@@ -33,7 +46,6 @@
         .btn-download { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: 600; font-size: 11px; cursor: pointer; }
         #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
         
-        /* Tabel Rekap */
         .rekap-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
         .rekap-table th, .rekap-table td { border: 1px solid #eee; padding: 8px; text-align: center; }
         .rekap-table th { background: #f8fafc; color: var(--primary); }
@@ -67,17 +79,15 @@
         </div>
 
         <div class="form-grup">
-            <label>Data Santri</label>
-            <div style="display: flex; gap: 8px;">
-                <select id="pilih-kelas" onchange="loadSantri()">
-                    <option value="">-- Kelas --</option>
-                    <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-                    <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-                    <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-                </select>
-                <select id="pilih-santri">
-                    <option value="">-- Pilih Nama --</option>
-                </select>
+            <label>Data Santri (Bisa pilih banyak)</label>
+            <select id="pilih-kelas" onchange="loadSantri()" style="margin-bottom: 8px;">
+                <option value="">-- Pilih Kelas --</option>
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+            </select>
+            <div id="pilih-santri-box">
+                <p style="color:#ccc; font-size:10px; text-align:center; padding-top:20px;">Pilih kelas dulu...</p>
             </div>
         </div>
 
@@ -91,8 +101,8 @@
             <div class="baris-aspek" data-aspek="Ramah"><div class="judul-aspek">😊 5. RAMAH</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
         </div>
 
-        <div id="loading">⏳ Menyimpan 5 Data...</div>
-        <button class="btn-simpan" onclick="simpanKolektif()">💾 SIMPAN SEMUA ASPEK</button>
+        <div id="loading">⏳ Menyimpan...</div>
+        <button class="btn-simpan" onclick="simpanKolektif()">💾 SIMPAN UNTUK SEMUA YANG TERCENTANG</button>
     </div>
 
     <div id="page-rekap" style="display:none;">
@@ -117,14 +127,13 @@
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOi_m9c4FgTyD3Q98w_xqyy0rdHnMN90xhhwOro7c6jSKxB09GBTSxIP1U7ufe1VnOoQ/exec";
-    const SS_ID = "1M1SizjY7In13bMfjqec9mAHdRtvA38d5Tvg8tKD_1EI";
     const kategoriArr = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
 
     function switchTab(mode) {
         document.getElementById('page-input').style.display = mode === 'input' ? 'block' : 'none';
         document.getElementById('page-rekap').style.display = mode === 'rekap' ? 'block' : 'none';
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        if(event) event.target.classList.add('active');
     }
 
     function klikStar(el, n) {
@@ -146,24 +155,33 @@
 
     async function loadSantri() {
         const kelas = document.getElementById('pilih-kelas').value;
-        const sel = document.getElementById('pilih-santri');
+        const box = document.getElementById('pilih-santri-box');
         if(!kelas) return;
-        sel.innerHTML = '<option>Memuat...</option>';
+        box.innerHTML = '<p style="text-align:center; font-size:12px;">Memuat santri...</p>';
         try {
             const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
             const data = await res.json();
-            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
-        } catch(e) { sel.innerHTML = '<option>Gagal!</option>'; }
+            box.innerHTML = ''; 
+            data.forEach(x => {
+                const item = document.createElement('div');
+                item.className = 'item-santri';
+                item.innerHTML = `<input type="checkbox" value="${x.nipd}" data-nama="${x.nama}"> <span>${x.nama}</span>`;
+                item.onclick = (e) => {
+                    if(e.target.tagName !== 'INPUT') {
+                        const cb = item.querySelector('input');
+                        cb.checked = !cb.checked;
+                    }
+                };
+                box.appendChild(item);
+            });
+        } catch(e) { box.innerHTML = '<p style="color:red; font-size:12px;">Gagal memuat!</p>'; }
     }
 
     async function ambilRekap() {
         const kelas = document.getElementById('pilih-kelas').value;
         const bulan = document.getElementById('bulan-rekap').value;
         if(!kelas) return alert("Pilih kelas dulu!");
-        
         document.getElementById('hasil-rekap').innerHTML = '<p style="text-align:center; padding:20px;">Memproses data...</p>';
-        
         const s = document.createElement('script');
         s.src = `${SCRIPT_URL}?mode=rekapBudaya&kelas=${kelas}&bulan=${bulan}&tahun=2026&callback=renderRekap`;
         document.body.appendChild(s);
@@ -171,45 +189,48 @@
 
     window.renderRekap = (res) => {
         let html = '<table class="rekap-table"><tr><th>Nama</th><th>Rata★</th><th>Input</th></tr>';
-        res.data.forEach(x => {
-            html += `<tr><td>${x.nama}</td><td><b>${x.rata}</b></td><td>${x.total}x</td></tr>`;
-        });
+        res.data.forEach(x => { html += `<tr><td>${x.nama}</td><td><b>${x.rata}</b></td><td>${x.total}x</td></tr>`; });
         html += '</table>';
         document.getElementById('hasil-rekap').innerHTML = html;
     }
 
     async function simpanKolektif() {
-        const s = document.getElementById('pilih-santri');
+        const checkboxes = document.querySelectorAll('#pilih-santri-box input:checked');
         const kelas = document.getElementById('pilih-kelas').value;
         const barisAspek = document.querySelectorAll('.baris-aspek');
         
-        if(!s.value) return alert("⚠️ Pilih nama santri terlebih dahulu!");
+        if(checkboxes.length === 0) return alert("⚠️ Centang minimal satu nama santri!");
 
         let semuaTerisi = true;
-        barisAspek.forEach(baris => {
-            if(!baris.getAttribute('data-nilai')) semuaTerisi = false;
-        });
-
-        if(!semuaTerisi) return alert("⚠️ Gagal! Semua 5 aspek harus diberi penilaian bintang.");
+        barisAspek.forEach(baris => { if(!baris.getAttribute('data-nilai')) semuaTerisi = false; });
+        if(!semuaTerisi) return alert("⚠️ Gagal! Semua 5 aspek harus diberi bintang.");
 
         document.getElementById('loading').style.display = 'block';
+        document.getElementById('loading').innerText = `⏳ Menyimpan data untuk ${checkboxes.length} santri...`;
         
         try {
-            for(let baris of barisAspek) {
-                const nilai = baris.getAttribute('data-nilai');
-                const payload = {
-                    tanggal: new Date().toLocaleDateString('id-ID'),
-                    nipd: s.value,
-                    nama: s.options[s.selectedIndex].text,
-                    kelas: kelas,
-                    aspek: baris.getAttribute('data-aspek'),
-                    kategori: kategoriArr[nilai],
-                    nilai: nilai,
-                    guru: document.getElementById('guru').value
-                };
-                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            // Looping untuk setiap santri yang dicentang
+            for(let cb of checkboxes) {
+                const nipd = cb.value;
+                const nama = cb.getAttribute('data-nama');
+                
+                // Looping untuk setiap aspek
+                for(let baris of barisAspek) {
+                    const nilai = baris.getAttribute('data-nilai');
+                    const payload = {
+                        tanggal: new Date().toLocaleDateString('id-ID'),
+                        nipd: nipd,
+                        nama: nama,
+                        kelas: kelas,
+                        aspek: baris.getAttribute('data-aspek'),
+                        kategori: kategoriArr[nilai],
+                        nilai: nilai,
+                        guru: document.getElementById('guru').value
+                    };
+                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                }
             }
-            alert("✅ Berhasil Simpan 5 Aspek!");
+            alert(`✅ Berhasil Simpan untuk ${checkboxes.length} santri!`);
             location.reload();
         } catch(e) { 
             alert("❌ Gagal menyimpan."); 
