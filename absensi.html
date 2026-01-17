@@ -177,25 +177,35 @@ window.onload = () => {
     const kelasId = urlParams.get('kls');
 
     if (scanId && kelasId) {
-        showLoading("📲 NFC TERDETEKSI: Mengirim Absen...");
+        showLoading("📲 MENYIMPAN...");
         
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
             body: JSON.stringify([{
                 nipd: scanId,
-                nama: "Scan NFC (MacroDroid)",
+                nama: "Scan NFC",
                 kelas: kelasId,
                 status: 'H',
                 metode: 'Auto'
             }])
         }).then(() => {
             document.getElementById('snd_ok').play();
-            // Alert opsional, jika ingin otomatis tanpa klik OK, bisa dihapus line alert bawah ini
-            alert("✅ ABSEN BERHASIL: " + scanId);
-        }).catch(() => {
-            alert("❌ GAGAL MENGIRIM");
-        }).finally(() => {
+            
+            // Tampilan sukses tanpa klik OK
+            loadingText.innerHTML = "✅ BERHASIL!<br>Siap Scan Berikutnya...";
+            
+            // Hapus parameter di URL agar bisa discan ulang tanpa refresh manual
+            setTimeout(() => {
+                window.history.replaceState({}, document.title, window.location.pathname);
+                overlay.style.display = 'none';
+                
+                // Jika ingin browser tertutup otomatis (opsional)
+                // window.close(); 
+            }, 2000); // Tunggu 2 detik lalu siap lagi
+            
+        }).catch((err) => {
+            alert("Gagal: " + err);
             overlay.style.display = 'none';
         });
     }
