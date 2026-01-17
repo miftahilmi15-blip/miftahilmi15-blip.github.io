@@ -177,7 +177,7 @@ window.onload = () => {
     const kelasId = urlParams.get('kls');
 
     if (scanId && kelasId) {
-        showLoading("📲 MENGIRIM DATA...");
+        showLoading("📲 MENYIMPAN...");
         
         fetch(SCRIPT_URL, {
             method: 'POST',
@@ -191,16 +191,15 @@ window.onload = () => {
             }])
         }).then(() => {
             document.getElementById('snd_ok').play();
-            loadingText.innerHTML = "✅ BERHASIL!<br>Siap Scan Berikutnya...";
+            loadingText.innerHTML = "✅ BERHASIL!";
             
-            // Tunggu 1.5 detik agar suara Beep terdengar, lalu REFRESH TOTAL
+            // PENTING: Membersihkan URL agar browser siap untuk dipicu MacroDroid lagi
             setTimeout(() => {
-                // Ini akan membersihkan URL dan membuat browser SIAP scan lagi
-                window.location.href = window.location.pathname; 
-            }, 1500);
+                window.location.href = "about:blank"; // Mengosongkan halaman
+            }, 2000);
             
-        }).catch((err) => {
-            alert("Koneksi Error: " + err);
+        }).catch(() => {
+            alert("Gagal Kirim");
             overlay.style.display = 'none';
         });
     }
