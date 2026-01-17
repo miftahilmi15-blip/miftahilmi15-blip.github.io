@@ -3,31 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Bubble Edition v18</title>
+<title>E-Santri | Koi Pond Edition v19</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
     --primary-grad: linear-gradient(135deg, #1f6f51 0%, #2ecc71 100%);
-    --bg: #f4f9f6;
+    --bg: #eaf8f4; /* Warna background lebih cocok untuk air */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   
-  body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow-x: hidden; position: relative; }
+  body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
 
-  /* EFEK GELEMBUNG TERBANG (BACKGROUND) */
-  .bubble-bg {
-    position: fixed; bottom: -50px; background: rgba(255, 255, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 50%;
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
-    pointer-events: none; z-index: 0; animation: rise 10s infinite ease-in;
-  }
-  @keyframes rise {
-    0% { transform: translateY(0) scale(0.5); opacity: 0; }
-    20% { opacity: 0.6; }
-    100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
-  }
+  /* LOADING SCREEN */
+  #loading-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
 
   /* HEADER */
   header {
@@ -45,15 +37,17 @@
     background: white; border-radius: 25px; padding: 20px;
     display: flex; align-items: center; justify-content: space-between;
     box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px;
+    position: relative; /* Penting untuk interaksi Koi */
   }
   .fire { font-size: 35px; animation: burn 1s infinite alternate; }
-  @keyframes burn { from { transform: scale(1); filter: drop-shadow(0 0 2px orange); } to { transform: scale(1.2); filter: drop-shadow(0 0 10px red); } }
+  @keyframes burn { from { transform: scale(1); filter: drop-shadow(0 0 2px orange); } to { transform: scale(1.2); filter: drop_shadow(0 0 10px red); } }
 
   /* MAHFUZAT BOX (INFINITE RUN) */
   .mahfuzat-box {
     background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
     border-radius: 50px; padding: 12px 20px; margin-bottom: 20px;
     border: 1px solid white; overflow: hidden; display: flex; align-items: center;
+    position: relative; /* Penting untuk interaksi Koi */
   }
   .mahfuzat-text {
     white-space: nowrap; display: inline-block; padding-left: 100%;
@@ -69,9 +63,9 @@
   .menu-item { 
     background: white; padding: 25px 10px; border-radius: 25px; text-align: center; 
     box-shadow: 0 5px 15px rgba(0,0,0,0.02); cursor: pointer; position: relative; overflow: hidden;
-    transition: 0.3s;
+    transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth click */
   }
-  .menu-item:active { transform: scale(0.9); }
+  .menu-item:active { transform: scale(0.95); }
   .menu-item span { display: block; font-size: 11px; font-weight: 700; margin-top: 8px; color: #444; }
 
   /* SIDEBAR */
@@ -90,6 +84,30 @@
   .auth-card { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
   input { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid #eee; background: #f9f9f9; outline: none; }
   .btn-main { width: 100%; padding: 15px; border-radius: 15px; border: none; background: var(--primary-grad); color: white; font-weight: 700; cursor: pointer; }
+
+  /* KOI FISH STYLES */
+  .koi-fish {
+    position: absolute;
+    width: 80px; /* Ukuran ikan */
+    height: 80px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 10s linear; /* Kecepatan berenang */
+    z-index: 5; /* Di bawah UI tapi di atas background */
+  }
+  .food-particle {
+    position: absolute;
+    width: 8px; height: 8px;
+    background-color: orange;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: dissolve 1s forwards;
+    z-index: 6;
+  }
+  @keyframes dissolve {
+    from { transform: scale(1); opacity: 0.8; }
+    to { transform: scale(0.5); opacity: 0; }
+  }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -97,10 +115,7 @@
 </head>
 <body>
 
-<div id="bubble-container"></div>
-
-<div id="loading-screen" style="position:fixed; inset:0; background:white; display:flex; align-items:center; justify-content:center; z-index:9999;"><div style="width:40px; height:40px; border:3px solid #f3f3f3; border-top:3px solid #1f6f51; border-radius:50%; animation:spin 1s linear infinite;"></div></div>
-<style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+<div id="loading-screen"><div class="spinner"></div></div>
 
 <header id="app-header" class="hidden">
   <div class="menu-trigger" id="menu-btn">&#x22EE;</div>
@@ -108,7 +123,7 @@
   <p id="welcome-msg" style="color:white; opacity:0.8; font-size:13px;"></p>
 </header>
 
-<main class="container">
+<main class="container" id="main-content">
   <div id="login-card" class="auth-card hidden">
     <h2 style="color:var(--primary); margin-bottom:20px;">Ahlan wa Sahlan</h2>
     <input type="email" id="email" placeholder="Email">
@@ -151,27 +166,107 @@
   <a href="#" onclick="goTo('waktu-sholat.html')">🕌 Waktu Sholat</a>
   <a href="#" onclick="goTo('pengaduan.html')">📣 Pengaduan</a>
   <a href="#" onclick="goTo('kalender.html')">📅 Kalender</a>
-  <a href="#" onclick="logout()" style="color:red; margin-top:20px; border-top:1px solid #eee;">🚪 Keluar Akun</a>
+  <a href="#" onclick="logout()" style="color:red; margin-top:20px; border-top:1px solid #eee; padding-top:20px;">🚪 Keluar Akun</a>
 </div>
 
 <script>
   firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
   const auth = firebase.auth();
 
-  // FUNGSI BUAT GELEMBUNG OTOMATIS
-  function createBubbles() {
-    const container = document.getElementById('bubble-container');
-    const b = document.createElement('div');
-    b.className = 'bubble-bg';
-    const size = Math.random() * 40 + 10 + "px";
-    b.style.width = size;
-    b.style.height = size;
-    b.style.left = Math.random() * 100 + "vw";
-    b.style.animationDuration = Math.random() * 5 + 5 + "s";
-    container.appendChild(b);
-    setTimeout(() => b.remove(), 10000);
+  const koiImages = [
+    'https://raw.githubusercontent.com/kakgem/esantri_assets/main/koi_1_left.png',
+    'https://raw.githubusercontent.com/kakgem/esantri_assets/main/koi_2_left.png',
+    'https://raw.githubusercontent.com/kakgem/esantri_assets/main/koi_3_left.png',
+    'https://raw.githubusercontent.com/kakgem/esantri_assets/main/koi_1_right.png',
+    'https://raw.githubusercontent.com/kakgem/esantri_assets/main/koi_2_right.png',
+    'https://raw.githubusercontent.com/kakgem/esantri_assets/main/koi_3_right.png',
+  ];
+
+  let fishCounter = 0;
+  const maxFish = 4; // Maksimal ikan yang terlihat bersamaan
+  let currentFoodX = -100; // Posisi makanan
+  let currentFoodY = -100;
+
+  function createFish() {
+    if (fishCounter >= maxFish) return;
+
+    const fish = document.createElement('div');
+    fish.className = 'koi-fish';
+    
+    const isComingFromLeft = Math.random() < 0.5;
+    const fishImage = koiImages[Math.floor(Math.random() * 3) + (isComingFromLeft ? 0 : 3)]; // Random koi left/right
+    fish.style.backgroundImage = `url('${fishImage}')`;
+    
+    fish.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+    fish.style.left = isComingFromLeft ? '-100px' : (window.innerWidth + 'px');
+    
+    document.body.appendChild(fish);
+    fishCounter++;
+
+    moveFish(fish, isComingFromLeft);
   }
-  setInterval(createBubbles, 500); // Muncul tiap 0.5 detik
+
+  function moveFish(fishElement, isComingFromLeft) {
+    const targetX = isComingFromLeft ? window.innerWidth + 100 : -100;
+    const targetY = Math.random() * (window.innerHeight - 100);
+    const duration = Math.random() * 8 + 10; // 10-18 seconds
+
+    fishElement.style.transition = `transform ${duration}s linear`;
+    fishElement.style.transform = `translate(${targetX - fishElement.offsetLeft}px, ${targetY - fishElement.offsetTop}px)`;
+
+    // Jika ada makanan, arahkan ikan ke sana
+    if (currentFoodX !== -100 && currentFoodY !== -100) {
+      const foodDistanceX = currentFoodX - (fishElement.offsetLeft + fishElement.offsetWidth / 2);
+      const foodDistanceY = currentFoodY - (fishElement.offsetTop + fishElement.offsetHeight / 2);
+      
+      const newTargetX = fishElement.offsetLeft + foodDistanceX * 0.5; // Bergerak 50% ke arah makanan
+      const newTargetY = fishElement.offsetTop + foodDistanceY * 0.5;
+      
+      fishElement.style.transition = `transform 3s ease-out`; // Lebih cepat ke makanan
+      fishElement.style.transform = `translate(${newTargetX - fishElement.offsetLeft}px, ${newTargetY - fishElement.offsetTop}px)`;
+    }
+
+    fishElement.addEventListener('transitionend', () => {
+      fishElement.remove();
+      fishCounter--;
+      createFish();
+    });
+  }
+
+  // Event listener untuk memberi makan ikan
+  document.getElementById('main-content').addEventListener('click', function(e) {
+    if (document.getElementById('dashboard').classList.contains('hidden')) return; // Hanya saat di dashboard
+
+    const food = document.createElement('div');
+    food.className = 'food-particle';
+    food.style.left = e.clientX + 'px';
+    food.style.top = e.clientY + 'px';
+    document.body.appendChild(food);
+    setTimeout(() => food.remove(), 1000);
+
+    currentFoodX = e.clientX;
+    currentFoodY = e.clientY;
+
+    // Panggil ulang moveFish untuk semua ikan agar bergerak ke arah makanan
+    document.querySelectorAll('.koi-fish').forEach(fish => {
+      moveFish(fish, fish.offsetLeft < (window.innerWidth / 2)); // Menentukan arah awal
+    });
+    
+    // Reset posisi makanan setelah beberapa saat
+    setTimeout(() => {
+      currentFoodX = -100;
+      currentFoodY = -100;
+    }, 1500);
+  });
+
+
+  // Jalankan ikan saat dashboard terlihat
+  function initFishAnimation() {
+    if (!document.getElementById('dashboard').classList.contains('hidden')) {
+      setInterval(createFish, 5000); // Buat ikan baru setiap 5 detik
+    }
+  }
+
 
   function handleQuran() {
     const today = new Date().toDateString();
@@ -204,6 +299,8 @@
       const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:" — Barangsiapa bersungguh-sungguh, dapatlah ia."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:" — Barangsiapa sabar, beruntunglah ia."}];
       const d = m[new Date().getDate() % m.length];
       document.getElementById('runArab').innerText = d.ar; document.getElementById('runIndo').innerText = d.id;
+
+      initFishAnimation(); // Inisialisasi animasi ikan
     } else {
       document.getElementById("login-card").classList.remove("hidden");
     }
