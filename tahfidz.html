@@ -3,142 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Database Tahfidz & Qiraati</title>
+    <title>E-SANTRI | Database Tahfidz Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
-        .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
-        header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
-        .form-grup { margin-bottom: 15px; }
-        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        select, input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; outline: none; }
+        body { background: var(--bg); padding: 10px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 480px; background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        
+        header { text-align: center; margin-bottom: 15px; }
+        header h1 { color: var(--primary); font-size: 18px; font-weight: 800; }
+
+        /* Style Tab */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #eee; padding: 5px; border-radius: 12px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.3s; color: #666; }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        .form-grup { margin-bottom: 12px; }
+        label { font-size: 10px; font-weight: 700; color: #444; display: block; margin-bottom: 4px; text-transform: uppercase; }
+        select, input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
+        
         .grid-2 { display: flex; gap: 10px; }
-        .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
-        .star { cursor: pointer; font-size: 26px; color: #ddd; transition: 0.2s; }
-        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .menu-rekap { margin-top: 25px; padding-top: 15px; border-top: 2px dashed #eee; text-align: center; }
-        .btn-cetak { width: 100%; background: var(--blue); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
-        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
+        .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; border: 1px solid #eee; }
+        .star { cursor: pointer; font-size: 28px; color: #ddd; transition: 0.2s; }
+        
+        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 14px; }
+        .btn-cetak { width: 100%; background: var(--blue); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 12px; cursor: pointer; margin-top: 15px; }
+        
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; font-size: 12px; }
+        
+        /* Tabel Rekap */
+        .rekap-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
+        .rekap-table th { background: #f1f5f9; color: var(--primary); padding: 10px; border: 1px solid #e2e8f0; }
+        .rekap-table td { padding: 10px; border: 1px solid #e2e8f0; text-align: center; }
     </style>
 </head>
 <body>
+
 <div id="lock-screen" style="position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
-    <h2 style="margin-bottom:20px;">🔒 AKSES TERBATAS</h2>
-    <p style="margin-bottom:10px; font-size:12px;">Masukkan Kode Keamanan Ustadz/Ustadzah:</p>
+    <h2 style="margin-bottom:20px; letter-spacing: 2px;">🔒 E-SANTRI AUTH</h2>
     <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
-    <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
+    <button onclick="cekLogin()" style="padding:12px 40px; border-radius:12px; border:none; background:var(--accent); color:var(--primary); font-weight:800; cursor:pointer;">MASUK</button>
 </div>
 
 <div class="wadah">
-    <header><h1>CATAT TAHFIDZ</h1></header>
+    <header><h1>TAHFIDZ & QIRAATI</h1></header>
 
-    <div class="form-grup">
-        <label>Pilih Kelas</label>
-        <select id="pilih-kelas" onchange="loadSantri()">
-            <option value="">-- Pilih Kelas --</option>
-            <optgroup label="KELAS 7">
+    <div class="tabs">
+        <button class="tab-btn active" id="btn-input" onclick="bukaTab('input')">INPUT SETORAN</button>
+        <button class="tab-btn" id="btn-rekap" onclick="bukaTab('rekap')">REKAP PROGRES</button>
+    </div>
+
+    <div id="page-input">
+        <div class="form-grup">
+            <label>Pilih Kelas</label>
+            <select id="pilih-kelas" onchange="loadSantri()">
+                <option value="">-- Pilih Kelas --</option>
                 <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-            </optgroup>
-            <optgroup label="KELAS 8">
                 <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-            </optgroup>
-            <optgroup label="KELAS 9">
                 <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-            </optgroup>
-        </select>
-    </div>
-
-    <div class="form-grup">
-        <label>Nama Santri</label>
-        <select id="pilih-santri"><option value="">-- Pilih Nama --</option></select>
-    </div>
-
-    <div class="form-grup">
-        <label>Kategori Materi</label>
-        <select id="kategori-materi" onchange="updateSubMateri()">
-            <option value="">-- Pilih Kategori --</option>
-            <option value="Jilid">Qiraati (Jilid 1-4)</option>
-            <option value="Tadarus27">Tadarus Juz 27</option>
-            <option value="Tadarus30">Tadarus Al-Qur'an 30 Juz</option>
-            <option value="Ghorib">Materi Ghorib</option>
-            <option value="Tajwid">Materi Tajwid</option>
-            <option value="Tahfidz">Tahfidz 30 Juz</option>
-        </select>
-    </div>
-
-    <div class="form-grup">
-        <label>Detail Materi</label>
-        <select id="materi"><option value="">-- Pilih Kategori Dulu --</option></select>
-    </div>
-
-    <div class="grid-2">
-        <div class="form-grup"><label>Dari (Hal/Ayat)</label><input type="number" id="awal"></div>
-        <div class="form-grup"><label>Sampai (Hal/Ayat)</label><input type="number" id="akhir"></div>
-    </div>
-
-    <div class="form-grup">
-        <label>Status</label>
-        <select id="status"><option value="Lulus">✅ Lulus</option><option value="Sabaq">🔄 Sabaq</option></select>
-    </div>
-
-    <div class="form-grup">
-        <label>Kualitas (Bintang)</label>
-        <div class="rating">
-            <span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span><span class="star" onclick="setStar(4)">★</span><span class="star" onclick="setStar(5)">★</span>
+            </select>
         </div>
-        <input type="hidden" id="nilai-bintang" value="0">
+
+        <div class="form-grup">
+            <label>Nama Santri</label>
+            <select id="pilih-santri"><option value="">Pilih kelas dulu...</option></select>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-grup">
+                <label>Kategori</label>
+                <select id="kategori-materi" onchange="updateSubMateri()">
+                    <option value="">-- Pilih --</option>
+                    <option value="Jilid">Qiraati</option>
+                    <option value="Tadarus">Tadarus</option>
+                    <option value="Tahfidz">Tahfidz</option>
+                    <option value="Ghorib">Ghorib/Tajwid</option>
+                </select>
+            </div>
+            <div class="form-grup">
+                <label>Detail Materi</label>
+                <select id="materi"><option value="">--</option></select>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="form-grup"><label>Dari (Hal/Ayat)</label><input type="number" id="awal" placeholder="0"></div>
+            <div class="form-grup"><label>Sampai</label><input type="number" id="akhir" placeholder="0"></div>
+        </div>
+
+        <div class="form-grup">
+            <label>Kualitas Hafalan</label>
+            <div class="rating">
+                <span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span><span class="star" onclick="setStar(4)">★</span><span class="star" onclick="setStar(5)">★</span>
+            </div>
+            <input type="hidden" id="nilai-bintang" value="0">
+        </div>
+
+        <div class="form-grup">
+            <label>Catatan/Evaluasi</label>
+            <textarea id="catatan" rows="2" placeholder="Contoh: Lancarkan makhraj huruf kha..."></textarea>
+        </div>
+
+        <div id="loading">⏳ Memproses ke Firebase...</div>
+        <button class="btn-simpan" onclick="simpanTahfidz()">SIMPAN SETORAN</button>
     </div>
 
-    <div class="form-grup">
-        <label>Catatan Ustadz</label>
-        <textarea id="catatan" rows="2" placeholder="Evaluasi makhraj/tajwid..."></textarea>
-    </div>
-
-    <div id="loading">⏳ Menyimpan...</div>
-    <button class="btn-simpan" onclick="simpan()">SIMPAN PENCAPAIAN</button>
-
-    <div class="menu-rekap">
-        <button class="btn-cetak" onclick="downloadPDF()">📥 DOWNLOAD REKAP SIAP CETAK</button>
+    <div id="page-rekap" style="display:none;">
+        <div class="form-grup">
+            <label>Pilih Bulan</label>
+            <select id="bulan-rekap">
+                <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+            </select>
+        </div>
+        <button class="btn-simpan" style="background:var(--blue)" onclick="ambilRekapTahfidz()">📊 TAMPILKAN REKAP INSTAN</button>
+        
+        <div id="hasil-rekap-tahfidz"></div>
+        
+        <button class="btn-cetak" onclick="downloadPDF()">📥 DOWNLOAD PDF (FULL LAPORAN)</button>
     </div>
 </div>
 
 <script>
+    const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
     const SS_ID = "1fF8DzW7pNuSDefq_tHMvWlocg_KQieWEP7m1g6FIB4A";
     const KODE_RAHASIA = "152003"; 
+    
+    let globalSantriList = [];
 
-    const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
-
-    const subMateri = {
-        "Jilid": ["Jilid 1A (1-30)", "Jilid 1B (31-60)", "Jilid 2A (1-31)", "Jilid 2B (32-60)", "Jilid 3A (1-31)", "Jilid 3B (32-60)", "Jilid 4A (1-34)", "Jilid 4B (35-60)"],
-        "Tadarus27": ["Adz-Dzariyat 31-60", "Ath-Thur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid"],
-        "Tadarus30": surah30Juz,
-        "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`),
-        "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`),
-        "Tahfidz": surah30Juz
-    };
-
+    // 1. Fungsi Keamanan & Tab
     function cekLogin() {
-        const input = document.getElementById('passcode').value;
-        if (input === KODE_RAHASIA) {
+        if (document.getElementById('passcode').value === KODE_RAHASIA) {
             document.getElementById('lock-screen').style.display = 'none';
-            alert("Selamat bertugas, Ustadz/Ustdzah! tetap semangatt yaa 🥰🥰🥰");
         } else {
-            alert("Kode Salah! Akses Ditolak.");
-            document.getElementById('passcode').value = "";
+            alert("Kode Salah!");
         }
     }
 
+    function bukaTab(nama) {
+        document.getElementById('page-input').style.display = nama === 'input' ? 'block' : 'none';
+        document.getElementById('page-rekap').style.display = nama === 'rekap' ? 'block' : 'none';
+        document.getElementById('btn-input').classList.toggle('active', nama === 'input');
+        document.getElementById('btn-rekap').classList.toggle('active', nama === 'rekap');
+    }
+
+    // 2. Load Nama Santri (Dari Google Sheets)
+    async function loadSantri() {
+        const kelas = document.getElementById('pilih-kelas').value;
+        const sel = document.getElementById('pilih-santri');
+        if(!kelas) return;
+        sel.innerHTML = '<option>Memuat nama...</option>';
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
+            globalSantriList = await res.json();
+            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            globalSantriList.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
+        } catch(e) { alert("Gagal koneksi ke Sheets"); }
+    }
+
+    // 3. Update Dropdown Materi
     function updateSubMateri() {
         const kat = document.getElementById('kategori-materi').value;
         const sub = document.getElementById('materi');
-        sub.innerHTML = '<option value="">-- Pilih Detail --</option>';
-        if (subMateri[kat]) {
-            subMateri[kat].forEach(x => sub.options.add(new Option(x, x)));
-        }
+        sub.innerHTML = '';
+        const dataMateri = {
+            "Jilid": ["Jilid 1", "Jilid 2", "Jilid 3", "Jilid 4", "Jilid 5", "Jilid 6", "Al-Quran"],
+            "Tahfidz": ["Juz 30", "Juz 29", "Juz 1", "Juz 2"],
+            "Tadarus": ["Surah Pilihan", "Khataman"],
+            "Ghorib": ["Ghorib", "Tajwid"]
+        };
+        (dataMateri[kat] || []).forEach(x => sub.options.add(new Option(x, x)));
     }
 
     function setStar(n) {
@@ -146,65 +184,82 @@
         document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
     }
 
-    async function loadSantri() {
-        const kelas = document.getElementById('pilih-kelas').value;
-        const sel = document.getElementById('pilih-santri');
-        if(!kelas) return;
-        sel.innerHTML = '<option>Memuat...</option>';
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
-            const data = await res.json();
-            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-            data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
-        } catch(e) { alert("Gagal memuat nama santri"); }
-    }
-
-    async function simpan() {
+    // 4. SIMPAN KE FIREBASE (SQL Speed)
+    async function simpanTahfidz() {
         const s = document.getElementById('pilih-santri');
         const kls = document.getElementById('pilih-kelas').value;
         const mat = document.getElementById('materi').value;
-        const kat = document.getElementById('kategori-materi').value;
         const bin = document.getElementById('nilai-bintang').value;
 
-        if(!s.value || !kls || !mat || bin == "0") return alert("Lengkapi data!");
-
-        const payload = {
-            nipd: s.value,
-            nama: s.options[s.selectedIndex].text,
-            kelas: kls,
-            surah: `${kat}: ${mat}`,
-            juz: "-", 
-            ayat: document.getElementById('awal').value + "-" + document.getElementById('akhir').value,
-            status: document.getElementById('status').value,
-            nilai: bin,
-            catatan: document.getElementById('catatan').value
-        };
+        if(!s.value || bin == "0") return alert("Nama & Nilai wajib diisi!");
 
         document.getElementById('loading').style.display = 'block';
-        
+        const tgl = new Date();
+        const bulanId = tgl.getMonth() + 1;
+        const tahunId = tgl.getFullYear();
+
+        const payload = {
+            nama: s.options[s.selectedIndex].text,
+            materi: mat,
+            ayat: document.getElementById('awal').value + "-" + document.getElementById('akhir').value,
+            nilai: bin,
+            catatan: document.getElementById('catatan').value,
+            tgl: tgl.toLocaleDateString('id-ID')
+        };
+
         try {
-            await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Berhasil Disimpan!");
+            // Simpan ke Firebase Folder /tahfidz/tahun/bulan/nipd
+            await fetch(`${FIREBASE_URL}/tahfidz/${tahunId}/${bulanId}/${s.value}.json`, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
             
-            // RESET FORM TANPA RELOAD (Agar sandi tidak diminta lagi)
-            document.getElementById('pilih-santri').value = "";
-            document.getElementById('awal').value = "";
-            document.getElementById('akhir').value = "";
-            document.getElementById('catatan').value = "";
-            document.getElementById('nilai-bintang').value = "0";
-            document.querySelectorAll('.star').forEach(s => s.style.color = "#ddd");
+            // Backup ke Sheets (Optional)
+            fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({...payload, nipd: s.value, kelas: kls}) });
+
+            alert("✅ Hafalan Berhasil Dicatat!");
+            document.getElementById('awal').value = ""; document.getElementById('akhir').value = "";
+            document.getElementById('catatan').value = ""; setStar(0);
+        } catch(e) { alert("Gagal Simpan!"); }
+        finally { document.getElementById('loading').style.display = 'none'; }
+    }
+
+    // 5. AMBIL REKAP (SQL Speed)
+    async function ambilRekapTahfidz() {
+        const bulan = document.getElementById('bulan-rekap').value;
+        const kelas = document.getElementById('pilih-kelas').value;
+        if(!kelas) return alert("Pilih kelas dulu!");
+
+        const wadah = document.getElementById('hasil-rekap-tahfidz');
+        wadah.innerHTML = "Sedang menghitung...";
+
+        try {
+            const res = await fetch(`${FIREBASE_URL}/tahfidz/2026/${bulan}.json`);
+            const db = await res.json();
+
+            let html = '<table class="rekap-table"><tr><th>Santri</th><th>Materi Terakhir</th><th>★</th></tr>';
             
-        } catch(e) { 
-            alert("Terjadi kesalahan saat menyimpan!"); 
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
+            globalSantriList.forEach(siswa => {
+                const logs = db ? db[siswa.nipd] : null;
+                let lastMat = "-", lastStar = "0";
+                
+                if(logs) {
+                    const arr = Object.values(logs);
+                    const last = arr[arr.length - 1];
+                    lastMat = last.materi;
+                    lastStar = last.nilai;
+                }
+                html += `<tr><td style="text-align:left">${siswa.nama}</td><td>${lastMat}</td><td>${lastStar}</td></tr>`;
+            });
+            
+            html += '</table>';
+            wadah.innerHTML = html;
+        } catch(e) { wadah.innerHTML = "Data belum ada."; }
     }
 
     function downloadPDF() {
-        const url = `https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf&size=A4&portrait=true&fitw=true&gridlines=false`;
-        window.open(url, '_blank');
+        window.open(`https://docs.google.com/spreadsheets/d/${SS_ID}/export?format=pdf`, '_blank');
     }
 </script>
 </body>
-</html>
+    </html>
