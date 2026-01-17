@@ -3,181 +3,173 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri Pro | Absensi</title>
+<title>E-Santri | Absensi</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
---bg:#f8fafc;--card:#fff;--primary:#10b981;--dark:#059669;
---hadir:#22c55e;--sakit:#f59e0b;--izin:#3b82f6;--alpha:#ef4444;
---text:#1e293b;--sub:#64748b
+--bg:#f8fafc;--card:#fff;--primary:#10b981;--dark:#065f46;
+--hadir:#22c55e;--sakit:#f59e0b;--izin:#3b82f6;--alfa:#ef4444;
 }
 *{box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
-body{margin:0;background:var(--bg);color:var(--text);padding-bottom:90px}
+body{margin:0;background:var(--bg);padding-bottom:90px}
 
-header{background:var(--card);padding:20px;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:9}
-h1{margin:0;font-size:18px;color:var(--dark)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.box{background:#f1f5f9;padding:10px;border-radius:12px;text-align:center}
-.box small{font-size:11px;color:var(--sub)}
-.box b{font-size:16px}
+header{background:#fff;padding:16px;border-bottom:1px solid #e5e7eb;position:sticky;top:0}
+header h1{margin:0;color:var(--dark)}
 
-.controls{background:#fff;padding:15px;border-bottom:1px solid #e2e8f0}
-select,input{width:100%;padding:14px;border-radius:14px;border:1.5px solid #e2e8f0;margin-top:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.stat{background:#f1f5f9;padding:10px;border-radius:12px;text-align:center}
+
+.controls{padding:15px;background:#fff;border-bottom:1px solid #e5e7eb}
+select,input{width:100%;padding:14px;border-radius:14px;border:1px solid #e5e7eb;margin-top:10px}
 
 .list{padding:15px}
-.item{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;
-display:flex;justify-content:space-between;align-items:center;border:1px solid #f1f5f9}
+.item{background:#fff;padding:14px;border-radius:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid #f1f5f9}
 
-.info b{display:block;font-size:14px}
-.info small{color:var(--sub)}
+.btns button{
+width:38px;height:38px;border-radius:10px;border:1px solid #e5e7eb;
+background:#fff;font-weight:700;margin-left:5px
+}
 
-.btns{display:flex;gap:6px}
-.btn{width:38px;height:38px;border-radius:10px;border:1px solid #e2e8f0;
-background:#fff;font-weight:700;color:#cbd5e1}
 .h{background:var(--hadir);color:#fff}
 .s{background:var(--sakit);color:#fff}
 .i{background:var(--izin);color:#fff}
-.a{background:var(--alpha);color:#fff}
+.a{background:var(--alfa);color:#fff}
 
-footer{position:fixed;bottom:0;left:0;right:0;
-background:rgba(255,255,255,.9);backdrop-filter:blur(10px);
-padding:15px;display:grid;grid-template-columns:80px 1fr;gap:10px}
+footer{
+position:fixed;bottom:0;left:0;right:0;
+background:rgba(255,255,255,.9);
+backdrop-filter:blur(10px);
+display:grid;grid-template-columns:80px 1fr;
+gap:10px;padding:15px;border-top:1px solid #e5e7eb
+}
 footer button{border-radius:14px;border:none;font-weight:700}
 .save{background:var(--primary);color:#fff}
-.circle{background:#fff;border:1px solid #e2e8f0}
 
-#overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.8);
-color:#fff;z-index:99;align-items:center;justify-content:center;flex-direction:column}
+#overlay{
+position:fixed;inset:0;background:rgba(0,0,0,.6);
+display:none;align-items:center;justify-content:center;color:#fff;font-size:18px
+}
 </style>
 </head>
+
 <body>
 
-<div id="overlay"><h3 id="msg">Memproses...</h3></div>
+<div id="overlay">⏳ Menyimpan...</div>
 
 <header>
-<h1>🟢 E-SANTRI PRO</h1>
+<h1>🟢 E-Santri</h1>
 <div class="stats">
-<div class="box"><small>Total</small><b id="total">0</b></div>
-<div class="box"><small>Absen</small><b id="done" style="color:var(--primary)">0</b></div>
+<div class="stat"><small>Total</small><div id="tot">0</div></div>
+<div class="stat"><small>Absen</small><div id="hadir">0</div></div>
 </div>
 </header>
 
 <div class="controls">
 <select id="kelas">
 <option value="">Pilih Kelas</option>
-<option>7A</option><option>7B</option><option>7C</option>
-<option>8A</option><option>8B</option>
-<option>9A</option>
+<option>7A</option><option>7B</option><option>7C</option></option>7D</option>
+<option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+<option>9A</option><option>9B</option><option>8C</option><option>8D</option>
 </select>
-<input id="cari" placeholder="Cari santri..." onkeyup="filter()">
+<input id="cari" placeholder="Cari nama...">
 </div>
 
 <div id="list" class="list">
-<p style="text-align:center;color:#94a3b8">Pilih kelas dulu</p>
+<p style="text-align:center;color:#64748b">Pilih kelas</p>
 </div>
 
 <footer>
-<button class="circle" onclick="download()">📥</button>
+<button onclick="download()">📥</button>
 <button class="save" onclick="simpan()">SIMPAN</button>
 </footer>
 
-<!-- 🔊 AUDIO -->
 <audio id="ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-<audio id="dup" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzalHnTb_U4l3yCvJ2yf2E31-nkh29GuKvX5jkUqL-cnV6202XSjZ1_fSm9r0CeCVY4Dg/exec";
+const SCRIPT_URL="PASTE_SCRIPT_URL_KAMU_DI_SINI";
 
-/* 🔊 SOUND */
-const ok=()=>{const a=document.getElementById("ok");a.currentTime=0;a.play()}
-const dup=()=>{const a=document.getElementById("dup");a.currentTime=0;a.play()}
-
-/* NFC AUTO */
+/* ===== NFC AUTO ===== */
 window.onload=()=>{
-const p=new URLSearchParams(location.search)
-let scan=p.get("scan")
-const kelas=p.get("kls")
-if(!scan||!kelas)return
+const p=new URLSearchParams(location.search);
+let scan=p.get('scan'),kls=p.get('kls');
+if(!scan||!kls)return;
+if(scan.includes('http'))scan=new URL(scan).searchParams.get('scan');
 
-if(scan.includes("http")){
-scan=new URL(scan).searchParams.get("scan")
-}
-show("📲 NFC TERDETEKSI");ok()
+document.getElementById('overlay').style.display='flex';
+document.getElementById('ok').play();
 
 fetch(SCRIPT_URL,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify([{kelas,nipd:scan,status:"H",method:"NFC"}])
-})
-.then(r=>r.json())
-.then(r=>{
-if(r.status==="ALREADY"){msg("⚠️ SUDAH ABSEN");dup()}
-else{msg("✅ ABSEN BERHASIL");ok()}
-setTimeout(()=>location.href=location.pathname,700)
-})
-.catch(()=>msg("❌ GAGAL"))
-}
+method:'POST',mode:'no-cors',
+body:JSON.stringify([{kelas:kls,nipd:scan,status:'H'}])
+});
 
-/* LOAD KELAS */
+setTimeout(()=>location.href=location.pathname,1500);
+};
+
+/* ===== LOAD SISWA ===== */
 kelas.onchange=()=>{
-show("Memuat...")
-const s=document.createElement("script")
-s.src=`${SCRIPT_URL}?kelas=${kelas.value}&callback=render`
-document.body.appendChild(s)
-}
+if(!kelas.value)return;
+document.getElementById('overlay').style.display='flex';
+const s=document.createElement('script');
+s.src=`${SCRIPT_URL}?kelas=${kelas.value}&callback=render`;
+document.body.appendChild(s);
+};
 
-/* RENDER */
-function render(d){
-hide()
-list.innerHTML=""
-total.innerText=d.length
-d.forEach(x=>{
+function render(data){
+document.getElementById('overlay').style.display='none';
+list.innerHTML='';
+tot.innerText=data.length;
+data.forEach(x=>{
 list.innerHTML+=`
 <div class="item">
-<div class="info"><b>${x.nama}</b><small>${x.nipd}</small></div>
-<div class="btns" data-n="${x.nipd}" data-nama="${x.nama}">
-<button class="btn" onclick="st(this,'H')">H</button>
-<button class="btn" onclick="st(this,'S')">S</button>
-<button class="btn" onclick="st(this,'I')">I</button>
-<button class="btn" onclick="st(this,'A')">A</button>
-</div></div>`
-})
+<div>
+<b>${x.nama}</b><br><small>${x.nipd}</small>
+</div>
+<div class="btns" data-nipd="${x.nipd}" data-nama="${x.nama}">
+<button onclick="set(this,'H')">H</button>
+<button onclick="set(this,'S')">S</button>
+<button onclick="set(this,'I')">I</button>
+<button onclick="set(this,'A')">A</button>
+</div>
+</div>`;
+});
 }
 
-/* STATUS */
-function st(b,s){
-b.parentElement.querySelectorAll("button").forEach(x=>x.className="btn")
-b.classList.add(s.toLowerCase())
-b.dataset.s=s
-done.innerText=document.querySelectorAll("[data-s]").length
+function set(b,s){
+[...b.parentElement.children].forEach(x=>x.className='');
+b.className=s.toLowerCase();
+b.dataset.s=s;
+hadir.innerText=document.querySelectorAll('[data-s]').length;
 }
 
-/* SIMPAN */
+/* ===== SIMPAN ===== */
 function simpan(){
-const data=[]
-document.querySelectorAll(".btns").forEach(b=>{
-const s=b.querySelector("[data-s]")
-if(s)data.push({kelas:kelas.value,nipd:b.dataset.n,nama:b.dataset.nama,status:s.dataset.s})
-})
-if(!data.length)return alert("Belum ada")
-show("Menyimpan");ok()
-fetch(SCRIPT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)})
-.then(()=>msg("✅ TERSIMPAN"))
+overlay.style.display='flex';
+document.getElementById('ok').play();
+
+const data=[];
+document.querySelectorAll('.btns').forEach(g=>{
+const s=g.querySelector('[data-s]');
+if(s)data.push({
+kelas:kelas.value,
+nipd:g.dataset.nipd,
+nama:g.dataset.nama,
+status:s.dataset.s
+});
+});
+
+fetch(SCRIPT_URL,{
+method:'POST',mode:'no-cors',body:JSON.stringify(data)
+});
+
+setTimeout(()=>location.reload(),1200);
 }
 
-/* UTIL */
-const show=t=>{overlay.style.display="flex";msg(t)}
-const msg=t=>document.getElementById("msg").innerText=t
-const hide=()=>overlay.style.display="none"
-const filter=()=>{
-const v=cari.value.toLowerCase()
-document.querySelectorAll(".item").forEach(i=>{
-i.style.display=i.innerText.toLowerCase().includes(v)?"flex":"none"
-})
+function download(){
+window.open(SCRIPT_URL+'?action=download');
 }
-const download=()=>open(SCRIPT_URL+"?action=download","_blank")
 </script>
 </body>
 </html>
