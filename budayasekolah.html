@@ -12,6 +12,12 @@
         .wadah { width: 100%; max-width: 500px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         header { text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         header h1 { color: var(--primary); font-size: 18px; font-weight: 800; }
+        
+        /* Navigasi Tab */
+        .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 8px; border-radius: 10px; border: none; background: #eee; font-weight: 600; font-size: 12px; cursor: pointer; }
+        .tab-btn.active { background: var(--primary); color: white; }
+
         .form-grup { margin-bottom: 12px; }
         label { font-size: 10px; font-weight: 700; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; }
         select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
@@ -26,6 +32,11 @@
         .area-download { margin-top: 25px; display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; }
         .btn-download { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: 600; font-size: 11px; cursor: pointer; }
         #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
+        
+        /* Tabel Rekap */
+        .rekap-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
+        .rekap-table th, .rekap-table td { border: 1px solid #eee; padding: 8px; text-align: center; }
+        .rekap-table th { background: #f8fafc; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -33,49 +44,70 @@
 <div class="wadah">
     <header><h1>BUDAYA SEKOLAH</h1></header>
 
-    <div class="form-grup">
-        <label>Guru & Mapel</label>
-        <div style="display: flex; gap: 8px;">
-            <select id="guru">
-                <option value="Ibu Riani Rizki Astuti">Ibu Riani</option>
-                <option value="Ustadz Ahmad Fauzi">Ustadz Ahmad</option>
-                <option value="Ustadzah Siti Aminah">Ustadzah Siti</option>
-            </select>
-            <select id="mapel">
-                <option value="BK">BK</option>
-                <option value="PAI">PAI</option>
-                <option value="Tahfidz">Tahfidz</option>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('input')">INPUT NILAI</button>
+        <button class="tab-btn" onclick="switchTab('rekap')">REKAP BULANAN</button>
+    </div>
+
+    <div id="page-input">
+        <div class="form-grup">
+            <label>Guru & Mapel</label>
+            <div style="display: flex; gap: 8px;">
+                <select id="guru">
+                    <option value="Ibu Riani Rizki Astuti">Ibu Riani</option>
+                    <option value="Ustadz Ahmad Fauzi">Ustadz Ahmad</option>
+                    <option value="Ustadzah Siti Aminah">Ustadzah Siti</option>
+                </select>
+                <select id="mapel">
+                    <option value="BK">BK</option>
+                    <option value="PAI">PAI</option>
+                    <option value="Tahfidz">Tahfidz</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grup">
+            <label>Data Santri</label>
+            <div style="display: flex; gap: 8px;">
+                <select id="pilih-kelas" onchange="loadSantri()">
+                    <option value="">-- Kelas --</option>
+                    <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                    <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                    <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+                </select>
+                <select id="pilih-santri">
+                    <option value="">-- Pilih Nama --</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-fast" onclick="semuaBintang4()">⚡ SEMUA SANGAT BAIK (4★)</button>
+
+        <div id="area-aspek">
+            <div class="baris-aspek" data-aspek="Tertib"><div class="judul-aspek">📏 1. TERTIB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+            <div class="baris-aspek" data-aspek="Disiplin"><div class="judul-aspek">⏰ 2. DISIPLIN</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+            <div class="baris-aspek" data-aspek="Tanggung Jawab"><div class="judul-aspek">🔑 3. T. JAWAB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+            <div class="baris-aspek" data-aspek="Jujur"><div class="judul-aspek">🛡️ 4. JUJUR</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+            <div class="baris-aspek" data-aspek="Ramah"><div class="judul-aspek">😊 5. RAMAH</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
+        </div>
+
+        <div id="loading">⏳ Menyimpan 5 Data...</div>
+        <button class="btn-simpan" onclick="simpanKolektif()">💾 SIMPAN SEMUA ASPEK</button>
+    </div>
+
+    <div id="page-rekap" style="display:none;">
+        <div class="form-grup">
+            <label>Pilih Bulan</label>
+            <select id="bulan-rekap">
+                <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
         </div>
+        <button class="btn-simpan" onclick="ambilRekap()">📊 LIHAT REKAP BULANAN</button>
+        <div id="hasil-rekap"></div>
     </div>
-
-    <div class="form-grup">
-        <label>Data Santri</label>
-        <div style="display: flex; gap: 8px;">
-            <select id="pilih-kelas" onchange="loadSantri()">
-                <option value="">-- Kelas --</option>
-                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-            </select>
-            <select id="pilih-santri">
-                <option value="">-- Pilih Nama --</option>
-            </select>
-        </div>
-    </div>
-
-    <button class="btn-fast" onclick="semuaBintang4()">⚡ SEMUA SANGAT BAIK (4★)</button>
-
-    <div id="area-aspek">
-        <div class="baris-aspek" data-aspek="Tertib"><div class="judul-aspek">📏 1. TERTIB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
-        <div class="baris-aspek" data-aspek="Disiplin"><div class="judul-aspek">⏰ 2. DISIPLIN</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
-        <div class="baris-aspek" data-aspek="Tanggung Jawab"><div class="judul-aspek">🔑 3. T. JAWAB</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
-        <div class="baris-aspek" data-aspek="Jujur"><div class="judul-aspek">🛡️ 4. JUJUR</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
-        <div class="baris-aspek" data-aspek="Ramah"><div class="judul-aspek">😊 5. RAMAH</div><div class="rating"><span class="star" onclick="klikStar(this,1)">★</span><span class="star" onclick="klikStar(this,2)">★</span><span class="star" onclick="klikStar(this,3)">★</span><span class="star" onclick="klikStar(this,4)">★</span></div><div class="label-kategori">Belum Dinilai</div></div>
-    </div>
-
-    <div id="loading">⏳ Menyimpan 5 Data...</div>
-    <button class="btn-simpan" onclick="simpanKolektif()">💾 SIMPAN SEMUA ASPEK</button>
 
     <div class="area-download">
         <button class="btn-download" style="background:#e11d48" onclick="unduh('pdf')">📄 PDF REKAP</button>
@@ -86,8 +118,14 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzoXlwGfDW9DFhr9EEccYa7CZ_4TuOcGqhE51o0W0C2Se-FoKA_zC1zGLzU4SNjAmfg/exec";
     const SS_ID = "1M1SizjY7In13bMfjqec9mAHdRtvA38d5Tvg8tKD_1EI";
-    const GID_CETAK = "514667825";
     const kategoriArr = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
+
+    function switchTab(mode) {
+        document.getElementById('page-input').style.display = mode === 'input' ? 'block' : 'none';
+        document.getElementById('page-rekap').style.display = mode === 'rekap' ? 'block' : 'none';
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+    }
 
     function klikStar(el, n) {
         const parent = el.parentElement;
@@ -119,32 +157,41 @@
         } catch(e) { sel.innerHTML = '<option>Gagal!</option>'; }
     }
 
+    async function ambilRekap() {
+        const kelas = document.getElementById('pilih-kelas').value;
+        const bulan = document.getElementById('bulan-rekap').value;
+        if(!kelas) return alert("Pilih kelas dulu!");
+        
+        document.getElementById('hasil-rekap').innerHTML = '<p style="text-align:center; padding:20px;">Memproses data...</p>';
+        
+        const s = document.createElement('script');
+        s.src = `${SCRIPT_URL}?mode=rekapBudaya&kelas=${kelas}&bulan=${bulan}&tahun=2026&callback=renderRekap`;
+        document.body.appendChild(s);
+    }
+
+    window.renderRekap = (res) => {
+        let html = '<table class="rekap-table"><tr><th>Nama</th><th>Rata★</th><th>Input</th></tr>';
+        res.data.forEach(x => {
+            html += `<tr><td>${x.nama}</td><td><b>${x.rata}</b></td><td>${x.total}x</td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('hasil-rekap').innerHTML = html;
+    }
+
     async function simpanKolektif() {
         const s = document.getElementById('pilih-santri');
         const kelas = document.getElementById('pilih-kelas').value;
         const barisAspek = document.querySelectorAll('.baris-aspek');
         
-        // 1. Validasi Nama Santri
-        if(!s.value) {
-            alert("⚠️ Pilih nama santri terlebih dahulu!");
-            return;
-        }
+        if(!s.value) return alert("⚠️ Pilih nama santri terlebih dahulu!");
 
-        // 2. Validasi Semua Aspek (Wajib diisi)
         let semuaTerisi = true;
         barisAspek.forEach(baris => {
-            const nilai = baris.getAttribute('data-nilai');
-            if(!nilai || nilai === "") {
-                semuaTerisi = false;
-            }
+            if(!baris.getAttribute('data-nilai')) semuaTerisi = false;
         });
 
-        if(!semuaTerisi) {
-            alert("⚠️ Gagal! Semua 5 aspek (Tertib s/d Ramah) harus diberi penilaian bintang sebelum simpan.");
-            return; // Berhenti di sini, tidak lanjut ke proses kirim
-        }
+        if(!semuaTerisi) return alert("⚠️ Gagal! Semua 5 aspek harus diberi penilaian bintang.");
 
-        // 3. Jika lolos validasi, baru mulai proses simpan
         document.getElementById('loading').style.display = 'block';
         
         try {
@@ -160,17 +207,12 @@
                     nilai: nilai,
                     guru: document.getElementById('guru').value
                 };
-
-                await fetch(SCRIPT_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify(payload) 
-                });
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             }
             alert("✅ Berhasil Simpan 5 Aspek!");
             location.reload();
         } catch(e) { 
-            alert("❌ Terjadi kesalahan saat menyimpan."); 
+            alert("❌ Gagal menyimpan."); 
         } finally {
             document.getElementById('loading').style.display = 'none';
         }
