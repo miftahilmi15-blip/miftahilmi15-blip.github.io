@@ -175,25 +175,57 @@ document.getElementById('selectAll').onclick = function() {
     updateCount();
 };
 
-// 3. FITUR DOWNLOAD (XLS)
+// 3. FITUR DOWNLOAD LAPORAN ABSENSI (XLS)
 function downloadData() {
     const kelas = document.getElementById('kelas').value;
     if(!kelas) return alert("Pilih kelas dulu!");
     
-    let html = "<table border='1'><tr><th>NIPD</th><th>Nama</th><th>Kelas</th></tr>";
-    document.querySelectorAll('.item').forEach(el => {
-        html += `<tr><td>${el.dataset.nipd}</td><td>${el.dataset.nama}</td><td>${el.dataset.kelas}</td></tr>`;
+    // Ambil tanggal hari ini
+    const tgl = new Date().toLocaleDateString('id-ID', { 
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
     });
+
+    let html = `
+        <table border='1'>
+            <tr><th colspan='4' style='background:#f1f5f9;'>LAPORAN ABSENSI KELAS ${kelas}</th></tr>
+            <tr><th colspan='4'>Tanggal: ${tgl}</th></tr>
+            <tr style='background:#10b981; color:white;'>
+                <th>NIPD</th>
+                <th>Nama Siswa</th>
+                <th>Kelas</th>
+                <th>Status</th>
+            </tr>`;
+
+    let adaData = false;
+    document.querySelectorAll('.item').forEach(el => {
+        const nipd = el.dataset.nipd;
+        const nama = el.dataset.nama;
+        const kls = el.dataset.kelas;
+        // Ambil status dari tombol yang aktif
+        const s = el.querySelector('[data-status]');
+        const status = s ? s.dataset.status : "-"; // Jika belum diisi tampilkan "-"
+
+        html += `<tr>
+            <td>${nipd}</td>
+            <td>${nama}</td>
+            <td>${kls}</td>
+            <td style='text-align:center;'><b>${status}</b></td>
+        </tr>`;
+        adaData = true;
+    });
+
+    if(!adaData) return alert("Tidak ada data untuk diunduh!");
+
     html += "</table>";
 
+    // Proses Download
     const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Daftar_Siswa_${kelas}.xls`;
+    a.download = `Absensi_${kelas}_${new Date().toLocaleDateString('id-ID')}.xls`;
     a.click();
 }
-
 // 4. SIMPAN DATA
 async function simpan() {
     const kirim = [];
