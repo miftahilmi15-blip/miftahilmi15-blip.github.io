@@ -33,23 +33,15 @@
 <header>
     <h2 style="color:var(--primary)">🟢 E-SANTRI PRO</h2>
     <div class="controls">
- <select id="kelas">
-    <option value="">-- Pilih Kelas --</option>
-    <option value="7A">Kelas 7A</option>
-    <option value="7B">Kelas 7B</option>
-    <option value="7C">Kelas 7C</option>
-    <option value="7D">Kelas 7D</option>
-    
-    <option value="8A">Kelas 8A</option>
-    <option value="8B">Kelas 8B</option>
-    <option value="8C">Kelas 8C</option>
-    <option value="8D">Kelas 8D</option>
-    
-    <option value="9A">Kelas 9A</option>
-    <option value="9B">Kelas 9B</option>
-    <option value="9C">Kelas 9C</option>
-    <option value="9D">Kelas 9D</option>
-</select>
+        <select id="kelas">
+            <option value="">-- Pilih Kelas --</option>
+            <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option>
+            <option value="7C">Kelas 7C</option><option value="7D">Kelas 7D</option>
+            <option value="8A">Kelas 8A</option><option value="8B">Kelas 8B</option>
+            <option value="8C">Kelas 8C</option><option value="8D">Kelas 8D</option>
+            <option value="9A">Kelas 9A</option><option value="9B">Kelas 9B</option>
+            <option value="9C">Kelas 9C</option><option value="9D">Kelas 9D</option>
+        </select>
         <input id="scan" placeholder="Ketik NIPD / Scan Kartu..." autofocus>
     </div>
 </header>
@@ -57,26 +49,32 @@
 <div id="list" class="list"></div>
 
 <div class="footer">
-    <input type="checkbox" id="selectAll" style="width:20px; height:20px;"> <label>Semua</label>
+    <input type="checkbox" id="selectAll" style="width:20px; height:20px;"> <label for="selectAll">Semua</label>
     <button onclick="simpan()" style="flex:1; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-weight:bold;">SIMPAN ABSENSI</button>
 </div>
 
 <audio id="snd_ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
 <script>
-// GANTI URL DI BAWAH INI DENGAN URL DEPLOYMENT ANDA
+// URL WEB APP DARI GOOGLE APPS SCRIPT
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby24AOA1v7cB6g2oL6rbLOh3Ijhn-9dZdrRu5hdF1NrnL3VoBp4BSPsn71HL-h_4qpMCA/exec";
 
 const kelasSelect = document.getElementById('kelas');
 const list = document.getElementById('list');
 const overlay = document.getElementById('overlay');
+const loadingText = document.getElementById('loadingText');
 const scanInput = document.getElementById('scan');
 
-// 1. FUNGSI LOAD DATA (PASTI JALAN)
+// Fungsi pembantu untuk menampilkan loading
+function showLoading(text) {
+    loadingText.innerText = text;
+    overlay.style.display = 'flex';
+}
+
+// 1. FUNGSI LOAD DATA
 kelasSelect.onchange = () => {
     if(!kelasSelect.value) return;
-    overlay.style.display = 'flex';
-    document.getElementById('loadingText').innerText = "Memuat Siswa...";
+    showLoading("Memuat Siswa...");
     
     const oldScript = document.getElementById('jsonp');
     if(oldScript) oldScript.remove();
@@ -126,7 +124,7 @@ document.getElementById('selectAll').onclick = function() {
     document.querySelectorAll('.multi').forEach(c => c.checked = this.checked);
 };
 
-// 2. FUNGSI SIMPAN
+// 2. FUNGSI SIMPAN MANUAL
 async function simpan() {
     const kirim = [];
     document.querySelectorAll('.item').forEach(el => {
@@ -145,8 +143,7 @@ async function simpan() {
 
     if(!kirim.length) return alert("Pilih siswa & status!");
     
-    overlay.style.display = 'flex';
-    document.getElementById('loadingText').innerText = "Menyimpan...";
+    showLoading("Menyimpan...");
 
     await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(kirim) });
     document.getElementById('snd_ok').play();
@@ -154,10 +151,10 @@ async function simpan() {
     location.reload();
 }
 
-// 3. FUNGSI SCAN (AUTO)
+// 3. FUNGSI SCAN (KEYBOARD/ENTER)
 scanInput.onkeydown = async (e) => {
     if(e.key === 'Enter' && scanInput.value && kelasSelect.value) {
-        overlay.style.display = 'flex';
+        showLoading("Menyimpan Absen...");
         const dataScan = [{
             nipd: scanInput.value,
             nama: "Scan Otomatis",
@@ -172,7 +169,8 @@ scanInput.onkeydown = async (e) => {
         alert("Scan Berhasil!");
     }
 };
-   // Tambahkan ini di paling bawah skrip HTML Anda
+
+// 4. FUNGSI OTOMATIS (UNTUK MACRODROID/NFC)
 window.onload = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const scanId = urlParams.get('scan');
@@ -193,15 +191,15 @@ window.onload = () => {
             }])
         }).then(() => {
             document.getElementById('snd_ok').play();
+            // Alert opsional, jika ingin otomatis tanpa klik OK, bisa dihapus line alert bawah ini
             alert("✅ ABSEN BERHASIL: " + scanId);
-            // Kembali ke halaman utama atau tutup jika perlu
         }).catch(() => {
             alert("❌ GAGAL MENGIRIM");
         }).finally(() => {
             overlay.style.display = 'none';
         });
     }
-}; 
+};
 </script>
 </body>
 </html>
