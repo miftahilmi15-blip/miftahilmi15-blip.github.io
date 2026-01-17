@@ -3,222 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Imperial Zen Pond</title>
+<title>E-SANTRI | Zen Experience</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
   :root {
-    --sage-bg: #d4e9e2;
     --sage-dark: #1b4d3e;
-    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.2);
+    --glass-border: rgba(255, 255, 255, 0.4);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-  body { 
-    background: var(--sage-bg); height: 100vh; overflow: hidden; position: relative;
-    background-image: radial-gradient(circle at center, #ffffff 0%, #d4e9e2 100%);
-  }
-
-  /* --- IKAN KOI REALISTIK (TOP VIEW) --- */
-  .koi-fish {
-    position: absolute; width: 110px; height: auto; z-index: 2;
-    pointer-events: none; transition: all 4s cubic-bezier(0.45, 0.05, 0.55, 0.95);
-    filter: drop-shadow(15px 25px 12px rgba(0,0,0,0.15));
-  }
-
-  /* --- MAKANAN IKAN (PELET) --- */
-  .pellet {
-    position: absolute; width: 8px; height: 8px; background: #8d6e63;
-    border-radius: 50%; z-index: 1; pointer-events: none;
-    animation: sink 2s forwards;
-  }
-  @keyframes sink { to { transform: translateY(20px); opacity: 0; } }
-
-  /* --- UI DASHBOARD SAGE GREEN --- */
-  .ui-wrapper { position: relative; z-index: 10; height: 100vh; padding: 25px; display: flex; flex-direction: column; }
   
-  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .logo-text { font-family: 'Montserrat'; color: var(--sage-dark); letter-spacing: 4px; font-size: 20px; }
-  
-  .nav-trigger { 
-    width: 45px; height: 45px; background: var(--white); border-radius: 12px; 
-    display: flex; align-items: center; justify-content: center; 
-    cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.05); color: var(--sage-dark);
+  /* VIDEO BACKGROUND - ANTI 404 */
+  #video-bg {
+    position: fixed; right: 0; bottom: 0;
+    min-width: 100%; min-height: 100%;
+    z-index: -1; object-fit: cover; filter: brightness(0.9);
   }
 
-  /* STREAK CARD MEWAH */
-  .streak-card {
-    background: var(--white); border-radius: 20px; padding: 15px 20px;
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px;
-    border-left: 5px solid var(--sage-dark);
+  body { background: #000; height: 100vh; overflow: hidden; }
+
+  /* UI LAYER - PALING ATAS */
+  .ui-container {
+    position: relative; z-index: 100; height: 100vh;
+    display: flex; flex-direction: column; padding: 20px;
+    background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.1) 100%);
   }
 
-  /* LOGO TENGAH (PUSH-CENTER) */
-  .center-identity {
-    position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
-    width: 140px; height: 140px; background: rgba(255,255,255,0.3);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border-radius: 50%; border: 1px solid rgba(255,255,255,0.4);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 5; pointer-events: none;
+  /* PROFIL & STREAK (ANTI TABRAK) */
+  header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    z-index: 1000;
   }
-  .center-identity i { font-size: 35px; color: var(--sage-dark); opacity: 0.7; }
-  .center-identity span { font-family: 'Montserrat'; font-size: 13px; color: var(--sage-dark); letter-spacing: 2px; margin-top: 5px; }
 
-  /* MENU BATU LONCATAN (NATURAL POSITION) */
-  .stone-btn {
-    position: absolute; background: var(--white); width: 85px; height: 85px;
+  .profile-section {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--glass); backdrop-filter: blur(10px);
+    padding: 8px 15px; border-radius: 50px; border: 1px solid var(--glass-border);
+  }
+  .profile-section img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; }
+  .profile-section div h4 { color: white; font-size: 14px; font-weight: 600; }
+  .profile-section div p { color: rgba(255,255,255,0.8); font-size: 10px; }
+
+  .streak-box {
+    background: var(--glass); backdrop-filter: blur(10px);
+    padding: 10px 20px; border-radius: 20px; text-align: right;
+    border: 1px solid var(--glass-border);
+  }
+  .streak-box span { color: white; font-size: 10px; font-weight: 700; display: block; }
+  .streak-box h3 { color: #ffd700; font-size: 18px; }
+
+  /* TITIK TIGA (ENGSEL BAJA) */
+  .nav-dots {
+    width: 45px; height: 45px; background: white; border-radius: 15px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--sage-dark); font-size: 20px;
+    margin-top: 15px; float: right; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+
+  /* MENU BATU LONCATAN (IKON VEKTOR) */
+  .stone-menu {
+    position: relative; flex-grow: 1; margin-top: 50px;
+  }
+  .stone {
+    position: absolute; background: white; width: 85px; height: 85px;
     border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06); cursor: pointer; transition: 0.3s;
-    border: 1px solid rgba(255,255,255,0.8); z-index: 8;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; transition: 0.3s;
   }
-  .stone-btn:active { transform: scale(0.9) translateY(5px); }
-  .stone-btn i { font-size: 22px; color: var(--sage-dark); margin-bottom: 5px; }
-  .stone-btn span { font-size: 9px; font-weight: 700; color: var(--sage-dark); letter-spacing: 0.5px; }
+  .stone:active { transform: scale(0.9); }
+  .stone i { font-size: 22px; color: var(--sage-dark); margin-bottom: 5px; }
+  .stone span { font-size: 9px; font-weight: 800; color: var(--sage-dark); }
 
-  /* PENEMPATAN BATU NATURAL */
-  #btn-absensi { top: 18%; left: 8%; }
-  #btn-tahfidz { top: 12%; right: 15%; }
-  #btn-quran   { bottom: 38%; left: 12%; }
-  #btn-aduan   { bottom: 30%; right: 10%; }
-  #btn-kamus   { bottom: 12%; left: 28%; }
-  #btn-perpus  { bottom: 10%; right: 25%; }
+  /* POSISI BATU NATURAL */
+  #s1 { top: 5%; left: 5%; }
+  #s2 { top: 10%; right: 10%; }
+  #s3 { top: 40%; left: 35%; width: 100px; height: 100px; } /* Quran Utama */
+  #s4 { bottom: 20%; left: 5%; }
+  #s5 { bottom: 15%; right: 5%; }
+  #s6 { bottom: 35%; right: 25%; }
 
-  /* SIDEBAR CANGGIH */
+  /* SIDEBAR */
   .sidebar {
     position: fixed; top: 0; right: -100%; width: 80%; height: 100%;
-    background: var(--white); z-index: 1000; padding: 40px 25px;
-    transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1); border-radius: 30px 0 0 30px;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
+    z-index: 2000; padding: 50px 30px; transition: 0.5s; border-radius: 30px 0 0 30px;
   }
-  .sidebar.open { right: 0; box-shadow: -20px 0 50px rgba(0,0,0,0.15); }
-  .sidebar a { display: flex; align-items: center; padding: 18px; color: #333; text-decoration: none; border-bottom: 1px solid #f9f9f9; font-size: 14px; }
-  .sidebar i { width: 35px; color: var(--sage-dark); font-size: 18px; }
-  
-  .dimmer { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(5px); z-index: 999; }
+  .sidebar.open { right: 0; }
+  .sidebar a { display: flex; align-items: center; padding: 15px 0; color: #333; text-decoration: none; border-bottom: 1px solid #eee; }
+  .sidebar i { margin-right: 15px; color: var(--sage-dark); }
 
-  /* MAHFUZAT FOOTER */
-  .footer-scroll { margin-top: auto; background: var(--sage-dark); border-radius: 50px; padding: 12px; overflow: hidden; }
-  .text-move { display: inline-block; color: white; font-size: 12px; white-space: nowrap; animation: linearMove 20s linear infinite; }
-  @keyframes linearMove { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 </style>
 </head>
-<body onclick="feedFish(event)">
+<body>
 
-<div class="dimmer" id="dimmer"></div>
+  <video autoplay muted loop id="video-bg" playsinline>
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-fish-swimming-in-a-clear-pond-41311-large.mp4" type="video/mp4">
+  </video>
 
-<div class="ui-wrapper">
-  <header>
-    <div class="logo-text">E-SANTRI</div>
-    <div class="nav-trigger" id="menuOpen"><i class="fa-solid fa-ellipsis-v"></i></div>
-  </header>
+  <div class="ui-container">
+    <header>
+      <div class="profile-section">
+        <img src="https://ui-avatars.com/api/?name=Santri+Soleh&background=1b4d3e&color=fff" alt="User">
+        <div>
+          <h4>Ahmad Zaki</h4>
+          <p>Santri Aktif • Kelas 10</p>
+        </div>
+      </div>
 
-  <div class="streak-card">
-    <div>
-      <p style="font-size: 9px; font-weight: 700; color: #aaa;">QURAN STREAK</p>
-      <h3 style="color: var(--sage-dark); font-size: 20px;">12 Hari ✨</h3>
+      <div class="streak-box">
+        <span>QURAN STREAK</span>
+        <h3>12 Hari ✨</h3>
+      </div>
+    </header>
+
+    <div class="nav-dots" onclick="toggleSidebar()"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+
+    <div class="stone-menu">
+      <div class="stone" id="s1"><i class="fa-solid fa-fingerprint"></i><span>ABSENSI</span></div>
+      <div class="stone" id="s2"><i class="fa-solid fa-medal"></i><span>TAHFIDZ</span></div>
+      <div class="stone" id="s3" onclick="alert('Membuka Quran...')"><i class="fa-solid fa-book-quran"></i><span>AL-QURAN</span></div>
+      <div class="stone" id="s4"><i class="fa-solid fa-shield-heart"></i><span>ADUAN</span></div>
+      <div class="stone" id="s5"><i class="fa-solid fa-language"></i><span>KAMUS</span></div>
+      <div class="stone" id="s6"><i class="fa-solid fa-book-bookmark"></i><span>PERPUS</span></div>
     </div>
-    <div style="text-align: right;">
-      <p style="font-size: 9px; font-weight: 700; color: #aaa;">KOI COLLECTION</p>
-      <h3 style="color: var(--sage-dark);">5 Ekor</h3>
-    </div>
   </div>
 
-  <div class="center-identity">
-    <i class="fa-solid fa-kaaba"></i>
-    <span>DAREEL</span>
+  <div class="sidebar" id="sidebar">
+    <h3 style="margin-bottom: 20px;">Menu Utama</h3>
+    <a href="#"><i class="fa-solid fa-calendar"></i> Kalender</a>
+    <a href="#"><i class="fa-solid fa-clock"></i> Waktu Sholat</a>
+    <a href="#"><i class="fa-solid fa-user-gear"></i> Pengaturan</a>
+    <a href="#" style="color:red; margin-top:20px;" onclick="location.reload()"><i class="fa-solid fa-power-off"></i> Logout</a>
   </div>
 
-  <div class="stone-btn" id="btn-absensi" onclick="event.stopPropagation(); location.href='absensi.html'"><i class="fa-solid fa-fingerprint"></i><span>ABSENSI</span></div>
-  <div class="stone-btn" id="btn-tahfidz" onclick="event.stopPropagation(); location.href='tahfidz.html'"><i class="fa-solid fa-award"></i><span>TAHFIDZ</span></div>
-  <div class="stone-btn" id="btn-quran"   onclick="event.stopPropagation(); location.href='quran.html'"><i class="fa-solid fa-book-quran"></i><span>AL-QURAN</span></div>
-  <div class="stone-btn" id="btn-aduan"   onclick="event.stopPropagation(); location.href='pengaduan.html'"><i class="fa-solid fa-shield-halal"></i><span>ADUAN</span></div>
-  <div class="stone-btn" id="btn-kamus"   onclick="event.stopPropagation(); location.href='kamus.html'"><i class="fa-solid fa-language"></i><span>KAMUS</span></div>
-  <div class="stone-btn" id="btn-perpus"  onclick="event.stopPropagation(); location.href='perpus.html'"><i class="fa-solid fa-book-open-reader"></i><span>PERPUS</span></div>
-
-  <div class="footer-scroll">
-    <div class="text-move">مَنْ جَدَّ وَجَدَ — Barangsiapa bersungguh-sungguh maka ia akan berhasil. — مَنْ صَبَرَ ظَفِرَ — Barangsiapa bersabar maka ia akan beruntung.</div>
-  </div>
-</div>
-
-<div class="sidebar" id="sidebar">
-  <div style="text-align: center; margin-bottom: 30px;">
-    <div style="width: 70px; height: 70px; background: var(--sage-bg); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 30px; color: var(--sage-dark);">👤</div>
-    <h3 style="color: var(--sage-dark);">Ustadz Dareel</h3>
-  </div>
-  <a href="#"><i class="fa-solid fa-calendar-check"></i> Kalender Pendidikan</a>
-  <a href="#"><i class="fa-solid fa-mosque"></i> Jadwal Sholat</a>
-  <a href="#"><i class="fa-solid fa-gear"></i> Pengaturan Akun</a>
-  <a href="#" style="color: #d32f2f; margin-top: 30px;"><i class="fa-solid fa-door-open"></i> Logout</a>
-</div>
-
-<audio id="waterBG" loop src="https://assets.mixkit.co/active_storage/sfx/1118/1118-preview.mp3"></audio>
-
-<script>
-  const fishes = [];
-  const koiPNGs = [
-    'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-Transparent-Background.png', // Kohaku
-    'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-PNG-HD-Quality.png' // Sanke
-  ];
-
-  function initPond() {
-    for(let i=0; i<5; i++) {
-      const f = document.createElement('img');
-      f.src = koiPNGs[i % 2];
-      f.className = 'koi-fish';
-      f.x = Math.random() * 80; f.y = Math.random() * 80;
-      f.style.left = f.x + 'vw'; f.style.top = f.y + 'vh';
-      document.body.appendChild(f);
-      fishes.push({ el: f, x: f.x, y: f.y, angle: Math.random() * 360 });
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
     }
-    moveKoi();
-  }
-
-  function moveKoi(targetX = null, targetY = null) {
-    fishes.forEach((f, index) => {
-      const nx = targetX !== null ? targetX + (Math.random()*10 - 5) : Math.random() * 85;
-      const ny = targetY !== null ? targetY + (Math.random()*10 - 5) : Math.random() * 85;
-      
-      const distAngle = Math.atan2(ny - f.y, nx - f.x) * 180 / Math.PI;
-      f.el.style.left = nx + 'vw';
-      f.el.style.top = ny + 'vh';
-      f.el.style.transform = `rotate(${distAngle + 90}deg)`;
-      
-      f.x = nx; f.y = ny;
-    });
-    if(!targetX) setTimeout(moveKoi, 6000);
-  }
-
-  function feedFish(e) {
-    // Mulai musik kalau belum jalan
-    const bgm = document.getElementById('waterBG');
-    bgm.play().catch(() => {});
-
-    // Buat Pelet
-    const p = document.createElement('div');
-    p.className = 'pellet';
-    p.style.left = e.clientX + 'px';
-    p.style.top = e.clientY + 'px';
-    document.body.appendChild(p);
-    
-    // Ikan berebut ke arah makanan
-    const clickX = (e.clientX / window.innerWidth) * 100;
-    const clickY = (e.clientY / window.innerHeight) * 100;
-    moveKoi(clickX, clickY);
-
-    setTimeout(() => { p.remove(); }, 2000);
-  }
-
-  // Sidebar Logic
-  const menuBtn = document.getElementById('menuOpen');
-  const sb = document.getElementById('sidebar');
-  const dim = document.getElementById('dimmer');
-
-  menuBtn.onclick = (e) => { e.stopPropagation(); sb.classList.add('open'); dim.style.display = 'block'; }
-  dim.onclick = () => { sb.classList.remove('open'); dim.style.display = 'none'; }
-
-  window.onload = initPond;
-</script>
+  </script>
 </body>
 </html>
