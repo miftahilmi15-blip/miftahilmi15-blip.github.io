@@ -3,62 +3,60 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>E-SANTRI ABSENSI | Firebase Pro</title>
+    <title>E-SANTRI ABSENSI v9</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #10b981; --primary-dark: #059669; --bg: #f1f5f9; --white: #ffffff; --text: #0f172a; }
+        :root { --primary: #10b981; --bg: #f1f5f9; --white: #ffffff; --text: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); padding-bottom: 120px; }
         
         header { background: var(--white); padding: 20px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .brand { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; text-align: center; }
         
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; background: #f1f5f9; padding: 5px; border-radius: 12px; }
-        .nav-tabs button { flex: 1; padding: 10px; border-radius: 8px; border: none; background: transparent; cursor: pointer; font-weight: bold; color: #64748b; transition: 0.3s; }
-        .nav-tabs button.active { background: var(--primary); color: white; }
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 15px; background: #eee; padding: 4px; border-radius: 10px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; color: #666; }
+        .tab-btn.active { background: var(--primary); color: white; }
 
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.9rem; outline: none; }
+        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.9rem; }
         
-        .toolbar { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; padding-bottom: 5px; }
-        .btn-tool { padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
-
+        /* List Siswa */
         .list { padding: 15px; display: grid; gap: 12px; }
-        .item { background: var(--white); padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .student-info { display: flex; justify-content: space-between; align-items: flex-start; }
-        .student-info b { font-size: 1rem; color: #1e293b; display: block; }
+        .item { background: var(--white); padding: 15px; border-radius: 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .student-info { display: flex; justify-content: space-between; align-items: center; }
+        .student-info b { font-size: 0.95rem; text-transform: capitalize; }
 
+        /* Status Buttons */
         .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .status-grid button { padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9; background: #f8fafc; font-weight: 700; color: #64748b; cursor: pointer; }
         
-        /* Warna Aktif */
         .h-active { background: #dcfce7 !important; color: #15803d !important; border-color: #22c55e !important; }
         .s-active { background: #fef9c3 !important; color: #a16207 !important; border-color: #eab308 !important; }
         .i-active { background: #dbeafe !important; color: #1d4ed8 !important; border-color: #3b82f6 !important; }
         .a-active { background: #fee2e2 !important; color: #b91c1c !important; border-color: #ef4444 !important; }
 
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); padding: 15px 20px; border-top: 1px solid #e2e8f0; z-index: 1000; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: var(--white); padding: 15px 20px; border-top: 1px solid #e2e8f0; }
         .btn-save { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 1rem; cursor: pointer; }
 
-        #overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 2000; }
-        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        #overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 2000; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        table { width: 100%; border-collapse: collapse; background: white; font-size: 0.8rem; }
-        th, td { padding: 8px; text-align: center; border: 1px solid #eee; }
-        th { background: #f8fafc; position: sticky; top: 0; }
+        table { width: 100%; border-collapse: collapse; background: white; font-size: 0.8rem; margin-top: 10px; }
+        th, td { padding: 10px; text-align: center; border: 1px solid #eee; }
+        th { background: #f8fafc; }
     </style>
 </head>
 <body>
 
-<div id="overlay"><div class="spinner"></div><p id="loadingText">Proses...</p></div>
+<div id="overlay"><div class="spinner"></div><p style="margin-top:10px">Mohon Tunggu...</p></div>
 
 <header>
-    <div class="brand">🟢 E-SANTRI ABSEN</div>
+    <div class="brand">🟢 E-SANTRI ABSENSI</div>
     <div class="nav-tabs">
-        <button id="tabAbsen" class="active" onclick="switchMenu('absen')">Absensi</button>
-        <button id="tabRekap" onclick="switchMenu('rekap')">Rekap Bulanan</button>
+        <button id="tabAbsen" class="tab-btn active" onclick="switchMenu('absen')">INPUT ABSEN</button>
+        <button id="tabRekap" class="tab-btn" onclick="switchMenu('rekap')">LIHAT REKAP</button>
     </div>
 
     <div id="filterAbsen">
@@ -71,46 +69,42 @@
             </select>
             <input type="date" id="tgl-absen">
         </div>
-        <div class="toolbar">
-            <button class="btn-tool" onclick="setSemua('H')">✅ Hadir Semua</button>
-            <button class="btn-tool" onclick="exportExcel()">📥 Download Excel</button>
-        </div>
+        <button onclick="setSemua('H')" style="width:100%; margin-top:10px; padding:8px; border-radius:8px; border:1px dashed var(--primary); color:var(--primary); font-weight:700; background:none; cursor:pointer">✅ HADIRKAN SEMUA ANAK</button>
     </div>
 
     <div id="filterRekap" style="display:none;">
         <div class="controls">
+            <select id="mode-rekap">
+                <option value="harian">Rekap Harian</option>
+                <option value="bulanan">Rekap Bulanan</option>
+            </select>
             <select id="bulan-rekap">
                 <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
                 <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
                 <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
                 <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
-            <button onclick="prosesRekap()" style="background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">Lihat Rekap</button>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:10px">
+            <button onclick="prosesRekap()" style="flex:2; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📊 TAMPILKAN</button>
+            <button onclick="exportExcel()" style="flex:1; padding:12px; background:#107c41; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📥 EXCEL</button>
         </div>
     </div>
 </header>
 
 <div id="areaAbsen">
-    <div id="list-siswa" class="list">
-        <p style="text-align:center; padding:50px; color:#64748b;">Silakan pilih kelas...</p>
-    </div>
-    <div class="footer">
-        <button onclick="simpanKeFirebase()" class="btn-save">SIMPAN KE FIREBASE</button>
-    </div>
+    <div id="list-siswa" class="list"><p style="text-align:center; padding:30px; color:#999;">Pilih kelas untuk memulai...</p></div>
+    <div class="footer"><button onclick="simpanKeFirebase()" class="btn-save">SIMPAN ABSENSI</button></div>
 </div>
 
 <div id="areaRekap" style="display:none; padding:15px;">
-    <div style="overflow-x: auto; background:white; border-radius:12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);" id="wadah-tabel">
-        <p style="text-align:center; padding:30px; color:#64748b;">Pilih bulan dan kelas lalu klik Lihat Rekap</p>
-    </div>
+    <div id="wadah-tabel" style="overflow-x:auto; background:white; border-radius:12px;"></div>
 </div>
 
 <script>
-// KONFIGURASI
 const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
-// SET TANGGAL HARI INI
 document.getElementById('tgl-absen').valueAsDate = new Date();
 
 function switchMenu(m) {
@@ -122,53 +116,32 @@ function switchMenu(m) {
     document.getElementById('tabRekap').classList.toggle('active', m === 'rekap');
 }
 
-// 1. MUAT SISWA DARI GOOGLE SHEET
 async function muatSiswa() {
     const kls = document.getElementById('pilih-kelas').value;
     if(!kls) return;
     document.getElementById('overlay').style.display = 'flex';
-    
-    try {
-        const response = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-        const data = await response.json();
-        renderSiswa(data);
-    } catch (e) {
-        alert("Gagal mengambil data siswa");
-    } finally {
-        document.getElementById('overlay').style.display = 'none';
-    }
-}
-
-function renderSiswa(data) {
+    const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+    const data = await res.json();
     const container = document.getElementById('list-siswa');
     container.innerHTML = "";
     data.forEach(s => {
         const div = document.createElement('div');
         div.className = 'item';
-        div.dataset.nipd = s.nipd;
-        div.dataset.nama = s.nama;
-        div.innerHTML = `
-            <div class="student-info">
-                <div><b>${s.nama}</b><small>${s.nipd}</small></div>
-                <input type="checkbox" class="chk-pilih" style="width:20px; height:20px;">
-            </div>
-            <div class="status-grid">
-                <button onclick="pilihStatus(this,'H')">H</button>
-                <button onclick="pilihStatus(this,'S')">S</button>
-                <button onclick="pilihStatus(this,'I')">I</button>
-                <button onclick="pilihStatus(this,'A')">A</button>
-            </div>
-        `;
+        div.dataset.nipd = s.nipd; div.dataset.nama = s.nama;
+        div.innerHTML = `<div class="student-info"><b>${s.nama.toLowerCase()}</b><input type="checkbox" class="chk-pilih"></div>
+            <div class="status-grid" data-pilihan="">
+                <button onclick="pilihStatus(this,'H')">H</button><button onclick="pilihStatus(this,'S')">S</button>
+                <button onclick="pilihStatus(this,'I')">I</button><button onclick="pilihStatus(this,'A')">A</button>
+            </div>`;
         container.appendChild(div);
     });
+    document.getElementById('overlay').style.display = 'none';
 }
 
 function pilihStatus(btn, stat) {
-    const parent = btn.parentElement;
-    [...parent.children].forEach(b => b.className = ""); // Reset warna
-    btn.className = stat.toLowerCase() + "-active"; // Set warna aktif
-    parent.dataset.pilihan = stat;
-    // Otomatis centang checkbox saat status dipilih
+    [...btn.parentElement.children].forEach(b => b.className = "");
+    btn.className = stat.toLowerCase() + "-active";
+    btn.parentElement.dataset.pilihan = stat;
     btn.closest('.item').querySelector('.chk-pilih').checked = true;
 }
 
@@ -179,112 +152,79 @@ function setSemua(stat) {
     });
 }
 
-// 2. SIMPAN KE FIREBASE
 async function simpanKeFirebase() {
     const items = document.querySelectorAll('.item');
-    const tglFull = document.getElementById('tgl-absen').value; // Format: YYYY-MM-DD
+    const tglFull = document.getElementById('tgl-absen').value;
     if(!tglFull) return alert("Pilih tanggal!");
-
     const [thn, bln, tgl] = tglFull.split("-");
     const kls = document.getElementById('pilih-kelas').value;
     
     const dataKirim = {};
-    let adaData = false;
-
+    let ada = false;
     items.forEach(el => {
         const status = el.querySelector('.status-grid').dataset.pilihan;
-        const terpilih = el.querySelector('.chk-pilih').checked;
-        if(status && terpilih) {
-            dataKirim[el.dataset.nipd] = {
-                nama: el.dataset.nama,
-                status: status,
-                waktu: new Date().toLocaleTimeString()
-            };
-            adaData = true;
+        if(status && el.querySelector('.chk-pilih').checked) {
+            dataKirim[el.dataset.nipd] = { nama: el.dataset.nama, status: status };
+            ada = true;
         }
     });
 
-    if(!adaData) return alert("Pilih siswa dan statusnya!");
-
+    if(!ada) return alert("Belum ada santri yang diabsen!");
     document.getElementById('overlay').style.display = 'flex';
-    try {
-        // Path: /absensi/2026/1/20/7A
-        await fetch(`${FIREBASE_URL}/absensi/${thn}/${parseInt(bln)}/${parseInt(tgl)}/${kls}.json`, {
-            method: 'PUT',
-            body: JSON.stringify(dataKirim)
-        });
-        alert("Absensi Berhasil Disimpan ke Firebase!");
-    } catch (e) {
-        alert("Gagal menyimpan ke Firebase");
-    } finally {
-        document.getElementById('overlay').style.display = 'none';
-    }
+    await fetch(`${FIREBASE_URL}/absensi/${thn}/${parseInt(bln)}/${parseInt(tgl)}/${kls}.json`, { method: 'PUT', body: JSON.stringify(dataKirim) });
+    alert("Berhasil Disimpan!");
+    location.reload(); // AUTO REFRESH
 }
 
-// 3. REKAP BULANAN DARI FIREBASE
 async function prosesRekap() {
+    const mode = document.getElementById('mode-rekap').value;
     const kls = document.getElementById('pilih-kelas').value;
     const bln = document.getElementById('bulan-rekap').value;
-    if(!kls) return alert("Pilih kelas dulu di tab Absensi!");
+    const tglPilih = document.getElementById('tgl-absen').value;
+    if(!kls) return alert("Pilih kelas dulu!");
 
     document.getElementById('overlay').style.display = 'flex';
-    
-    try {
-        // Ambil data satu bulan penuh untuk tahun 2026
+    const resSiswa = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+    const daftarSiswa = await resSiswa.json();
+    let rekap = {};
+    daftarSiswa.forEach(s => rekap[s.nipd] = { nama: s.nama, H:0, S:0, I:0, A:0, statusHarian: '-' });
+
+    if(mode === 'harian') {
+        const [y, m, d] = tglPilih.split("-");
+        const res = await fetch(`${FIREBASE_URL}/absensi/${y}/${parseInt(m)}/${parseInt(d)}/${kls}.json`);
+        const data = await res.json() || {};
+        Object.keys(data).forEach(id => { if(rekap[id]) rekap[id].statusHarian = data[id].status; });
+        renderTabel(rekap, 'harian');
+    } else {
         const res = await fetch(`${FIREBASE_URL}/absensi/2026/${bln}.json`);
-        const dataBulan = await res.json();
-        
-        // Ambil daftar siswa asli agar nama yang tidak absen tetap muncul
-        const resSiswa = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-        const daftarSiswa = await resSiswa.json();
-
-        let rekap = {};
-        daftarSiswa.forEach(s => {
-            rekap[s.nipd] = { nama: s.nama, H: 0, S: 0, I: 0, A: 0 };
+        const dataBulan = await res.json() || {};
+        Object.keys(dataBulan).forEach(tgl => {
+            const dataKelas = dataBulan[tgl][kls];
+            if(dataKelas) Object.keys(dataKelas).forEach(id => { if(rekap[id]) rekap[id][dataKelas[id].status]++; });
         });
-
-        if(dataBulan) {
-            // Iterasi Tanggal (dataBulan[tanggal][kelas][nipd])
-            Object.keys(dataBulan).forEach(tgl => {
-                const dataKelas = dataBulan[tgl][kls];
-                if(dataKelas) {
-                    Object.keys(dataKelas).forEach(nipd => {
-                        const s = dataKelas[nipd];
-                        if(rekap[nipd]) rekap[nipd][s.status]++;
-                    });
-                }
-            });
-        }
-
-        renderTabelRekap(rekap);
-    } catch (e) {
-        console.error(e);
-        alert("Gagal memproses rekap");
-    } finally {
-        document.getElementById('overlay').style.display = 'none';
+        renderTabel(rekap, 'bulanan');
     }
+    document.getElementById('overlay').style.display = 'none';
 }
 
-function renderTabelRekap(rekap) {
-    let html = `<table id="tabel-download"><thead><tr><th>Nama Santri</th><th>H</th><th>S</th><th>I</th><th>A</th></tr></thead><tbody>`;
+function renderTabel(rekap, tipe) {
+    let html = `<table id="tabel-data"><thead><tr><th>Nama</th>${tipe==='harian'?'<th>Status</th>':'<th>H</th><th>S</th><th>I</th><th>A</th>'}</tr></thead><tbody>`;
     Object.values(rekap).forEach(r => {
-        html += `<tr>
-            <td style="text-align:left">${r.nama}</td>
-            <td style="color:green; font-weight:bold">${r.H}</td>
-            <td style="color:orange">${r.S}</td>
-            <td style="color:blue">${r.I}</td>
-            <td style="color:red">${r.A}</td>
-        </tr>`;
+        html += `<tr><td style="text-align:left">${r.nama.toLowerCase()}</td>`;
+        if(tipe === 'harian') {
+            html += `<td style="font-weight:bold; color:${r.statusHarian==='H'?'green':r.statusHarian==='A'?'red':'blue'}">${r.statusHarian}</td>`;
+        } else {
+            html += `<td>${r.H}</td><td>${r.S}</td><td>${r.I}</td><td>${r.A}</td>`;
+        }
+        html += `</tr>`;
     });
-    html += `</tbody></table>`;
-    document.getElementById('wadah-tabel').innerHTML = html;
+    document.getElementById('wadah-tabel').innerHTML = html + `</tbody></table>`;
 }
 
 function exportExcel() {
-    const table = document.getElementById("tabel-download");
-    if(!table) return alert("Proses rekap dulu!");
-    const wb = XLSX.utils.table_to_book(table);
-    XLSX.writeFile(wb, "Rekap_Absensi_Santri.xlsx");
+    const t = document.getElementById("tabel-data");
+    if(!t) return alert("Tampilkan data dulu!");
+    XLSX.writeFile(XLSX.utils.table_to_book(t), "Rekap_Absensi.xlsx");
 }
 </script>
 </body>
