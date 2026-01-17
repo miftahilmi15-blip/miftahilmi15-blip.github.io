@@ -3,319 +3,163 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>E-Santri Pro | Dashboard</title>
+    <title>E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --bg: #f1f5f9;
-            --card: #ffffff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
-            --h: #22c55e;
-            --s: #f59e0b;
-            --i: #3b82f6;
-            --a: #ef4444;
-        }
-
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-        }
-
-        body { 
-            background: var(--bg); 
-            color: var(--text-main); 
-            padding-bottom: 120px; 
-        }
-
-        /* Header Styling */
-        header {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-
-        h1 { font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-
-        .controls { display: flex; flex-direction: column; gap: 10px; }
-
-        select, input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1.5px solid #e2e8f0;
-            font-size: 14px;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-
-        /* List Styling */
-        .list { padding: 20px; }
-
-        .item {
-            background: var(--card);
-            padding: 16px;
-            margin-bottom: 12px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            border: 1px solid rgba(0,0,0,0.03);
-            animation: slideUp 0.4s ease;
-        }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .santri-info b { font-size: 15px; color: var(--text-main); display: block; margin-bottom: 4px; }
-        .santri-info span { font-size: 12px; color: var(--text-sub); font-weight: 600; }
-
-        /* Buttons Styling */
-        .btns { display: flex; gap: 6px; }
-        .btns button {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            border: 2px solid #f1f5f9;
-            background: #fff;
-            font-weight: 700;
-            color: #cbd5e1;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btns button.h-active { background: var(--h); color: white; border-color: var(--h); }
-        .btns button.s-active { background: var(--s); color: white; border-color: var(--s); }
-        .btns button.i-active { background: var(--i); color: white; border-color: var(--i); }
-        .btns button.a-active { background: var(--a); color: white; border-color: var(--a); }
-
-        /* Footer / Action Bar */
-        .footer-action {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            padding: 20px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        .select-all-wrapper { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
-        
-        .btn-simpan {
-            flex: 1;
-            background: var(--primary);
-            color: white;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
-        }
-
-        #overlay {
-            position: fixed; inset: 0;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(4px);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            z-index: 999;
-        }
-
-        /* Checkbox custom style */
-        .multi { transform: scale(1.3); accent-color: var(--primary); }
-
-        /* Loading Spinner */
-        .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-bottom: 12px;
-        }
+        :root { --primary: #10b981; --bg: #f8fafc; --text: #1e293b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 100px; }
+        header { background: #fff; padding: 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+        .controls { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        .list { padding: 15px; }
+        .item { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .btns { display: flex; gap: 5px; }
+        .btns button { width: 35px; height: 35px; border-radius: 8px; border: 1px solid #eee; background: #fff; font-weight: bold; cursor: pointer; }
+        .h-active { background: #22c55e !important; color: #fff; }
+        .s-active { background: #f59e0b !important; color: #fff; }
+        .i-active { background: #3b82f6 !important; color: #fff; }
+        .a-active { background: #ef4444 !important; color: #fff; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center; }
+        #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; z-index: 1000; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="overlay">
-    <div class="spinner"></div>
-    <div id="statusText">⏳ Menyimpan...</div>
-</div>
+<div id="overlay"><div class="spinner"></div><p id="loadingText">Mohon Tunggu...</p></div>
 
 <header>
-    <h1><span>🟢</span> E-SANTRI PRO</h1>
+    <h2 style="color:var(--primary)">🟢 E-SANTRI PRO</h2>
     <div class="controls">
         <select id="kelas">
-            <option value="">Pilih Kelas...</option>
-            <option>7A</option><option>7B</option>
-            <option>8A</option><option>8B</option>
-            <option>9A</option><option>9B</option>
+            <option value="">-- Pilih Kelas --</option>
+            <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option>
+            <option value="8A">Kelas 8A</option><option value="8B">Kelas 8B</option>
         </select>
-        <input id="scan" placeholder="⌨️ Scan kartu atau ketik NIPD..." autofocus>
+        <input id="scan" placeholder="Ketik NIPD / Scan Kartu..." autofocus>
     </div>
 </header>
 
-<div id="list" class="list">
-    <div style="text-align:center; padding: 40px; color: var(--text-sub);">
-        Pilih kelas untuk melihat daftar santri
-    </div>
+<div id="list" class="list"></div>
+
+<div class="footer">
+    <input type="checkbox" id="selectAll" style="width:20px; height:20px;"> <label>Semua</label>
+    <button onclick="simpan()" style="flex:1; padding:12px; background:var(--primary); color:#fff; border:none; border-radius:10px; font-weight:bold;">SIMPAN ABSENSI</button>
 </div>
 
-<div class="footer-action">
-    <div class="select-all-wrapper">
-        <input type="checkbox" id="selectAll" class="multi">
-        <label for="selectAll">Pilih Semua</label>
-    </div>
-    <button onclick="simpan()" class="btn-simpan">SIMPAN ABSENSI</button>
-</div>
-
-<audio id="ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-<audio id="fail" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio>
+<audio id="snd_ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbydyTflFgKmsJBLCI-1pH3oE-gHWzSFyyRI-NjbItLHF2iSlKqcTL0F3R4fhr4zug-C7A/exec";
-const overlay=document.getElementById('overlay');
-const kelasSelect=document.getElementById('kelas');
-const scanInput=document.getElementById('scan');
-const list=document.getElementById('list');
-const ok=document.getElementById('ok');
-const fail=document.getElementById('fail');
+// GANTI URL DI BAWAH INI DENGAN URL DEPLOYMENT ANDA
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHeS1LbwRJgWKsnHkIyZGe_hrKUiCctpTBTtjjG9rSAtxKN28jguXDDdvS15U6kyFAOA/exec";
 
-// Load siswa ketika pilih kelas
-kelasSelect.onchange=async ()=>{
+const kelasSelect = document.getElementById('kelas');
+const list = document.getElementById('list');
+const overlay = document.getElementById('overlay');
+const scanInput = document.getElementById('scan');
+
+// 1. FUNGSI LOAD DATA (PASTI JALAN)
+kelasSelect.onchange = () => {
     if(!kelasSelect.value) return;
-    showLoading("Memuat data siswa...");
-    try{
-        const res = await fetch(`${SCRIPT_URL}?kelas=${kelasSelect.value}`);
-        const data = await res.json();
-        overlay.style.display='none';
-        render(data.data || []);
-    }catch(err){
-        overlay.style.display='none';
-        alert('Gagal load siswa: '+err);
-    }
+    overlay.style.display = 'flex';
+    document.getElementById('loadingText').innerText = "Memuat Siswa...";
+    
+    const oldScript = document.getElementById('jsonp');
+    if(oldScript) oldScript.remove();
+
+    const s = document.createElement('script');
+    s.id = 'jsonp';
+    s.src = `${SCRIPT_URL}?kelas=${kelasSelect.value}&callback=handleData`;
+    document.body.appendChild(s);
 };
 
-// Render list siswa
-function render(data){
-    if(data.length === 0) {
-        list.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-sub);">Data siswa tidak ditemukan di kelas ini.</div>`;
-        return;
-    }
-    list.innerHTML='';
-    data.forEach(x=>{
-        const div=document.createElement('div');
-        div.className='item';
-        div.dataset.nipd=x.nipd;
-        div.dataset.kelas=x.kelas;
-        div.innerHTML=`
-            <div class="santri-info">
-                <b>${x.nama}</b>
-                <span>ID: ${x.nipd} | No: ${x.no}</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:15px">
+window.handleData = (res) => {
+    overlay.style.display = 'none';
+    if(res.error) return alert(res.error);
+    render(res.data);
+};
+
+function render(data) {
+    list.innerHTML = data.length ? '' : 'Siswa tidak ditemukan.';
+    data.forEach(x => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.dataset.nipd = x.nipd;
+        div.dataset.nama = x.nama;
+        div.dataset.kelas = x.kelas;
+        div.innerHTML = `
+            <div><b>${x.nama}</b><br><small>${x.nipd}</small></div>
+            <div style="display:flex; align-items:center; gap:10px">
                 <div class="btns">
-                    <button onclick="setStatus(this,'H')">H</button>
-                    <button onclick="setStatus(this,'S')">S</button>
-                    <button onclick="setStatus(this,'I')">I</button>
-                    <button onclick="setStatus(this,'A')">A</button>
+                    <button onclick="st(this,'H')">H</button>
+                    <button onclick="st(this,'S')">S</button>
+                    <button onclick="st(this,'I')">I</button>
+                    <button onclick="st(this,'A')">A</button>
                 </div>
-                <input type="checkbox" class="multi">
+                <input type="checkbox" class="multi" style="width:18px;height:18px">
             </div>`;
         list.appendChild(div);
     });
 }
 
-function setStatus(btn,status){
-    const buttons = btn.parentElement.querySelectorAll('button');
-    buttons.forEach(b => b.className = '');
-    btn.className = status.toLowerCase() + '-active';
-    btn.dataset.s = status;
+function st(btn, s) {
+    [...btn.parentElement.children].forEach(b => b.className = '');
+    btn.className = s.toLowerCase() + '-active';
+    btn.dataset.status = s;
 }
 
-document.getElementById('selectAll').onchange=function(){
-    document.querySelectorAll('.multi').forEach(chk=>chk.checked=this.checked);
+document.getElementById('selectAll').onclick = function() {
+    document.querySelectorAll('.multi').forEach(c => c.checked = this.checked);
 };
 
-async function simpan(){
-    const data=[];
-    document.querySelectorAll('.item').forEach(div=>{
-        const statusBtn=div.querySelector('[data-s]');
-        const chk=div.querySelector('.multi');
-        if(statusBtn && chk.checked){
-            data.push({
-                kelas: div.dataset.kelas,
-                nipd: div.dataset.nipd,
-                nama: div.querySelector('b').innerText,
-                status: statusBtn.dataset.s,
-                metode:'manual'
+// 2. FUNGSI SIMPAN
+async function simpan() {
+    const kirim = [];
+    document.querySelectorAll('.item').forEach(el => {
+        const s = el.querySelector('[data-status]');
+        const chk = el.querySelector('.multi');
+        if(s && chk.checked) {
+            kirim.push({
+                nipd: el.dataset.nipd,
+                nama: el.dataset.nama,
+                kelas: el.dataset.kelas,
+                status: s.dataset.status,
+                metode: 'Manual'
             });
         }
     });
 
-    if(data.length===0){ alert("Pilih minimal satu siswa dan statusnya!"); return; }
+    if(!kirim.length) return alert("Pilih siswa & status!");
     
-    showLoading("Menyimpan ke Google Sheets...");
-    try{
-        const res = await fetch(SCRIPT_URL,{
-            method:'POST',
-            mode: 'no-cors',
-            body:JSON.stringify(data)
-        });
-        ok.play();
-        alert("Berhasil disimpan!");
-        location.reload();
-    }catch(err){ 
-        fail.play();
-        alert('Gagal simpan: ' + err); 
-    }
-    overlay.style.display='none';
-}
-
-scanInput.addEventListener('keydown', e => {
-    if(e.key === 'Enter' && scanInput.value){
-        const nipd = scanInput.value.trim();
-        if(!kelasSelect.value){ alert("Pilih kelas dulu!"); return; }
-        
-        showLoading("Auto-Scan Berjalan...");
-        fetch(SCRIPT_URL,{
-            method:'POST',
-            mode: 'no-cors',
-            body:JSON.stringify([{kelas:kelasSelect.value, nipd, status:'H', metode:'auto'}])
-        }).then(() => {
-            ok.play();
-            scanInput.value='';
-            overlay.style.display='none';
-            // Berikan feedback visual kecil jika perlu
-        }).catch(() => {
-            fail.play();
-            overlay.style.display='none';
-        });
-    }
-});
-
-function showLoading(text) {
-    document.getElementById('statusText').innerText = text;
     overlay.style.display = 'flex';
+    document.getElementById('loadingText').innerText = "Menyimpan...";
+
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(kirim) });
+    document.getElementById('snd_ok').play();
+    alert("Berhasil Disimpan!");
+    location.reload();
 }
+
+// 3. FUNGSI SCAN (AUTO)
+scanInput.onkeydown = async (e) => {
+    if(e.key === 'Enter' && scanInput.value && kelasSelect.value) {
+        overlay.style.display = 'flex';
+        const dataScan = [{
+            nipd: scanInput.value,
+            nama: "Scan Otomatis",
+            kelas: kelasSelect.value,
+            status: 'H',
+            metode: 'Auto'
+        }];
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataScan) });
+        document.getElementById('snd_ok').play();
+        scanInput.value = '';
+        overlay.style.display = 'none';
+        alert("Scan Berhasil!");
+    }
+};
 </script>
 </body>
 </html>
