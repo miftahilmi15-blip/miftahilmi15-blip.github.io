@@ -176,30 +176,37 @@ window.onload = () => {
     const scanId = urlParams.get('scan');
     const kelasId = urlParams.get('kls');
 
+    // Jika ada data scan dari URL (MacroDroid)
     if (scanId && kelasId) {
-        showLoading("📲 DATA SEDANG DIKIRIM...");
+        showLoading("📲 MENYIMPAN ABSEN...");
         
-        // Data yang dikirim
-        const dataAbsen = JSON.stringify([{
+        const dataScan = [{
             nipd: scanId,
             nama: "Scan NFC (MacroDroid)",
             kelas: kelasId,
             status: 'H',
             metode: 'Auto'
-        }]);
+        }];
 
-        // Gunakan sendBeacon: Lebih cepat & tidak membebani browser
-        const blob = new Blob([dataAbsen], { type: 'application/json' });
-        navigator.sendBeacon(SCRIPT_URL, blob);
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(dataScan)
+        }).then(() => {
+            // 1. Bunyikan suara sukses
+            document.getElementById('snd_ok').play();
+            loadingText.innerHTML = "✅ BERHASIL!<br>Kembali ke Layar Utama...";
 
-        // Langsung tampilkan sukses & reset
-        document.getElementById('snd_ok').play();
-        loadingText.innerHTML = "✅ DATA TERKIRIM!<br>Siap Scan Berikutnya...";
-
-        setTimeout(() => {
-            // Paksa kembali ke halaman utama agar browser "segar" lagi
-            window.location.href = window.location.pathname;
-        }, 1500);
+            // 2. Tunggu sebentar lalu bersihkan halaman
+            setTimeout(() => {
+                // Mengosongkan URL agar tidak terjadi pengulangan scan yang sama
+                window.location.href = "about:blank"; 
+            }, 1500);
+            
+        }).catch((err) => {
+            alert("Gagal Kirim: " + err);
+            overlay.style.display = 'none';
+        });
     }
 };
 </script>
