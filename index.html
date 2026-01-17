@@ -3,100 +3,135 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Ultimate Edition v15</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>E-Santri | Royal Emerald v16</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
-    --primary-hover: #16503a;
-    --accent: #d4b96a;      
-    --text: #2d3436;
-    --muted: #636e72;
-    --glass: rgba(255, 255, 255, 0.9);
-    --soft: rgba(31, 111, 81, 0.1);
+    --primary-gradient: linear-gradient(135deg, #1f6f51 0%, #2ecc71 100%);
+    --bg-light: #f4f9f6;
+    --white: #ffffff;
+    --text-dark: #1a1a1a;
+    --shadow: 0 10px 30px rgba(31, 111, 81, 0.1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   
   body {
-    background: #f3fbf7;
-    background-image: radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.15) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(212, 185, 106, 0.15) 0px, transparent 50%);
-    background-attachment: fixed; color: var(--text); padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  /* LOADING SCREEN */
-  #loading-screen { position: fixed; inset: 0; background: #f3fbf7; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-  .spinner { width: 45px; height: 45px; border: 4px solid var(--soft); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  /* LOADING */
+  #loading-screen { position: fixed; inset: 0; background: var(--white); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #eee; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
   @keyframes spin { 100% { transform: rotate(360deg); } }
 
-  .container { width: 100%; max-width: 420px; z-index: 1; animation: slideUp 0.6s ease-out; }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* HEADER & TITLE */
-  .header-box { text-align: center; padding: 40px 0 20px; }
-  .title { 
-    font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: #ffffff;
-    letter-spacing: 2px; text-transform: uppercase; display: inline-block;
-    -webkit-text-stroke: 1.5px var(--primary); text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3);
+  /* HEADER STYLE DARI GAMBAR */
+  header {
+    width: 100%;
+    max-width: 420px;
+    background: var(--primary-gradient);
+    padding: 40px 25px 80px;
+    border-radius: 0 0 40px 40px;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2);
   }
 
-  /* STREAK CARD WITH FIRE EFFECT */
+  .title-main { 
+    font-family: 'Montserrat', sans-serif; font-size: 28px; color: white;
+    letter-spacing: 2px; text-transform: uppercase; text-align: center;
+  }
+
+  .container { 
+    width: 90%; 
+    max-width: 380px; 
+    margin-top: -50px; /* Menumpuk ke header seperti di gambar */
+    z-index: 2; 
+  }
+
+  /* STREAK CARD (ELEGANT VERSION) */
   .streak-card {
-    background: linear-gradient(135deg, var(--primary), #2ecc71);
-    border-radius: 20px; padding: 20px; color: white; margin-bottom: 20px;
-    display: flex; align-items: center; justify-content: space-between;
-    box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2); position: relative; overflow: hidden;
+    background: var(--white);
+    border-radius: 25px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.8);
   }
-  .streak-icon { font-size: 35px; animation: burn 1.5s ease-in-out infinite alternate; }
-  @keyframes burn { from { transform: scale(1); filter: drop-shadow(0 0 5px orange); } to { transform: scale(1.2); filter: drop-shadow(0 0 15px red); } }
+  .streak-val { font-size: 24px; font-weight: 800; color: var(--primary); }
+  .streak-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 600; }
+  .fire-icon { font-size: 32px; animation: burn 1.2s infinite alternate; }
+  @keyframes burn { from { transform: scale(1); } to { transform: scale(1.15); filter: drop-shadow(0 0 10px orange); } }
 
-  /* MAHFUZAT TICKER */
-  .mahfuzat-ticker {
-    background: white; margin-bottom: 25px; padding: 10px 15px; border-radius: 50px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; align-items: center; overflow: hidden;
-    border: 1px solid rgba(31, 111, 81, 0.1);
+  /* MAHFUZAT (GLASSMORPHISM) */
+  .mahfuzat-box {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 12px 20px;
+    margin-bottom: 25px;
+    border: 1px solid white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
   }
-  .ticker-label { background: var(--primary); color: white; font-size: 8px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 12px; }
 
-  /* MENU GRID & BUBBLE EFFECT */
+  /* MENU GRID (CLEAN MINIMALIST SEPERTI GAMBAR) */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .menu-item { 
-    background: #fff; padding: 22px 10px; border-radius: 24px; text-align: center; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    cursor: pointer; border: 1px solid rgba(0,0,0,0.03); position: relative; overflow: hidden;
+    background: var(--white);
+    padding: 25px 10px;
+    border-radius: 24px;
+    text-align: center; 
+    transition: 0.3s;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
-  .menu-item:active { transform: scale(0.92); background: #f0fdf4; }
-  
+  .menu-item:active { transform: scale(0.9); }
+  .menu-symbol { font-size: 32px; display: block; margin-bottom: 10px; }
+  .menu-item span { font-size: 11px; font-weight: 700; color: #444; }
+
   /* RIPPLE EFFECT */
-  .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple 0.6s linear; background: rgba(31, 111, 81, 0.2); pointer-events: none; }
+  .ripple { position: absolute; background: rgba(31, 111, 81, 0.1); border-radius: 50%; transform: scale(0); animation: ripple 0.6s linear; pointer-events: none; }
   @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
-  .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
-  .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
-
-  /* SIDEBAR */
+  /* SIDEBAR TRIGGER */
   .menu-trigger {
-    position: fixed; top: 25px; right: 25px; z-index: 1300; background: var(--primary);
-    color: #fff; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-    border-radius: 16px; cursor: pointer; transition: 0.3s;
+    position: absolute; top: 35px; right: 25px;
+    color: white; font-size: 24px; cursor: pointer;
   }
+
+  /* AUTH CARD */
+  .auth-card {
+    background: white; padding: 40px 30px; border-radius: 35px;
+    box-shadow: var(--shadow); width: 100%; text-align: center;
+  }
+  input { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 18px; border: 1px solid #f0f0f0; background: #f9f9f9; outline: none; font-weight: 500; }
+  .btn-primary { 
+    width: 100%; padding: 18px; border-radius: 18px; border: none; 
+    background: var(--primary-gradient); color: white; font-weight: 700; 
+    box-shadow: 0 8px 20px rgba(31, 111, 81, 0.3); cursor: pointer;
+  }
+
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: white; 
-    transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1200; padding: 50px 25px; border-radius: 30px 0 0 30px;
+    transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1200; padding: 60px 30px; border-radius: 40px 0 0 40px;
   }
-  .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
+  .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.1); }
+  .sidebar-link { display: block; padding: 15px 20px; color: var(--text-dark); text-decoration: none; font-weight: 600; border-radius: 15px; margin-bottom: 5px; }
+  .sidebar-link.active { background: var(--bg-light); color: var(--primary); }
 
-  .card { background: var(--glass); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; margin-bottom: 25px; animation: fadeIn 0.8s; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  input { width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 14px; border: 1px solid #eee; outline: none; background: #f8fafb; transition: 0.3s; }
-  input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px var(--soft); }
-  
-  .btn { width: 100%; padding: 15px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
-  .btn.primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(31, 111, 81, 0.3); }
-
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); z-index: 1100; }
   .hidden { display: none !important; }
-  footer { margin-top: auto; padding: 30px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -105,51 +140,37 @@
 <body>
 
 <div id="loading-screen"><div class="spinner"></div></div>
-<div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
 
-<div class="sidebar" id="sidebar">
-  <div style="text-align: center; margin-bottom: 20px;">
-    <img id="user-photo" src="assets/default-avatar.png" style="width:85px; height:85px; border-radius:24px; object-fit:cover; border: 4px solid var(--soft);">
-    <div id="sidebar-name" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top:12px;">Santri</div>
-    <div id="sidebar-email" style="font-size: 11px; color: var(--muted);">email@santri.com</div>
-  </div>
-  <div style="display:flex; flex-direction:column; gap:12px;">
-    <a href="#" onclick="location.reload()" style="text-decoration:none; color:var(--text); font-weight:700; padding:15px; background:var(--soft); border-radius:12px;">🏠 Dashboard</a>
-    <a href="#" onclick="goTo('waktu-sholat.html')" style="text-decoration:none; padding:15px; font-weight:600; color:var(--text);">🕌 Waktu Sholat</a>
-    <a href="#" onclick="goTo('pengaduan.html')" style="text-decoration:none; padding:15px; font-weight:600; color:var(--text);">📣 Pengaduan</a>
-    <a href="#" onclick="logout()" style="text-decoration:none; padding:15px; font-weight:700; color:red;">🚪 Keluar</a>
-  </div>
-</div>
-
-<div class="overlay" id="overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.2); backdrop-filter:blur(4px); z-index:1100;"></div>
-
-<header class="header-box"><h1 class="title">E-SANTRI</h1></header>
+<header id="app-header" class="hidden">
+  <div class="menu-trigger" id="menu-btn">&#x22EE;</div>
+  <h1 class="title-main">E-SANTRI</h1>
+  <p id="welcome-msg" style="color: white; text-align: center; opacity: 0.9; font-size: 14px; margin-top: 5px;">Ahlan, Santri!</p>
+</header>
 
 <main class="container">
-  <div id="login-card" class="card hidden">
-    <h2 style="text-align:center; color:var(--primary); font-weight:800; margin-bottom:20px;">Ahlan wa Sahlan!</h2>
+  <div id="login-card" class="auth-card hidden">
+    <h2 style="margin-bottom: 10px; color: var(--primary)">Selamat Datang</h2>
+    <p style="font-size: 12px; color: #999; margin-bottom: 30px;">Silakan masuk ke akun E-Santri Ustadz</p>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
-    <button class="btn primary ripple-btn" onclick="login()">MASUK</button>
-    <button class="btn outline ripple-btn" onclick="register()" style="background:none; color:var(--primary); border:2px solid var(--primary); margin-top:10px;">DAFTAR AKUN</button>
+    <button class="btn-primary" onclick="login()">MASUK SEKARANG</button>
+    <button onclick="loginGoogle()" style="margin-top:15px; background:none; border:none; color:#666; font-size:13px; font-weight:600; cursor:pointer;">Atau masuk dengan Google</button>
   </div>
 
   <section id="dashboard" class="hidden">
     <div class="streak-card">
         <div>
-            <p style="font-size:11px; opacity:0.9; font-weight:600;">AL-QUR'AN DAILY STREAK</p>
-            <h2 id="streak-count" style="font-size: 26px;">0 Hari</h2>
+            <p class="streak-label">Al-Qur'an Streak</p>
+            <h2 id="streak-count" class="streak-val">0 Hari</h2>
         </div>
-        <div class="streak-icon">🔥</div>
+        <div class="fire-icon">🔥</div>
     </div>
 
-    <h3 id="welcome-msg" style="color:var(--primary); font-weight:800; margin-bottom:15px; padding-left:5px;">Ahlan, Santri!</h3>
-
-    <div class="mahfuzat-ticker">
-        <div class="ticker-label">MAHFUZAT</div>
-        <div class="ticker-content">
-            <marquee scrollamount="4"><span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-weight:bold; font-size:16px;"></span> <span id="runIndo" style="color:var(--muted); font-weight:600; font-size:13px;"></span></marquee>
-        </div>
+    <div class="mahfuzat-box">
+        <marquee scrollamount="3">
+            <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-weight:bold; font-size:16px;"></span> 
+            <span id="runIndo" style="color:#666; font-weight:500; font-size:13px;"></span>
+        </marquee>
     </div>
 
     <div class="menu-grid">
@@ -163,17 +184,27 @@
   </section>
 </main>
 
-<footer>JANGAN TINGGALKAN SHOLAT</footer>
+<div class="overlay" id="overlay"></div>
+<div class="sidebar" id="sidebar">
+  <div style="text-align: center; margin-bottom: 30px;">
+    <img id="user-photo" src="assets/default-avatar.png" style="width:90px; height:90px; border-radius:25px; border: 4px solid var(--bg-light); object-fit: cover;">
+    <h3 id="sidebar-name" style="margin-top:15px;">Santri</h3>
+  </div>
+  <a href="#" class="sidebar-link active">🏠 Dashboard</a>
+  <a href="#" onclick="goTo('waktu-sholat.html')" class="sidebar-link">🕌 Waktu Sholat</a>
+  <a href="#" onclick="goTo('pengaduan.html')" class="sidebar-link">📣 Pengaduan</a>
+  <a href="#" onclick="logout()" class="sidebar-link" style="color: #e74c3c; margin-top: 20px;">🚪 Keluar Akun</a>
+</div>
 
 <script>
   firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
   const auth = firebase.auth();
 
-  // EFFECT RIPPLE (GELEMBUNG)
-  document.addEventListener('click', function (e) {
-    if (e.target.closest('.ripple-btn')) {
-      const btn = e.target.closest('.ripple-btn');
-      const ripple = document.createElement('span');
+  // RIPPLE EFFECT
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.ripple-btn');
+    if (btn) {
+      const ripple = document.createElement('div');
       ripple.className = 'ripple';
       const rect = btn.getBoundingClientRect();
       const size = Math.max(rect.width, rect.height);
@@ -185,7 +216,6 @@
     }
   });
 
-  // LOGIKA STREAK
   function handleQuran() {
     const today = new Date().toDateString();
     const last = localStorage.getItem('last_q_date');
@@ -199,24 +229,23 @@
   }
 
   function goTo(url) { 
-    document.querySelector('.container').style.opacity = '0';
+    document.body.style.opacity = '0';
     setTimeout(() => window.location.href = url, 400); 
   }
 
   function login(){ auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(a=>alert(a.message)); }
+  function loginGoogle(){ auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user => {
     document.getElementById("loading-screen").style.display = "none";
     if(user){
-      document.getElementById("login-card").classList.add("hidden");
+      document.getElementById("app-header").classList.remove("hidden");
       document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("menu-btn").style.display="flex";
+      document.getElementById("login-card").classList.add("hidden");
       document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
       document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
-      document.getElementById("sidebar-email").innerText = user.email;
       if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
-      
       document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
       
       const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:" — Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:" — Siapa sabar, beruntung."}];
