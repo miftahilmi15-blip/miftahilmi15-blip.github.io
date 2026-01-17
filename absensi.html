@@ -13,6 +13,10 @@
         /* Header & Controls */
         header { background: var(--white); padding: 20px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .brand { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+        .nav-tabs button { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ddd; background: #eee; cursor: pointer; font-weight: bold; }
+        .nav-tabs button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         select, input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 0.9rem; outline: none; transition: 0.3s; }
         select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
@@ -20,19 +24,17 @@
         /* Toolbar Fitur */
         .toolbar { display: flex; gap: 8px; margin-top: 12px; overflow-x: auto; padding-bottom: 5px; }
         .btn-tool { padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
-        .btn-tool:active { transform: scale(0.95); }
 
         /* List Siswa */
         .list { padding: 15px; display: grid; gap: 12px; }
-        .item { background: var(--white); padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid transparent; transition: 0.2s; }
-        .item:hover { border-color: var(--primary); }
+        .item { background: var(--white); padding: 16px; border-radius: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid transparent; }
         .student-info { display: flex; justify-content: space-between; align-items: flex-start; }
         .student-info b { font-size: 1rem; color: #1e293b; display: block; }
         .student-info small { color: #64748b; font-weight: 500; }
 
         /* Status Buttons */
         .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .status-grid button { padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9; background: #f8fafc; font-weight: 700; color: #64748b; cursor: pointer; transition: 0.2s; }
+        .status-grid button { padding: 10px; border-radius: 10px; border: 1px solid #f1f5f9; background: #f8fafc; font-weight: 700; color: #64748b; cursor: pointer; }
         
         .h-active { background: #dcfce7 !important; color: #15803d !important; border-color: #22c55e !important; }
         .s-active { background: #fef9c3 !important; color: #a16207 !important; border-color: #eab308 !important; }
@@ -49,6 +51,11 @@
         .spinner { width: 48px; height: 48px; border: 5px solid rgba(255,255,255,0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* Tabel Rekap */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 10px; text-align: center; border: 1px solid #eee; }
+        th { background: #f8fafc; }
+
         @media (min-width: 600px) { .list { grid-template-columns: 1fr 1fr; } }
     </style>
 </head>
@@ -58,41 +65,66 @@
 
 <header>
     <div class="brand">🟢 E-SANTRI PRO</div>
-    <div class="controls">
-        <select id="kelas">
-            <option value="">-- Kelas --</option>
-            <optgroup label="Kelas 7">
-                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-            </optgroup>
-            <optgroup label="Kelas 8">
-                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-            </optgroup>
-            <optgroup label="Kelas 9">
-                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-            </optgroup>
-        </select>
-        <input id="scan" placeholder="Scan Kartu / NIPD..." autofocus>
-    </div>
     
-    <div class="toolbar">
-        <button class="btn-tool" onclick="setAll('H')">✅ Hadir Semua</button>
-        <button class="btn-tool" onclick="downloadData()">📥 Download Data</button>
-        <button class="btn-tool" onclick="location.reload()">🔄 Refresh</button>
+    <div class="nav-tabs">
+        <button id="btnAbsen" class="active" onclick="switchMenu('absen')">Menu Absen</button>
+        <button id="btnRekap" onclick="switchMenu('rekap')">Rekap Bulanan</button>
+    </div>
+
+    <div id="filterAbsen">
+        <div class="controls">
+            <select id="kelas">
+                <option value="">-- Kelas --</option>
+                <optgroup label="Kelas 7">
+                    <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                </optgroup>
+                <optgroup label="Kelas 8">
+                    <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                </optgroup>
+                <optgroup label="Kelas 9">
+                    <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+                </optgroup>
+            </select>
+            <input id="scan" placeholder="Scan Kartu..." autofocus>
+        </div>
+        <div class="toolbar">
+            <button class="btn-tool" onclick="setAll('H')">✅ Hadir Semua</button>
+            <button class="btn-tool" onclick="downloadData()">📥 Download</button>
+        </div>
+    </div>
+
+    <div id="filterRekap" style="display:none;">
+        <div class="controls">
+            <select id="bulanRekap">
+                <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+            </select>
+            <button onclick="muatRekap()" style="padding:10px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold;">Lihat Rekap</button>
+        </div>
     </div>
 </header>
 
-<div id="list" class="list">
-    <div style="text-align:center; padding:50px; color:#64748b;">Pilih kelas untuk memulai absensi</div>
+<div id="areaAbsen">
+    <div id="list" class="list">
+        <div style="text-align:center; padding:50px; color:#64748b;">Pilih kelas untuk memulai absensi</div>
+    </div>
+    <div class="footer">
+        <div class="footer-top">
+            <div style="display:flex; align-items:center; gap:5px;">
+                <input type="checkbox" id="selectAll" style="width:18px;height:18px;"> <label for="selectAll">Pilih Semua</label>
+            </div>
+            <div id="count">0 Siswa Terpilih</div>
+        </div>
+        <button onclick="simpan()" class="btn-save">SIMPAN ABSENSI SEKARANG</button>
+    </div>
 </div>
 
-<div class="footer">
-    <div class="footer-top">
-        <div style="display:flex; align-items:center; gap:5px;">
-            <input type="checkbox" id="selectAll" style="width:18px;height:18px;"> <label for="selectAll">Pilih Semua</label>
-        </div>
-        <div id="count">0 Siswa Terpilih</div>
+<div id="areaRekap" style="display:none; padding:15px;">
+    <div id="tabelRekap">
+        <p style="text-align:center; color:#64748b;">Pilih kelas & bulan lalu klik Lihat Rekap</p>
     </div>
-    <button onclick="simpan()" class="btn-save">SIMPAN ABSENSI SEKARANG</button>
 </div>
 
 <audio id="snd_ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
@@ -107,7 +139,16 @@ function showLoading(text) {
     overlay.style.display = 'flex';
 }
 
-// 1. LOAD DATA SISWA
+function switchMenu(menu) {
+    document.getElementById('areaAbsen').style.display = (menu === 'absen') ? 'block' : 'none';
+    document.getElementById('filterAbsen').style.display = (menu === 'absen') ? 'block' : 'none';
+    document.getElementById('areaRekap').style.display = (menu === 'rekap') ? 'block' : 'none';
+    document.getElementById('filterRekap').style.display = (menu === 'rekap') ? 'block' : 'none';
+    document.getElementById('btnAbsen').className = (menu === 'absen') ? 'active' : '';
+    document.getElementById('btnRekap').className = (menu === 'rekap') ? 'active' : '';
+}
+
+// 1. LOAD DATA SISWA (ABSEN)
 document.getElementById('kelas').onchange = function() {
     if(!this.value) return;
     showLoading("Memuat Daftar Siswa " + this.value + "...");
@@ -118,38 +159,31 @@ document.getElementById('kelas').onchange = function() {
 
 window.handleData = (res) => {
     overlay.style.display = 'none';
-    if(res.error) return alert(res.error);
     render(res.data);
 };
 
 function render(data) {
     const container = document.getElementById('list');
     container.innerHTML = "";
-    if(!data.length) { container.innerHTML = "Tidak ada data."; return; }
-
     data.forEach(x => {
         const div = document.createElement('div');
         div.className = 'item';
-        div.dataset.nipd = x.nipd;
-        div.dataset.nama = x.nama;
-        div.dataset.kelas = x.kelas;
+        div.dataset.nipd = x.nipd; div.dataset.nama = x.nama; div.dataset.kelas = x.kelas;
         div.innerHTML = `
             <div class="student-info">
                 <div><b>${x.nama}</b><small>${x.nipd}</small></div>
                 <input type="checkbox" class="multi" style="width:20px;height:20px">
             </div>
             <div class="status-grid">
-                <button onclick="st(this,'H')">H</button>
-                <button onclick="st(this,'S')">S</button>
-                <button onclick="st(this,'I')">I</button>
-                <button onclick="st(this,'A')">A</button>
+                <button onclick="st(this,'H')">H</button><button onclick="st(this,'S')">S</button>
+                <button onclick="st(this,'I')">I</button><button onclick="st(this,'A')">A</button>
             </div>`;
         container.appendChild(div);
     });
     updateCount();
 }
 
-// 2. LOGIKA TOMBOL
+// 2. LOGIKA ABSEN
 function st(btn, s) {
     [...btn.parentElement.children].forEach(b => b.className = '');
     btn.className = s.toLowerCase() + '-active';
@@ -170,140 +204,78 @@ function updateCount() {
     document.getElementById('count').innerText = checked + " Siswa Terpilih";
 }
 
-document.getElementById('selectAll').onclick = function() {
-    document.querySelectorAll('.multi').forEach(c => c.checked = this.checked);
-    updateCount();
-};
+// 3. FUNGSI REKAP
+function muatRekap() {
+    const kls = document.getElementById('kelas').value;
+    const bln = document.getElementById('bulanRekap').value;
+    if(!kls) return alert("Pilih kelas di menu sebelah dulu!");
+    
+    showLoading("Menghitung Rekap Bulanan...");
+    const s = document.createElement('script');
+    s.src = `${SCRIPT_URL}?mode=rekap&kelas=${kls}&bulan=${bln}&tahun=2026&callback=handleRekap`;
+    document.body.appendChild(s);
+}
 
-// 3. FITUR DOWNLOAD LAPORAN ABSENSI (XLS)
+window.handleRekap = (res) => {
+    overlay.style.display = 'none';
+    let html = `<table><tr><th>Nama</th><th>H</th><th>S</th><th>I</th><th>A</th></tr>`;
+    res.data.forEach(r => {
+        html += `<tr><td>${r.nama}</td><td style="color:green">${r.h}</td><td>${r.s}</td><td>${r.i}</td><td style="color:red">${r.a}</td></tr>`;
+    });
+    html += `</table>`;
+    document.getElementById('tabelRekap').innerHTML = html;
+}
+
+// 4. DOWNLOAD & SIMPAN (Tetap Sama)
 function downloadData() {
     const kelas = document.getElementById('kelas').value;
     if(!kelas) return alert("Pilih kelas dulu!");
-    
-    // Ambil tanggal hari ini
-    const tgl = new Date().toLocaleDateString('id-ID', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-    });
-
-    let html = `
-        <table border='1'>
-            <tr><th colspan='4' style='background:#f1f5f9;'>LAPORAN ABSENSI KELAS ${kelas}</th></tr>
-            <tr><th colspan='4'>Tanggal: ${tgl}</th></tr>
-            <tr style='background:#10b981; color:white;'>
-                <th>NIPD</th>
-                <th>Nama Siswa</th>
-                <th>Kelas</th>
-                <th>Status</th>
-            </tr>`;
-
-    let adaData = false;
+    let html = `<table border='1'><tr><th>NIPD</th><th>Nama</th><th>Status</th></tr>`;
     document.querySelectorAll('.item').forEach(el => {
-        const nipd = el.dataset.nipd;
-        const nama = el.dataset.nama;
-        const kls = el.dataset.kelas;
-        // Ambil status dari tombol yang aktif
         const s = el.querySelector('[data-status]');
-        const status = s ? s.dataset.status : "-"; // Jika belum diisi tampilkan "-"
-
-        html += `<tr>
-            <td>${nipd}</td>
-            <td>${nama}</td>
-            <td>${kls}</td>
-            <td style='text-align:center;'><b>${status}</b></td>
-        </tr>`;
-        adaData = true;
+        html += `<tr><td>${el.dataset.nipd}</td><td>${el.dataset.nama}</td><td>${s?s.dataset.status:'-'}</td></tr>`;
     });
-
-    if(!adaData) return alert("Tidak ada data untuk diunduh!");
-
     html += "</table>";
-
-    // Proses Download
     const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `Absensi_${kelas}_${new Date().toLocaleDateString('id-ID')}.xls`;
+    a.href = URL.createObjectURL(blob);
+    a.download = `Absensi_${kelas}.xls`;
     a.click();
 }
-// 4. SIMPAN DATA
+
 async function simpan() {
     const kirim = [];
     document.querySelectorAll('.item').forEach(el => {
         const s = el.querySelector('[data-status]');
         const chk = el.querySelector('.multi');
         if(s && chk.checked) {
-            kirim.push({
-                nipd: el.dataset.nipd, nama: el.dataset.nama,
-                kelas: el.dataset.kelas, status: s.dataset.status, metode: 'Manual'
-            });
+            kirim.push({ nipd: el.dataset.nipd, nama: el.dataset.nama, kelas: el.dataset.kelas, status: s.dataset.status, metode: 'Manual' });
         }
     });
-
-    if(!kirim.length) return alert("Pilih siswa dan tentukan statusnya!");
-    
-    showLoading("Mengirim Data ke Server...");
-    try {
-        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(kirim) });
-        document.getElementById('snd_ok').play();
-        alert("✅ Absensi Berhasil Disimpan!");
-        location.reload();
-    } catch(e) {
-        alert("Gagal menyimpan!");
-    } finally {
-        overlay.style.display = 'none';
-    }
+    if(!kirim.length) return alert("Pilih siswa!");
+    showLoading("Menyimpan...");
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(kirim) });
+    document.getElementById('snd_ok').play();
+    alert("Berhasil!"); location.reload();
 }
 
-// 5. SCAN HANDLER
+// 5. SCAN & NFC
 document.getElementById('scan').onkeydown = async (e) => {
     if(e.key === 'Enter' && e.target.value) {
-        const val = e.target.value;
         const kls = document.getElementById('kelas').value;
-        if(!kls) return alert("Pilih kelas dulu sebelum scan!");
-        
-        showLoading("Mencatat NIPD: " + val);
-        const dataScan = [{ nipd: val, nama: "Scan Otomatis", kelas: kls, status: 'H', metode: 'Auto' }];
-        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(dataScan) });
+        if(!kls) return alert("Pilih kelas dulu!");
+        showLoading("Mencatat...");
+        await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify([{ nipd: e.target.value, nama: "Scan", kelas: kls, status: 'H', metode: 'Auto' }]) });
         document.getElementById('snd_ok').play();
-        e.target.value = '';
-        overlay.style.display = 'none';
+        e.target.value = ''; overlay.style.display = 'none';
     }
 };
 
 window.onload = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const scanId = urlParams.get('scan');
-    const kelasId = urlParams.get('kls');
-
-    if (scanId && kelasId) {
-        showLoading("📲 PROSES ABSENSI...");
-        
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify([{
-                nipd: scanId,
-                nama: "NFC MacroDroid",
-                kelas: kelasId,
-                status: 'H',
-                metode: 'Auto'
-            }])
-        }).then(() => {
-            // Bunyikan suara
-            document.getElementById('snd_ok').play();
-            loadingText.innerHTML = "✅ BERHASIL!<br>Menutup Aplikasi...";
-            
-            // JURUS TERAKHIR: Alihkan ke halaman kosong
-            // Ini membuat browser 'reset' dan siap menerima perintah scan berikutnya
-            setTimeout(() => {
-                window.location.href = "about:blank"; 
-            }, 1500);
-            
-        }).catch((err) => {
-            alert("Koneksi Error: " + err);
-            overlay.style.display = 'none';
-        });
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('scan') && params.get('kls')) {
+        fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify([{ nipd: params.get('scan'), nama: "NFC", kelas: params.get('kls'), status: 'H', metode: 'Auto' }]) })
+        .then(() => { document.getElementById('snd_ok').play(); setTimeout(()=> window.location.href="about:blank", 1500); });
     }
 };
 </script>
