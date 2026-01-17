@@ -3,113 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Budaya Sekolah Premium</title>
+    <title>E-SANTRI | Budaya Sekolah v7</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --primary-light: #2d9d73; --bg: #f8fafc; --blue: #2563eb; }
+        :root { --primary: #1f6f51; --bg: #f4f7f6; --blue: #2563eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
-        .wadah { width: 100%; max-width: 800px; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); }
+        body { background: var(--bg); padding: 10px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 700px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         
-        header { text-align: center; margin-bottom: 25px; }
-        header h1 { color: var(--primary); font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-        header p { font-size: 12px; color: #64748b; margin-top: 5px; }
+        header h1 { color: var(--primary); font-size: 18px; text-align: center; margin-bottom: 15px; font-weight: 800; }
         
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #f1f5f9; padding: 6px; border-radius: 16px; }
-        .tab-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 600; font-size: 13px; cursor: pointer; color: #64748b; transition: 0.3s; }
-        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .tabs { display: flex; gap: 8px; margin-bottom: 15px; background: #eee; padding: 4px; border-radius: 10px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; color: #666; }
+        .tab-btn.active { background: var(--primary); color: white; }
 
-        .form-grup { margin-bottom: 20px; }
-        label { font-size: 12px; font-weight: 600; color: #475569; display: block; margin-bottom: 8px; }
-        select, input { width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #fff; font-size: 14px; transition: 0.2s; }
-        select:focus { border-color: var(--primary); outline: none; }
+        .form-grup { margin-bottom: 12px; }
+        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 4px; }
+        select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 13px; }
         
-        /* PENATAAN NAMA LEBIH RAPI & BERSIH */
-        #pilih-santri-box { width: 100%; max-height: 300px; overflow-y: auto; border: 1.5px solid #e2e8f0; border-radius: 14px; background: #fff; }
-        .item-santri { 
-            display: flex; align-items: center; padding: 12px 18px; 
-            border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: 0.2s;
-        }
-        .item-santri:hover { background: #f0fdf4; }
-        .item-santri span { 
-            margin-left: 14px; font-weight: 500; font-size: 14px; color: #1e293b;
-            text-transform: capitalize; /* Nama jadi rapi otomatis */
-        }
-        .item-santri input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); }
+        /* DAFTAR NAMA TETAP KIRI & ASLI */
+        #pilih-santri-box { width: 100%; max-height: 180px; overflow-y: auto; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; background: #fff; }
+        .item-santri { display: flex; align-items: center; padding: 8px 12px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .item-santri span { margin-left: 10px; font-size: 13px; color: #333; text-align: left; flex: 1; }
 
-        .baris-aspek { background: #ffffff; padding: 18px; border-radius: 18px; margin-bottom: 12px; border: 1.5px solid #f1f5f9; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .judul-aspek { font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 12px; text-align: center; letter-spacing: 0.5px; }
-        
-        .rating { display: flex; gap: 25px; justify-content: center; }
-        .star { cursor: pointer; font-size: 40px; color: #e2e8f0; transition: 0.2s; }
-        .star[data-val="1"].active { color: #f43f5e; }
-        .star[data-val="2"].active { color: #f59e0b; }
-        .star[data-val="3"].active { color: #facc15; }
+        /* ASPEK COMPACT - ANTI SCROLL */
+        .baris-aspek { 
+            display: flex; align-items: center; justify-content: space-between;
+            background: #fafafa; padding: 8px 15px; border-radius: 10px; margin-bottom: 6px; border: 1px solid #eee; 
+        }
+        .judul-aspek { font-size: 11px; font-weight: 700; color: var(--primary); width: 45%; }
+        .rating { display: flex; gap: 15px; }
+        .star { cursor: pointer; font-size: 28px; color: #ddd; transition: 0.2s; }
+        .star[data-val="1"].active { color: #ef4444; }
+        .star[data-val="2"].active { color: #f97316; }
+        .star[data-val="3"].active { color: #fbbf24; }
         .star[data-val="4"].active { color: #22c55e; }
 
-        .btn-aksi { width: 100%; padding: 18px; border-radius: 16px; border: none; font-weight: 700; cursor: pointer; font-size: 15px; margin-top: 10px; transition: 0.3s; }
-        .btn-simpan { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2); }
-        .btn-simpan:hover { background: var(--primary-light); transform: translateY(-2px); }
-        .btn-excel { background: #107c41; color: white; display: none; margin-top: 15px; }
+        .btn-aksi { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 8px; transition: 0.3s; }
+        .btn-simpan { background: var(--primary); color: white; }
+        .btn-excel { background: #107c41; color: white; display: none; }
 
-        .tabel-scroll { width: 100%; overflow-x: auto; margin-top: 25px; border-radius: 16px; border: 1px solid #e2e8f0; }
-        .rekap-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 650px; }
-        .rekap-table th { background: #f8fafc; color: #475569; padding: 15px; border-bottom: 2px solid #e2e8f0; font-weight: 600; }
-        .rekap-table td { padding: 14px; border-bottom: 1px solid #f1f5f9; text-align: center; color: #334155; }
-        .rekap-table td:first-child { text-align: left !important; padding-left: 20px; font-weight: 600; text-transform: capitalize; color: #0f172a; }
+        .tabel-scroll { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 10px; border: 1px solid #ddd; }
+        .rekap-table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 600px; }
+        .rekap-table th { background: #f1f1f1; padding: 10px; border: 1px solid #ddd; }
+        .rekap-table td { padding: 8px; border: 1px solid #ddd; text-align: center; }
+        .rekap-table td:first-child { text-align: left; padding-left: 10px; font-weight: 600; }
 
-        .chart-box { margin-top: 30px; padding: 20px; background: #fff; border: 1.5px solid #f1f5f9; border-radius: 20px; }
+        .chart-box { margin-top: 20px; padding: 10px; border: 1px solid #eee; border-radius: 15px; background: #fff; }
     </style>
 </head>
 <body>
 
 <div class="wadah">
-    <header>
-        <h1>BUDAYA SEKOLAH</h1>
-        <p>Monitoring Karakter Santri - Versi Premium 2026</p>
-    </header>
+    <header><h1>BUDAYA SEKOLAH</h1></header>
 
     <div class="tabs">
-        <button class="tab-btn active" id="btn-in" onclick="bukaTab('input')">Input Harian</button>
-        <button class="tab-btn" id="btn-re" onclick="bukaTab('rekap')">Rekapitulasi</button>
+        <button class="tab-btn active" id="btn-in" onclick="bukaTab('input')">INPUT</button>
+        <button class="tab-btn" id="btn-re" onclick="bukaTab('rekap')">REKAP</button>
     </div>
 
     <div id="page-input">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="form-grup">
-                <label>Unit Kelas</label>
-                <select id="pilih-kelas" onchange="loadSantri()">
-                    <option value="">-- Pilih --</option>
-                    <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-                    <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-                    <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-                </select>
-            </div>
-            <div class="form-grup">
-                <label>Guru Pengutus</label>
-                <select id="pilih-guru">
-                    <option value="">-- Pilih --</option>
-                    <option value="Ahmad">Ahmad</option>
-                    <option value="Miftah">Miftah</option>
-                    <option value="Zainal">Zainal</option>
-                    <option value="Umar">Umar</option>
-                </select>
-            </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-grup"><label>Kelas</label><select id="pilih-kelas" onchange="loadSantri()"><option value="">--</option><option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option><option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option><option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option></select></div>
+            <div class="form-grup"><label>Guru Pengutus</label><select id="pilih-guru"><option value="">--</option><option value="Ahmad">Ahmad</option><option value="Miftah">Miftah</option><option value="Zainal">Zainal</option><option value="Umar">Umar</option></select></div>
         </div>
 
-        <div class="form-grup">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-                <label>Daftar Nama Santri</label>
-                <button onclick="pilihSemua(true)" style="border:none; background:none; color:var(--blue); font-weight:700; cursor:pointer; font-size: 11px;">PILIH SEMUA</button>
-            </div>
-            <div id="pilih-santri-box">
-                <p style="text-align:center; padding:30px; color:#94a3b8; font-size:13px;">Silakan pilih unit kelas...</p>
-            </div>
-        </div>
-
-        <button onclick="setSemua4()" style="width:100%; padding:14px; margin-bottom:20px; border-radius:14px; border:2px dashed var(--primary); color:var(--primary); font-weight:700; cursor:pointer; background:#f0fdf4; font-size:12px;">⚡ SET SEMUA SANGAT BAIK (4 BINTANG)</button>
+        <div id="pilih-santri-box"></div>
+        <button onclick="setSemua4()" style="width:100%; padding:8px; margin-bottom:10px; border-radius:8px; border:1px dashed var(--primary); color:var(--primary); font-weight:700; cursor:pointer; font-size: 11px; background: #fff;">⚡ SET SEMUA 4 BINTANG</button>
 
         <div id="area-aspek">
             <div class="baris-aspek" data-aspek="Tertib"><div class="judul-aspek">📏 TERTIB</div><div class="rating"><span class="star" data-val="1" onclick="klikStar(this,1)">★</span><span class="star" data-val="2" onclick="klikStar(this,2)">★</span><span class="star" data-val="3" onclick="klikStar(this,3)">★</span><span class="star" data-val="4" onclick="klikStar(this,4)">★</span></div></div>
@@ -119,18 +81,17 @@
             <div class="baris-aspek" data-aspek="Ramah"><div class="judul-aspek">😊 RAMAH</div><div class="rating"><span class="star" data-val="1" onclick="klikStar(this,1)">★</span><span class="star" data-val="2" onclick="klikStar(this,2)">★</span><span class="star" data-val="3" onclick="klikStar(this,3)">★</span><span class="star" data-val="4" onclick="klikStar(this,4)">★</span></div></div>
         </div>
 
-        <button class="btn-aksi btn-simpan" onclick="simpanKolektif()">💾 SIMPAN DATA SEKARANG</button>
+        <button class="btn-aksi btn-simpan" onclick="simpanKolektif()">💾 SIMPAN DATA</button>
     </div>
 
     <div id="page-rekap" style="display:none;">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-            <div class="form-grup"><label>Bulan Lap.</label><select id="bulan-rekap"><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select></div>
-            <div class="form-grup"><label>Mode Lihat</label><select id="opsi-rekap"><option value="perkelas">Tabel Per Kelas</option><option value="semua">Grafik Seluruh Kelas</option></select></div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <div class="form-grup"><label>Bulan</label><select id="bulan-rekap"><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select></div>
+            <div class="form-grup"><label>Mode</label><select id="opsi-rekap"><option value="perkelas">Tabel Kelas</option><option value="semua">Grafik Semua</option></select></div>
         </div>
         <div id="box-kelas-rekap" class="form-grup"><label>Pilih Kelas</label><select id="kelas-rekap"><option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option><option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option><option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option></select></div>
-        <button class="btn-aksi btn-simpan" style="background:var(--blue); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);" onclick="jalankanRekap()">📊 PROSES LAPORAN</button>
-        <button id="btnExcel" class="btn-aksi btn-excel" onclick="exportExcel()">📥 DOWNLOAD KE EXCEL (.XLSX)</button>
-        
+        <button class="btn-aksi btn-simpan" style="background:var(--blue)" onclick="jalankanRekap()">📊 PROSES DATA</button>
+        <button id="btnExcel" class="btn-aksi btn-excel" onclick="exportExcel()">📥 DOWNLOAD EXCEL</button>
         <div id="wadah-grafik" class="chart-box" style="display:none;"><canvas id="chartBudaya"></canvas></div>
         <div class="tabel-scroll" id="hasil-rekap"></div>
     </div>
@@ -152,25 +113,25 @@
         const k = document.getElementById('pilih-kelas').value;
         const b = document.getElementById('pilih-santri-box');
         if(!k) return;
-        b.innerHTML = '<p style="text-align:center; padding:20px; font-size:12px; color:#666;">Mengambil data...</p>';
+        b.innerHTML = '<p style="text-align:center; padding:10px; font-size:12px;">Memuat...</p>';
         const r = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${k}`);
         const data = await r.json();
         b.innerHTML = '';
         data.forEach(s => {
             const d = document.createElement('div');
             d.className = 'item-santri';
-            d.innerHTML = `<input type="checkbox" class="cb-santri" value="${s.nipd}" data-nama="${s.nama}"> <span>${s.nama.toLowerCase()}</span>`;
+            d.innerHTML = `<input type="checkbox" class="cb-santri" value="${s.nipd}" data-nama="${s.nama}"> <span>${s.nama}</span>`;
             d.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const c = d.querySelector('input'); c.checked = !c.checked; } };
             b.appendChild(d);
         });
     }
 
-    function pilihSemua(v) { document.querySelectorAll('.cb-santri').forEach(c => c.checked = v); }
     function klikStar(el, n) {
         const p = el.parentElement;
         p.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n));
-        p.parentElement.setAttribute('data-nilai', n);
+        p.parentElement.parentElement.setAttribute('data-nilai', n);
     }
+
     function setSemua4() { document.querySelectorAll('.baris-aspek').forEach(b => klikStar(b.querySelectorAll('.star')[3], 4)); }
 
     async function simpanKolektif() {
@@ -178,7 +139,7 @@
         const asp = document.querySelectorAll('.baris-aspek');
         const kls = document.getElementById('pilih-kelas').value;
         const guru = document.getElementById('pilih-guru').value;
-        if(cbs.length === 0 || !guru) return alert("Pilih Santri dan Guru Pengutus!");
+        if(cbs.length === 0 || !guru) return alert("Pilih Santri dan Guru!");
         const bln = new Date().getMonth() + 1;
         for(let c of cbs) {
             const data = {
@@ -188,7 +149,7 @@
             };
             await fetch(`${FIREBASE_URL}/budaya/2026/${bln}/${c.value}.json`, { method: 'POST', body: JSON.stringify(data) });
         }
-        alert("Data Berhasil Disimpan!"); location.reload();
+        alert("Tersimpan!"); location.reload();
     }
 
     async function jalankanRekap() {
@@ -214,22 +175,19 @@
                 });
                 const r = n.c > 0 ? [(n.t/n.c).toFixed(1), (n.d/n.c).toFixed(1), (n.tj/n.c).toFixed(1), (n.j/n.c).toFixed(1), (n.r/n.c).toFixed(1)] : [0,0,0,0,0];
                 const avg = (r.reduce((a,b)=>parseFloat(a)+parseFloat(b),0)/5).toFixed(1);
-                h += `<tr><td>${s.nama.toLowerCase()}</td><td>${n.g}</td><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td style="font-weight:700; color:var(--primary)">${avg}</td></tr>`;
+                h += `<tr><td>${s.nama}</td><td>${n.g}</td><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${avg}</td></tr>`;
             });
             wadah.innerHTML = h + '</table>';
         } else {
             const listK = ["7A","7B","7C","7D","8A","8B","8C","8D","9A","9B","9C","9D"];
             let skorK = [];
-            let h = `<table class="rekap-table" id="tabelData"><tr><th>Unit Kelas</th><th>Rata-Rata Karakter</th></tr>`;
+            let h = `<table class="rekap-table" id="tabelData"><tr><th>Unit Kelas</th><th>Rata-Rata</th></tr>`;
             listK.forEach(k => {
                 let total = 0, count = 0;
                 Object.values(db).forEach(logs => {
                     const lArr = Object.values(logs);
                     if(lArr[0] && lArr[0].kelas === k) { 
-                        lArr.forEach(x => { 
-                            total += ( (parseInt(x.T)||0)+(parseInt(x.D)||0)+(parseInt(x.TJ)||0)+(parseInt(x.J)||0)+(parseInt(x.R)||0) )/5; 
-                            count++; 
-                        }); 
+                        lArr.forEach(x => { total += ((parseInt(x.T)||0)+(parseInt(x.D)||0)+(parseInt(x.TJ)||0)+(parseInt(x.J)||0)+(parseInt(x.R)||0))/5; count++; }); 
                     }
                 });
                 const final = count > 0 ? (total/count).toFixed(2) : "0.00";
@@ -244,35 +202,21 @@
 
     function renderChart(labels, data) {
         const ctx = document.getElementById('chartBudaya').getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, '#1f6f51');
-        gradient.addColorStop(1, '#a7f3d0');
+        const grad = ctx.createLinearGradient(0, 0, 0, 300);
+        grad.addColorStop(0, '#1f6f51'); 
+        grad.addColorStop(1, '#82ca9d'); 
 
         if(chartObj) chartObj.destroy();
         chartObj = new Chart(ctx, { 
             type:'bar', 
-            data: { 
-                labels, 
-                datasets: [{ 
-                    label:'Skor Karakter', 
-                    data, 
-                    backgroundColor: gradient,
-                    borderRadius: 10,
-                    borderSkipped: false
-                }] 
-            }, 
-            options:{ 
-                responsive: true,
-                scales:{ y:{ beginAtZero:true, max:4, grid:{ color:'#f1f5f9' } }, x:{ grid:{ display:false } } },
-                plugins: { legend: { display: false } }
-            } 
+            data: { labels, datasets: [{ label:'Skor Karakter', data, backgroundColor: grad, borderRadius: 8 }] }, 
+            options:{ scales:{ y:{ beginAtZero:true, max:4 } } } 
         });
     }
 
     function exportExcel() {
-        const wb = XLSX.utils.table_to_book(document.getElementById("tabelData"));
-        XLSX.writeFile(wb, `Laporan_Budaya_Sekolah_2026.xlsx`);
+        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabelData")), `Laporan_Budaya_2026.xlsx`);
     }
 </script>
 </body>
-    </html>
+</html>
