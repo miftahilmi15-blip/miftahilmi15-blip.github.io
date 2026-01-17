@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | Budaya Sekolah</title>
+    <title>E-SANTRI | Budaya Sekolah SQL Speed</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; }
@@ -21,18 +21,9 @@
         label { font-size: 10px; font-weight: 700; color: #666; display: block; margin-bottom: 3px; text-transform: uppercase; }
         select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
         
-        /* Gaya Box Pilihan Banyak Santri */
-        #pilih-santri-box { 
-            width: 100%; 
-            max-height: 150px; 
-            overflow-y: auto; 
-            border: 1px solid #eee; 
-            border-radius: 10px; 
-            padding: 10px; 
-            background: #f9f9f9;
-        }
-        .item-santri { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 12px; border-bottom: 1px solid #f1f1f1; cursor: pointer; }
-        .item-santri input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+        #pilih-santri-box { width: 100%; max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 10px; padding: 10px; background: #f9f9f9; }
+        .item-santri { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #f1f1f1; cursor: pointer; }
+        .item-santri input { width: 18px; height: 18px; accent-color: var(--primary); }
 
         .baris-aspek { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 15px; margin-bottom: 10px; }
         .judul-aspek { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
@@ -42,8 +33,6 @@
         .label-kategori { text-align: center; font-size: 11px; font-weight: 700; margin-top: 5px; color: #bbb; }
         .btn-fast { width: 100%; background: #e8f5e9; color: var(--primary); border: 2px dashed var(--primary); padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; margin-bottom: 15px; font-size: 12px; }
         .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; font-size: 14px; }
-        .area-download { margin-top: 25px; display: flex; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; }
-        .btn-download { flex: 1; padding: 12px; border-radius: 10px; border: none; color: white; font-weight: 600; font-size: 11px; cursor: pointer; }
         #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
         
         .rekap-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px; }
@@ -54,7 +43,7 @@
 <body>
 
 <div class="wadah">
-    <header><h1>BUDAYA SEKOLAH</h1></header>
+    <header><h1>BUDAYA SEKOLAH PRO</h1></header>
 
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('input')">INPUT NILAI</button>
@@ -68,18 +57,16 @@
                 <select id="guru">
                     <option value="Ibu Riani Rizki Astuti">Ibu Riani</option>
                     <option value="Ustadz Ahmad Fauzi">Ustadz Ahmad</option>
-                    <option value="Ustadzah Siti Aminah">Ustadzah Siti</option>
                 </select>
                 <select id="mapel">
                     <option value="BK">BK</option>
                     <option value="PAI">PAI</option>
-                    <option value="Tahfidz">Tahfidz</option>
                 </select>
             </div>
         </div>
 
         <div class="form-grup">
-            <label>Data Santri (Bisa pilih banyak)</label>
+            <label>Data Santri (Pilih Banyak)</label>
             <select id="pilih-kelas" onchange="loadSantri()" style="margin-bottom: 8px;">
                 <option value="">-- Pilih Kelas --</option>
                 <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
@@ -102,7 +89,7 @@
         </div>
 
         <div id="loading">⏳ Menyimpan...</div>
-        <button class="btn-simpan" onclick="simpanKolektif()">💾 SIMPAN UNTUK SEMUA YANG TERCENTANG</button>
+        <button class="btn-simpan" onclick="simpanKolektif()">💾 SIMPAN DATA (FIREBASE)</button>
     </div>
 
     <div id="page-rekap" style="display:none;">
@@ -115,19 +102,16 @@
                 <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
         </div>
-        <button class="btn-simpan" onclick="ambilRekap()">📊 LIHAT REKAP BULANAN</button>
+        <button class="btn-simpan" onclick="ambilRekap()">📊 LIHAT REKAP (INSTAN)</button>
         <div id="hasil-rekap"></div>
-    </div>
-
-    <div class="area-download">
-        <button class="btn-download" style="background:#e11d48" onclick="unduh('pdf')">📄 PDF REKAP</button>
-        <button class="btn-download" style="background:#16a34a" onclick="unduh('xlsx')">📊 EXCEL REKAP</button>
     </div>
 </div>
 
 <script>
+    const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOi_m9c4FgTyD3Q98w_xqyy0rdHnMN90xhhwOro7c6jSKxB09GBTSxIP1U7ufe1VnOoQ/exec";
     const kategoriArr = ["", "KURANG", "CUKUP", "BAIK", "SANGAT BAIK"];
+    let globalSantriList = [];
 
     function switchTab(mode) {
         document.getElementById('page-input').style.display = mode === 'input' ? 'block' : 'none';
@@ -141,9 +125,7 @@
         const stars = parent.querySelectorAll('.star');
         stars.forEach((s, i) => s.classList.toggle('active', i < n));
         parent.parentElement.setAttribute('data-nilai', n);
-        const label = parent.nextElementSibling;
-        label.innerText = kategoriArr[n];
-        label.style.color = "#1f6f51";
+        parent.nextElementSibling.innerText = kategoriArr[n];
     }
 
     function semuaBintang4() {
@@ -157,86 +139,92 @@
         const kelas = document.getElementById('pilih-kelas').value;
         const box = document.getElementById('pilih-santri-box');
         if(!kelas) return;
-        box.innerHTML = '<p style="text-align:center; font-size:12px;">Memuat santri...</p>';
+        box.innerHTML = 'Memuat santri...';
         try {
             const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kelas}`);
-            const data = await res.json();
+            globalSantriList = await res.json();
             box.innerHTML = ''; 
-            data.forEach(x => {
+            globalSantriList.forEach(x => {
                 const item = document.createElement('div');
                 item.className = 'item-santri';
                 item.innerHTML = `<input type="checkbox" value="${x.nipd}" data-nama="${x.nama}"> <span>${x.nama}</span>`;
-                item.onclick = (e) => {
-                    if(e.target.tagName !== 'INPUT') {
-                        const cb = item.querySelector('input');
-                        cb.checked = !cb.checked;
-                    }
-                };
+                item.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const cb = item.querySelector('input'); cb.checked = !cb.checked; } };
                 box.appendChild(item);
             });
-        } catch(e) { box.innerHTML = '<p style="color:red; font-size:12px;">Gagal memuat!</p>'; }
-    }
-
-    async function ambilRekap() {
-        const kelas = document.getElementById('pilih-kelas').value;
-        const bulan = document.getElementById('bulan-rekap').value;
-        if(!kelas) return alert("Pilih kelas dulu!");
-        document.getElementById('hasil-rekap').innerHTML = '<p style="text-align:center; padding:20px;">Memproses data...</p>';
-        const s = document.createElement('script');
-        s.src = `${SCRIPT_URL}?mode=rekapBudaya&kelas=${kelas}&bulan=${bulan}&tahun=2026&callback=renderRekap`;
-        document.body.appendChild(s);
-    }
-
-    window.renderRekap = (res) => {
-        let html = '<table class="rekap-table"><tr><th>Nama</th><th>Rata★</th><th>Input</th></tr>';
-        res.data.forEach(x => { html += `<tr><td>${x.nama}</td><td><b>${x.rata}</b></td><td>${x.total}x</td></tr>`; });
-        html += '</table>';
-        document.getElementById('hasil-rekap').innerHTML = html;
+        } catch(e) { box.innerHTML = 'Gagal!'; }
     }
 
     async function simpanKolektif() {
         const checkboxes = document.querySelectorAll('#pilih-santri-box input:checked');
         const kelas = document.getElementById('pilih-kelas').value;
         const barisAspek = document.querySelectorAll('.baris-aspek');
+        const guru = document.getElementById('guru').value;
         
-        if(checkboxes.length === 0) return alert("⚠️ Centang minimal satu nama santri!");
-
-        let semuaTerisi = true;
-        barisAspek.forEach(baris => { if(!baris.getAttribute('data-nilai')) semuaTerisi = false; });
-        if(!semuaTerisi) return alert("⚠️ Gagal! Semua 5 aspek harus diberi bintang.");
+        if(checkboxes.length === 0) return alert("Pilih santri!");
+        
+        let valid = true;
+        barisAspek.forEach(b => { if(!b.getAttribute('data-nilai')) valid = false; });
+        if(!valid) return alert("Beri semua bintang!");
 
         document.getElementById('loading').style.display = 'block';
-        document.getElementById('loading').innerText = `⏳ Menyimpan data untuk ${checkboxes.length} santri...`;
-        
+        const tgl = new Date();
+        const bulanId = tgl.getMonth() + 1;
+        const tahunId = tgl.getFullYear();
+
         try {
-            // Looping untuk setiap santri yang dicentang
             for(let cb of checkboxes) {
                 const nipd = cb.value;
-                const nama = cb.getAttribute('data-nama');
+                const data = {
+                    nama: cb.getAttribute('data-nama'),
+                    kelas: kelas,
+                    guru: guru,
+                    timestamp: tgl.getTime()
+                };
+                barisAspek.forEach(b => { data[b.getAttribute('data-aspek')] = b.getAttribute('data-nilai'); });
                 
-                // Looping untuk setiap aspek
-                for(let baris of barisAspek) {
-                    const nilai = baris.getAttribute('data-nilai');
-                    const payload = {
-                        tanggal: new Date().toLocaleDateString('id-ID'),
-                        nipd: nipd,
-                        nama: nama,
-                        kelas: kelas,
-                        aspek: baris.getAttribute('data-aspek'),
-                        kategori: kategoriArr[nilai],
-                        nilai: nilai,
-                        guru: document.getElementById('guru').value
-                    };
-                    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                }
+                // Simpan ke Firebase (POST menciptakan ID unik otomatis)
+                await fetch(`${FIREBASE_URL}/budaya/${tahunId}/${bulanId}/${nipd}.json`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
             }
-            alert(`✅ Berhasil Simpan untuk ${checkboxes.length} santri!`);
+            alert("Berhasil!");
             location.reload();
-        } catch(e) { 
-            alert("❌ Gagal menyimpan."); 
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
+        } catch(e) { alert("Gagal Firebase!"); }
+    }
+
+    async function ambilRekap() {
+        const bulan = document.getElementById('bulan-rekap').value;
+        const kelas = document.getElementById('pilih-kelas').value;
+        if(!kelas) return alert("Pilih kelas dulu!");
+
+        document.getElementById('hasil-rekap').innerHTML = 'Menghitung dari SQL Firebase...';
+        
+        try {
+            const res = await fetch(`${FIREBASE_URL}/budaya/2026/${bulan}.json`);
+            const dataFirebase = await res.json();
+            
+            let html = '<table class="rekap-table"><tr><th>Nama</th><th>Rata★</th><th>Input</th></tr>';
+            
+            globalSantriList.forEach(siswa => {
+                const logs = dataFirebase ? dataFirebase[siswa.nipd] : null;
+                let totalNilai = 0, count = 0;
+                
+                if(logs) {
+                    Object.values(logs).forEach(log => {
+                        const rataHarian = (parseInt(log.Tertib) + parseInt(log.Disiplin) + parseInt(log['Tanggung Jawab']) + parseInt(log.Jujur) + parseInt(log.Ramah)) / 5;
+                        totalNilai += rataHarian;
+                        count++;
+                    });
+                }
+                
+                const rataBulan = count > 0 ? (totalNilai / count).toFixed(1) : 0;
+                html += `<tr><td>${siswa.nama}</td><td><b>${rataBulan} ★</b></td><td>${count}x</td></tr>`;
+            });
+            
+            html += '</table>';
+            document.getElementById('hasil-rekap').innerHTML = html;
+        } catch(e) { document.getElementById('hasil-rekap').innerHTML = 'Data bulan ini kosong.'; }
     }
 </script>
 </body>
