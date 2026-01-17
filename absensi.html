@@ -3,219 +3,134 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Absensi Otomatis</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-
+<title>E-Santri Otomatis</title>
 <style>
-:root{
---bg:#f8fafc;--card:#fff;--primary:#10b981;--dark:#065f46;
---hadir:#22c55e;--sakit:#f59e0b;--izin:#3b82f6;--alfa:#ef4444;
-}
-*{box-sizing:border-box;font-family:'Plus Jakarta Sans',sans-serif}
-body{margin:0;background:var(--bg);padding-bottom:90px}
-
-header{background:#fff;padding:16px;border-bottom:1px solid #e5e7eb;position:sticky;top:0}
-header h1{margin:0;color:var(--dark)}
-
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.stat{background:#f1f5f9;padding:10px;border-radius:12px;text-align:center}
-
-.controls{padding:15px;background:#fff;border-bottom:1px solid #e5e7eb}
-select,input{width:100%;padding:14px;border-radius:14px;border:1px solid #e5e7eb;margin-top:10px}
-
-.list{padding:15px}
-.item{background:#fff;padding:14px;border-radius:16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid #f1f5f9}
-
-.btns button{
-width:38px;height:38px;border-radius:10px;border:1px solid #e5e7eb;
-background:#fff;font-weight:700;margin-left:5px
-}
-
-.h{background:var(--hadir);color:#fff}
-.s{background:var(--sakit);color:#fff}
-.i{background:var(--izin);color:#fff}
-.a{background:var(--alfa);color:#fff}
-
-footer{
-position:fixed;bottom:0;left:0;right:0;
-background:rgba(255,255,255,.9);
-backdrop-filter:blur(10px);
-display:grid;grid-template-columns:80px 1fr;
-gap:10px;padding:15px;border-top:1px solid #e5e7eb
-}
-footer button{border-radius:14px;border:none;font-weight:700}
-.save{background:var(--primary);color:#fff}
-
-#overlay{
-position:fixed;inset:0;background:rgba(0,0,0,.6);
-display:none;align-items:center;justify-content:center;color:#fff;font-size:18px
-}
-
-.multi-select{margin-top:10px;padding:10px;background:#fff;border-radius:12px;border:1px solid #e5e7eb;}
-.multi-select label{display:block;margin-bottom:5px;cursor:pointer;}
+body{margin:0;font-family:sans-serif;background:#f8fafc;padding-bottom:100px}
+header{background:#fff;padding:16px;border-bottom:1px solid #ccc;position:sticky;top:0;}
+.list{padding:15px;}
+.item{display:flex;justify-content:space-between;padding:10px;background:#fff;margin-bottom:5px;border-radius:8px;}
+.btns button{width:35px;height:35px;margin-left:5px;border-radius:6px;border:none;color:#fff;font-weight:bold;}
+.h{background:#22c55e;} .s{background:#f59e0b;} .i{background:#3b82f6;} .a{background:#ef4444;}
 </style>
 </head>
-
 <body>
-
-<div id="overlay">⏳ Menyimpan...</div>
 
 <header>
 <h1>🟢 E-Santri</h1>
-<div class="stats">
-<div class="stat"><small>Total</small><div id="tot">0</div></div>
-<div class="stat"><small>Absen</small><div id="hadir">0</div></div>
-</div>
-</header>
-
-<div class="controls">
 <select id="kelas">
 <option value="">Pilih Kelas</option>
-<option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-<option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-<option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+<option>7A</option><option>7B</option>
+<option>8A</option><option>8B</option>
+<option>9A</option><option>9B</option>
 </select>
-<input id="cari" placeholder="Cari nama...">
-</div>
+<input id="scan" placeholder="Scan kartu/NIPD" autofocus>
+</header>
 
-<div id="list" class="list">
-<p style="text-align:center;color:#64748b">Pilih kelas</p>
-</div>
-
+<div id="list" class="list"></div>
 <div class="multi-select">
 <label><input type="checkbox" id="selectAll"> Pilih Semua</label>
 </div>
 
-<footer>
-<button onclick="download()">📥</button>
-<button class="save" onclick="simpan()">SIMPAN</button>
-</footer>
+<button onclick="simpan()">SIMPAN</button>
 
 <audio id="ok" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 <audio id="fail" src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"></audio>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwAqACKjbSjwZlI_kCIsXdTDHxuz8U2qqyM0-42szs3tGqeX3ODeLdzsMH3VLevr9ob4A/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyQRAdn7rOZ4q2EZMheWVgf1IPxINl7yL3g4mEPBPPdNBVoOZqtGP54KDZZZ7gn0tTCOw/exec";
+const overlay = {style:{display:'none'}};
 
-// ===== Load siswa ketika pilih kelas =====
-kelas.onchange = async () => {
-  if (!kelas.value) return;
-  overlay.style.display='flex';
-  try {
-    const res = await fetch(`${SCRIPT_URL}?kelas=${kelas.value}`);
+const kelasSelect=document.getElementById('kelas');
+const scanInput=document.getElementById('scan');
+const ok=document.getElementById('ok');
+const fail=document.getElementById('fail');
+const list=document.getElementById('list');
+
+// Load siswa per kelas
+kelasSelect.onchange = async ()=>{
+  if(!kelasSelect.value) return;
+  try{
+    const res = await fetch(`${SCRIPT_URL}?kelas=${kelasSelect.value}`);
     const data = await res.json();
-    overlay.style.display='none';
-    render(data.data || []);
-  } catch(err){
-    overlay.style.display='none';
-    alert('Gagal load siswa: ' + err);
-  }
+    render(data.data||[]);
+  }catch(err){ alert("Gagal load: "+err); }
 };
 
-// ===== Render list siswa =====
+// Render list siswa
 function render(data){
   list.innerHTML='';
-  tot.innerText=data.length;
-  hadir.innerText=0;
   data.forEach(x=>{
     const div=document.createElement('div');
     div.className='item';
     div.dataset.nipd=x.nipd;
+    div.dataset.kelas=x.kelas;
     div.innerHTML=`
-      <div>
-        <b>${x.nama}</b><br><small>${x.nipd}</small>
-      </div>
+      <div><b>${x.nama}</b> (#${x.no})<br>${x.nipd}</div>
       <div class="btns">
         <button onclick="setStatus(this,'H')">H</button>
         <button onclick="setStatus(this,'S')">S</button>
         <button onclick="setStatus(this,'I')">I</button>
         <button onclick="setStatus(this,'A')">A</button>
       </div>
-      <input type="checkbox" class="multi" style="margin-left:5px">`;
+      <input type="checkbox" class="multi">`;
     list.appendChild(div);
   });
 }
 
-// ===== Set status absen =====
+// Set status absen
 function setStatus(btn,status){
   [...btn.parentElement.children].forEach(x=>x.className='');
   btn.className=status.toLowerCase();
   btn.dataset.s=status;
-  hadir.innerText=document.querySelectorAll('[data-s]').length;
 }
 
-// ===== Pilih semua untuk multi =====
+// Multi-select
 document.getElementById('selectAll').onchange=function(){
   document.querySelectorAll('.multi').forEach(chk=>chk.checked=this.checked);
 };
 
-// ===== Simpan =====
+// Simpan manual
 async function simpan(){
-  overlay.style.display='flex';
   const data=[];
   document.querySelectorAll('.item').forEach(div=>{
-    const statusBtn = div.querySelector('[data-s]');
-    const multiChk = div.querySelector('.multi');
-    if(statusBtn && multiChk.checked){
+    const statusBtn=div.querySelector('[data-s]');
+    const chk=div.querySelector('.multi');
+    if(statusBtn && chk.checked){
       data.push({
-        kelas:kelas.value,
+        kelas:div.dataset.kelas,
         nipd:div.dataset.nipd,
         nama: div.querySelector('b').innerText,
-        status: statusBtn.dataset.s
+        status: statusBtn.dataset.s,
+        metode:"manual"
       });
     }
   });
-
-  if(data.length===0){
-    overlay.style.display='none';
-    alert('Pilih siswa dan status sebelum simpan');
-    return;
-  }
-
-  try {
+  if(data.length===0){ alert("Pilih siswa dan status"); return; }
+  try{
     const res = await fetch(SCRIPT_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(data)
     });
-    const result = await res.json();
-    console.log(result);
-
-    // Bunyi konfirmasi
-    result.results.forEach(r=>{
-      if(r.status==='Sukses') ok.play();
-      else fail.play();
-    });
-
-  } catch(err){
-    console.error(err);
-    alert('Gagal simpan absensi');
-  } finally{
-    overlay.style.display='none';
+    const result=await res.json();
+    result.results.forEach(r=>r.status==="Sukses"?ok.play():fail.play());
     setTimeout(()=>location.reload(),1000);
-  }
+  }catch(err){ alert("Gagal simpan: "+err); }
 }
 
-// ===== Download =====
-function download(){
-  window.open(SCRIPT_URL+'?action=download');
-}
-
-// ===== NFC / kartu otomatis =====
-window.addEventListener('keydown',e=>{
-  // Simulasi scan kartu: NIPD diketik manual dan enter
-  if(e.key==='Enter' && e.target.value){
-    const nipd=e.target.value.trim();
-    const selectedStatus='H'; // default hadir
-    overlay.style.display='flex';
-    ok.play();
+// Auto-save scan kartu/NFC
+scanInput.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && scanInput.value){
+    const nipd=scanInput.value.trim();
+    if(!kelasSelect.value){ alert("Pilih kelas terlebih dahulu"); return; }
     fetch(SCRIPT_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify([{kelas:kelas.value,nipd,status:selectedStatus}])
-    }).then(()=>overlay.style.display='none');
-    e.target.value=''; // reset input
+      body:JSON.stringify([{kelas:kelasSelect.value,nipd,status:'H',metode:'auto'}])
+    }).then(r=>{
+      ok.play();
+      scanInput.value='';
+    }).catch(()=>fail.play());
   }
 });
 </script>
