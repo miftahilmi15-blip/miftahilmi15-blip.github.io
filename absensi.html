@@ -177,7 +177,7 @@ window.onload = () => {
     const kelasId = urlParams.get('kls');
 
     if (scanId && kelasId) {
-        showLoading("📲 MENYIMPAN...");
+        showLoading("📲 MENGIRIM DATA...");
         
         fetch(SCRIPT_URL, {
             method: 'POST',
@@ -191,21 +191,16 @@ window.onload = () => {
             }])
         }).then(() => {
             document.getElementById('snd_ok').play();
-            
-            // Tampilan sukses tanpa klik OK
             loadingText.innerHTML = "✅ BERHASIL!<br>Siap Scan Berikutnya...";
             
-            // Hapus parameter di URL agar bisa discan ulang tanpa refresh manual
+            // Tunggu 1.5 detik agar suara Beep terdengar, lalu REFRESH TOTAL
             setTimeout(() => {
-                window.history.replaceState({}, document.title, window.location.pathname);
-                overlay.style.display = 'none';
-                
-                // Jika ingin browser tertutup otomatis (opsional)
-                // window.close(); 
-            }, 2000); // Tunggu 2 detik lalu siap lagi
+                // Ini akan membersihkan URL dan membuat browser SIAP scan lagi
+                window.location.href = window.location.pathname; 
+            }, 1500);
             
         }).catch((err) => {
-            alert("Gagal: " + err);
+            alert("Koneksi Error: " + err);
             overlay.style.display = 'none';
         });
     }
