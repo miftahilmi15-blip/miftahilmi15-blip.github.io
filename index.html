@@ -3,135 +3,83 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Royal Emerald v16</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>E-Santri | Royal v17</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --primary: #1f6f51;
-    --primary-gradient: linear-gradient(135deg, #1f6f51 0%, #2ecc71 100%);
-    --bg-light: #f4f9f6;
-    --white: #ffffff;
-    --text-dark: #1a1a1a;
-    --shadow: 0 10px 30px rgba(31, 111, 81, 0.1);
+    --primary-grad: linear-gradient(135deg, #1f6f51 0%, #2ecc71 100%);
+    --bg: #f4f9f6;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   
-  body {
-    background: var(--bg-light);
-    color: var(--text-dark);
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow-x: hidden; }
 
-  /* LOADING */
-  #loading-screen { position: fixed; inset: 0; background: var(--white); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-  .spinner { width: 40px; height: 40px; border: 3px solid #eee; border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-  @keyframes spin { 100% { transform: rotate(360deg); } }
-
-  /* HEADER STYLE DARI GAMBAR */
+  /* HEADER MEWAH */
   header {
-    width: 100%;
-    max-width: 420px;
-    background: var(--primary-gradient);
-    padding: 40px 25px 80px;
-    border-radius: 0 0 40px 40px;
-    position: relative;
+    background: var(--primary-grad); height: 180px; padding: 40px 25px;
+    border-radius: 0 0 45px 45px; position: relative; text-align: center;
     box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2);
   }
+  .title-app { font-family: 'Montserrat', sans-serif; font-size: 30px; color: white; letter-spacing: 2px; }
 
-  .title-main { 
-    font-family: 'Montserrat', sans-serif; font-size: 28px; color: white;
-    letter-spacing: 2px; text-transform: uppercase; text-align: center;
-  }
+  /* CONTAINER OVERLAP */
+  .container { width: 90%; max-width: 400px; margin: -60px auto 20px; z-index: 5; position: relative; }
 
-  .container { 
-    width: 90%; 
-    max-width: 380px; 
-    margin-top: -50px; /* Menumpuk ke header seperti di gambar */
-    z-index: 2; 
-  }
-
-  /* STREAK CARD (ELEGANT VERSION) */
+  /* STREAK CARD */
   .streak-card {
-    background: var(--white);
-    border-radius: 25px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.8);
+    background: white; border-radius: 25px; padding: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px;
   }
-  .streak-val { font-size: 24px; font-weight: 800; color: var(--primary); }
-  .streak-label { font-size: 11px; color: #888; text-transform: uppercase; font-weight: 600; }
-  .fire-icon { font-size: 32px; animation: burn 1.2s infinite alternate; }
-  @keyframes burn { from { transform: scale(1); } to { transform: scale(1.15); filter: drop-shadow(0 0 10px orange); } }
+  .fire { font-size: 35px; animation: burn 1s infinite alternate; }
+  @keyframes burn { from { transform: scale(1); filter: drop-shadow(0 0 2px orange); } to { transform: scale(1.2); filter: drop-shadow(0 0 10px red); } }
 
-  /* MAHFUZAT (GLASSMORPHISM) */
+  /* MAHFUZAT BOX */
   .mahfuzat-box {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 12px 20px;
-    margin-bottom: 25px;
-    border: 1px solid white;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+    border-radius: 50px; padding: 10px 20px; margin-bottom: 20px;
+    border: 1px solid white; overflow: hidden;
   }
 
-  /* MENU GRID (CLEAN MINIMALIST SEPERTI GAMBAR) */
+  /* MENU GRID */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .menu-item { 
-    background: var(--white);
-    padding: 25px 10px;
-    border-radius: 24px;
-    text-align: center; 
-    transition: 0.3s;
-    box-shadow: var(--shadow);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    background: white; padding: 25px 10px; border-radius: 25px; text-align: center; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02); cursor: pointer; position: relative; overflow: hidden;
+    transition: transform 0.2s;
   }
-  .menu-item:active { transform: scale(0.9); }
-  .menu-symbol { font-size: 32px; display: block; margin-bottom: 10px; }
-  .menu-item span { font-size: 11px; font-weight: 700; color: #444; }
+  .menu-item:active { transform: scale(0.95); }
+  .menu-item span { display: block; font-size: 11px; font-weight: 700; margin-top: 8px; color: #444; }
 
-  /* RIPPLE EFFECT */
-  .ripple { position: absolute; background: rgba(31, 111, 81, 0.1); border-radius: 50%; transform: scale(0); animation: ripple 0.6s linear; pointer-events: none; }
-  @keyframes ripple { to { transform: scale(4); opacity: 0; } }
-
-  /* SIDEBAR TRIGGER */
-  .menu-trigger {
-    position: absolute; top: 35px; right: 25px;
-    color: white; font-size: 24px; cursor: pointer;
+  /* EFEK GELEMBUNG SABUN */
+  .bubble {
+    position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6); pointer-events: none;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+    animation: pop 0.6s ease-out forwards;
+  }
+  @keyframes pop {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(2.5); opacity: 0; }
   }
 
-  /* AUTH CARD */
-  .auth-card {
-    background: white; padding: 40px 30px; border-radius: 35px;
-    box-shadow: var(--shadow); width: 100%; text-align: center;
-  }
-  input { width: 100%; padding: 18px; margin-bottom: 15px; border-radius: 18px; border: 1px solid #f0f0f0; background: #f9f9f9; outline: none; font-weight: 500; }
-  .btn-primary { 
-    width: 100%; padding: 18px; border-radius: 18px; border: none; 
-    background: var(--primary-gradient); color: white; font-weight: 700; 
-    box-shadow: 0 8px 20px rgba(31, 111, 81, 0.3); cursor: pointer;
-  }
-
+  /* SIDEBAR */
+  .menu-trigger { position: absolute; top: 40px; right: 25px; color: white; font-size: 24px; cursor: pointer; }
   .sidebar { 
     position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: white; 
-    transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1200; padding: 60px 30px; border-radius: 40px 0 0 40px;
+    transition: 0.4s; z-index: 1200; padding: 50px 25px; border-radius: 40px 0 0 40px;
   }
-  .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.1); }
-  .sidebar-link { display: block; padding: 15px 20px; color: var(--text-dark); text-decoration: none; font-weight: 600; border-radius: 15px; margin-bottom: 5px; }
-  .sidebar-link.active { background: var(--bg-light); color: var(--primary); }
+  .sidebar.open { right: 0; box-shadow: -10px 0 40px rgba(0,0,0,0.1); }
+  .sidebar a { display: block; padding: 15px; color: #333; text-decoration: none; font-weight: 600; border-radius: 12px; }
+  .sidebar a:hover { background: #f0fdf4; color: var(--primary); }
 
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); z-index: 1100; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 1100; }
   .hidden { display: none !important; }
+  .auth-card { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+  input { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 15px; border: 1px solid #eee; background: #f9f9f9; outline: none; }
+  .btn-main { width: 100%; padding: 15px; border-radius: 15px; border: none; background: var(--primary-grad); color: white; font-weight: 700; cursor: pointer; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -139,80 +87,78 @@
 </head>
 <body>
 
-<div id="loading-screen"><div class="spinner"></div></div>
+<div id="loading-screen" style="position:fixed; inset:0; background:white; display:flex; align-items:center; justify-content:center; z-index:9999;"><div style="width:40px; height:40px; border:3px solid #f3f3f3; border-top:3px solid #1f6f51; border-radius:50%; animation:spin 1s linear infinite;"></div></div>
+<style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
 
 <header id="app-header" class="hidden">
   <div class="menu-trigger" id="menu-btn">&#x22EE;</div>
-  <h1 class="title-main">E-SANTRI</h1>
-  <p id="welcome-msg" style="color: white; text-align: center; opacity: 0.9; font-size: 14px; margin-top: 5px;">Ahlan, Santri!</p>
+  <h1 class="title-app">E-SANTRI</h1>
+  <p id="welcome-msg" style="color:white; opacity:0.8; font-size:13px;"></p>
 </header>
 
 <main class="container">
   <div id="login-card" class="auth-card hidden">
-    <h2 style="margin-bottom: 10px; color: var(--primary)">Selamat Datang</h2>
-    <p style="font-size: 12px; color: #999; margin-bottom: 30px;">Silakan masuk ke akun E-Santri Ustadz</p>
+    <h2 style="text-align:center; color:var(--primary); margin-bottom:20px;">Ahlan wa Sahlan</h2>
     <input type="email" id="email" placeholder="Email">
     <input type="password" id="password" placeholder="Password">
-    <button class="btn-primary" onclick="login()">MASUK SEKARANG</button>
-    <button onclick="loginGoogle()" style="margin-top:15px; background:none; border:none; color:#666; font-size:13px; font-weight:600; cursor:pointer;">Atau masuk dengan Google</button>
+    <button class="btn-main" onclick="login()">MASUK</button>
+    <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:none; border:none; color:#777; font-weight:600;">Login with Google</button>
   </div>
 
   <section id="dashboard" class="hidden">
     <div class="streak-card">
-        <div>
-            <p class="streak-label">Al-Qur'an Streak</p>
-            <h2 id="streak-count" class="streak-val">0 Hari</h2>
-        </div>
-        <div class="fire-icon">🔥</div>
+      <div><p style="font-size:11px; color:#888; font-weight:600;">QURAN STREAK</p><h2 id="streak-count" style="color:var(--primary)">0 Hari</h2></div>
+      <div class="fire">🔥</div>
     </div>
 
     <div class="mahfuzat-box">
-        <marquee scrollamount="3">
-            <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-weight:bold; font-size:16px;"></span> 
-            <span id="runIndo" style="color:#666; font-weight:500; font-size:13px;"></span>
-        </marquee>
+      <marquee scrollamount="4">
+        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-weight:bold; font-size:18px;"></span>
+        <span id="runIndo" style="color:#666; font-weight:600; margin-left:10px;"></span>
+      </marquee>
     </div>
 
     <div class="menu-grid">
-      <div class="menu-item ripple-btn" onclick="goTo('absensi.html')"><span class="menu-symbol">📝</span><span>Absensi</span></div>
-      <div class="menu-item ripple-btn" onclick="goTo('tahfidz.html')"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
-      <div class="menu-item ripple-btn" onclick="handleQuran()"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
-      <div class="menu-item ripple-btn" onclick="goTo('kamus.html')"><span class="menu-symbol">📑</span><span>Kamus</span></div>
-      <div class="menu-item ripple-btn" onclick="goTo('perpustakaan.html')"><span class="menu-symbol">📚</span><span>Perpus</span></div>
-      <div class="menu-item ripple-btn" onclick="goTo('budayasekolah.html')"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
+      <div class="menu-item" onclick="goTo('absensi.html')">🌐<span>Absensi</span></div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')">🏆<span>Tahfidz</span></div>
+      <div class="menu-item" onclick="handleQuran()">📖<span>Al-Quran</span></div>
+      <div class="menu-item" onclick="goTo('kamus.html')">📑<span>Kamus</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')">📚<span>Perpus</span></div>
+      <div class="menu-item" onclick="goTo('budayasekolah.html')">🕌<span>Budaya</span></div>
     </div>
   </section>
 </main>
 
 <div class="overlay" id="overlay"></div>
 <div class="sidebar" id="sidebar">
-  <div style="text-align: center; margin-bottom: 30px;">
-    <img id="user-photo" src="assets/default-avatar.png" style="width:90px; height:90px; border-radius:25px; border: 4px solid var(--bg-light); object-fit: cover;">
-    <h3 id="sidebar-name" style="margin-top:15px;">Santri</h3>
+  <div style="text-align:center; margin-bottom:20px;">
+    <img id="user-photo" src="logo-assunnah.png" style="width:80px; height:80px; border-radius:20px; object-fit:cover; border:3px solid #f0fdf4;">
+    <h3 id="sidebar-name" style="margin-top:10px;">Santri</h3>
   </div>
-  <a href="#" class="sidebar-link active">🏠 Dashboard</a>
-  <a href="#" onclick="goTo('waktu-sholat.html')" class="sidebar-link">🕌 Waktu Sholat</a>
-  <a href="#" onclick="goTo('pengaduan.html')" class="sidebar-link">📣 Pengaduan</a>
-  <a href="#" onclick="logout()" class="sidebar-link" style="color: #e74c3c; margin-top: 20px;">🚪 Keluar Akun</a>
+  <a href="#" onclick="location.reload()">🏠 Dashboard</a>
+  <a href="#" onclick="goTo('waktu-sholat.html')">🕌 Waktu Sholat</a>
+  <a href="#" onclick="goTo('pengaduan.html')">📣 Pengaduan</a>
+  <a href="#" onclick="goTo('kalender.html')">📅 Kalender</a>
+  <a href="#" onclick="logout()" style="color:red; margin-top:20px;">🚪 Keluar Akun</a>
 </div>
 
 <script>
   firebase.initializeApp({ apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes", authDomain:"e-santri-ed555.firebaseapp.com", projectId:"e-santri-ed555" });
   const auth = firebase.auth();
 
-  // RIPPLE EFFECT
-  document.addEventListener('click', e => {
-    const btn = e.target.closest('.ripple-btn');
-    if (btn) {
-      const ripple = document.createElement('div');
-      ripple.className = 'ripple';
-      const rect = btn.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height);
-      ripple.style.width = ripple.style.height = `${size}px`;
-      ripple.style.left = `${e.clientX - rect.left - size/2}px`;
-      ripple.style.top = `${e.clientY - rect.top - size/2}px`;
-      btn.appendChild(ripple);
-      setTimeout(() => ripple.remove(), 600);
+  // EFEK GELEMBUNG SABUN (BALON)
+  document.addEventListener('click', function(e) {
+    const target = e.target.closest('.menu-item, .btn-main');
+    if (target) {
+      for(let i=0; i<3; i++) { // Munculkan 3 gelembung kecil
+        const b = document.createElement('div');
+        b.className = 'bubble';
+        const rect = target.getBoundingClientRect();
+        b.style.left = (e.clientX - rect.left) + 'px';
+        b.style.top = (e.clientY - rect.top) + 'px';
+        target.appendChild(b);
+        setTimeout(() => b.remove(), 600);
+      }
     }
   });
 
@@ -221,34 +167,30 @@
     const last = localStorage.getItem('last_q_date');
     let s = parseInt(localStorage.getItem('q_streak') || "0");
     if (last !== today) {
-      const yest = new Date(); yest.setDate(yest.getDate() - 1);
+      const yest = new Date(); yest.setDate(yest.getDate()-1);
       s = (last === yest.toDateString()) ? s + 1 : 1;
       localStorage.setItem('q_streak', s); localStorage.setItem('last_q_date', today);
     }
-    goTo('alquran.html');
+    window.location.href = 'alquran.html';
   }
 
-  function goTo(url) { 
-    document.body.style.opacity = '0';
-    setTimeout(() => window.location.href = url, 400); 
-  }
-
-  function login(){ auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(a=>alert(a.message)); }
+  function goTo(url) { window.location.href = url; }
+  function login(){ auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
   function loginGoogle(){ auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout(){ auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user => {
-    document.getElementById("loading-screen").style.display = "none";
+    document.getElementById("loading-screen").style.display="none";
     if(user){
       document.getElementById("app-header").classList.remove("hidden");
       document.getElementById("dashboard").classList.remove("hidden");
       document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri") + "!";
+      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || "Santri");
       document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
       if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
       document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
       
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:" — Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:" — Siapa sabar, beruntung."}];
+      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:" — Barangsiapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:" — Barangsiapa sabar, beruntung."}];
       const d = m[new Date().getDate() % m.length];
       document.getElementById('runArab').innerText = d.ar; document.getElementById('runIndo').innerText = d.id;
     } else {
@@ -256,9 +198,9 @@
     }
   });
 
-  const sb = document.getElementById("sidebar"), ov = document.getElementById("overlay");
-  document.getElementById("menu-btn").onclick = () => { sb.classList.add("open"); ov.style.display="block"; }
-  ov.onclick = () => { sb.classList.remove("open"); ov.style.display="none"; }
+  const sb=document.getElementById("sidebar"), ov=document.getElementById("overlay");
+  document.getElementById("menu-btn").onclick=()=>{ sb.classList.add("open"); ov.style.display="block"; }
+  ov.onclick=()=>{ sb.classList.remove("open"); ov.style.display="none"; }
 </script>
 </body>
 </html>
