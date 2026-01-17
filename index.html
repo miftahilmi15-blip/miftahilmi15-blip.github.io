@@ -3,166 +3,151 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri | Imperial Zen Pond</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>E-Santri | Modern Zen Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --water: #2c5d63;
-    --stone: #4b4b4b;
-    --stone-light: #7a7a7a;
+    --sage-primary: #1f6f51;
+    --sage-soft: #e9f5f0;
+    --water-bg: #d4e9e2;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-  
   body { 
-    background-color: var(--water);
-    /* Efek Kedalaman Air */
-    background-image: 
-      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 80%),
-      linear-gradient(135deg, #2c5d63 0%, #1a3c40 100%);
+    background-color: var(--water-bg); 
     height: 100vh; overflow: hidden; position: relative;
+    background-image: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, transparent 100%);
   }
 
-  /* --- AWAN BERJALAN (REFLEKSI) --- */
-  .clouds {
-    position: absolute; inset: 0;
-    background: url('https://www.transparenttextures.com/patterns/clouds.png');
-    opacity: 0.2; animation: cloudMove 60s linear infinite; pointer-events: none; z-index: 2;
-  }
-  @keyframes cloudMove { from { background-position: 0 0; } to { background-position: 1000px 500px; } }
-
-  /* --- KOI JEPANG (MONTOK & MELIUK) --- */
+  /* --- IKAN KOI JEPANG MONTOK (NISHIKIGOI) --- */
   .koi-fish {
-    position: absolute; width: 130px; height: 60px; z-index: 3;
+    position: absolute; width: 120px; height: 60px; z-index: 1;
     pointer-events: none; transition: all 6s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .koi-body {
+  .koi-svg {
     width: 100%; height: 100%;
-    animation: swim-action 1.5s infinite ease-in-out;
-    filter: drop-shadow(20px 30px 15px rgba(0,0,0,0.3)); /* Bayangan jauh di dasar */
+    animation: swim-move 1.5s infinite ease-in-out;
+    filter: drop-shadow(20px 30px 15px rgba(0,0,0,0.15));
   }
-  @keyframes swim-action {
-    0%, 100% { transform: scale(1) rotate(0deg) skewX(0deg); }
-    50% { transform: scale(1.02) rotate(2deg) skewX(5deg); }
-  }
-
-  /* --- TERATAI --- */
-  .lotus {
-    position: absolute; width: 100px; height: 100px;
-    background: radial-gradient(circle, #45a247 60%, #2d5a27 100%);
-    border-radius: 50%; z-index: 4; opacity: 0.9;
-    clip-path: polygon(50% 50%, 100% 40%, 100% 0, 0 0, 0 100%, 100% 100%, 100% 60%);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  @keyframes swim-move {
+    0%, 100% { transform: scaleX(1) skewY(0deg); }
+    50% { transform: scaleX(1.05) skewY(5deg); }
   }
 
-  /* --- UI MENU BATU LONCATAN (STEPPING STONES) --- */
-  .ui-container {
+  /* --- UI DASHBOARD (KAYA GAMBAR) --- */
+  .ui-layer {
     position: relative; z-index: 10; height: 100vh;
-    display: flex; flex-direction: column; align-items: center; padding: 20px;
+    display: flex; flex-direction: column; padding: 25px;
   }
 
-  .header-glass {
-    text-align: center; color: white; margin-bottom: 20px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  header { 
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; 
+    background: white; padding: 15px 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
   }
-  .header-glass h1 { font-family: 'Montserrat'; letter-spacing: 5px; font-size: 28px; }
+  .logo-top { font-family: 'Montserrat'; color: var(--sage-primary); letter-spacing: 2px; font-size: 18px; }
 
-  .stone-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 350px;
+  /* CARD STREAK (KAYA DI GAMBAR) */
+  .streak-card {
+    background: white; border-radius: 25px; padding: 20px;
+    margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    display: flex; justify-content: space-between; align-items: center;
+    border-left: 6px solid var(--sage-primary);
   }
 
+  /* MENU BATU LONCATAN (NATURAL & CANGGIH) */
+  .stone-layout {
+    position: relative; height: 60%; width: 100%;
+  }
   .stone-btn {
-    background: radial-gradient(ellipse at top left, var(--stone-light), var(--stone));
-    height: 100px; border-radius: 35% 65% 60% 40% / 40% 35% 65% 60%; /* Bentuk Batu Natural */
+    position: absolute; background: white; 
+    padding: 20px; border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; 
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #eee; font-weight: 700; font-size: 13px; cursor: pointer;
-    box-shadow: 0 10px 0 #222, 0 15px 20px rgba(0,0,0,0.4);
-    border: none; transition: 0.2s; position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08); cursor: pointer; transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.8); min-width: 100px;
   }
-  .stone-btn:active { transform: translateY(8px); box-shadow: 0 2px 0 #222; }
+  .stone-btn:active { transform: scale(0.9); background: var(--sage-soft); }
   .stone-btn i { font-style: normal; font-size: 24px; margin-bottom: 5px; }
+  .stone-btn span { font-size: 11px; font-weight: 700; color: var(--sage-primary); }
 
-  /* MAHFUZAT DI ATAS BATU PANJANG */
-  .mahfuzat-stone {
-    width: 100%; max-width: 350px; background: rgba(0,0,0,0.4);
-    margin-top: auto; padding: 15px; border-radius: 50px;
-    color: #fff; overflow: hidden; white-space: nowrap; border: 1px solid rgba(255,255,255,0.2);
+  /* MAHFUZAT TICKER */
+  .mahfuzat-banner {
+    margin-top: auto; background: var(--sage-primary); border-radius: 50px;
+    padding: 12px; overflow: hidden; white-space: nowrap;
   }
-  .scrolling { display: inline-block; animation: scrollText 20s linear infinite; }
-  @keyframes scrollText { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+  .scrolling-text { display: inline-block; color: white; font-size: 13px; animation: jalan 20s linear infinite; }
+  @keyframes jalan { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-  /* RIPPLE WATER EFFECT */
-  .ripple {
-    position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%;
-    animation: rippleEffect 1s linear; pointer-events: none;
-  }
-  @keyframes rippleEffect { from { width: 0; height: 0; opacity: 1; } to { width: 200px; height: 200px; opacity: 0; } }
+  /* POSISI BATU NATURAL */
+  #btn1 { top: 0%; left: 10%; }
+  #btn2 { top: 15%; right: 5%; }
+  #btn3 { top: 40%; left: 35%; transform: scale(1.1); } /* Tahfidz Utama */
+  #btn4 { bottom: 15%; left: 5%; }
+  #btn5 { bottom: 10%; right: 10%; }
+  #btn6 { top: 65%; right: 25%; }
 </style>
 </head>
-<body onclick="createRipple(event)">
+<body onclick="playSplash(event)">
 
-<div class="clouds"></div>
+<div class="ui-layer">
+  <header>
+    <div class="logo-top">E-SANTRI</div>
+    <div style="font-size: 20px; color: var(--sage-primary); cursor: pointer;" onclick="openSidebar()">⋮</div>
+  </header>
 
-<audio id="waterSound" loop>
-  <source src="https://www.soundjay.com/nature/river-1.mp3" type="audio/mpeg">
-</audio>
-
-<div class="ui-container">
-  <div class="header-glass">
-    <h1>E-SANTRI</h1>
-    <p id="greet">Assalamu'alaikum, Ustadz</p>
+  <div class="streak-card">
+    <div>
+      <p style="font-size: 10px; color: #999; font-weight: 700; margin-bottom: 5px;">DAILY STREAK</p>
+      <h2 style="color: var(--sage-primary); font-size: 22px;">12 Hari</h2>
+    </div>
+    <div style="font-size: 35px;">🔥</div>
   </div>
 
-  <div class="stone-grid">
-    <div class="stone-btn" onclick="location.href='absensi.html'"><i>📍</i><span>ABSENSI</span></div>
-    <div class="stone-btn" onclick="location.href='tahfidz.html'"><i>🏆</i><span>TAHFIDZ</span></div>
-    <div class="stone-btn" onclick="location.href='alquran.html'"><i>📖</i><span>AL-QURAN</span></div>
-    <div class="stone-btn" onclick="location.href='pengaduan.html'"><i>📣</i><span>PENGADUAN</span></div>
-    <div class="stone-btn" onclick="location.href='kamus.html'"><i>📑</i><span>KAMUS</span></div>
-    <div class="stone-btn" onclick="location.href='perpus.html'"><i>📚</i><span>PERPUS</span></div>
+  <div class="stone-layout">
+    <div class="stone-btn" id="btn1" onclick="location.href='absensi.html'"><i>📍</i><span>ABSENSI</span></div>
+    <div class="stone-btn" id="btn2" onclick="location.href='tahfidz.html'"><i>🏆</i><span>TAHFIDZ</span></div>
+    <div class="stone-btn" id="btn3" onclick="location.href='alquran.html'"><i>📖</i><span>QURAN</span></div>
+    <div class="stone-btn" id="btn4" onclick="location.href='pengaduan.html'"><i>📣</i><span>PENGADUAN</span></div>
+    <div class="stone-btn" id="btn5" onclick="location.href='kamus.html'"><i>📑</i><span>KAMUS</span></div>
+    <div class="stone-btn" id="btn6" onclick="location.href='perpus.html'"><i>📚</i><span>PERPUS</span></div>
   </div>
 
-  <div class="mahfuzat-stone">
-    <div class="scrolling">مَنْ جَدَّ وَجَدَ — Barangsiapa bersungguh-sungguh, dapatlah ia.</div>
+  <div class="mahfuzat-banner">
+    <div class="scrolling-text">مَنْ جَدَّ وَجَدَ — Barangsiapa bersungguh-sungguh maka ia akan berhasil.</div>
   </div>
 </div>
 
-<div class="lotus" style="top: 15%; right: 5%;"></div>
-<div class="lotus" style="bottom: 20%; left: -10%; transform: scale(1.5);"></div>
-
 <script>
-  // --- KODE KOI JEPANG MONTOK ---
-  function getKoiSVG(type) {
-    let patterns = '';
-    if(type === 'kohaku') patterns = `<path d="M20,25 Q40,10 65,20 T85,30" fill="#d32f2f"/><path d="M40,35 Q60,45 80,35" fill="#d32f2f"/>`;
-    else if(type === 'sanke') patterns = `<path d="M30,15 Q50,10 70,20" fill="#d32f2f"/><circle cx="45" cy="22" r="4" fill="#111"/><path d="M20,35 Q40,45 60,35" fill="#d32f2f"/>`;
-    else patterns = `<circle cx="22" cy="30" r="8" fill="#d32f2f"/>`; // Tancho
+  // KODE KOI JEPANG (NISHIKIGOI) 5D
+  const koiTypes = [
+    { name: 'kohaku', p: '<path d="M20,25 Q40,10 65,20 T85,30" fill="#d32f2f"/>' },
+    { name: 'sanke', p: '<path d="M30,15 Q50,10 70,20" fill="#d32f2f"/><circle cx="45" cy="22" r="4" fill="#111"/>' },
+    { name: 'tancho', p: '<circle cx="22" cy="30" r="8" fill="#d32f2f"/>' }
+  ];
 
-    return `<svg viewBox="0 0 120 60" class="koi-body">
-      <path d="M85,30 L115,10 Q105,30 115,50 Z" fill="white" opacity="0.7"/>
+  function getKoi(type) {
+    return `<svg viewBox="0 0 120 60" class="koi-svg">
+      <path d="M85,30 L115,10 Q105,30 115,50 Z" fill="white" opacity="0.6"/>
       <path d="M10,30 C10,5 95,5 95,30 C95,55 10,55 10,30" fill="white"/>
-      ${patterns}
+      ${type.p}
       <circle cx="18" cy="23" r="2" fill="black"/><circle cx="18" cy="37" r="2" fill="black"/>
     </svg>`;
   }
 
   const fishes = [];
-  function initPond() {
-    const types = ['kohaku', 'sanke', 'tancho', 'kohaku', 'sanke', 'kohaku', 'sanke', 'tancho', 'kohaku']; // 9 Ekor
+  function init() {
     for(let i=0; i<9; i++) {
       const f = document.createElement('div');
       f.className = 'koi-fish';
-      f.innerHTML = getKoiSVG(types[i]);
+      f.innerHTML = getKoi(koiTypes[i % 3]);
       f.x = Math.random() * 80; f.y = Math.random() * 80;
       f.style.left = f.x + 'vw'; f.style.top = f.y + 'vh';
       document.body.appendChild(f);
       fishes.push({ el: f, x: f.x, y: f.y });
     }
-    moveKoi();
-    document.getElementById('waterSound').play().catch(() => {}); // Play sound on click
+    swim();
   }
 
-  function moveKoi() {
+  function swim() {
     fishes.forEach(f => {
       const nx = Math.random() * 85; const ny = Math.random() * 85;
       const angle = Math.atan2(ny - f.y, nx - f.x) * 180 / Math.PI;
@@ -170,22 +155,25 @@
       f.el.style.transform = `rotate(${angle}deg)`;
       f.x = nx; f.y = ny;
     });
-    setTimeout(moveKoi, 6000);
+    setTimeout(swim, 6000);
   }
 
-  function createRipple(e) {
-    const r = document.createElement('div');
-    r.className = 'ripple';
-    r.style.left = e.clientX - 100 + 'px';
-    r.style.top = e.clientY - 100 + 'px';
-    document.body.appendChild(r);
-    setTimeout(() => r.remove(), 1000);
-    
-    // Play sound if not playing
-    document.getElementById('waterSound').play();
+  function playSplash(e) {
+    if(e.target.closest('.stone-btn')) return;
+    const s = document.createElement('div');
+    s.style.position = 'absolute';
+    s.style.border = '2px solid white';
+    s.style.borderRadius = '50%';
+    s.style.left = e.clientX + 'px'; s.style.top = e.clientY + 'px';
+    s.style.width = '0'; s.style.height = '0';
+    s.style.opacity = '0.5';
+    s.style.transition = 'all 0.5s ease-out';
+    document.body.appendChild(s);
+    setTimeout(() => { s.style.width = '100px'; s.style.height = '100px'; s.style.left = e.clientX - 50 + 'px'; s.style.top = e.clientY - 50 + 'px'; s.style.opacity = '0'; }, 10);
+    setTimeout(() => s.remove(), 600);
   }
 
-  window.onload = initPond;
+  init();
 </script>
 </body>
 </html>
