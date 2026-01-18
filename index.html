@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Fluid Motion Nishikigoi</title>
+<title>E-Santri | ZNA Standard Koi</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -17,96 +17,82 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
 
-  /* --- LAYER 1: POND (DASAR) --- */
+  /* --- LAYER 1: POND --- */
   #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at center, #427466, #1b4d3e); }
 
-  /* --- LAYER 2: INTERFACE (TENGAH - AGAR BISA DIPENCET) --- */
-  .container { width: 92%; max-width: 400px; margin: -50px auto 20px; position: relative; z-index: 100; pointer-events: auto; }
+  /* --- LAYER 2: INTERFACE (UTAMA) --- */
+  .main-wrapper { position: relative; z-index: 100; height: 100vh; overflow-y: auto; }
+  .container { width: 92%; max-width: 400px; margin: 0 auto; padding-bottom: 30px; }
+
+  /* --- LAYER 3: KOI (FLOATING) --- */
+  .koi-unit { position: absolute; z-index: 50; pointer-events: none; transition: all 5s cubic-bezier(0.4, 0, 0.2, 1); }
   
-  /* --- LAYER 3: FLUID KOI (DI ATAS MENU TAPI TEMBUS KLIK) --- */
-  .koi-container { 
-    position: absolute; z-index: 50; pointer-events: none; 
-    transition: all 4.5s cubic-bezier(0.4, 0, 0.2, 1); 
-    transform-style: preserve-3d;
-  }
-
-  .koi-shadow {
-    position: absolute; top: 40px; left: 20px; width: 70px; height: 25px;
-    background: rgba(0,0,0,0.2); filter: blur(10px); border-radius: 50%; z-index: -1;
-  }
-
-  /* S-CURVE ANATOMY */
+  /* Anatomi Torpedo ZNA */
   .koi-body {
-    position: relative; width: 75px; height: 32px;
-    background: white; border-radius: 50% 80% 80% 50%;
-    box-shadow: inset -5px -2px 10px rgba(0,0,0,0.1);
-    transform-origin: center left;
-    animation: bodySway 2.5s infinite ease-in-out;
+    position: relative; width: 85px; height: 34px;
+    background: white; border-radius: 40% 70% 70% 40%;
+    box-shadow: inset -8px -4px 12px rgba(0,0,0,0.1);
+    animation: bodySway 3s infinite ease-in-out;
+  }
+  
+  .koi-fin-dada {
+    position: absolute; width: 18px; height: 12px;
+    background: rgba(255,255,255,0.4); border-radius: 50% 50% 0 0;
+    left: 20px; top: -6px; transform-origin: bottom;
+    animation: finRow 1.5s infinite ease-in-out;
+  }
+  .koi-fin-dada.bawah { top: auto; bottom: -6px; transform-origin: top; }
+
+  .koi-tail-ozutsu {
+    position: absolute; right: -12px; top: 10px; width: 28px; height: 14px;
+    background: rgba(255,255,255,0.5);
+    clip-path: polygon(0 50%, 100% 0, 80% 50%, 100% 100%);
+    animation: tailWhip 3s infinite ease-in-out;
   }
 
-  /* Fin Fluttering (Sirip Dada) */
-  .koi-fin {
-    position: absolute; width: 15px; height: 25px;
-    background: rgba(255,255,255,0.4); border-radius: 50%;
-    top: -10px; left: 15px; transform-origin: bottom;
-    animation: finPaddle 1.2s infinite ease-in-out;
-  }
-  .koi-fin.right { top: auto; bottom: -10px; transform-origin: top; }
+  @keyframes bodySway { 0%, 100% { transform: skewY(0deg); } 50% { transform: skewY(4deg); } }
+  @keyframes tailWhip { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
+  @keyframes finRow { 0%, 100% { transform: rotateX(0deg); } 50% { transform: rotateX(45deg); } }
 
-  .koi-tail-wrap {
-    position: absolute; right: -12px; top: 8px;
-    animation: tailWhip 2.5s infinite ease-in-out; /* Sinkron tapi delay via keyframe */
-  }
-
-  .koi-tail-fin {
-    width: 25px; height: 16px; background: rgba(255,255,255,0.5);
-    clip-path: polygon(0 50%, 100% 0, 75% 50%, 100% 100%);
-  }
-
-  /* ANIMASI FLUID MOTION */
-  @keyframes bodySway {
-    0%, 100% { transform: rotateY(0deg) rotate(0deg) skewY(0deg); }
-    50% { transform: rotateY(15deg) rotate(2deg) skewY(3deg); }
-  }
-
-  @keyframes tailWhip {
-    0%, 100% { transform: rotate(-10deg); }
-    50% { transform: rotate(40deg); }
-  }
-
-  @keyframes finPaddle {
-    0%, 100% { transform: rotateX(0deg); }
-    50% { transform: rotateX(40deg); }
-  }
-
-  /* --- HEADER & UI ELEMENTS --- */
+  /* HEADER & STREAK */
   header {
-    background: var(--primary-grad); height: 160px; padding: 30px 25px;
-    border-radius: 0 0 45px 45px; position: relative; z-index: 200;
+    background: var(--primary-grad); padding: 40px 25px 80px;
+    border-radius: 0 0 45px 45px; position: relative;
   }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
   .profile-trigger {
-    position: absolute; top: 35px; right: 25px; width: 52px; height: 52px;
-    border: 3px solid white; border-radius: 18px; overflow: hidden;
-    cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    width: 55px; height: 55px; border: 3px solid white;
+    border-radius: 18px; overflow: hidden; cursor: pointer;
   }
 
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { 
-    background: rgba(255,255,255,0.95); padding: 25px 5px; border-radius: 28px;
-    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    cursor: pointer; border: 1.5px solid white;
+  .streak-card {
+    background: white; border-radius: 25px; padding: 20px;
+    margin-top: -50px; display: flex; justify-content: space-between;
+    align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   }
-  .menu-item:active { transform: scale(0.9); }
 
-  /* MAHFUZAT */
+  /* MAHFUZAT MARQUEE */
   .mahfuzat-box {
     background: rgba(27, 77, 62, 0.85); backdrop-filter: blur(10px);
-    border-radius: 20px; padding: 15px; margin-bottom: 15px; overflow: hidden;
+    border-radius: 20px; padding: 15px; margin: 15px 0; overflow: hidden;
   }
-  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee 25s linear infinite; }
+  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee 30s linear infinite; }
   .mahfuzat-item { display: flex; align-items: center; padding-right: 60px; }
+
   @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
+  /* MENU GRID */
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .menu-item { 
+    background: rgba(255,255,255,0.95); padding: 22px 5px; border-radius: 25px;
+    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    cursor: pointer; transition: 0.2s;
+  }
+  .menu-item:active { transform: scale(0.9); }
+  .menu-item span { font-size: 24px; display: block; margin-bottom: 5px; }
+  .menu-item p { font-size: 9px; font-weight: 800; color: var(--primary); }
+
+  /* SIDEBAR */
   .sidebar { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: white; transition: 0.5s; z-index: 1000; padding: 40px; }
   .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.3); }
   .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 900; }
@@ -116,35 +102,45 @@
 <body>
 
 <div id="pond-base"></div>
-<div id="touch-layer" style="position:fixed; inset:0; z-index:5;"></div>
 
-<header id="app-header" class="hidden">
-  <div class="profile-trigger" id="menu-btn"><img id="user-avatar" src=""></div>
-  <h1 style="color:white; font-size:22px; font-weight:800; letter-spacing:1px;">E-SANTRI</h1>
-  <p id="welcome-msg" style="color:white; opacity:0.8; font-size:12px; font-weight:600;"></p>
-</header>
-
-<main class="container">
-  <section id="dashboard" class="hidden">
-    <div style="background:white; border-radius:25px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
-       <div><p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p><h2 id="streak-count" style="color:var(--primary); font-size:24px;">0 Hari</h2></div>
-       <div style="font-size:35px">🔥</div>
+<div class="main-wrapper">
+  <header id="app-header" class="hidden">
+    <div class="header-top">
+      <div>
+        <h1 style="color:white; font-size:24px; font-weight:800;">E-SANTRI</h1>
+        <p id="welcome-msg" style="color:white; opacity:0.8; font-size:12px;"></p>
+      </div>
+      <div class="profile-trigger" id="menu-btn">
+        <img id="user-avatar" src="" style="width:100%; height:100%; object-fit:cover;">
+      </div>
     </div>
+  </header>
 
-    <div class="mahfuzat-box">
-      <div class="mahfuzat-track" id="mahfuzat-list"></div>
-    </div>
+  <main class="container">
+    <section id="dashboard" class="hidden">
+      <div class="streak-card">
+         <div>
+           <p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p>
+           <h2 id="streak-count" style="color:var(--primary); font-size:24px;">0 Hari</h2>
+         </div>
+         <div style="font-size:35px">🔥</div>
+      </div>
 
-    <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')"><span>🌐</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">ABSENSI</p></div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')"><span>🏆</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">TAHFIDZ</p></div>
-      <div class="menu-item" onclick="handleQuran()"><span>📖</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">AL-QURAN</p></div>
-      <div class="menu-item" onclick="goTo('kamus.html')"><span>📑</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">KAMUS</p></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><span>📚</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">PERPUS</p></div>
-      <div class="menu-item" onclick="goTo('budaya.html')"><span>🕌</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">BUDAYA</p></div>
-    </div>
-  </section>
-</main>
+      <div class="mahfuzat-box">
+        <div class="mahfuzat-track" id="mahfuzat-list"></div>
+      </div>
+
+      <div class="menu-grid">
+        <div class="menu-item" onclick="goTo('absensi.html')"><span>🌐</span><p>ABSENSI</p></div>
+        <div class="menu-item" onclick="goTo('tahfidz.html')"><span>🏆</span><p>TAHFIDZ</p></div>
+        <div class="menu-item" onclick="goTo('alquran.html')"><span>📖</span><p>AL-QURAN</p></div>
+        <div class="menu-item" onclick="goTo('kamus.html')"><span>📑</span><p>KAMUS</p></div>
+        <div class="menu-item" onclick="goTo('perpustakaan.html')"><span>📚</span><p>PERPUS</p></div>
+        <div class="menu-item" onclick="goTo('budaya.html')"><span>🕌</span><p>BUDAYA</p></div>
+      </div>
+    </section>
+  </main>
+</div>
 
 <div class="overlay" id="overlay"></div>
 <div class="sidebar" id="sidebar">
@@ -168,28 +164,18 @@
     const patterns = ['#bc1a1a', '#ffa000', '#1a1a1a'];
     for(let i=0; i<6; i++) {
       const unit = document.createElement('div');
-      unit.className = 'koi-container';
-      
-      const shadow = document.createElement('div');
-      shadow.className = 'koi-shadow';
+      unit.className = 'koi-unit';
       
       const body = document.createElement('div');
       body.className = 'koi-body';
-      body.style.backgroundImage = `radial-gradient(circle at ${Math.random()*70}% 50%, ${patterns[i%3]} 40%, transparent 42%)`;
+      body.style.backgroundImage = `radial-gradient(circle at ${Math.random()*70}% 50%, ${patterns[i%3]} 42%, transparent 45%)`;
       
-      // Add Fins
-      const finL = document.createElement('div'); finL.className = 'koi-fin';
-      const finR = document.createElement('div'); finR.className = 'koi-fin right';
+      const finT = document.createElement('div'); finT.className = 'koi-fin-dada';
+      const finB = document.createElement('div'); finB.className = 'koi-fin-dada bawah';
+      const tail = document.createElement('div'); tail.className = 'koi-tail-ozutsu';
       
-      // Add Tail
-      const tailWrap = document.createElement('div');
-      tailWrap.className = 'koi-tail-wrap';
-      const tailFin = document.createElement('div');
-      tailFin.className = 'koi-tail-fin';
-      tailWrap.appendChild(tailFin);
-      
-      body.appendChild(finL); body.appendChild(finR); body.appendChild(tailWrap);
-      unit.appendChild(shadow); unit.appendChild(body);
+      body.appendChild(finT); body.appendChild(finB); body.appendChild(tail);
+      unit.appendChild(body);
       
       unit.style.left = Math.random()*80+'vw';
       unit.style.top = Math.random()*80+'vh';
@@ -208,37 +194,42 @@
         f.style.left = x; f.style.top = y;
         f.style.transform = `rotate(${deg}deg)`;
       });
-    }, 4500);
+    }, 5000);
   }
 
-  document.getElementById('touch-layer').onclick = (e) => {
+  // FIX: Menggunakan pointer-events agar klik menembus ke menu di bawah ikan
+  document.addEventListener('click', (e) => {
+    // Efek feeding sederhana tanpa menghalangi klik menu
+    if(e.target.closest('.menu-item')) return;
     fishList.forEach(f => {
       f.style.left = (e.clientX - 40) + 'px';
       f.style.top = (e.clientY - 20) + 'px';
     });
-  };
+  });
 
   function initMahfuzat() {
     const track = document.getElementById('mahfuzat-list');
     const items = [
       {ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa giat, pasti dapat."},
       {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, pasti beruntung."},
-      {ar:"خَيْرُ جَلِيْسٍ كِتَابٌ", id:"Teman duduk terbaik adalah buku."}
+      {ar:"العِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id:"Ilmu tanpa amal bagai pohon tanpa buah."}
     ];
     track.innerHTML = [...items, ...items].map(d => `
-      <div class="mahfuzat-item"><span style="font-family:'Noto Naskh Arabic'; font-size:20px; color:#ffd700; margin-right:15px;">${d.ar}</span><span style="color:white; font-size:13px;">${d.id}</span></div>
+      <div class="mahfuzat-item">
+        <span style="font-family:'Noto Naskh Arabic'; font-size:20px; color:#ffd700; margin-right:15px;">${d.ar}</span>
+        <span style="color:white; font-size:12px; font-style:italic;">${d.id}</span>
+      </div>
     `).join('');
   }
 
   function goTo(u) { window.location.href = u; }
-  function handleQuran() { window.location.href = 'alquran.html'; }
   function logout() { auth.signOut().then(() => location.reload()); }
 
   auth.onAuthStateChanged(user => {
     if(user) {
       document.getElementById('app-header').classList.remove('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('welcome-msg').innerText = "Ahlan, " + user.displayName;
+      document.getElementById('welcome-msg').innerText = "Ahlan wa Sahlan, " + user.displayName;
       const p = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=1b4d3e&color=fff`;
       document.getElementById('user-avatar').src = p;
       document.getElementById('sidebar-photo').src = p;
