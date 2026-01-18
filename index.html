@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | ZNA Standard Koi</title>
+<title>E-Santri | Ultimate Nishikigoi</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -17,98 +17,122 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
 
-  /* --- LAYER 1: POND --- */
-  #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at center, #427466, #1b4d3e); }
-
-  /* --- LAYER 2: INTERFACE (UTAMA) --- */
-  .main-wrapper { position: relative; z-index: 100; height: 100vh; overflow-y: auto; }
-  .container { width: 92%; max-width: 400px; margin: 0 auto; padding-bottom: 30px; }
-
-  /* --- LAYER 3: KOI (FLOATING) --- */
-  .koi-unit { position: absolute; z-index: 50; pointer-events: none; transition: all 5s cubic-bezier(0.4, 0, 0.2, 1); }
+  /* --- LAYER 1: POND BACKGROUND --- */
+  #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at center, #3e7c6d, #1b4d3e); }
   
-  /* Anatomi Torpedo ZNA */
+  /* --- LAYER 2: INTERFACE (Z-10) --- */
+  .main-wrapper { position: relative; z-index: 10; height: 100vh; overflow-y: auto; pointer-events: none; }
+  /* Container dan Menu harus pointer-events: auto agar bisa diklik */
+  .container, header, .sidebar, .overlay { pointer-events: auto; }
+
+  /* --- LAYER 3: IKAN (Z-20) --- */
+  .koi-unit { 
+    position: absolute; z-index: 20; pointer-events: none; 
+    transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  
+  /* Anatomi Tapered & 3D Spine */
   .koi-body {
-    position: relative; width: 85px; height: 34px;
-    background: white; border-radius: 40% 70% 70% 40%;
-    box-shadow: inset -8px -4px 12px rgba(0,0,0,0.1);
-    animation: bodySway 3s infinite ease-in-out;
+    position: relative; width: 90px; height: 32px;
+    background: #f5f5f5;
+    /* Kepala Bulat, Bahu Lebar, Ekor Mengecil */
+    clip-path: polygon(10% 0%, 30% 0%, 80% 25%, 100% 50%, 80% 75%, 30% 100%, 10% 100%, 0% 50%);
+    border-radius: 50% 100% 100% 50%;
+    box-shadow: inset -10px -5px 15px rgba(0,0,0,0.1);
+    animation: bodyWave 2.5s infinite ease-in-out;
   }
-  
-  .koi-fin-dada {
-    position: absolute; width: 18px; height: 12px;
-    background: rgba(255,255,255,0.4); border-radius: 50% 50% 0 0;
-    left: 20px; top: -6px; transform-origin: bottom;
-    animation: finRow 1.5s infinite ease-in-out;
-  }
-  .koi-fin-dada.bawah { top: auto; bottom: -6px; transform-origin: top; }
 
-  .koi-tail-ozutsu {
-    position: absolute; right: -12px; top: 10px; width: 28px; height: 14px;
-    background: rgba(255,255,255,0.5);
+  /* Sirip Punggung (Dorsal) */
+  .koi-body::after {
+    content: ''; position: absolute; top: 50%; left: 30%; width: 30px; height: 2px;
+    background: rgba(255,255,255,0.6); box-shadow: 0 0 5px white;
+    transform: translateY(-50%);
+  }
+
+  /* Sirip Pektoral (Pointed) */
+  .koi-fin {
+    position: absolute; width: 25px; height: 12px;
+    background: linear-gradient(to right, rgba(255,255,255,0.8), transparent);
     clip-path: polygon(0 50%, 100% 0, 80% 50%, 100% 100%);
-    animation: tailWhip 3s infinite ease-in-out;
+    left: 15px; top: -8px; transform-origin: bottom right;
+    animation: finPaddle 1.5s infinite ease-in-out;
+  }
+  .koi-fin.bottom { top: auto; bottom: -8px; transform-origin: top right; }
+
+  .koi-tail {
+    position: absolute; right: -15px; top: 6px; width: 35px; height: 20px;
+    background: rgba(255,255,255,0.4);
+    clip-path: polygon(0 50%, 100% 0, 60% 50%, 100% 100%);
+    transform-origin: left center;
+    animation: tailWhip 0.6s infinite alternate ease-in-out;
   }
 
-  @keyframes bodySway { 0%, 100% { transform: skewY(0deg); } 50% { transform: skewY(4deg); } }
-  @keyframes tailWhip { 0%, 100% { transform: rotate(-15deg); } 50% { transform: rotate(15deg); } }
-  @keyframes finRow { 0%, 100% { transform: rotateX(0deg); } 50% { transform: rotateX(45deg); } }
-
-  /* HEADER & STREAK */
-  header {
-    background: var(--primary-grad); padding: 40px 25px 80px;
-    border-radius: 0 0 45px 45px; position: relative;
+  @keyframes bodyWave {
+    0%, 100% { transform: skewX(0deg) scaleX(1); }
+    50% { transform: skewX(8deg) scaleX(0.95); }
   }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  @keyframes tailWhip { from { transform: rotate(-20deg); } to { transform: rotate(20deg); } }
+  @keyframes finPaddle { 0%, 100% { transform: rotateX(0deg); } 50% { transform: rotateX(50deg); } }
+
+  /* HEADER */
+  header { background: var(--primary-grad); padding: 35px 25px 80px; border-radius: 0 0 45px 45px; position: relative; }
+  .header-content { display: flex; justify-content: space-between; align-items: center; }
   .profile-trigger {
-    width: 55px; height: 55px; border: 3px solid white;
+    width: 52px; height: 52px; border: 3px solid white;
     border-radius: 18px; overflow: hidden; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   }
 
+  /* UI COMPONENTS */
+  .container { width: 92%; max-width: 400px; margin: -50px auto 20px; }
   .streak-card {
     background: white; border-radius: 25px; padding: 20px;
-    margin-top: -50px; display: flex; justify-content: space-between;
-    align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 15px;
   }
 
   /* MAHFUZAT MARQUEE */
   .mahfuzat-box {
-    background: rgba(27, 77, 62, 0.85); backdrop-filter: blur(10px);
-    border-radius: 20px; padding: 15px; margin: 15px 0; overflow: hidden;
+    background: rgba(27, 77, 62, 0.9); backdrop-filter: blur(10px);
+    border-radius: 50px; padding: 12px 25px; margin-bottom: 20px;
+    overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
   }
-  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee 30s linear infinite; }
-  .mahfuzat-item { display: flex; align-items: center; padding-right: 60px; }
+  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee 25s linear infinite; }
+  .mahfuzat-item { display: flex; align-items: center; padding-right: 80px; color: white; }
 
-  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-  /* MENU GRID */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .menu-item { 
-    background: rgba(255,255,255,0.95); padding: 22px 5px; border-radius: 25px;
-    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    cursor: pointer; transition: 0.2s;
+    background: rgba(255,255,255,0.95); padding: 25px 5px; border-radius: 28px;
+    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); cursor: pointer;
   }
-  .menu-item:active { transform: scale(0.9); }
   .menu-item span { font-size: 24px; display: block; margin-bottom: 5px; }
-  .menu-item p { font-size: 9px; font-weight: 800; color: var(--primary); }
+  .menu-item p { font-size: 10px; font-weight: 800; color: var(--primary); }
 
-  /* SIDEBAR */
-  .sidebar { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: white; transition: 0.5s; z-index: 1000; padding: 40px; }
-  .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.3); }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 900; }
+  .sidebar { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: white; transition: 0.5s; z-index: 5000; padding: 40px; border-radius: 40px 0 0 40px; }
+  .sidebar.open { right: 0; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 4000; }
   .hidden { display: none !important; }
+
+  /* Feeding Ripple */
+  #touch-layer { position: fixed; inset: 0; z-index: 5; } /* Di bawah menu tapi di atas kolam */
+  .ripple { position: absolute; border: 2px solid white; border-radius: 50%; animation: ripple-ani 0.6s ease-out; pointer-events: none; z-index: 6; }
+  @keyframes ripple-ani { from { transform: scale(0); opacity: 1; } to { transform: scale(3); opacity: 0; } }
 </style>
 </head>
 <body>
 
 <div id="pond-base"></div>
+<div id="touch-layer"></div>
 
 <div class="main-wrapper">
   <header id="app-header" class="hidden">
-    <div class="header-top">
+    <div class="header-content">
       <div>
-        <h1 style="color:white; font-size:24px; font-weight:800;">E-SANTRI</h1>
-        <p id="welcome-msg" style="color:white; opacity:0.8; font-size:12px;"></p>
+        <h1 style="color:white; font-size:22px; font-weight:800; letter-spacing:1px;">E-SANTRI</h1>
+        <p id="welcome-msg" style="color:white; opacity:0.8; font-size:12px; font-weight:600;"></p>
       </div>
       <div class="profile-trigger" id="menu-btn">
         <img id="user-avatar" src="" style="width:100%; height:100%; object-fit:cover;">
@@ -119,10 +143,7 @@
   <main class="container">
     <section id="dashboard" class="hidden">
       <div class="streak-card">
-         <div>
-           <p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p>
-           <h2 id="streak-count" style="color:var(--primary); font-size:24px;">0 Hari</h2>
-         </div>
+         <div><p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p><h2 id="streak-count" style="color:var(--primary); font-size:24px;">0 Hari</h2></div>
          <div style="font-size:35px">🔥</div>
       </div>
 
@@ -148,7 +169,7 @@
     <img id="sidebar-photo" src="" style="width:90px; height:90px; border-radius:20px; border:4px solid var(--bg); object-fit:cover;">
     <h3 id="sidebar-name" style="margin-top:15px; color:var(--primary); font-weight:800;">Santri</h3>
   </div>
-  <a href="#" onclick="location.reload()" style="display:flex; align-items:center; padding:15px; color:#333; text-decoration:none; gap:15px; font-weight:600;"><i class="fa-solid fa-house"></i> Beranda</a>
+  <a href="#" onclick="location.reload()" style="display:flex; align-items:center; padding:15px; color:#333; text-decoration:none; gap:15px; font-weight:600;"><i class="fa-solid fa-house"></i> Dashboard</a>
   <a href="#" onclick="logout()" style="display:flex; align-items:center; padding:15px; color:#d32f2f; text-decoration:none; gap:15px; font-weight:600; margin-top:30px;"><i class="fa-solid fa-power-off"></i> Logout</a>
 </div>
 
@@ -168,11 +189,11 @@
       
       const body = document.createElement('div');
       body.className = 'koi-body';
-      body.style.backgroundImage = `radial-gradient(circle at ${Math.random()*70}% 50%, ${patterns[i%3]} 42%, transparent 45%)`;
+      body.style.backgroundImage = `radial-gradient(circle at ${Math.random()*70}% 50%, ${patterns[i%3]} 40%, transparent 42%)`;
       
-      const finT = document.createElement('div'); finT.className = 'koi-fin-dada';
-      const finB = document.createElement('div'); finB.className = 'koi-fin-dada bawah';
-      const tail = document.createElement('div'); tail.className = 'koi-tail-ozutsu';
+      const finT = document.createElement('div'); finT.className = 'koi-fin';
+      const finB = document.createElement('div'); finB.className = 'koi-fin bottom';
+      const tail = document.createElement('div'); tail.className = 'koi-tail';
       
       body.appendChild(finT); body.appendChild(finB); body.appendChild(tail);
       unit.appendChild(body);
@@ -185,39 +206,44 @@
     moveFish();
   }
 
-  function moveFish() {
-    setInterval(() => {
-      fishList.forEach(f => {
-        const x = Math.random()*80+'vw';
-        const y = Math.random()*80+'vh';
-        const deg = Math.random()*360;
-        f.style.left = x; f.style.top = y;
-        f.style.transform = `rotate(${deg}deg)`;
-      });
-    }, 5000);
-  }
-
-  // FIX: Menggunakan pointer-events agar klik menembus ke menu di bawah ikan
-  document.addEventListener('click', (e) => {
-    // Efek feeding sederhana tanpa menghalangi klik menu
-    if(e.target.closest('.menu-item')) return;
+  function moveFish(fast = false) {
     fishList.forEach(f => {
-      f.style.left = (e.clientX - 40) + 'px';
-      f.style.top = (e.clientY - 20) + 'px';
+      f.style.transitionDuration = fast ? '1s' : '4.5s';
+      const x = Math.random()*80+'vw';
+      const y = Math.random()*80+'vh';
+      const deg = Math.random()*360;
+      f.style.left = x; f.style.top = y;
+      f.style.transform = `rotate(${deg}deg)`;
     });
-  });
+  }
+  setInterval(() => moveFish(), 4500);
+
+  // Interaksi Feeding
+  document.getElementById('touch-layer').onclick = (e) => {
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
+    document.body.appendChild(r);
+    setTimeout(() => r.remove(), 600);
+
+    fishList.forEach(f => {
+      f.style.transitionDuration = '0.8s';
+      f.style.left = (e.clientX - 45) + 'px';
+      f.style.top = (e.clientY - 16) + 'px';
+    });
+  };
 
   function initMahfuzat() {
     const track = document.getElementById('mahfuzat-list');
     const items = [
       {ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa giat, pasti dapat."},
       {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, pasti beruntung."},
-      {ar:"العِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id:"Ilmu tanpa amal bagai pohon tanpa buah."}
+      {ar:"خَيْرُ جَلِيْسٍ كِتَابٌ", id:"Teman duduk terbaik adalah buku."}
     ];
     track.innerHTML = [...items, ...items].map(d => `
       <div class="mahfuzat-item">
         <span style="font-family:'Noto Naskh Arabic'; font-size:20px; color:#ffd700; margin-right:15px;">${d.ar}</span>
-        <span style="color:white; font-size:12px; font-style:italic;">${d.id}</span>
+        <span style="font-size:13px;">${d.id}</span>
       </div>
     `).join('');
   }
@@ -229,7 +255,7 @@
     if(user) {
       document.getElementById('app-header').classList.remove('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('welcome-msg').innerText = "Ahlan wa Sahlan, " + user.displayName;
+      document.getElementById('welcome-msg').innerText = "Ahlan, " + user.displayName;
       const p = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=1b4d3e&color=fff`;
       document.getElementById('user-avatar').src = p;
       document.getElementById('sidebar-photo').src = p;
