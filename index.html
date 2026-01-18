@@ -3,74 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Official</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
+<title>E-Santri | Real Version</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --primary: #1b4d3e; --bg: #e0f2f1; }
   * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
-  body { background: var(--bg); min-height:100vh; overflow:hidden; position:relative; }
+  body { background: var(--bg); min-height:100vh; overflow:hidden; }
   .hidden { display:none !important; }
 
-  /* BACKGROUND & KOI LAYER */
-  #pond-base { position:fixed; inset:0; z-index:1; background:radial-gradient(circle at center, #80cbc4, #1b4d3e); pointer-events:none; }
-  .koi-unit { position:absolute; z-index:5; pointer-events:none; transition:all 3.5s ease-in-out; }
+  /* BACKGROUND */
+  #pond-base { position:fixed; inset:0; z-index:1; background:radial-gradient(circle at center, #80cbc4, #1b4d3e); }
 
-  /* LOGIN BOX */
-  #login-screen { 
+  /* LOGIN & DAFTAR CARD */
+  #auth-screen { 
     position:fixed; inset:0; z-index:9999; background:var(--bg); 
     display:flex; justify-content:center; align-items:center; padding:20px; 
   }
-  .login-card { 
-    background:white; width:100%; max-width:350px; padding:40px 25px; 
+  .auth-card { 
+    background:white; width:100%; max-width:350px; padding:30px; 
     border-radius:30px; box-shadow:0 20px 50px rgba(0,0,0,0.1); text-align:center; 
   }
-  .login-input { width:100%; padding:14px; margin-bottom:10px; border-radius:12px; border:1px solid #ddd; outline:none; }
-  .btn-login { width:100%; padding:14px; border-radius:12px; border:none; background:linear-gradient(135deg,#1b4d3e,#3e7c6d); color:white; font-weight:700; cursor:pointer; }
+  input { width:100%; padding:14px; margin-bottom:10px; border-radius:12px; border:1px solid #ddd; outline:none; }
+  .btn-main { width:100%; padding:14px; border-radius:12px; border:none; background:linear-gradient(135deg,#1b4d3e,#3e7c6d); color:white; font-weight:700; cursor:pointer; margin-top:5px; }
   .btn-google { width:100%; padding:14px; border-radius:12px; border:1px solid #ddd; background:white; margin-top:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600; }
+  .toggle-link { margin-top:15px; font-size:12px; color: #666; cursor:pointer; display:block; }
+  .toggle-link b { color: var(--primary); }
 
-  /* DASHBOARD UI */
-  header { background:linear-gradient(135deg,#1b4d3e,#3e7c6d); padding:30px 25px 80px; border-radius:0 0 45px 45px; position:relative; z-index:100; }
+  /* DASHBOARD */
+  header { background:linear-gradient(135deg,#1b4d3e,#3e7c6d); padding:30px 25px 80px; border-radius:0 0 45px 45px; position:relative; z-index:100; color:white; }
   .container { width:92%; max-width:400px; margin:-50px auto 20px; position:relative; z-index:110; }
   .menu-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
-  .menu-item { background:rgba(255,255,255,0.95); padding:20px 5px; border-radius:20px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.1); cursor:pointer; }
-  .menu-item p { font-size:9px; font-weight:800; color:var(--primary); margin-top:5px; }
+  .menu-item { background:white; padding:20px 5px; border-radius:20px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.1); cursor:pointer; }
 </style>
 </head>
 <body>
 
 <div id="pond-base"></div>
 
-<section id="login-screen">
-  <div class="login-card">
-    <h2 style="color:var(--primary); margin-bottom:20px;">E-Santri</h2>
-    <input type="email" id="email" class="login-input" placeholder="Email Santri">
-    <input type="password" id="password" class="login-input" placeholder="Password">
-    <button class="btn-login" id="btn-login" onclick="loginEmail()">MASUK</button>
+<section id="auth-screen">
+  <div class="auth-card">
+    <h2 id="auth-title" style="color:var(--primary); margin-bottom:5px;">E-Santri</h2>
+    <p id="auth-subtitle" style="font-size:12px; color:#888; margin-bottom:20px;">Silakan Masuk</p>
+    
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    
+    <button class="btn-main" id="auth-btn" onclick="handleAuth()">MASUK</button>
+    
     <button class="btn-google" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Google Login
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Login Google
     </button>
-    <p id="error-msg" style="color:red; font-size:11px; margin-top:15px;"></p>
+    
+    <span class="toggle-link" id="toggle-auth" onclick="toggleMode()">Belum punya akun? <b>Daftar Disini</b></span>
+    <p id="error-msg" style="color:red; font-size:11px; margin-top:10px;"></p>
   </div>
 </section>
 
 <header id="app-header" class="hidden">
-  <div style="position:absolute; top:30px; right:25px; width:45px; height:45px; border:2px solid white; border-radius:12px; overflow:hidden;">
-    <img id="user-avatar" src="" style="width:100%; height:100%; object-fit:cover;">
-  </div>
-  <h1 style="color:white; font-size:22px; font-weight:800;">E-SANTRI</h1>
-  <p id="welcome-msg" style="color:white; opacity:0.8; font-size:12px;"></p>
+  <h1 style="font-size:22px; font-weight:800;">E-SANTRI</h1>
+  <p id="welcome-msg" style="opacity:0.8; font-size:12px;"></p>
 </header>
 
 <main id="main-content" class="container hidden">
   <div class="menu-grid">
-    <div class="menu-item" onclick="location.href='absensi.html'"><span>🌐</span><p>ABSENSI</p></div>
-    <div class="menu-item" onclick="location.href='alquran.html'"><span>📖</span><p>AL-QURAN</p></div>
-    <div class="menu-item" onclick="location.href='tahfidz.html'"><span>🏆</span><p>TAHFIDZ</p></div>
-    <div class="menu-item" onclick="location.href='budaya.html'"><span>🕌</span><p>BUDAYA</p></div>
-    <div class="menu-item" onclick="location.href='perpus.html'"><span>📚</span><p>PERPUS</p></div>
-    <div class="menu-item" onclick="logout()"><span>🚪</span><p>KELUAR</p></div>
+    <div class="menu-item" onclick="alert('Menu Absensi')"><span>🌐</span><p style="font-size:10px; font-weight:700;">ABSENSI</p></div>
+    <div class="menu-item" onclick="alert('Menu Al-Quran')"><span>📖</span><p style="font-size:10px; font-weight:700;">AL-QURAN</p></div>
+    <div class="menu-item" onclick="logout()"><span>🚪</span><p style="font-size:10px; font-weight:700;">LOGOUT</p></div>
   </div>
 </main>
 
@@ -81,7 +79,6 @@
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
-    databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "e-santri-b62be",
     storageBucket: "e-santri-b62be.firebasestorage.app",
     messagingSenderId: "6560427635",
@@ -90,72 +87,46 @@
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
+  let isLoginMode = true;
 
-  auth.onAuthStateChanged(user => {
-    const loginScr = document.getElementById('login-screen');
-    const appHdr = document.getElementById('app-header');
-    const mainCont = document.getElementById('main-content');
+  function toggleMode() {
+    isLoginMode = !isLoginMode;
+    document.getElementById('auth-title').innerText = isLoginMode ? "E-Santri" : "Daftar Akun";
+    document.getElementById('auth-subtitle').innerText = isLoginMode ? "Silakan Masuk" : "Buat akun baru santri";
+    document.getElementById('auth-btn').innerText = isLoginMode ? "MASUK" : "DAFTAR SEKARANG";
+    document.getElementById('toggle-auth').innerHTML = isLoginMode ? "Belum punya akun? <b>Daftar Disini</b>" : "Sudah punya akun? <b>Login Saja</b>";
+  }
 
-    if(user) {
-      loginScr.classList.add('hidden');
-      appHdr.classList.remove('hidden');
-      mainCont.classList.remove('hidden');
-      document.getElementById('welcome-msg').innerText = "Ahlan, " + (user.displayName || "Santri");
-      document.getElementById('user-avatar').src = user.photoURL || "https://ui-avatars.com/api/?name=" + (user.displayName || "S");
-      initPond();
-    } else {
-      loginScr.classList.remove('hidden');
-      appHdr.classList.add('hidden');
-      mainCont.classList.add('hidden');
-    }
-  });
-
-  // Handle Redirect Result (Untuk Google Login di HP)
-  auth.getRedirectResult().catch(e => {
-    document.getElementById('error-msg').innerText = "Gagal: " + e.message;
-  });
-
-  function loginEmail() {
+  function handleAuth() {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
-    const btn = document.getElementById('btn-login');
+    const msg = document.getElementById('error-msg');
     
-    if(!email || !pass) return alert("Isi email dan password!");
-    
-    btn.innerText = "Memeriksa...";
-    btn.disabled = true;
-
-    auth.signInWithEmailAndPassword(email, pass).catch(e => {
-      btn.innerText = "MASUK";
-      btn.disabled = false;
-      document.getElementById('error-msg').innerText = "Gagal: " + e.message;
-    });
+    if(isLoginMode) {
+      auth.signInWithEmailAndPassword(email, pass).catch(e => msg.innerText = e.message);
+    } else {
+      auth.createUserWithEmailAndPassword(email, pass).then(() => {
+        alert("Pendaftaran Berhasil! Silakan Masuk.");
+        toggleMode();
+      }).catch(e => msg.innerText = e.message);
+    }
   }
 
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    // Menggunakan Redirect agar tidak diblokir Pop-up browser HP
-    auth.signInWithRedirect(provider);
+    auth.signInWithPopup(provider).catch(e => alert("Gagal Google: " + e.message));
   }
 
-  function logout() { 
-    auth.signOut().then(() => location.reload()); 
-  }
+  function logout() { auth.signOut().then(() => location.reload()); }
 
-  function initPond() {
-    if(document.querySelectorAll('.koi-unit').length > 0) return;
-    for(let i=0; i<5; i++) {
-      const unit = document.createElement('div');
-      unit.className = 'koi-unit';
-      unit.innerHTML = `<svg width="80" height="30" viewBox="0 0 120 45"><path d="M10,22.5 C10,10 40,5 70,15 C90,22.5 110,22.5 110,22.5 C90,22.5 70,30 40,40 10,35 10,22.5" fill="white" /><ellipse cx="35" cy="18" rx="12" ry="7" fill="#bc1a1a" opacity="0.8"/></svg>`;
-      unit.style.left = Math.random()*80+'vw'; unit.style.top = Math.random()*80+'vh';
-      document.body.appendChild(unit);
-      setInterval(() => {
-        unit.style.left = Math.random()*80+'vw'; unit.style.top = Math.random()*80+'vh';
-        unit.style.transform = `rotate(${Math.random()*360}deg)`;
-      }, 4000);
+  auth.onAuthStateChanged(user => {
+    if(user) {
+      document.getElementById('auth-screen').classList.add('hidden');
+      document.getElementById('app-header').classList.remove('hidden');
+      document.getElementById('main-content').classList.remove('hidden');
+      document.getElementById('welcome-msg').innerText = "Ahlan, " + (user.email);
     }
-  }
+  });
 </script>
 </body>
 </html>
