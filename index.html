@@ -9,106 +9,71 @@
 <style>
 :root {
   --primary: #1b4d3e;
-  --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
-  --bg: #d4e9e2;
-  --koi-red: #bc1a1a;
-  --koi-white: #ffffff;
-  --koi-black: #1a1a1a;
+  /* Gradient dibuat lebih cerah agar tidak monoton hijau pekat */
+  --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #2a5d4d 100%);
+  --bg: #e0f2f1; /* Hijau air yang lebih bening/cerah */
+  --koi-red: #d32f2f;
+  --koi-orange: #ff9800;
+  --koi-black: #212121;
 }
-* { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins",sans-serif; }
-body { background: var(--bg); min-height:100vh; overflow:hidden; position:relative; }
-.hidden { display:none !important; }
 
-/* LOGIN */
-#login-screen { position:fixed; inset:0; background:#d4e9e2; display:flex; justify-content:center; align-items:center; z-index:1000; }
+/* Perbaikan Agar Menu Bisa Diklik (Z-Index Hierarchy) */
+#pond-base { position: fixed; inset: 0; z-index: 1; background: radial-gradient(circle at center, #80cbc4, #4db6ac); }
+#touch-layer { position: fixed; inset: 0; z-index: 2; cursor: pointer; } /* Di atas background */
 
-/* DASHBOARD */
-#pond-base { position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(circle at center, #427466, #1b4d3e); }
-.container { width:92%; max-width:400px; margin:-50px auto 20px; position:relative; z-index:10; pointer-events:auto; }
-header { background: var(--primary-grad); height:160px; padding:30px 25px; border-radius:0 0 45px 45px; position:relative; z-index:100; box-shadow:0 10px 30px rgba(0,0,0,0.2);}
-.profile-trigger { position:absolute; top:30px; right:25px; width:50px; height:50px; border:3px solid white; border-radius:18px; overflow:hidden; cursor:pointer; z-index:110; }
+/* Container Menu harus di atas Touch Layer agar bisa diklik */
+.container { position: relative; z-index: 100; pointer-events: auto; margin-top: -40px; }
+header { position: relative; z-index: 100; background: var(--primary-grad); border-radius: 0 0 40px 40px; padding: 30px 20px 60px; }
 
-/* KOI */
-.koi-unit { position:absolute; z-index:5; pointer-events:none; transition:all 3s ease-in-out; filter:drop-shadow(10px 15px 6px rgba(0,0,0,0.2)); }
-.koi-body-svg { width:80px; height:35px; animation: swimming 3s infinite ease-in-out; }
-@keyframes swimming { 0%,100%{transform:rotateY(0deg) skewX(0deg);} 50%{transform:rotateY(15deg) skewX(3deg);} }
+/* Anatomi Ikan Tapered */
+.koi-unit { 
+  position: absolute; 
+  z-index: 5; 
+  pointer-events: none; 
+  transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(15px 25px 8px rgba(0,0,0,0.15));
+}
 
-/* TOUCH LAYER */
-#touch-layer { position:fixed; inset:0; z-index:20; cursor:pointer; }
+.koi-body-svg { 
+  width: 90px; height: 40px; 
+  animation: swimming 3s infinite ease-in-out; 
+}
 
-/* MAHFUZAT */
-.mahfuzat-box { background: rgba(27,77,62,0.8); backdrop-filter: blur(10px); border-radius:20px; padding:15px; margin-bottom:20px; overflow:hidden; mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent); position:relative; z-index:15; }
-.mahfuzat-track { display:flex; white-space:nowrap; animation:marquee 35s linear infinite; }
-.mahfuzat-item { display:flex; align-items:center; padding-right:70px; }
-.ar-text { font-family: 'Noto Naskh Arabic'; font-size:22px; color:#ffd700; margin-right:15px; }
-@keyframes marquee { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+@keyframes swimming { 
+  0%, 100% { transform: scaleX(1) rotate(0deg); }
+  50% { transform: scaleX(0.95) rotate(2deg); }
+}
 
-/* MENU */
-.menu-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; z-index:15; position:relative; }
-.menu-item { background: rgba(255,255,255,0.9); padding:25px 5px; border-radius:25px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.05); cursor:pointer; border:1.5px solid white; position:relative; }
-.menu-item:active { transform:scale(0.95); }
-
-/* RIPPLE */
-.ripple { position:absolute; width:2px; height:2px; border:2px solid rgba(255,255,255,0.4); border-radius:50%; animation:ripple-ani 0.8s ease-out; pointer-events:none; z-index:6; }
-@keyframes ripple-ani { to { transform: scale(50); opacity:0; } }
-
-/* SIDEBAR */
-.sidebar { position:fixed; top:0; right:-300px; width:300px; height:100%; background:white; transition:0.5s; z-index:500; padding:40px; border-radius:40px 0 0 40px; }
-.sidebar.open { right:0; box-shadow:-20px 0 60px rgba(0,0,0,0.3); }
-.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); z-index:400; }
+/* Styling Menu agar lebih clean */
+.menu-item { 
+  background: rgba(255,255,255,0.95); 
+  backdrop-filter: blur(10px);
+  border: none;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+.menu-item p { font-size: 9px; letter-spacing: 0.5px; margin-top: 8px; font-weight: 700; }
 </style>
-</head>
-<body>
 
-<!-- LOGIN -->
-<section id="login-screen">
-  <div style="max-width:300px;text-align:center;">
-    <h2 style="color:var(--primary);margin-bottom:20px;">E-Santri Login</h2>
-    <input id="email" type="email" placeholder="Email" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;">
-    <input id="password" type="password" placeholder="Password" style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;">
-    <button id="login-btn" style="width:100%;padding:10px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;">Login</button>
-    <p id="login-msg" style="color:red;margin-top:10px;font-size:12px;"></p>
-    <button id="google-login" style="width:100%;padding:10px;margin-top:10px;background:#4285f4;color:white;border:none;border-radius:8px;cursor:pointer;">Login with Google</button>
-  </div>
-</section>
-
-<!-- DASHBOARD -->
-<header id="app-header" class="hidden">
-  <div class="profile-trigger" id="menu-btn"><img id="user-avatar" src=""></div>
-  <h1 style="color:white; font-size:22px; font-weight:800; letter-spacing:1px;">E-SANTRI</h1>
-  <p id="welcome-msg" style="color:white; opacity:0.8; font-size:12px; font-weight:600;"></p>
-</header>
-<main class="container">
-  <section id="dashboard" class="hidden">
-    <div style="background:white; border-radius:25px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; z-index:15; position:relative;">
-       <div><p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p><h2 id="streak-count" style="color:var(--primary)">0 Hari</h2></div>
-       <div style="font-size:32px">🔥</div>
-    </div>
-    <div class="mahfuzat-box"><div class="mahfuzat-track" id="mahfuzat-list"></div></div>
-    <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')"><span>🌐</span><p>ABSENSI</p></div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')"><span>🏆</span><p>TAHFIDZ</p></div>
-      <div class="menu-item" onclick="handleQuran()"><span>📖</span><p>AL-QURAN</p></div>
-      <div class="menu-item" onclick="goTo('kamus.html')"><span>📑</span><p>KAMUS</p></div>
-      <div class="menu-item" onclick="goTo('perpus.html')"><span>📚</span><p>PERPUS</p></div>
-      <div class="menu-item" onclick="goTo('budayasekolah.html')"><span>🕌</span><p>BUDAYA SEKOLAH</p></div>
-      <div class="menu-item" onclick="goTo('pengaduan.html')"><span>📝</span><p>PENGADUAN</p></div>
-      <div class="menu-item" onclick="goTo('kalender.html')"><span>📅</span><p>KALENDER</p></div>
-      <div class="menu-item" onclick="goTo('waktu-sholat.html')"><span>🕋</span><p>WAKTU SHOLAT</p></div>
-      <div class="menu-item" onclick="logout()"><span>🚪</span><p>LOGOUT</p></div>
-    </div>
-  </section>
-</main>
-
-<div class="overlay" id="overlay"></div>
-<div class="sidebar" id="sidebar">
-  <div style="text-align:center; margin-bottom:30px;">
-    <img id="sidebar-photo" src="" style="width:90px; height:90px; border-radius:25px; border:4px solid var(--bg); object-fit:cover;">
-    <h3 id="sidebar-name" style="margin-top:15px; color:var(--primary); font-weight:800;">Santri</h3>
-  </div>
-  <a href="#" onclick="location.reload()" style="display:flex;align-items:center;padding:15px;color:#333;text-decoration:none;gap:15px;font-weight:600;"><i class="fa-solid fa-house"></i> Beranda</a>
-  <a href="#" onclick="logout()" style="display:flex;align-items:center;padding:15px;color:#d32f2f;text-decoration:none;gap:15px;font-weight:600;margin-top:30px;"><i class="fa-solid fa-power-off"></i> Logout</a>
-</div>
+<script>
+// Fungsi Membuat Ikan dengan Anatomi Torpedo/Tapered
+function createKoiSVG(index){
+  const colors = [var(--koi-red), var(--koi-black), var(--koi-orange)];
+  const pattern = colors[index % 3];
+  
+  return `<svg class="koi-body-svg" viewBox="0 0 120 45" xmlns="http://www.w3.org/2000/svg">
+    <path d="M30,10 Q10,5 25,18" fill="rgba(255,255,255,0.5)" />
+    <path d="M30,35 Q10,40 25,27" fill="rgba(255,255,255,0.5)" />
+    
+    <path d="M10,22.5 C10,10 40,5 70,15 C90,22.5 110,22.5 110,22.5 C110,22.5 90,22.5 70,30 C40,40 10,35 10,22.5" fill="white" />
+    
+    <ellipse cx="35" cy="18" rx="12" ry="7" fill="${pattern}" opacity="0.9"/>
+    <ellipse cx="70" cy="22" rx="15" ry="5" fill="${pattern}" opacity="0.8"/>
+    
+    <rect x="40" y="21" width="30" height="3" rx="1.5" fill="rgba(255,255,255,0.4)" />
+    
+    <path d="M110,22.5 L125,10 Q118,22.5 125,35 Z" fill="rgba(255,255,255,0.7)" />
+  </svg>`;
+}
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
