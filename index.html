@@ -2,128 +2,157 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Premium Nishikigoi</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Santri | Premium Edition v14</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #1b4d3e;
-    --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
-    --bg: #d4e9e2;
+    --primary: #1f6f51;
+    --primary-hover: #16503a;
+    --accent: #d4b96a;      
+    --text: #2d3436;
+    --muted: #636e72;
+    --glass: rgba(255, 255, 255, 0.9);
+    --soft: rgba(31, 111, 81, 0.1);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  body { background: var(--bg); min-height: 100vh; overflow: hidden; position: relative; }
+  /* --- STYLE TETAP SAMA SEPERTI ASLI --- */
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #f3fbf7;
+    background-image: radial-gradient(at 0% 0%, rgba(31, 111, 81, 0.15) 0px, transparent 50%), radial-gradient(at 100% 0%, rgba(212, 185, 106, 0.15) 0px, transparent 50%);
+    background-attachment: fixed; color: var(--text); padding: 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+  }
+  #loading-screen { position: fixed; inset: 0; background: #f3fbf7; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+  .spinner { width: 45px; height: 45px; border: 4px solid var(--soft); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+  .container { width: 100%; max-width: 420px; z-index: 1; }
+  .header-box { text-align: center; padding: 40px 0 20px; }
+  .title { 
+    font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: #ffffff;
+    letter-spacing: 2px; text-transform: uppercase; display: inline-block;
+    -webkit-text-stroke: 1.5px var(--primary); text-shadow: 0 5px 15px rgba(31, 111, 81, 0.3);
+  }
+  .streak-card {
+    background: linear-gradient(135deg, var(--primary), #2ecc71);
+    border-radius: 20px; padding: 15px 20px; color: white; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2);
+  }
+  .mahfuzat-ticker {
+    background: white; margin-bottom: 25px; padding: 8px 12px; border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; align-items: center; overflow: hidden;
+    border: 1px solid rgba(31, 111, 81, 0.1); cursor: pointer;
+  }
+  .ticker-label { background: var(--primary); color: white; font-size: 8px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 12px; }
+  .ticker-content { flex: 1; overflow: hidden; white-space: nowrap; }
+  .ticker-content marquee { font-size: 13px; color: var(--text); line-height: 24px; }
+  .ar-run { font-family: 'Noto Naskh Arabic', serif; color: var(--primary); font-weight: bold; margin-right: 8px; font-size: 15px; }
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .menu-item { 
+    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.03);
+  }
+  .menu-symbol { font-size: 30px; display: block; margin-bottom: 5px; }
+  .menu-item span { display: block; font-size: 11px; font-weight: 700; color: #444; }
+  .menu-trigger {
+    position: fixed; top: 25px; right: 25px; z-index: 1300; background: var(--primary);
+    color: #fff; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+    border-radius: 16px; cursor: pointer;
+  }
+  .sidebar { 
+    position: fixed; top: 0; right: -85%; width: 85%; height: 100%; background: white; 
+    transition: var(--transition); z-index: 1200; padding: 50px 25px; border-radius: 30px 0 0 30px;
+  }
+  .sidebar.open { right: 0; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
+  .sidebar-nav a { display: block; padding: 12px; text-decoration: none; color: var(--text); font-weight: 600; border-bottom: 1px solid #f1f1f1; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); z-index: 1100; }
+  .overlay.show { display: block; }
+  .card { background: var(--glass); backdrop-filter: blur(10px); border-radius: 24px; padding: 30px; margin-bottom: 25px; }
+  input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); background: #f8fafb; outline: none; }
+  .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
+  .btn.primary { background: var(--primary); color: #fff; }
+  .btn.outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
   .hidden { display: none !important; }
-
-  /* LAYER POND & KOI */
-  #pond-base { position: fixed; inset: 0; z-index: 1; background: radial-gradient(circle at center, #427466, #1b4d3e); }
-  .koi-unit { position: absolute; z-index: 20; pointer-events: none; transition: all 4s ease-in-out; filter: drop-shadow(20px 30px 10px rgba(0,0,0,0.15)); }
-  .koi-body-svg { width: 100px; height: 40px; }
-  #touch-layer { position: fixed; inset: 0; z-index: 5; cursor: pointer; }
-
-  /* LAYAR LOGIN & DAFTAR */
-  #auth-screen { 
-    position: fixed; inset: 0; z-index: 9999; background: var(--bg); 
-    display: flex; justify-content: center; align-items: center; padding: 20px; 
-  }
-  .auth-card { 
-    background: white; width: 100%; max-width: 360px; padding: 35px 25px; 
-    border-radius: 35px; box-shadow: 0 25px 60px rgba(0,0,0,0.15); text-align: center; 
-  }
-  .auth-input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 15px; border: 1px solid #ddd; outline: none; }
-  .btn-auth { width: 100%; padding: 15px; border-radius: 15px; border: none; background: var(--primary-grad); color: white; font-weight: 700; cursor: pointer; }
-  .btn-google { width: 100%; padding: 14px; border-radius: 15px; border: 1px solid #ddd; background: white; margin-top: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 600; }
-  
-  /* DASHBOARD UI */
-  header { background: var(--primary-grad); height: 160px; padding: 30px 25px; border-radius: 0 0 45px 45px; position: relative; z-index: 100; color: white; }
-  .profile-trigger { position: absolute; top: 30px; right: 25px; width: 50px; height: 50px; border: 3px solid white; border-radius: 18px; overflow: hidden; cursor: pointer; }
-  .container { width: 92%; max-width: 400px; margin: -50px auto 20px; position: relative; z-index: 110; }
-  
-  /* MAHFUZAT MARQUEE */
-  .mahfuzat-box { background: rgba(27, 77, 62, 0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 15px; margin-bottom: 20px; overflow: hidden; color: white; }
-  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee 30s linear infinite; }
-  .ar-text { font-family: 'Noto Naskh Arabic'; font-size: 20px; color: #ffd700; margin-right: 15px; }
-
-  @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { background: white; padding: 25px 5px; border-radius: 25px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer; }
-  .ripple { position: absolute; width: 2px; height: 2px; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; animation: ripple-ani 0.8s ease-out; pointer-events: none; z-index: 6; }
-  @keyframes ripple-ani { to { transform: scale(50); opacity: 0; } }
-
-  .sidebar { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background: white; transition: 0.4s; z-index: 500; padding: 40px 20px; border-radius: 35px 0 0 35px; }
-  .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.2); }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 400; }
+  footer { margin-top: auto; padding: 20px; color: var(--muted); font-size: 11px; font-weight: 800; text-align: center; }
 </style>
-</head>
-<body>
-
-<div id="pond-base"></div>
-<div id="touch-layer"></div>
-
-<section id="auth-screen">
-  <div class="auth-card">
-    <h2 id="auth-title" style="color:var(--primary); margin-bottom:5px;">E-Santri</h2>
-    <p id="auth-subtitle" style="font-size:12px; color:#888; margin-bottom:20px;">Silakan Masuk</p>
-    
-    <input type="email" id="email" class="auth-input" placeholder="Email Santri">
-    <input type="password" id="password" class="auth-input" placeholder="Password">
-    
-    <button class="btn-auth" id="btn-auth" onclick="handleAuth()">MASUK</button>
-    <button class="btn-google" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Google Login
-    </button>
-    
-    <p id="toggle-text" style="font-size:12px; margin-top:20px; cursor:pointer;" onclick="toggleAuth()">
-      Belum punya akun? <b style="color:var(--primary)">Daftar Disini</b>
-    </p>
-    <p id="error-msg" style="color:red; font-size:11px; margin-top:15px;"></p>
-  </div>
-</section>
-
-<header id="app-header" class="hidden">
-  <div class="profile-trigger" id="menu-btn"><img id="user-avatar" src="" style="width:100%; height:100%; object-fit:cover;"></div>
-  <h1 style="font-size:22px; font-weight:800;">E-SANTRI</h1>
-  <p id="welcome-msg" style="opacity:0.8; font-size:12px;"></p>
-</header>
-
-<main class="container hidden" id="main-content">
-  <div style="background:white; border-radius:25px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-      <div><p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p><h2 id="streak-count" style="color:var(--primary)">0 Hari</h2></div>
-      <div style="font-size:32px">🔥</div>
-  </div>
-
-  <div class="mahfuzat-box">
-    <div class="mahfuzat-track" id="mahfuzat-list"></div>
-  </div>
-
-  <div class="menu-grid">
-    <div class="menu-item" onclick="location.href='absensi.html'"><span>🌐</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">ABSENSI</p></div>
-    <div class="menu-item" onclick="location.href='tahfidz.html'"><span>🏆</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">TAHFIDZ</p></div>
-    <div class="menu-item" onclick="location.href='alquran.html'"><span>📖</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">AL-QURAN</p></div>
-    <div class="menu-item" onclick="location.href='kamus.html'"><span>📑</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">KAMUS</p></div>
-    <div class="menu-item" onclick="location.href='perpus.html'"><span>📚</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">PERPUS</p></div>
-    <div class="menu-item" onclick="logout()"><span>🚪</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">LOGOUT</p></div>
-  </div>
-</main>
-
-<div class="overlay" id="overlay"></div>
-<div class="sidebar" id="sidebar">
-  <div style="text-align:center; margin-bottom:30px;">
-    <img id="sidebar-photo" src="" style="width:85px; height:85px; border-radius:25px; object-fit:cover; border:3px solid var(--bg);">
-    <h3 id="sidebar-name" style="margin-top:15px; color:var(--primary);">Santri</h3>
-  </div>
-  <div onclick="logout()" style="color:red; font-weight:700; cursor:pointer;"><i class="fa-solid fa-power-off"></i> Logout Akun</div>
-</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<div id="loading-screen"><div class="spinner"></div></div>
+<div class="menu-trigger" id="menu-btn" style="display:none;">&#x22EE;</div>
+
+<div class="sidebar" id="sidebar">
+  <div style="text-align: center; margin-bottom: 20px;">
+    <img id="user-photo" src="https://ui-avatars.com/api/?name=S&background=1f6f51&color=fff" style="width:80px; height:80px; border-radius:20px; object-fit:cover; border: 3px solid var(--soft);">
+    <div id="sidebar-name" style="font-size: 18px; font-weight: 800; color: var(--primary); margin-top:10px;">Santri</div>
+    <div id="sidebar-email" style="font-size: 11px; color: var(--muted);">email@santri.com</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="#" onclick="location.reload()">🏠 Dashboard</a>
+    <a href="#" onclick="goTo('waktu-sholat.html')">🕌 Waktu Sholat</a>
+    <a href="#" onclick="goTo('pengaduan.html')">📣 Pengaduan</a>
+    <a href="#" onclick="goTo('kalender.html')">📅 Kalender</a>
+    <a href="#" onclick="logout()" style="color:red; border:none; margin-top:20px;">🚪 Keluar</a>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<header class="header-box"><h1 class="title">E-SANTRI</h1></header>
+
+<main class="container">
+  <div id="login-card" class="card hidden">
+    <h2 style="text-align:center; color:var(--primary); margin-bottom: 15px;">Ahlan wa Sahlan!</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button class="btn primary" id="btn-masuk" onclick="login()">MASUK</button>
+    <button class="btn outline" onclick="register()">DAFTAR BARU</button>
+    <button class="btn" style="background:white; border:1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px;" id="btn-google" onclick="loginGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Google Login
+    </button>
+  </div>
+
+  <section id="dashboard" class="hidden">
+    <div class="streak-card">
+        <div style="flex:1">
+            <p style="font-size:11px; opacity:0.9;">Al-Qur'an Daily Streak</p>
+            <h2 id="streak-count">0 Hari</h2>
+        </div>
+        <div style="font-size:35px;">🔥</div>
+    </div>
+
+    <h3 id="welcome-msg" style="color:var(--primary); font-weight:800; margin-bottom:15px;">Ahlan, Santri!</h3>
+
+    <div class="mahfuzat-ticker" onclick="goTo('mahfuzat.html')">
+        <div class="ticker-label">MAHFUZAT</div>
+        <div class="ticker-content">
+            <marquee id="marquee-box" scrollamount="4">
+                <span class="ar-run" id="runArab">...</span><span id="runIndo" style="color:var(--muted); font-weight:600;">...</span>
+            </marquee>
+        </div>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-item" onclick="goTo('absensi.html')"><span class="menu-symbol">📝</span><span>Absensi</span></div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="openQuran()"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="goTo('kamus.html')"><span class="menu-symbol">📑</span><span>Kamus</span></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><span class="menu-symbol">📚</span><span>Perpus</span></div>
+      <div class="menu-item" onclick="goTo('budayasekolah.html')"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
+    </div>
+  </section>
+</main>
+
+<footer>JANGAN TINGGALKAN SHOLAT</footer>
 
 <script>
-  // CONFIG BARU (e-santri-b62be)
+  // --- KONFIGURASI FIREBASE YANG BENAR (e-santri-b62be) ---
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -135,100 +164,76 @@
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
-  let isLoginMode = true;
 
-  // AUTH LOGIC
-  function toggleAuth() {
-    isLoginMode = !isLoginMode;
-    document.getElementById('auth-title').innerText = isLoginMode ? "E-Santri" : "Daftar Akun";
-    document.getElementById('btn-auth').innerText = isLoginMode ? "MASUK" : "DAFTAR SEKARANG";
-    document.getElementById('toggle-text').innerHTML = isLoginMode ? 'Belum punya akun? <b style="color:var(--primary)">Daftar Disini</b>' : 'Sudah punya akun? <b style="color:var(--primary)">Login Saja</b>';
+  // Handle Google Redirect Result
+  auth.getRedirectResult().catch(e => console.error(e));
+
+  function login(){ 
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    if(!email || !pass) return alert("Isi email & password!");
+    auth.signInWithEmailAndPassword(email, pass).catch(e=>alert("Gagal: " + e.message)); 
   }
 
-  function handleAuth() {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    if(!email || !pass) return alert("Lengkapi data!");
-
-    if(isLoginMode) {
-      auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
-    } else {
-      auth.createUserWithEmailAndPassword(email, pass).then(() => {
-        alert("Pendaftaran Sukses! Silakan Login.");
-        toggleAuth();
-      }).catch(e => alert(e.message));
-    }
+  function register(){ 
+    const email = document.getElementById("email").value;
+    const pass = document.getElementById("password").value;
+    if(!email || !pass) return alert("Isi email & password untuk daftar!");
+    auth.createUserWithEmailAndPassword(email, pass).then(() => alert("Berhasil Daftar! Silakan Masuk.")).catch(e=>alert(e.message)); 
   }
 
-  function loginGoogle() {
+  function loginGoogle(){ 
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithRedirect(provider);
+    // Menggunakan Redirect agar lancar di HP dan tidak jadi tempelan
+    auth.signInWithRedirect(provider); 
+  }
+
+  function logout(){ auth.signOut().then(()=>location.reload()); }
+
+  // --- LOGIKA STREAK & UI TETAP SAMA ---
+  function openQuran() {
+    const today = new Date().toDateString();
+    const lastDate = localStorage.getItem('last_quran_date');
+    let streak = parseInt(localStorage.getItem('quran_streak') || "0");
+    if (lastDate !== today) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (lastDate === yesterday.toDateString()) { streak++; } else { streak = 1; }
+        localStorage.setItem('quran_streak', streak);
+        localStorage.setItem('last_quran_date', today);
+    }
+    window.location.href = 'alquran.html';
   }
 
   auth.onAuthStateChanged(user => {
-    if(user) {
-      document.getElementById('auth-screen').classList.add('hidden');
-      document.getElementById('app-header').classList.remove('hidden');
-      document.getElementById('main-content').classList.remove('hidden');
-      document.getElementById('welcome-msg').innerText = "Ahlan, " + (user.displayName || user.email.split('@')[0]);
-      const p = user.photoURL || `https://ui-avatars.com/api/?name=Santri&background=1b4d3e&color=fff`;
-      document.getElementById('user-avatar').src = p;
-      document.getElementById('sidebar-photo').src = p;
-      document.getElementById('sidebar-name').innerText = user.displayName || "Santri";
-      initPond(); initMahfuzat();
+    document.getElementById("loading-screen").classList.add("hidden");
+    if(user){
+      document.getElementById("login-card").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+      document.getElementById("menu-btn").style.display="flex";
+      document.getElementById("welcome-msg").innerText = "Ahlan, " + (user.displayName || user.email.split('@')[0]) + "!";
+      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
+      document.getElementById("sidebar-email").innerText = user.email;
+      document.getElementById("user-photo").src = user.photoURL || `https://ui-avatars.com/api/?name=${user.email}&background=1f6f51&color=fff`;
+      
+      const list = [
+        {ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa sungguh-sungguh, dapat."},
+        {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}
+      ];
+      const d = list[new Date().getDate() % list.length];
+      document.getElementById('runArab').innerText = d.ar;
+      document.getElementById('runIndo').innerText = " — " + d.id;
+      document.getElementById('streak-count').innerText = (localStorage.getItem('quran_streak') || "0") + " Hari";
     } else {
-      document.getElementById('auth-screen').classList.remove('hidden');
+      document.getElementById("login-card").classList.remove("hidden");
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("menu-btn").style.display="none";
     }
   });
 
-  // KOI FISH SYSTEM
-  const fishList = [];
-  function createKoiSVG(index) {
-    const colors = ['#bc1a1a', '#1a1a1a', '#f39c12'];
-    const pColor = colors[index % 3];
-    return `<svg class="koi-body-svg" viewBox="0 0 120 45"><path d="M10,22 C10,5 80,5 110,22 C80,39 10,39 10,22" fill="white" /><ellipse cx="40" cy="18" rx="15" ry="10" fill="${pColor}" opacity="0.8"/></svg>`;
-  }
-
-  function initPond() {
-    if(fishList.length > 0) return;
-    for(let i=0; i<6; i++) {
-      const unit = document.createElement('div');
-      unit.className = 'koi-unit';
-      unit.innerHTML = createKoiSVG(i);
-      unit.style.left = Math.random()*80+'vw'; unit.style.top = Math.random()*80+'vh';
-      document.body.appendChild(unit);
-      fishList.push(unit);
-    }
-    setInterval(() => {
-      fishList.forEach(f => {
-        f.style.left = Math.random()*80+'vw'; f.style.top = Math.random()*80+'vh';
-        f.style.transform = `rotate(${Math.random()*360}deg)`;
-      });
-    }, 4000);
-  }
-
-  function initMahfuzat() {
-    const track = document.getElementById('mahfuzat-list');
-    const items = [
-      {ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa giat, pasti dapat."},
-      {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, pasti beruntung."}
-    ];
-    track.innerHTML = items.map(d => `<div style="display:inline-block; margin-right:50px;"><span class="ar-text">${d.ar}</span><span>${d.id}</span></div>`).join('');
-  }
-
-  document.getElementById('touch-layer').onclick = (e) => {
-    const rip = document.createElement('div');
-    rip.className = 'ripple';
-    rip.style.left = e.clientX+'px'; rip.style.top = e.clientY+'px';
-    document.body.appendChild(rip);
-    setTimeout(()=>rip.remove(), 800);
-    fishList.forEach(f => { f.style.left = (e.clientX-50)+'px'; f.style.top = (e.clientY-20)+'px'; });
-  };
-
-  const sb=document.getElementById("sidebar"), ov=document.getElementById("overlay");
-  document.getElementById("menu-btn").onclick=(e)=>{ e.stopPropagation(); sb.classList.add("open"); ov.style.display="block"; }
-  ov.onclick=()=>{ sb.classList.remove("open"); ov.style.display="none"; }
-  function logout() { auth.signOut().then(() => location.reload()); }
+  document.getElementById("menu-btn").onclick = () => { document.getElementById("sidebar").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
+  document.getElementById("overlay").onclick = () => { document.getElementById("sidebar").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
+  function goTo(url) { window.location.href = url; }
 </script>
 </body>
 </html>
