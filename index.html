@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Pro v16</title>
+<title>E-Santri | Pro v16 AI</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
@@ -46,24 +46,14 @@
     border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f0f0f0;
   }
 
-  /* --- STREAK API TIMBUL --- */
+  /* --- STREAK API --- */
   .streak-card { 
     background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; 
     margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
     box-shadow: 0 15px 35px rgba(31,111,81,0.2); position: relative; overflow: hidden;
   }
-  .fire-icon { 
-    font-size: 40px; transition: 0.5s; 
-    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); /* Efek Timbul Menyala */
-  }
+  .fire-icon { font-size: 40px; transition: 0.5s; filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); }
   .fire-off { filter: grayscale(1) opacity(0.3) !important; transform: scale(0.8); }
-
-  /* --- MAHFUZAT MARQUEE --- */
-  .mahfuzat-box { 
-    background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
-    display: flex; align-items: center; box-shadow: var(--shadow); border: 1px solid #f0f0f0;
-  }
-  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; }
 
   /* --- MENU GRID --- */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
@@ -75,14 +65,23 @@
   .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
   .menu-item span { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* --- LOGIN GOOGLE LOGO ASLI --- */
-  .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
-  .btn-google { 
-    width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #eee; 
-    background: white; display: flex; align-items: center; justify-content: center; 
-    gap: 12px; font-weight: 700; color: #444; cursor: pointer; margin-top: 20px; transition: 0.3s;
+  /* --- CHATBOT AI FLOATING --- */
+  #ai-window {
+    display: none; position: fixed; bottom: 100px; right: 20px; width: 320px; height: 450px; 
+    background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); 
+    z-index: 1500; flex-direction: column; overflow: hidden; border: 1px solid #eee;
   }
-  .btn-google img { width: 22px; height: 22px; }
+  .ai-header { background: var(--primary-grad); color: white; padding: 15px; font-weight: bold; text-align: center; display: flex; justify-content: space-between; align-items: center; }
+  #chatContent { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; background: #fdfdfd; display: flex; flex-direction: column; gap: 10px; }
+  .ai-bubble { background: #e8f5e9; padding: 10px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 85%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  .user-bubble { background: var(--primary); color: white; padding: 10px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 85%; }
+  .ai-input-area { padding: 12px; border-top: 1px solid #eee; display: flex; gap: 8px; background: white; }
+  .ai-input-area input { flex: 1; border: 1px solid #eee; padding: 10px 15px; border-radius: 25px; outline: none; font-size: 13px; }
+  .ai-input-area button { background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; }
+
+  /* --- LOGIN --- */
+  .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
+  .btn-google { width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #eee; background: white; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 700; color: #444; cursor: pointer; margin-top: 20px; }
 
   .hidden { display: none !important; }
 </style>
@@ -104,8 +103,6 @@
   <div class="sidebar-nav">
     <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
     <a href="sholat.html"><i class="fa-solid fa-mosque"></i> Waktu Sholat</a>
-    <a href="kalender.html"><i class="fa-solid fa-calendar-alt"></i> Kalender</a>
-    <a href="pengaduan.html"><i class="fa-solid fa-bullhorn"></i> Pengaduan</a>
     <a href="#" onclick="logout()" style="color:#e74c3c;"><i class="fa-solid fa-power-off"></i> Keluar</a>
   </div>
 </div>
@@ -115,15 +112,11 @@
 
   <div id="login-card" class="card-login hidden">
     <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
-    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:15px; margin-bottom:12px; border-radius:12px; border:1px solid #eee; outline:none;">
-    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:1px solid #eee; outline:none;">
+    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:15px; margin-bottom:12px; border-radius:12px; border:1px solid #eee;">
+    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:1px solid #eee;">
     <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700;">MASUK</button>
-    
-    <div style="margin: 20px 0; color:#eee;">— ATAU —</div>
-    
     <button class="btn-google" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg">
-      Masuk dengan Google
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg"> Masuk dengan Google
     </button>
   </div>
 
@@ -131,14 +124,6 @@
     <div class="streak-card">
       <div><p style="font-size:11px; opacity:0.8;">Hadir Hari Ini</p><h2 id="streak-text">0 Hari</h2></div>
       <div id="fire-api" class="fire-icon">🔥</div>
-    </div>
-
-    <div class="mahfuzat-box" onclick="location.href='mahfuzat.html'">
-      <div class="m-label">MAHFUZAT</div>
-      <marquee scrollamount="4" style="color:#555; font-weight:600;">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;"></span>
-        <span id="runIndo" style="margin-left:15px;"></span>
-      </marquee>
     </div>
 
     <div class="menu-grid">
@@ -152,7 +137,28 @@
   </section>
 </main>
 
+<div id="ai-ui" class="hidden">
+    <div id="ai-button" onclick="toggleChat()" style="position: fixed; bottom: 25px; right: 25px; background: var(--primary-grad); color: white; width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 25px rgba(31,111,81,0.3); z-index: 1400; font-size: 24px;">
+        🌙
+    </div>
+
+    <div id="ai-window">
+        <div class="ai-header">
+            <span>Asisten E-Santri</span>
+            <span onclick="toggleChat()" style="cursor:pointer">✕</span>
+        </div>
+        <div id="chatContent">
+            <div class="ai-bubble">Assalamu'alaikum! Ada yang bisa saya bantu terkait pelajaran pesantren?</div>
+        </div>
+        <div class="ai-input-area">
+            <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') kirimKeAI()">
+            <button onclick="kirimKeAI()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
 <script>
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -164,68 +170,68 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // SIDEBAR
+  // Elements
   const sb = document.getElementById("sidebar");
+  const aiUi = document.getElementById("ai-ui");
+  const aiWindow = document.getElementById("ai-window");
+  
   document.getElementById("menu-btn").onclick = () => { sb.classList.add("open"); }
   document.getElementById("close-btn").onclick = () => { sb.classList.remove("open"); }
 
-  // LOGIN GOOGLE REDIRECT (Paling Stabil)
-  function loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithRedirect(provider);
+  function toggleChat() {
+    aiWindow.style.display = (aiWindow.style.display === 'none' || aiWindow.style.display === '') ? 'flex' : 'none';
   }
-  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
-  function logout() { auth.signOut().then(()=>location.reload()); }
 
+  async function kirimKeAI() {
+    const input = document.getElementById('aiInput');
+    const content = document.getElementById('chatContent');
+    const pesan = input.value.trim();
+    if(!pesan) return;
+
+    // Tampilkan pesan user
+    content.innerHTML += `<div class="user-bubble">${pesan}</div>`;
+    input.value = "";
+    content.scrollTop = content.scrollHeight;
+
+    // Loading indicator
+    const loadingId = "load-" + Date.now();
+    content.innerHTML += `<div class="ai-bubble" id="${loadingId}">...</div>`;
+
+    try {
+        const response = await fetch('/proses', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ pesan: pesan })
+        });
+        const data = await response.json();
+        document.getElementById(loadingId).innerText = data.jawaban;
+    } catch (e) {
+        document.getElementById(loadingId).innerText = "Maaf, server sedang sibuk.";
+    }
+    content.scrollTop = content.scrollHeight;
+  }
+
+  // Auth Logic
   auth.onAuthStateChanged(user => {
     if(user){
       document.getElementById("dashboard").classList.remove("hidden");
       document.getElementById("login-card").classList.add("hidden");
       document.getElementById("menu-btn").style.display="flex";
+      aiUi.classList.remove("hidden"); // Munculkan Tombol AI
+
       document.getElementById("u-name").innerText = user.displayName || "Santri";
       document.getElementById("u-email").innerText = user.email;
       if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
-<div id="ai-button" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; background: #15803d; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000;">
-    <span style="font-size: 24px;">🌙</span>
-</div>
-
-<div id="ai-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; flex-direction: column; overflow: hidden;">
-    <div style="background: #15803d; color: white; p: 15px; padding: 10px; font-weight: bold; text-align: center;">
-        Asisten E-Santri
-    </div>
-    <div id="chatContent" style="flex: 1; padding: 10px; overflow-y: auto; font-size: 14px;">
-        <p>Assalamu'alaikum! Ada yang bisa saya bantu?</p>
-    </div>
-    <div style="padding: 10px; border-top: 1px solid #eee; display: flex;">
-        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." style="flex: 1; border: none; outline: none;">
-        <button onclick="kirimKeAI()" style="color: #15803d; font-weight: bold; background: none; border: none;">Kirim</button>
-    </div>
-</div>
-      // Logika Streak Api Timbul
-      const lastVisit = localStorage.getItem('last_visit');
-      const today = new Date().toDateString();
-      const fire = document.getElementById('fire-api');
-      
-      if(lastVisit === today) {
-        fire.classList.remove('fire-off'); // Api Menyala Timbul
-        document.getElementById('streak-text').innerText = "Sudah Absen";
-      } else {
-        fire.classList.add('fire-off'); // Api Padam
-        document.getElementById('streak-text').innerText = "Ketuk Menu Absensi";
-        localStorage.setItem('last_visit', today); // Set kunjungan hari ini
-      }
-
-      // Mahfuzat Berjalan
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
-      const d = m[new Date().getDate() % m.length];
-      document.getElementById('runArab').innerText = d.ar;
-      document.getElementById('runIndo').innerText = " — " + d.id;
     } else {
       document.getElementById("login-card").classList.remove("hidden");
+      document.getElementById("dashboard").classList.add("hidden");
+      aiUi.classList.add("hidden");
     }
   });
 
-  auth.getRedirectResult().catch(e => console.log(e.message));
+  function loginGoogle() { auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); }
+  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
+  function logout() { auth.signOut().then(()=>location.reload()); }
 </script>
 </body>
 </html>
