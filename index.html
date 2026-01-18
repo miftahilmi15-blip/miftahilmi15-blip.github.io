@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Procedural Zen</title>
+<title>E-Santri | Nishikigoi Champion Edition</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -12,44 +12,66 @@
     --primary: #1b4d3e;
     --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
     --bg: #d4e9e2;
+    --koi-red: #d32f2f;
+    --koi-white: #f5f5f5;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
 
-  /* --- LAYER 1: IKAN KOI MURNI KODE CSS --- */
-  #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle, #5d8a7d, #1b4d3e); }
+  /* --- LAYER 1: PROCEDURAL NISHIKIGOI KOI --- */
+  #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at center, #3e7c6d, #1b4d3e); }
   
+  /* Water Caustics (Efek Cahaya Air) */
+  #pond-base::before {
+    content: ''; position: absolute; inset: 0;
+    background: url('https://www.transparenttextures.com/patterns/water-reflection.png');
+    opacity: 0.15; animation: caustics 10s infinite linear;
+  }
+  @keyframes caustics { from { transform: scale(1) rotate(0deg); } to { transform: scale(1.5) rotate(5deg); } }
+
   .koi-fish {
-    position: absolute; width: 40px; height: 20px;
-    background: orange; border-radius: 50% 50% 50% 50%;
-    transition: all 4s ease-in-out; z-index: 2;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: absolute; width: 60px; height: 25px;
+    background: var(--koi-white);
+    border-radius: 50% 70% 70% 50%;
+    transition: all 4.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+    /* GINRIN EFFECT: Tekstur sisik berkilau */
+    background-image: 
+      radial-gradient(circle at 20% 50%, var(--koi-red) 40%, transparent 41%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 1px, transparent 1px, transparent 3px);
   }
-  /* Bintik Putih di Badan */
-  .koi-fish::after {
-    content: ''; position: absolute; width: 15px; height: 8px;
-    background: white; border-radius: 50%; top: 2px; left: 10px;
+
+  /* Sirip Ikan (Transparan) */
+  .koi-fish::before {
+    content: ''; position: absolute; top: -5px; left: 10px;
+    width: 15px; height: 35px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%; z-index: -1;
+    box-shadow: inset 0 0 5px white;
   }
-  /* Ekor Ikan */
+
   .koi-tail {
-    position: absolute; right: -12px; top: 2px;
-    width: 0; height: 0;
-    border-left: 15px solid orange;
-    border-top: 8px solid transparent;
-    border-bottom: 8px solid transparent;
-    animation: tail-wiggle 0.5s infinite alternate;
+    position: absolute; right: -18px; top: 0;
+    width: 25px; height: 25px;
+    background: rgba(255,255,255,0.4);
+    clip-path: polygon(0 50%, 100% 0, 70% 50%, 100% 100%);
+    animation: tail-wiggle 0.4s infinite alternate ease-in-out;
+    transform-origin: left center;
   }
+
   @keyframes tail-wiggle {
-    from { transform: rotate(-10deg); } to { transform: rotate(10deg); }
+    from { transform: rotate(-15deg) scaleY(0.8); }
+    to { transform: rotate(15deg) scaleY(1.2); }
   }
 
   /* --- LAYER 2: INTERAKSI --- */
   #touch-layer { position: fixed; inset: 0; z-index: 3; }
-  .ripple { position: absolute; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; animation: ripple-ani 0.6s linear; pointer-events: none; z-index: 4; }
-  @keyframes ripple-ani { to { transform: scale(3); opacity: 0; } }
+  .ripple { position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-ani 0.7s ease-out; pointer-events: none; z-index: 4; }
+  @keyframes ripple-ani { to { transform: scale(4); opacity: 0; } }
 
-  /* --- HEADER & PROFIL TRIGGER --- */
+  /* --- HEADER & PROFIL --- */
   header {
     background: var(--primary-grad); height: 160px; padding: 30px 25px;
     border-radius: 0 0 40px 40px; position: relative; text-align: center;
@@ -57,38 +79,41 @@
   }
   .profile-trigger {
     position: absolute; top: 30px; right: 25px;
-    width: 45px; height: 45px; border: 2px solid white;
-    border-radius: 50%; overflow: hidden; cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 1100;
-    background: #eee; display: flex; align-items: center; justify-content: center;
+    width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.8);
+    border-radius: 18px; overflow: hidden; cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1100;
+    transition: 0.3s;
   }
+  .profile-trigger:active { transform: scale(0.9); }
   .profile-trigger img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* --- CONTAINER UI --- */
+  /* --- UI CONTENT --- */
   .container { width: 92%; max-width: 400px; margin: -50px auto 20px; position: relative; z-index: 2000; }
 
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .menu-item { 
-    background: white; padding: 22px 5px; border-radius: 22px; text-align: center; 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; transition: 0.1s;
-    border: 1px solid #eee;
+    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+    padding: 22px 5px; border-radius: 25px; text-align: center; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s;
+    border: 1px solid white;
   }
-  .menu-item:active { transform: scale(0.92); background: #f0fdf4; }
-  .menu-item .icon { font-size: 24px; margin-bottom: 5px; display: block; }
-  .menu-item span { display: block; font-size: 9px; font-weight: 800; color: var(--primary); text-transform: uppercase; }
+  .menu-item:active { transform: translateY(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .menu-item .icon { font-size: 26px; margin-bottom: 6px; display: block; }
+  .menu-item span { display: block; font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
 
   /* STREAK & MAHFUZAT */
-  .streak-card { background: white; border-radius: 25px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-  .mahfuzat-box { background: rgba(27, 77, 62, 0.9); border-radius: 50px; padding: 10px 20px; margin-bottom: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
-  .mahfuzat-text { white-space: nowrap; display: inline-block; animation: marquee 18s linear infinite; color: white; }
+  .streak-card { background: white; border-radius: 25px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+  .mahfuzat-box { background: rgba(27, 77, 62, 0.92); backdrop-filter: blur(5px); border-radius: 50px; padding: 12px 20px; margin-bottom: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+  .mahfuzat-text { white-space: nowrap; display: inline-block; animation: marquee 20s linear infinite; color: white; font-size: 14px; }
   @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
   /* SIDEBAR */
-  .sidebar { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: white; transition: 0.4s; z-index: 5000; padding: 40px 20px; border-radius: 30px 0 0 30px; }
-  .sidebar.open { right: 0; box-shadow: -10px 0 40px rgba(0,0,0,0.3); }
-  .sidebar a { display: flex; align-items: center; padding: 15px; color: #333; text-decoration: none; font-weight: 600; border-radius: 12px; margin-bottom: 5px; gap: 12px; }
+  .sidebar { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: white; transition: 0.5s cubic-bezier(0.6, 0, 0.3, 1); z-index: 5000; padding: 40px 25px; border-radius: 35px 0 0 35px; }
+  .sidebar.open { right: 0; box-shadow: -15px 0 50px rgba(0,0,0,0.4); }
+  .sidebar a { display: flex; align-items: center; padding: 16px; color: #333; text-decoration: none; font-weight: 600; border-radius: 15px; margin-bottom: 8px; gap: 15px; transition: 0.2s; }
+  .sidebar a:active { background: #f0fdf4; color: var(--primary); }
 
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 4000; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); z-index: 4000; }
   .hidden { display: none !important; }
 </style>
 </head>
@@ -102,27 +127,27 @@
     <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=1b4d3e&color=fff">
   </div>
   <h1 class="title-app">E-SANTRI</h1>
-  <p id="welcome-msg" style="color:white; opacity:0.9; font-size:12px; font-weight:600;"></p>
+  <p id="welcome-msg" style="color:white; opacity:0.9; font-size:13px; font-weight:600; margin-top:5px;"></p>
 </header>
 
 <main class="container">
-  <div id="login-card" class="hidden" style="background:white; padding:30px; border-radius:30px; text-align:center;">
-    <h2 style="color:var(--primary); margin-bottom:20px;">Ahlan wa Sahlan</h2>
-    <input type="email" id="email" placeholder="Email" style="width:100%; padding:15px; border-radius:15px; border:1px solid #ddd; margin-bottom:10px;">
-    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; border-radius:15px; border:1px solid #ddd; margin-bottom:20px;">
-    <button onclick="login()" style="width:100%; padding:15px; border-radius:15px; background:var(--primary-grad); color:white; border:none; font-weight:bold;">MASUK</button>
+  <div id="login-card" class="hidden" style="background:white; padding:40px 30px; border-radius:35px; text-align:center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+    <h2 style="color:var(--primary); margin-bottom:25px; font-weight:800;">Ahlan wa Sahlan</h2>
+    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:18px; border-radius:18px; border:1.5px solid #eee; margin-bottom:12px; outline:none; background:#f9f9f9;">
+    <input type="password" id="password" placeholder="Password" style="width:100%; padding:18px; border-radius:18px; border:1.5px solid #eee; margin-bottom:25px; outline:none; background:#f9f9f9;">
+    <button onclick="login()" style="width:100%; padding:18px; border-radius:18px; background:var(--primary-grad); color:white; border:none; font-weight:800; box-shadow: 0 8px 20px rgba(31,111,81,0.3);">MASUK APLIKASI</button>
   </div>
 
   <section id="dashboard" class="hidden">
     <div class="streak-card">
-      <div><p style="font-size:10px; color:#888;">QURAN STREAK</p><h2 id="streak-count" style="color:var(--primary)">0 Hari</h2></div>
-      <div style="font-size:30px">🔥</div>
+      <div><p style="font-size:11px; color:#888; font-weight:700; letter-spacing:1px;">QURAN STREAK</p><h2 id="streak-count" style="color:var(--primary); font-size:24px;">0 Hari</h2></div>
+      <div style="font-size:35px; filter: drop-shadow(0 0 10px orange);">🔥</div>
     </div>
 
     <div class="mahfuzat-box">
       <div class="mahfuzat-text">
         <span id="runArab" style="font-family:'Noto Naskh Arabic'; font-weight:bold; font-size:18px;"></span>
-        <span id="runIndo" style="font-weight:600; margin-left:15px;"></span>
+        <span id="runIndo" style="font-weight:600; margin-left:15px; opacity:0.8;"></span>
       </div>
     </div>
 
@@ -139,15 +164,18 @@
 
 <div class="overlay" id="overlay"></div>
 <div class="sidebar" id="sidebar">
-  <div style="text-align:center; margin-bottom:30px;">
-     <img id="sidebar-photo" src="" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--bg);">
-     <h3 id="sidebar-name" style="margin-top:10px; color:var(--primary)">Santri</h3>
+  <div style="text-align:center; margin-bottom:35px;">
+     <div style="width:90px; height:90px; margin:0 auto; border:4px solid var(--bg); border-radius:25px; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
+        <img id="sidebar-photo" src="" style="width:100%; height:100%; object-fit:cover;">
+     </div>
+     <h3 id="sidebar-name" style="margin-top:15px; color:var(--primary); font-weight:800;">Santri</h3>
+     <p style="font-size:11px; color:#aaa; font-weight:600; text-transform:uppercase; letter-spacing:1px;">ID Santri Aktif</p>
   </div>
   <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
   <a href="#" onclick="goTo('waktu-sholat.html')"><i class="fa-solid fa-clock"></i> Jadwal Sholat</a>
-  <a href="#" onclick="goTo('kalender.html')"><i class="fa-solid fa-calendar"></i> Kalender</a>
-  <a href="#" onclick="goTo('pengaduan.html')"><i class="fa-solid fa-envelope"></i> Pengaduan</a>
-  <a href="#" onclick="logout()" style="color:red; border-top:1px solid #eee; margin-top:20px; padding-top:20px;"><i class="fa-solid fa-power-off"></i> Logout</a>
+  <a href="#" onclick="goTo('kalender.html')"><i class="fa-solid fa-calendar-days"></i> Kalender</a>
+  <a href="#" onclick="goTo('pengaduan.html')"><i class="fa-solid fa-comment-dots"></i> Pengaduan</a>
+  <a href="#" onclick="logout()" style="color:#d32f2f; border-top:1.5px solid #f5f5f5; margin-top:20px; padding-top:20px;"><i class="fa-solid fa-power-off"></i> Logout</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -158,12 +186,18 @@
   const auth = firebase.auth();
   const fishList = [];
 
-  // BIKIN IKAN KOI PAKAI KODE (CSS + HTML)
+  // PROCEDURAL NISHIKIGOI GENERATOR
   function initPond() {
     const container = document.getElementById('pond-base');
+    const colors = ['#d32f2f', '#ffa000', '#212121']; // Variasi corak merah, emas, hitam
     for(let i=0; i<6; i++) {
       const fish = document.createElement('div');
       fish.className = 'koi-fish';
+      
+      // Corak acak untuk tiap ikan
+      const randomColor = colors[Math.floor(Math.random()*colors.length)];
+      fish.style.backgroundImage = `radial-gradient(circle at ${Math.random()*80}% 50%, ${randomColor} 45%, transparent 46%), repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 4px)`;
+      
       const tail = document.createElement('div');
       tail.className = 'koi-tail';
       fish.appendChild(tail);
@@ -179,23 +213,30 @@
   function moveFish() {
     setInterval(() => {
       fishList.forEach(f => {
-        const x = Math.random()*80+'vw';
-        const y = Math.random()*80+'vh';
+        const x = Math.random()*85+'vw';
+        const y = Math.random()*85+'vh';
+        // Hitung sudut rotasi agar ikan menghadap ke tujuan
         const angle = Math.random()*360;
         f.style.left = x; f.style.top = y;
         f.style.transform = `rotate(${angle}deg)`;
       });
-    }, 4000);
+    }, 4500);
   }
 
-  // RIAK AIR & IKAN MENGEJAR
+  // RIAK AIR & IKAN MENDEKAT
   document.getElementById('touch-layer').onclick = (e) => {
     const r = document.createElement('div');
     r.className = 'ripple';
     r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
     document.body.appendChild(r);
-    setTimeout(() => r.remove(), 600);
-    fishList.forEach(f => { f.style.left = (e.clientX-20)+'px'; f.style.top = (e.clientY-10)+'px'; });
+    setTimeout(() => r.remove(), 700);
+    // Ikan mendekat ke arah sentuhan
+    fishList.forEach((f, index) => { 
+      setTimeout(() => {
+        f.style.left = (e.clientX + (index*10) - 30)+'px'; 
+        f.style.top = (e.clientY + (index*10) - 15)+'px'; 
+      }, index * 100);
+    });
   };
 
   function goTo(url) { window.location.href = url; }
@@ -222,10 +263,10 @@
       document.getElementById("login-card").classList.add("hidden");
       
       const name = user.displayName || "Santri";
-      document.getElementById("welcome-msg").innerText = "Ahlan, " + name;
+      document.getElementById("welcome-msg").innerText = "Assalamu'alaikum, " + name;
       document.getElementById("sidebar-name").innerText = name;
       
-      const photo = user.photoURL || `https://ui-avatars.com/api/?name=${name}&background=1b4d3e&color=fff`;
+      const photo = user.photoURL || `https://ui-avatars.com/api/?name=${name}&background=1b4d3e&color=fff&rounded=true&bold=true`;
       document.getElementById("user-avatar").src = photo;
       document.getElementById("sidebar-photo").src = photo;
 
