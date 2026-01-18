@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Professional Edition</title>
+<title>E-Santri | Pro v16</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
@@ -12,26 +12,24 @@
     --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71);
     --bg: #f8faf9;
     --text: #2d3436;
-    --shadow: 0 10px 30px rgba(31, 111, 81, 0.08);
+    --shadow: 0 10px 30px rgba(31, 111, 81, 0.1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
   /* --- HEADER & TITEL --- */
-  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; position: relative; }
-  .header-box { text-align: center; padding: 30px 0 10px; }
-  .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; }
+  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; }
+  .header-box { text-align: center; padding: 25px 0; }
+  .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
 
-  /* --- MENU TRIGGER (GARIS TIGA RAPI) --- */
+  /* --- SIDEBAR CENTERED --- */
   .menu-trigger { 
     position: fixed; top: 25px; right: 25px; z-index: 1400; 
     background: white; color: var(--primary); width: 48px; height: 48px; 
     border-radius: 14px; display: flex; align-items: center; justify-content: center; 
     font-size: 20px; box-shadow: var(--shadow); cursor: pointer; border: 1px solid #eee;
   }
-
-  /* --- SIDEBAR CENTERED --- */
   .sidebar { 
     position: fixed; top: 0; right: -100%; width: 100%; height: 100%; 
     background: rgba(255,255,255,0.98); z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -39,49 +37,52 @@
   }
   .sidebar.open { right: 0; }
   .close-sidebar { position: absolute; top: 30px; right: 30px; font-size: 30px; color: #ccc; cursor: pointer; }
-  
   .user-profile { text-align: center; margin-bottom: 40px; }
-  .user-profile img { width: 100px; height: 100px; border-radius: 30px; margin-bottom: 15px; box-shadow: var(--shadow); border: 4px solid white; }
-  .user-profile h3 { font-size: 22px; color: var(--primary); font-weight: 700; }
-
+  .user-profile img { width: 90px; height: 90px; border-radius: 25px; margin-bottom: 12px; box-shadow: var(--shadow); border: 3px solid white; }
   .sidebar-nav { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 280px; }
   .sidebar-nav a { 
     display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px; 
     text-decoration: none; color: var(--text); font-weight: 600; background: white; 
-    border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; transition: 0.3s;
+    border-radius: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f0f0f0;
   }
-  .sidebar-nav a:active { transform: scale(0.95); background: var(--bg); }
 
-  /* --- DASHBOARD ELEMENTS --- */
+  /* --- STREAK API TIMBUL --- */
   .streak-card { 
     background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; 
     margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
-    box-shadow: 0 15px 35px rgba(31,111,81,0.2); 
+    box-shadow: 0 15px 35px rgba(31,111,81,0.2); position: relative; overflow: hidden;
   }
+  .fire-icon { 
+    font-size: 40px; transition: 0.5s; 
+    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); /* Efek Timbul Menyala */
+  }
+  .fire-off { filter: grayscale(1) opacity(0.3) !important; transform: scale(0.8); }
 
+  /* --- MAHFUZAT MARQUEE --- */
   .mahfuzat-box { 
     background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
     display: flex; align-items: center; box-shadow: var(--shadow); border: 1px solid #f0f0f0;
   }
   .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; }
 
+  /* --- MENU GRID --- */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
   .menu-item { 
     background: white; padding: 22px 10px; border-radius: 24px; text-align: center; 
-    box-shadow: var(--shadow); transition: 0.3s; cursor: pointer; border: 1px solid transparent;
+    box-shadow: var(--shadow); transition: 0.3s; cursor: pointer;
   }
-  .menu-item:active { transform: scale(0.9); border-color: var(--primary); }
+  .menu-item:active { transform: scale(0.9); }
   .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
   .menu-item span { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* --- LOGIN GOOGLE MEWAH --- */
+  /* --- LOGIN GOOGLE LOGO ASLI --- */
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
   .btn-google { 
-    width: 100%; padding: 16px; border-radius: 18px; border: 1px solid #eee; 
+    width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #eee; 
     background: white; display: flex; align-items: center; justify-content: center; 
     gap: 12px; font-weight: 700; color: #444; cursor: pointer; margin-top: 20px; transition: 0.3s;
   }
-  .btn-google:active { background: #f9f9f9; transform: scale(0.98); }
+  .btn-google img { width: 22px; height: 22px; }
 
   .hidden { display: none !important; }
 </style>
@@ -96,7 +97,7 @@
 <div class="sidebar" id="sidebar">
   <div class="close-sidebar" id="close-btn">✕</div>
   <div class="user-profile">
-    <img id="u-img" src="https://ui-avatars.com/api/?background=1f6f51&color=fff&name=User">
+    <img id="u-img" src="https://ui-avatars.com/api/?background=1f6f51&color=fff&name=Santri">
     <h3 id="u-name">Santri</h3>
     <p id="u-email" style="color:#999; font-size:12px;"></p>
   </div>
@@ -113,30 +114,30 @@
   <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
 
   <div id="login-card" class="card-login hidden">
-    <h2 style="color:var(--primary); margin-bottom:30px;">Selamat Datang</h2>
-    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:16px; margin-bottom:12px; border-radius:14px; border:1px solid #eee; outline:none;">
-    <input type="password" id="password" placeholder="Password" style="width:100%; padding:16px; margin-bottom:20px; border-radius:14px; border:1px solid #eee; outline:none;">
-    <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer;">MASUK</button>
+    <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
+    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:15px; margin-bottom:12px; border-radius:12px; border:1px solid #eee; outline:none;">
+    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:1px solid #eee; outline:none;">
+    <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700;">MASUK</button>
     
-    <div style="margin: 20px 0; color:#ddd; font-size:12px;">Atau masuk lebih cepat</div>
+    <div style="margin: 20px 0; color:#eee;">— ATAU —</div>
     
     <button class="btn-google" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="20">
-      Masuk Akun Google
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg">
+      Masuk dengan Google
     </button>
   </div>
 
   <section id="dashboard" class="hidden">
     <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.8;">Quran Daily Streak</p><h2 id="streak-count">0 Hari</h2></div>
-      <div style="font-size:32px;">🔥</div>
+      <div><p style="font-size:11px; opacity:0.8;">Hadir Hari Ini</p><h2 id="streak-text">0 Hari</h2></div>
+      <div id="fire-api" class="fire-icon">🔥</div>
     </div>
 
     <div class="mahfuzat-box" onclick="location.href='mahfuzat.html'">
       <div class="m-label">MAHFUZAT</div>
-      <marquee scrollamount="4" style="font-weight:600; color:#555;">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:16px;"></span>
-        <span id="runIndo" style="margin-left:10px;"></span>
+      <marquee scrollamount="4" style="color:#555; font-weight:600;">
+        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;"></span>
+        <span id="runIndo" style="margin-left:15px;"></span>
       </marquee>
     </div>
 
@@ -146,7 +147,7 @@
       <div class="menu-item" onclick="location.href='tahfidz.html'"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
       <div class="menu-item" onclick="location.href='kamus.html'"><span class="menu-symbol">📑</span><span>Kamus</span></div>
       <div class="menu-item" onclick="location.href='perpustakaan.html'"><span class="menu-symbol">📚</span><span>Perpus</span></div>
-      <div class="menu-item" onclick="location.href='budaya.html'"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
+      <div class="menu-item" onclick="location.href='budayasekolah.html'"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
     </div>
   </section>
 </main>
@@ -163,17 +164,16 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // SIDEBAR CONTROL
+  // SIDEBAR
   const sb = document.getElementById("sidebar");
   document.getElementById("menu-btn").onclick = () => { sb.classList.add("open"); }
   document.getElementById("close-btn").onclick = () => { sb.classList.remove("open"); }
 
-  // GOOGLE LOGIN (Redirect Method - Jauh lebih stabil untuk HP)
+  // LOGIN GOOGLE REDIRECT (Paling Stabil)
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithRedirect(provider);
   }
-
   function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
   function logout() { auth.signOut().then(()=>location.reload()); }
 
@@ -185,19 +185,32 @@
       document.getElementById("u-name").innerText = user.displayName || "Santri";
       document.getElementById("u-email").innerText = user.email;
       if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
+
+      // Logika Streak Api Timbul
+      const lastVisit = localStorage.getItem('last_visit');
+      const today = new Date().toDateString();
+      const fire = document.getElementById('fire-api');
       
+      if(lastVisit === today) {
+        fire.classList.remove('fire-off'); // Api Menyala Timbul
+        document.getElementById('streak-text').innerText = "Sudah Absen";
+      } else {
+        fire.classList.add('fire-off'); // Api Padam
+        document.getElementById('streak-text').innerText = "Ketuk Menu Absensi";
+        localStorage.setItem('last_visit', today); // Set kunjungan hari ini
+      }
+
+      // Mahfuzat Berjalan
       const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
       const d = m[new Date().getDate() % m.length];
       document.getElementById('runArab').innerText = d.ar;
       document.getElementById('runIndo').innerText = " — " + d.id;
-      document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
     } else {
       document.getElementById("login-card").classList.remove("hidden");
     }
   });
 
-  // Handle Redirect Result (Penting untuk Google Login)
-  auth.getRedirectResult().catch(e => alert(e.message));
+  auth.getRedirectResult().catch(e => console.log(e.message));
 </script>
 </body>
 </html>
