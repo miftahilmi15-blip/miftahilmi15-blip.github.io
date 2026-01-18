@@ -3,72 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Nishikigoi Champion Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>E-Santri | Nishikigoi Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
 :root {
 --primary: #1b4d3e;
 --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
 --bg: #d4e9e2;
---koi-red: #d32f2f;
 --koi-white: #f5f5f5;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
 body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
-
-/* --- LAYER 1: POND --- */
-#pond-base { position: fixed; inset: 0; z-index: 999; pointer-events: none; } /* Ikan di atas (z-999) */
-
+#pond-base { position: fixed; inset: 0; z-index: 999; pointer-events: none; }
 .koi-fish {
-position: absolute; width: 80px; height: 30px;
-background: var(--koi-white);
+position: absolute; width: 80px; height: 30px; background: var(--koi-white);
 clip-path: polygon(0% 50%, 15% 20%, 40% 10%, 70% 20%, 85% 45%, 100% 50%, 85% 55%, 70% 80%, 40% 90%, 15% 80%);
-transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
-z-index: 1000;
-box-shadow: 0 15px 25px rgba(0,0,0,0.2);
-display: flex; align-items: center;
+transition: all 4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; box-shadow: 0 15px 25px rgba(0,0,0,0.2);
 }
-
-/* Sirip Tajam */
-.koi-fish::after {
-content: ''; position: absolute; left: 20%; top: -10px;
-width: 20px; height: 50px; background: rgba(255,255,255,0.4);
-clip-path: polygon(50% 0%, 100% 100%, 0% 100%); z-index: -1;
-}
-
 .koi-tail {
-position: absolute; right: -5px; width: 25px; height: 25px;
-background: rgba(255,255,255,0.6);
-clip-path: polygon(0 50%, 100% 0, 80% 50%, 100% 100%);
-animation: tail-swing 0.3s infinite alternate ease-in-out;
+position: absolute; right: -5px; width: 25px; height: 25px; background: rgba(255,255,255,0.6);
+clip-path: polygon(0 50%, 100% 0, 80% 50%, 100% 100%); animation: tail-swing 0.3s infinite alternate ease-in-out;
 }
 @keyframes tail-swing { from { transform: rotate(-20deg); } to { transform: rotate(20deg); } }
-
-/* --- UI LAYER --- */
 #touch-layer { position: fixed; inset: 0; z-index: 2; }
 .container { width: 92%; max-width: 400px; margin: 40px auto; position: relative; z-index: 50; }
-
 .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.menu-item {
-background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
-padding: 20px 5px; border-radius: 20px; text-align: center;
-box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer;
-}
-.menu-item span { display: block; font-size: 10px; font-weight: 800; color: var(--primary); margin-top: 5px;}
-
+.menu-item { background: rgba(255, 255, 255, 0.9); padding: 20px 5px; border-radius: 20px; text-align: center; }
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
-
 <div id="pond-base"></div>
 <div id="touch-layer"></div>
-
 <main class="container">
     <div id="login-card" class="hidden" style="background:white; padding:40px; border-radius:30px; text-align:center;">
-        <h2 style="color:var(--primary); margin-bottom:20px;">E-Santri Login</h2>
+        <h2 style="color:var(--primary); margin-bottom:20px;">E-Santri</h2>
         <input type="email" id="email" placeholder="Email" style="width:100%; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
         <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">
         <button onclick="login()" style="width:100%; padding:15px; border-radius:10px; background:var(--primary-grad); color:white; border:none; font-weight:bold;">MASUK</button>
@@ -76,27 +46,21 @@ box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer;
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Google Login
         </button>
     </div>
-
     <section id="dashboard" class="hidden">
         <div style="background:white; padding:20px; border-radius:20px; margin-bottom:20px; text-align:center;">
-            <h3 id="welcome-msg" style="color:var(--primary);">Ahlan, Santri!</h3>
-            <button onclick="logout()" style="font-size:10px; color:red; border:none; background:none;">LOGOUT</button>
+            <h3 id="welcome-msg">Ahlan, Santri!</h3>
+            <button onclick="logout()" style="color:red; border:none; background:none;">LOGOUT</button>
         </div>
         <div class="menu-grid">
             <div class="menu-item"><span>📖 Al-Quran</span></div>
             <div class="menu-item"><span>🏆 Tahfidz</span></div>
             <div class="menu-item"><span>🕌 Budaya</span></div>
-            <div class="menu-item"><span>📚 Perpus</span></div>
-            <div class="menu-item"><span>📅 Kalender</span></div>
-            <div class="menu-item"><span>📣 Aduan</span></div>
         </div>
     </section>
 </main>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script>
-// SUNTIKAN CONFIG ASLI (b62be)
 const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -107,14 +71,13 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-
 const fishList = [];
 function initPond() {
     const container = document.getElementById('pond-base');
     for(let i=0; i<6; i++) {
         const fish = document.createElement('div');
         fish.className = 'koi-fish';
-        fish.style.backgroundImage = `radial-gradient(circle at ${Math.random()*80}% 50%, #d32f2f 40%, transparent 41%)`;
+        fish.style.backgroundImage = `radial-gradient(circle at 30% 50%, #d32f2f 40%, transparent 41%)`;
         const tail = document.createElement('div');
         tail.className = 'koi-tail';
         fish.appendChild(tail);
@@ -123,7 +86,6 @@ function initPond() {
     }
     moveFish(4000);
 }
-
 function moveFish(speed) {
     fishList.forEach(f => {
         f.style.transition = `all ${speed/1000}s cubic-bezier(0.4, 0, 0.2, 1)`;
@@ -133,16 +95,9 @@ function moveFish(speed) {
     });
 }
 setInterval(() => moveFish(4000), 4500);
-
-document.getElementById('touch-layer').onclick = (e) => {
-    moveFish(1000); // Ikan jadi cepat (kecepatan makan)
-    setTimeout(() => moveFish(4000), 1100);
-};
-
 function loginGoogle() { auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); }
 function login(){ auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
 function logout(){ auth.signOut().then(()=>location.reload()); }
-
 auth.onAuthStateChanged(user => {
     if(user){
         document.getElementById("dashboard").classList.remove("hidden");
