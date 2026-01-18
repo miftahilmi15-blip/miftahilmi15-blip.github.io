@@ -3,75 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Smooth Premium</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>E-Santri | Ultra Premium Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
   :root {
     --primary: #1f6f51;
-    --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
+    --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71);
     --bg: #f3fbf7;
-    --soft-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    --text: #2d3436;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); overflow-x: hidden; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
 
-  /* --- EFEK KLIK LEMBUT --- */
-  .menu-item, .btn-primary, .google-btn, .menu-trigger {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Ini yang bikin lembut */
-    cursor: pointer;
-  }
+  /* --- IKAN KOI (Latar Belakang) --- */
+  #pond-base { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .koi-fish { position: absolute; width: 70px; height: 25px; background: #fff; clip-path: polygon(0% 50%, 15% 20%, 40% 10%, 70% 20%, 85% 45%, 100% 50%, 85% 55%, 70% 80%, 40% 90%, 15% 80%); transition: all 4s linear; z-index: 1; opacity: 0.4; }
 
-  .menu-item:active, .btn-primary:active, .google-btn:active {
-    transform: scale(0.92); /* Efek membal lembut saat ditekan */
-    opacity: 0.8;
-  }
-
-  /* --- UI LAYOUT --- */
-  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 25px; }
+  /* --- UI PREMIUM --- */
+  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
   
-  .header-box { text-align: center; padding: 20px 0; }
-  .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
+  /* Header Mewah */
+  .header-box { text-align: center; padding: 30px 0 15px; }
+  .title { font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: #fff; -webkit-text-stroke: 1.5px var(--primary); text-shadow: 0 5px 15px rgba(31,111,81,0.2); text-transform: uppercase; letter-spacing: 2px; }
 
-  .card-login { 
-    background: white; padding: 35px; border-radius: 30px; 
-    box-shadow: var(--soft-shadow); text-align: center; 
-  }
+  /* Streak Card */
+  .streak-card { background: var(--primary-grad); border-radius: 20px; padding: 18px; color: white; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px rgba(31,111,81,0.2); }
 
-  input { 
-    width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 15px; 
-    border: 1.5px solid #eee; outline: none; background: #fdfdfd; transition: 0.3s;
-  }
-  input:focus { border-color: var(--primary); background: #fff; }
+  /* Mahfuzat Ticker */
+  .mahfuzat-ticker { background: white; padding: 12px 18px; border-radius: 50px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid rgba(31,111,81,0.1); cursor: pointer; }
+  .ticker-label { background: #d4b96a; color: white; font-size: 8px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 12px; }
 
-  .btn-primary { 
-    width: 100%; padding: 16px; border-radius: 15px; border: none; 
-    background: var(--primary-grad); color: white; font-weight: 700; font-size: 16px; 
-  }
-
-  .google-btn { 
-    width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #eee; 
-    background: white; display: flex; align-items: center; justify-content: center; 
-    gap: 12px; font-weight: 600; color: #555; margin-top: 10px;
-  }
-
-  /* DASHBOARD GRID */
+  /* Menu Grid (Lembut) */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-  .menu-item { 
-    background: #fff; padding: 22px 10px; border-radius: 25px; text-align: center; 
-    box-shadow: var(--soft-shadow); border: 1px solid rgba(0,0,0,0.02);
-  }
-  .menu-symbol { font-size: 30px; display: block; margin-bottom: 8px; }
+  .menu-item { background: #fff; padding: 20px 10px; border-radius: 22px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer; border: 1px solid rgba(0,0,0,0.02); }
+  .menu-item:active { transform: scale(0.9); background: #f0fdf4; }
+  .menu-symbol { font-size: 30px; display: block; margin-bottom: 5px; }
   .menu-item span { font-size: 11px; font-weight: 700; color: #444; }
 
-  .sidebar { 
-    position: fixed; top: 0; right: -85%; width: 80%; height: 100%; background: white; 
-    z-index: 2100; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 50px 25px; 
-    border-radius: 35px 0 0 35px; box-shadow: -15px 0 40px rgba(0,0,0,0.1); 
-  }
+  /* Sidebar */
+  .menu-trigger { position: fixed; top: 25px; right: 25px; z-index: 1300; background: var(--primary); color: #fff; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; font-size: 20px; box-shadow: 0 8px 20px rgba(31,111,81,0.3); }
+  .sidebar { position: fixed; top: 0; right: -85%; width: 82%; height: 100%; background: white; transition: var(--transition); z-index: 1400; padding: 50px 25px; border-radius: 35px 0 0 35px; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
   .sidebar.open { right: 0; }
-  
+  .sidebar a { display: flex; align-items: center; gap: 15px; padding: 15px; text-decoration: none; color: var(--text); font-weight: 600; border-bottom: 1px solid #f8f9fa; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(4px); z-index: 1350; }
+
+  /* Login Card */
+  .card-login { background: white; padding: 40px 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; }
+  input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1.5px solid #f1f1f1; background: #f9fbfb; outline: none; }
+  .btn-primary { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary-grad); color: white; font-weight: 700; cursor: pointer; font-size: 16px; }
+
   .hidden { display: none !important; }
 </style>
 
@@ -79,6 +62,25 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
 <body>
+
+<div id="pond-base"></div>
+<div class="overlay" id="overlay"></div>
+<div class="menu-trigger" id="menu-btn" style="display:none;"><i class="fa-solid fa-bars-staggered"></i></div>
+
+<div class="sidebar" id="sidebar">
+  <div style="text-align: center; margin-bottom: 30px;">
+    <img id="u-img" src="https://ui-avatars.com/api/?name=User&background=1f6f51&color=fff" style="width:80px; height:80px; border-radius:25px; margin-bottom:15px; border: 3px solid #f3fbf7;">
+    <h3 id="u-name" style="color:var(--primary)">Santri</h3>
+    <p id="u-email" style="font-size:11px; color:#999;"></p>
+  </div>
+  <nav>
+    <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
+    <a href="#" onclick="nav('sholat.html')"><i class="fa-solid fa-clock"></i> Waktu Sholat</a>
+    <a href="#" onclick="nav('kalender.html')"><i class="fa-solid fa-calendar"></i> Kalender</a>
+    <a href="#" onclick="nav('pengaduan.html')"><i class="fa-solid fa-comment-dots"></i> Pengaduan</a>
+    <a href="#" onclick="logout()" style="color:red; margin-top:30px; border:none;"><i class="fa-solid fa-power-off"></i> Logout</a>
+  </nav>
+</div>
 
 <main class="container">
   <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
@@ -88,17 +90,27 @@
     <input type="email" id="email" placeholder="Email Santri">
     <input type="password" id="password" placeholder="Password">
     <button class="btn-primary" onclick="login()">MASUK</button>
-    <div style="margin: 20px 0; color: #ddd; font-size: 12px;">Atau masuk lebih mudah</div>
-    
-    <button class="google-btn" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="20">
-      Masuk dengan Google
+    <div style="margin: 20px 0; color: #ccc; font-size: 12px; position: relative;">
+      <span style="background:#fff; padding: 0 10px;">Atau</span>
+      <hr style="position:absolute; top:50%; width:100%; z-index:-1; border:0; border-top:1px solid #eee;">
+    </div>
+    <button onclick="loginGoogle()" style="width:100%; padding:14px; border-radius:12px; border:1px solid #ddd; background:white; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; font-weight:600; transition:0.3s;">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Masuk dengan Google
     </button>
   </div>
 
   <section id="dashboard" class="hidden">
-    <div onclick="openSidebar()" style="text-align:right; margin-bottom:20px; color:var(--primary); font-size:24px; cursor:pointer;">
-      <i class="fa-solid fa-bars-staggered"></i>
+    <div class="streak-card">
+      <div><p style="font-size:11px; opacity:0.9;">Quran Daily Streak</p><h2 id="streak-count">0 Hari</h2></div>
+      <div style="font-size:35px;">🔥</div>
+    </div>
+
+    <div class="mahfuzat-ticker" onclick="nav('mahfuzat.html')">
+      <div class="ticker-label">MAHFUZAT</div>
+      <marquee scrollamount="4">
+        <span style="font-family:'Noto Naskh Arabic'; font-weight:bold; color:var(--primary); font-size:16px;" id="runArab">...</span>
+        <span id="runIndo" style="color:#666; margin-left:10px; font-weight:600;">...</span>
+      </marquee>
     </div>
 
     <div class="menu-grid">
@@ -112,25 +124,8 @@
   </section>
 </main>
 
-<div class="sidebar" id="sidebar">
-  <div onclick="closeSidebar()" style="margin-bottom:30px; font-size:24px; color:#ccc;">✕</div>
-  <div style="text-align:center; margin-bottom:30px;">
-    <img id="u-img" src="https://ui-avatars.com/api/?name=Santri&background=1f6f51&color=fff" style="width:80px; height:80px; border-radius:25px; margin-bottom:15px;">
-    <h3 id="u-name">Santri</h3>
-    <p id="u-email" style="font-size:12px; color:#999;"></p>
-  </div>
-  <hr style="border:0; border-top:1px solid #f5f5f5; margin-bottom:20px;">
-  <div style="display:flex; flex-direction:column; gap:15px;">
-    <div onclick="nav('sholat.html')" style="font-weight:600; cursor:pointer;">🕌 Waktu Sholat</div>
-    <div onclick="nav('kalender.html')" style="font-weight:600; cursor:pointer;">📅 Kalender</div>
-    <div onclick="nav('pengaduan.html')" style="font-weight:600; cursor:pointer;">📣 Pengaduan</div>
-    <div onclick="logout()" style="font-weight:600; color:red; cursor:pointer; margin-top:20px;">🚪 Logout</div>
-  </div>
-</div>
-
 <script>
-  // KONEKSI FIREBASE USTADZ (b62be)
-  const config = {
+  const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
     projectId: "e-santri-b62be",
@@ -138,42 +133,56 @@
     messagingSenderId: "6560427635",
     appId: "1:6560427635:web:368b4fbf95163e8d214406"
   };
-  firebase.initializeApp(config);
+  firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // NAVIGASI LEMBUT
-  function nav(url) {
-    setTimeout(() => { window.location.href = url; }, 200);
+  // SIDEBAR & IKAN
+  const sb = document.getElementById("sidebar"), ov = document.getElementById("overlay");
+  document.getElementById("menu-btn").onclick = () => { sb.classList.add("open"); ov.style.display="block"; }
+  ov.onclick = () => { sb.classList.remove("open"); ov.style.display="none"; }
+
+  const fishList = [];
+  function initPond() {
+    const container = document.getElementById('pond-base');
+    for(let i=0; i<5; i++) {
+      const f = document.createElement('div'); f.className = 'koi-fish';
+      f.style.backgroundImage = `radial-gradient(circle at 30% 50%, #d32f2f 40%, transparent 41%)`;
+      container.appendChild(f); fishList.push(f);
+    }
+    setInterval(() => {
+      fishList.forEach(f => {
+        f.style.left = Math.random()*85+'vw'; f.style.top = Math.random()*85+'vh';
+        f.style.transform = `rotate(${Math.random()*360}deg)`;
+      });
+    }, 4000);
   }
 
-  function openSidebar() { document.getElementById("sidebar").classList.add("open"); }
-  function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); }
-
-  // FUNGSI GOOGLE LOGIN ASLI
-  function loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).catch(e => alert(e.message));
-  }
-
-  function login() {
-    const e = document.getElementById("email").value;
-    const p = document.getElementById("password").value;
-    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
-  }
-
+  // LOGIK
+  function nav(url) { setTimeout(() => { window.location.href = url; }, 200); }
+  function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); }
+  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e => alert(e.message)); }
   function logout() { auth.signOut().then(() => location.reload()); }
 
-  // MONITOR STATUS USER
   auth.onAuthStateChanged(user => {
     if(user){
       document.getElementById("dashboard").classList.remove("hidden");
       document.getElementById("login-card").classList.add("hidden");
+      document.getElementById("menu-btn").style.display="flex";
       document.getElementById("u-name").innerText = user.displayName || "Santri";
       document.getElementById("u-email").innerText = user.email;
       if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
+      
+      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
+      const d = m[new Date().getDate() % m.length];
+      document.getElementById('runArab').innerText = d.ar;
+      document.getElementById('runIndo').innerText = " — " + d.id;
+      
+      document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
+      initPond();
     } else {
       document.getElementById("login-card").classList.remove("hidden");
       document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("menu-btn").style.display="none";
     }
   });
 </script>
