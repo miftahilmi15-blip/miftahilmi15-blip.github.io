@@ -8,7 +8,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1f6f51">
 
@@ -21,7 +20,7 @@
   --shadow:0 10px 30px rgba(31,111,81,.1);
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
-body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);min-height:100vh}
 
 .container{max-width:420px;margin:auto;padding:20px}
 .header-box{text-align:center;padding:25px 0}
@@ -37,48 +36,35 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 .sidebar{
   position:fixed;top:0;right:-100%;width:100%;height:100%;
   background:rgba(255,255,255,.98);z-index:2000;
-  transition:.5s;display:flex;flex-direction:column;
+  transition:.4s;display:flex;flex-direction:column;
   align-items:center;justify-content:center
 }
 .sidebar.open{right:0}
 .close-sidebar{position:absolute;top:30px;right:30px;font-size:30px;color:#ccc;cursor:pointer}
-
-.user-profile{text-align:center;margin-bottom:40px}
-.user-profile img{width:90px;height:90px;border-radius:25px;margin-bottom:10px}
-
-.sidebar-nav{display:flex;flex-direction:column;gap:15px;width:280px}
-.sidebar-nav a{
-  padding:16px;border-radius:18px;background:#fff;
-  text-decoration:none;color:#333;font-weight:600;
-  display:flex;gap:10px;justify-content:center;
-  box-shadow:0 4px 10px rgba(0,0,0,.05)
-}
 
 .card-login{
   background:#fff;padding:40px 30px;border-radius:35px;
   box-shadow:var(--shadow);text-align:center;
   position:relative;z-index:9999;isolation:isolate
 }
+
 .btn-google{
   width:100%;padding:14px;border-radius:16px;
   border:1.5px solid #eee;background:#fff;
   display:flex;gap:12px;justify-content:center;
   font-weight:700;cursor:pointer;
-  z-index:10000;position:relative
+  position:relative;z-index:10000
 }
 .btn-google img{width:22px}
 
 .hidden{display:none!important}
 
-/* DASHBOARD */
 .streak-card{
   background:var(--primary-grad);color:#fff;
   border-radius:24px;padding:20px;
   display:flex;justify-content:space-between;
   margin-bottom:20px
 }
-.fire-icon{font-size:40px}
-.fire-off{filter:grayscale(1) opacity(.3)}
 
 .mahfuzat-box{
   background:#fff;padding:15px 20px;
@@ -103,11 +89,9 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
 .menu-item{
   background:#fff;padding:22px 10px;border-radius:24px;
-  text-align:center;box-shadow:var(--shadow);cursor:pointer
+  text-align:center;box-shadow:var(--shadow)
 }
-.menu-symbol{font-size:32px}
 
-/* AI */
 #ai-button{
   position:fixed;bottom:20px;right:20px;
   width:60px;height:60px;border-radius:50%;
@@ -121,8 +105,6 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
   border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.3);
   z-index:1000;flex-direction:column
 }
-.msg-user{background:#1f6f51;color:#fff;padding:8px;border-radius:10px;margin-bottom:8px;text-align:right}
-.msg-ai{background:#f1f1f1;padding:8px;border-radius:10px;margin-bottom:8px}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -130,32 +112,17 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 </head>
 <body>
 
-<div class="menu-trigger" id="menu-btn"><i class="fa fa-bars"></i></div>
-
-<div class="sidebar" id="sidebar">
-  <div class="close-sidebar" id="close-btn">✕</div>
-  <div class="user-profile">
-    <img id="u-img" src="https://ui-avatars.com/api/?name=Santri">
-    <h3 id="u-name">Santri</h3>
-    <p id="u-email"></p>
-  </div>
-  <div class="sidebar-nav">
-    <a href="#" onclick="location.reload()">Dashboard</a>
-    <a href="sholat.html">Waktu Sholat</a>
-    <a href="kalender.html">Kalender</a>
-    <a href="#" onclick="logout()" style="color:red">Keluar</a>
-  </div>
-</div>
+<div class="menu-trigger" id="menuBtn"><i class="fa fa-bars"></i></div>
 
 <main class="container">
 <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
 
-<div id="login-card" class="card-login hidden">
+<div id="loginCard" class="card-login hidden">
   <input id="email" placeholder="Email" style="width:100%;padding:15px;margin-bottom:10px">
   <input id="password" type="password" placeholder="Password" style="width:100%;padding:15px">
-  <button onclick="login()" style="width:100%;margin-top:15px;padding:16px;background:var(--primary-grad);color:#fff;border:none;border-radius:16px">MASUK</button>
+  <button id="loginBtn" style="width:100%;margin-top:15px;padding:16px;background:var(--primary-grad);color:#fff;border:none;border-radius:16px">MASUK</button>
   <div style="margin:20px 0;color:#ccc">— ATAU —</div>
-  <button type="button" class="btn-google" onclick="loginGoogle()">
+  <button type="button" class="btn-google" id="googleBtn">
     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg">
     Masuk dengan Google
   </button>
@@ -163,8 +130,8 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
 <section id="dashboard" class="hidden">
   <div class="streak-card">
-    <div><small>Hadir Hari Ini</small><h2 id="streak-text">0 Hari</h2></div>
-    <div id="fire-api" class="fire-icon">🔥</div>
+    <div><small>Hadir Hari Ini</small><h2>0 Hari</h2></div>
+    <div>🔥</div>
   </div>
 
   <div class="mahfuzat-box">
@@ -186,14 +153,8 @@ body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 </section>
 </main>
 
-<div id="ai-button" onclick="toggleChat()">🌙</div>
-
-<div id="ai-window">
-  <div style="background:#15803d;color:#fff;padding:10px;text-align:center">Asisten E-Santri</div>
-  <div id="chatContent" style="flex:1;padding:10px;overflow:auto">
-    <div class="msg-ai">Assalamu’alaikum 😊</div>
-  </div>
-</div>
+<div id="ai-button">🌙</div>
+<div id="ai-window"></div>
 
 <script>
 const firebaseConfig={
@@ -205,35 +166,26 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth();
 
-menu-btn.onclick=()=>sidebar.classList.add("open");
-close-btn.onclick=()=>sidebar.classList.remove("open");
+const loginCard=document.getElementById("loginCard");
+const dashboard=document.getElementById("dashboard");
+const googleBtn=document.getElementById("googleBtn");
+const loginBtn=document.getElementById("loginBtn");
+const aiBtn=document.getElementById("ai-button");
 
-function loginGoogle(){
-  auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
-}
-function login(){
-  auth.signInWithEmailAndPassword(email.value,password.value)
-}
-function logout(){auth.signOut()}
+googleBtn.onclick=()=>auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+loginBtn.onclick=()=>auth.signInWithEmailAndPassword(email.value,password.value);
 
 auth.onAuthStateChanged(u=>{
   if(u){
     dashboard.classList.remove("hidden");
-    login-card.classList.add("hidden");
-    menu-btn.style.display="flex";
-    ai-button.style.display="flex";
-    u-name.innerText=u.displayName||"Santri";
-    u-email.innerText=u.email;
+    loginCard.classList.add("hidden");
+    aiBtn.style.display="flex";
     runArab.innerText="مَنْ جَدَّ وَجَدَ";
     runIndo.innerText=" — Siapa bersungguh-sungguh, dapat";
   }else{
-    login-card.classList.remove("hidden");
+    loginCard.classList.remove("hidden");
   }
 });
-
-function toggleChat(){
-  ai-window.style.display=ai-window.style.display==="flex"?"none":"flex";
-}
 
 if("serviceWorker"in navigator){
   navigator.serviceWorker.register("sw.js");
