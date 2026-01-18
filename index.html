@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Ultra Premium Final</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<title>E-Santri | Modern Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
   :root {
@@ -12,48 +12,59 @@
     --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71);
     --bg: #f3fbf7;
     --text: #2d3436;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-  /* --- IKAN KOI (Latar Belakang) --- */
-  #pond-base { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-  .koi-fish { position: absolute; width: 70px; height: 25px; background: #fff; clip-path: polygon(0% 50%, 15% 20%, 40% 10%, 70% 20%, 85% 45%, 100% 50%, 85% 55%, 70% 80%, 40% 90%, 15% 80%); transition: all 4s linear; z-index: 1; opacity: 0.4; }
+  /* --- LOGIN GOOGLE MEWAH --- */
+  .google-btn {
+    width: 100%; padding: 16px; border-radius: 16px; border: 1px solid #e0e0e0;
+    background: white; display: flex; align-items: center; justify-content: center;
+    gap: 12px; font-weight: 700; color: #444; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: all 0.3s ease;
+  }
+  .google-btn:active { transform: scale(0.95); background: #f9f9f9; }
+  .google-btn img { width: 22px; }
 
-  /* --- UI PREMIUM --- */
-  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
-  
-  /* Header Mewah */
-  .header-box { text-align: center; padding: 30px 0 15px; }
-  .title { font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: #fff; -webkit-text-stroke: 1.5px var(--primary); text-shadow: 0 5px 15px rgba(31,111,81,0.2); text-transform: uppercase; letter-spacing: 2px; }
-
-  /* Streak Card */
-  .streak-card { background: var(--primary-grad); border-radius: 20px; padding: 18px; color: white; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 25px rgba(31,111,81,0.2); }
-
-  /* Mahfuzat Ticker */
-  .mahfuzat-ticker { background: white; padding: 12px 18px; border-radius: 50px; margin-bottom: 25px; display: flex; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid rgba(31,111,81,0.1); cursor: pointer; }
-  .ticker-label { background: #d4b96a; color: white; font-size: 8px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 12px; }
-
-  /* Menu Grid (Lembut) */
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-  .menu-item { background: #fff; padding: 20px 10px; border-radius: 22px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: var(--transition); cursor: pointer; border: 1px solid rgba(0,0,0,0.02); }
-  .menu-item:active { transform: scale(0.9); background: #f0fdf4; }
-  .menu-symbol { font-size: 30px; display: block; margin-bottom: 5px; }
-  .menu-item span { font-size: 11px; font-weight: 700; color: #444; }
-
-  /* Sidebar */
-  .menu-trigger { position: fixed; top: 25px; right: 25px; z-index: 1300; background: var(--primary); color: #fff; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 16px; cursor: pointer; font-size: 20px; box-shadow: 0 8px 20px rgba(31,111,81,0.3); }
-  .sidebar { position: fixed; top: 0; right: -85%; width: 82%; height: 100%; background: white; transition: var(--transition); z-index: 1400; padding: 50px 25px; border-radius: 35px 0 0 35px; box-shadow: -20px 0 40px rgba(0,0,0,0.1); }
+/* --- SIDEBAR CENTERED DESIGN --- */
+  .sidebar { 
+    position: fixed; top: 0; right: -100%; width: 100%; height: 100%; 
+    background: white; z-index: 2000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; /* SEMUA KE TENGAH */
+    padding: 40px;
+  }
   .sidebar.open { right: 0; }
-  .sidebar a { display: flex; align-items: center; gap: 15px; padding: 15px; text-decoration: none; color: var(--text); font-weight: 600; border-bottom: 1px solid #f8f9fa; }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.25); backdrop-filter: blur(4px); z-index: 1350; }
+  
+  .user-profile {
+    text-align: center; background: #f8fbf9; padding: 25px; border-radius: 25px;
+    margin-bottom: 30px; border: 1px solid #edf5f0;
+  }
+  .user-profile img { width: 75px; height: 75px; border-radius: 22px; margin-bottom: 12px; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+  
+  .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
+  .sidebar-nav a { 
+    display: flex; align-items: center; gap: 15px; padding: 16px 20px;
+    text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px;
+    border-radius: 15px; transition: 0.3s;
+  }
+  .sidebar-nav a i { font-size: 18px; color: var(--primary); width: 25px; }
+  .sidebar-nav a:active { background: #f0fdf4; color: var(--primary); }
 
-  /* Login Card */
-  .card-login { background: white; padding: 40px 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1.5px solid #f1f1f1; background: #f9fbfb; outline: none; }
-  .btn-primary { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary-grad); color: white; font-weight: 700; cursor: pointer; font-size: 16px; }
+  /* --- UI DASHBOARD --- */
+  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; }
+  .header-box { text-align: center; padding: 30px 0; }
+  .title { font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: #fff; -webkit-text-stroke: 1.5px var(--primary); text-shadow: 0 5px 15px rgba(31,111,81,0.2); }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .menu-item { background: #fff; padding: 20px 10px; border-radius: 22px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.02); cursor: pointer; border: 1px solid rgba(0,0,0,0.01); transition: 0.2s; }
+  .menu-item:active { transform: scale(0.92); }
+
+  .card-login { background: white; padding: 35px; border-radius: 35px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); text-align: center; }
+  .btn-primary { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--primary-grad); color: white; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(31,111,81,0.2); }
+
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); z-index: 1500; }
+  .menu-trigger { position: fixed; top: 25px; right: 25px; z-index: 1400; background: var(--primary); color: white; width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
 
   .hidden { display: none !important; }
 </style>
@@ -63,63 +74,62 @@
 </head>
 <body>
 
-<div id="pond-base"></div>
 <div class="overlay" id="overlay"></div>
 <div class="menu-trigger" id="menu-btn" style="display:none;"><i class="fa-solid fa-bars-staggered"></i></div>
 
 <div class="sidebar" id="sidebar">
-  <div style="text-align: center; margin-bottom: 30px;">
-    <img id="u-img" src="https://ui-avatars.com/api/?name=User&background=1f6f51&color=fff" style="width:80px; height:80px; border-radius:25px; margin-bottom:15px; border: 3px solid #f3fbf7;">
-    <h3 id="u-name" style="color:var(--primary)">Santri</h3>
-    <p id="u-email" style="font-size:11px; color:#999;"></p>
+  <div class="user-profile">
+    <img id="u-img" src="https://ui-avatars.com/api/?background=1f6f51&color=fff&name=Santri">
+    <h3 id="u-name" style="font-size:18px; color:var(--primary);">Santri</h3>
+    <p id="u-email" style="font-size:11px; color:#999; margin-top:4px;"></p>
   </div>
-  <nav>
+  
+  <div class="sidebar-nav">
     <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
-    <a href="#" onclick="nav('sholat.html')"><i class="fa-solid fa-clock"></i> Waktu Sholat</a>
-    <a href="#" onclick="nav('kalender.html')"><i class="fa-solid fa-calendar"></i> Kalender</a>
-    <a href="#" onclick="nav('pengaduan.html')"><i class="fa-solid fa-comment-dots"></i> Pengaduan</a>
-    <a href="#" onclick="logout()" style="color:red; margin-top:30px; border:none;"><i class="fa-solid fa-power-off"></i> Logout</a>
-  </nav>
+    <a href="sholat.html"><i class="fa-solid fa-mosque"></i> Waktu Sholat</a>
+    <a href="kalender.html"><i class="fa-solid fa-calendar-days"></i> Kalender</a>
+    <a href="pengaduan.html"><i class="fa-solid fa-circle-exclamation"></i> Pengaduan</a>
+    <a href="#" onclick="logout()" style="color:#e74c3c; margin-top:20px;"><i class="fa-solid fa-right-from-bracket"></i> Keluar</a>
+  </div>
 </div>
 
 <main class="container">
   <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
 
   <div id="login-card" class="card-login hidden">
-    <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
-    <input type="email" id="email" placeholder="Email Santri">
-    <input type="password" id="password" placeholder="Password">
+    <h2 style="color:var(--primary); margin-bottom:10px;">Masuk</h2>
+    <p style="font-size:13px; color:#999; margin-bottom:25px;">Gunakan akun resmi santri</p>
+    
+    <input type="email" id="email" placeholder="Email" style="width:100%; padding:15px; margin-bottom:12px; border-radius:12px; border:1px solid #eee; outline:none; background: #f9f9f9;">
+    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:1px solid #eee; outline:none; background: #f9f9f9;">
+    
     <button class="btn-primary" onclick="login()">MASUK</button>
-    <div style="margin: 20px 0; color: #ccc; font-size: 12px; position: relative;">
-      <span style="background:#fff; padding: 0 10px;">Atau</span>
-      <hr style="position:absolute; top:50%; width:100%; z-index:-1; border:0; border-top:1px solid #eee;">
+    
+    <div style="margin: 25px 0; display:flex; align-items:center; gap:10px;">
+      <div style="flex:1; height:1px; background:#eee;"></div>
+      <span style="font-size:12px; color:#ccc;">ATAU</span>
+      <div style="flex:1; height:1px; background:#eee;"></div>
     </div>
-    <button onclick="loginGoogle()" style="width:100%; padding:14px; border-radius:12px; border:1px solid #ddd; background:white; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; font-weight:600; transition:0.3s;">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Masuk dengan Google
+    
+    <button class="google-btn" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg">
+      Lanjutkan dengan Google
     </button>
   </div>
 
   <section id="dashboard" class="hidden">
-    <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.9;">Quran Daily Streak</p><h2 id="streak-count">0 Hari</h2></div>
-      <div style="font-size:35px;">🔥</div>
-    </div>
-
-    <div class="mahfuzat-ticker" onclick="nav('mahfuzat.html')">
-      <div class="ticker-label">MAHFUZAT</div>
-      <marquee scrollamount="4">
-        <span style="font-family:'Noto Naskh Arabic'; font-weight:bold; color:var(--primary); font-size:16px;" id="runArab">...</span>
-        <span id="runIndo" style="color:#666; margin-left:10px; font-weight:600;">...</span>
-      </marquee>
+    <div style="background:var(--primary-grad); border-radius:25px; padding:20px; color:white; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 10px 25px rgba(31,111,81,0.2);">
+      <div><p style="font-size:11px; opacity:0.8;">Quran Streak</p><h2 id="streak-count">0 Hari</h2></div>
+      <div style="font-size:30px;">🔥</div>
     </div>
 
     <div class="menu-grid">
-      <div class="menu-item" onclick="nav('alquran.html')"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="nav('absensi.html')"><span class="menu-symbol">📝</span><span>Absensi</span></div>
-      <div class="menu-item" onclick="nav('tahfidz.html')"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="nav('kamus.html')"><span class="menu-symbol">📑</span><span>Kamus</span></div>
-      <div class="menu-item" onclick="nav('perpustakaan.html')"><span class="menu-symbol">📚</span><span>Perpus</span></div>
-      <div class="menu-item" onclick="nav('budaya.html')"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
+      <div class="menu-item" onclick="location.href='alquran.html'"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="location.href='absensi.html'"><span class="menu-symbol">📝</span><span>Absensi</span></div>
+      <div class="menu-item" onclick="location.href='tahfidz.html'"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="location.href='kamus.html'"><span class="menu-symbol">📑</span><span>Kamus</span></div>
+      <div class="menu-item" onclick="location.href='perpustakaan.html'"><span class="menu-symbol">📚</span><span>Perpus</span></div>
+      <div class="menu-item" onclick="location.href='budayasekolah.html'"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
     </div>
   </section>
 </main>
@@ -136,32 +146,15 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // SIDEBAR & IKAN
+  // SIDEBAR CONTROL
   const sb = document.getElementById("sidebar"), ov = document.getElementById("overlay");
   document.getElementById("menu-btn").onclick = () => { sb.classList.add("open"); ov.style.display="block"; }
   ov.onclick = () => { sb.classList.remove("open"); ov.style.display="none"; }
 
-  const fishList = [];
-  function initPond() {
-    const container = document.getElementById('pond-base');
-    for(let i=0; i<5; i++) {
-      const f = document.createElement('div'); f.className = 'koi-fish';
-      f.style.backgroundImage = `radial-gradient(circle at 30% 50%, #d32f2f 40%, transparent 41%)`;
-      container.appendChild(f); fishList.push(f);
-    }
-    setInterval(() => {
-      fishList.forEach(f => {
-        f.style.left = Math.random()*85+'vw'; f.style.top = Math.random()*85+'vh';
-        f.style.transform = `rotate(${Math.random()*360}deg)`;
-      });
-    }, 4000);
-  }
-
-  // LOGIK
-  function nav(url) { setTimeout(() => { window.location.href = url; }, 200); }
-  function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); }
-  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e => alert(e.message)); }
-  function logout() { auth.signOut().then(() => location.reload()); }
+  // AUTH LOGIC
+  function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e=>alert(e.message)); }
+  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
+  function logout() { auth.signOut().then(()=>location.reload()); }
 
   auth.onAuthStateChanged(user => {
     if(user){
@@ -171,18 +164,9 @@
       document.getElementById("u-name").innerText = user.displayName || "Santri";
       document.getElementById("u-email").innerText = user.email;
       if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
-      
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
-      const d = m[new Date().getDate() % m.length];
-      document.getElementById('runArab').innerText = d.ar;
-      document.getElementById('runIndo').innerText = " — " + d.id;
-      
       document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
-      initPond();
     } else {
       document.getElementById("login-card").classList.remove("hidden");
-      document.getElementById("dashboard").classList.add("hidden");
-      document.getElementById("menu-btn").style.display="none";
     }
   });
 </script>
