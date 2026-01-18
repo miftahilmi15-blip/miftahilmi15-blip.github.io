@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Premium Nishikigoi</title>
+<title>E-Santri | Fluid Motion Nishikigoi</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -12,66 +12,111 @@
     --primary: #1b4d3e;
     --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
     --bg: #d4e9e2;
-    --koi-red: #bc1a1a; /* Deep Crimson */
-    --koi-white: #ffffff; /* Snow White */
-    --koi-black: #1a1a1a; /* Sumi Black */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; perspective: 1200px; }
+  body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
 
-  /* --- LAYER 1: POND --- */
+  /* --- LAYER 1: POND (DASAR) --- */
   #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at center, #427466, #1b4d3e); }
 
-  /* --- LAYER 2: INTERFACE (Z-INDEX 10) --- */
-  .container { width: 92%; max-width: 400px; margin: -50px auto 20px; position: relative; z-index: 10; pointer-events: auto; }
+  /* --- LAYER 2: INTERFACE (TENGAH - AGAR BISA DIPENCET) --- */
+  .container { width: 92%; max-width: 400px; margin: -50px auto 20px; position: relative; z-index: 100; pointer-events: auto; }
   
-  /* --- LAYER 3: KOI (Z-INDEX 20 - DI ATAS MENU TAPI TEMBUS KLIK) --- */
-  .koi-unit { position: absolute; z-index: 20; pointer-events: none; transition: all 4s cubic-bezier(0.25, 0.1, 0.25, 1); filter: drop-shadow(20px 30px 10px rgba(0,0,0,0.15)); }
-
-  .koi-body-svg { width: 100px; height: 40px; animation: swimming 2s infinite ease-in-out; }
-
-  @keyframes swimming {
-    0%, 100% { transform: rotateY(0deg) skewX(0deg); }
-    50% { transform: rotateY(20deg) skewX(5deg); }
+  /* --- LAYER 3: FLUID KOI (DI ATAS MENU TAPI TEMBUS KLIK) --- */
+  .koi-container { 
+    position: absolute; z-index: 50; pointer-events: none; 
+    transition: all 4.5s cubic-bezier(0.4, 0, 0.2, 1); 
+    transform-style: preserve-3d;
   }
 
-  /* --- FIX KLIK MENU: TOUCH LAYER HANYA UNTUK BG --- */
-  #touch-layer { position: fixed; inset: 0; z-index: 5; cursor: pointer; }
+  .koi-shadow {
+    position: absolute; top: 40px; left: 20px; width: 70px; height: 25px;
+    background: rgba(0,0,0,0.2); filter: blur(10px); border-radius: 50%; z-index: -1;
+  }
 
-  /* MAHFUZAT CAROUSEL */
+  /* S-CURVE ANATOMY */
+  .koi-body {
+    position: relative; width: 75px; height: 32px;
+    background: white; border-radius: 50% 80% 80% 50%;
+    box-shadow: inset -5px -2px 10px rgba(0,0,0,0.1);
+    transform-origin: center left;
+    animation: bodySway 2.5s infinite ease-in-out;
+  }
+
+  /* Fin Fluttering (Sirip Dada) */
+  .koi-fin {
+    position: absolute; width: 15px; height: 25px;
+    background: rgba(255,255,255,0.4); border-radius: 50%;
+    top: -10px; left: 15px; transform-origin: bottom;
+    animation: finPaddle 1.2s infinite ease-in-out;
+  }
+  .koi-fin.right { top: auto; bottom: -10px; transform-origin: top; }
+
+  .koi-tail-wrap {
+    position: absolute; right: -12px; top: 8px;
+    animation: tailWhip 2.5s infinite ease-in-out; /* Sinkron tapi delay via keyframe */
+  }
+
+  .koi-tail-fin {
+    width: 25px; height: 16px; background: rgba(255,255,255,0.5);
+    clip-path: polygon(0 50%, 100% 0, 75% 50%, 100% 100%);
+  }
+
+  /* ANIMASI FLUID MOTION */
+  @keyframes bodySway {
+    0%, 100% { transform: rotateY(0deg) rotate(0deg) skewY(0deg); }
+    50% { transform: rotateY(15deg) rotate(2deg) skewY(3deg); }
+  }
+
+  @keyframes tailWhip {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(40deg); }
+  }
+
+  @keyframes finPaddle {
+    0%, 100% { transform: rotateX(0deg); }
+    50% { transform: rotateX(40deg); }
+  }
+
+  /* --- HEADER & UI ELEMENTS --- */
+  header {
+    background: var(--primary-grad); height: 160px; padding: 30px 25px;
+    border-radius: 0 0 45px 45px; position: relative; z-index: 200;
+  }
+  .profile-trigger {
+    position: absolute; top: 35px; right: 25px; width: 52px; height: 52px;
+    border: 3px solid white; border-radius: 18px; overflow: hidden;
+    cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .menu-item { 
+    background: rgba(255,255,255,0.95); padding: 25px 5px; border-radius: 28px;
+    text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    cursor: pointer; border: 1.5px solid white;
+  }
+  .menu-item:active { transform: scale(0.9); }
+
+  /* MAHFUZAT */
   .mahfuzat-box {
-    background: rgba(27, 77, 62, 0.8); backdrop-filter: blur(10px);
-    border-radius: 20px; padding: 15px; margin-bottom: 20px; overflow: hidden;
-    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    background: rgba(27, 77, 62, 0.85); backdrop-filter: blur(10px);
+    border-radius: 20px; padding: 15px; margin-bottom: 15px; overflow: hidden;
   }
-  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee 35s linear infinite; }
-  .mahfuzat-item { display: flex; align-items: center; padding-right: 70px; }
-  .ar-text { font-family: 'Noto Naskh Arabic'; font-size: 22px; color: #ffd700; margin-right: 15px; }
-
+  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee 25s linear infinite; }
+  .mahfuzat-item { display: flex; align-items: center; padding-right: 60px; }
   @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-  /* UI COMPONENTS */
-  header { background: var(--primary-grad); height: 160px; padding: 30px 25px; border-radius: 0 0 45px 45px; position: relative; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-  .profile-trigger { position: absolute; top: 30px; right: 25px; width: 50px; height: 50px; border: 3px solid white; border-radius: 18px; overflow: hidden; cursor: pointer; z-index: 110; }
-  
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { background: rgba(255,255,255,0.9); padding: 25px 5px; border-radius: 25px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.05); cursor: pointer; border: 1.5px solid white; position: relative; z-index: 100; }
-  .menu-item:active { transform: scale(0.95); }
-
-  .ripple { position: absolute; width: 2px; height: 2px; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; animation: ripple-ani 0.8s ease-out; pointer-events: none; z-index: 6; }
-  @keyframes ripple-ani { to { transform: scale(50); opacity: 0; } }
-
-  .sidebar { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: white; transition: 0.5s; z-index: 500; padding: 40px; border-radius: 40px 0 0 40px; }
+  .sidebar { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: white; transition: 0.5s; z-index: 1000; padding: 40px; }
   .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.3); }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 400; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 900; }
   .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
 <div id="pond-base"></div>
-<div id="touch-layer"></div>
+<div id="touch-layer" style="position:fixed; inset:0; z-index:5;"></div>
 
 <header id="app-header" class="hidden">
   <div class="profile-trigger" id="menu-btn"><img id="user-avatar" src=""></div>
@@ -81,9 +126,9 @@
 
 <main class="container">
   <section id="dashboard" class="hidden">
-    <div style="background:white; border-radius:25px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-       <div><p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p><h2 id="streak-count" style="color:var(--primary)">0 Hari</h2></div>
-       <div style="font-size:32px">🔥</div>
+    <div style="background:white; border-radius:25px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+       <div><p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p><h2 id="streak-count" style="color:var(--primary); font-size:24px;">0 Hari</h2></div>
+       <div style="font-size:35px">🔥</div>
     </div>
 
     <div class="mahfuzat-box">
@@ -95,7 +140,7 @@
       <div class="menu-item" onclick="goTo('tahfidz.html')"><span>🏆</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">TAHFIDZ</p></div>
       <div class="menu-item" onclick="handleQuran()"><span>📖</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">AL-QURAN</p></div>
       <div class="menu-item" onclick="goTo('kamus.html')"><span>📑</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">KAMUS</p></div>
-      <div class="menu-item" onclick="goTo('perpus.html')"><span>📚</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">PERPUS</p></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><span>📚</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">PERPUS</p></div>
       <div class="menu-item" onclick="goTo('budaya.html')"><span>🕌</span><p style="font-size:9px; font-weight:800; color:var(--primary); margin-top:5px;">BUDAYA</p></div>
     </div>
   </section>
@@ -104,7 +149,7 @@
 <div class="overlay" id="overlay"></div>
 <div class="sidebar" id="sidebar">
   <div style="text-align:center; margin-bottom:30px;">
-    <img id="sidebar-photo" src="" style="width:90px; height:90px; border-radius:25px; border:4px solid var(--bg); object-fit:cover;">
+    <img id="sidebar-photo" src="" style="width:90px; height:90px; border-radius:20px; border:4px solid var(--bg); object-fit:cover;">
     <h3 id="sidebar-name" style="margin-top:15px; color:var(--primary); font-weight:800;">Santri</h3>
   </div>
   <a href="#" onclick="location.reload()" style="display:flex; align-items:center; padding:15px; color:#333; text-decoration:none; gap:15px; font-weight:600;"><i class="fa-solid fa-house"></i> Beranda</a>
@@ -119,39 +164,33 @@
   const auth = firebase.auth();
   const fishList = [];
 
-  // --- PREMIUM NISHIKIGOI GENERATOR (SVG) ---
-  function createKoiSVG(index) {
-    const colors = ['#bc1a1a', '#1a1a1a', '#f39c12'];
-    const patternColor = colors[index % 3];
-    
-    // Pola Stepping Stone (Bercak Acak)
-    const p1 = `${30 + Math.random()*20},${5 + Math.random()*10}`;
-    const p2 = `${50 + Math.random()*20},${15 + Math.random()*10}`;
-
-    return `
-      <svg class="koi-body-svg" viewBox="0 0 120 45" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="ginrin" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style="stop-color:white;stop-opacity:0.3" />
-            <stop offset="50%" style="stop-color:white;stop-opacity:0.8" />
-            <stop offset="100%" style="stop-color:white;stop-opacity:0.3" />
-          </linearGradient>
-        </defs>
-        <ellipse cx="40" cy="22" rx="15" ry="20" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="0.5"/>
-        <path d="M10,22 C10,5 80,5 110,22 C80,39 10,39 10,22" fill="white" />
-        <ellipse cx="${30 + Math.random()*20}" cy="${15 + Math.random()*10}" rx="12" ry="8" fill="${patternColor}" />
-        <ellipse cx="${60 + Math.random()*20}" cy="${20 + Math.random()*10}" rx="15" ry="6" fill="${patternColor}" />
-        <path d="M20,22 Q60,10 100,22" fill="none" stroke="url(#ginrin)" stroke-width="4" opacity="0.4" />
-        <path d="M110,22 L125,10 Q120,22 125,34 Z" fill="rgba(255,255,255,0.6)" />
-      </svg>
-    `;
-  }
-
   function initPond() {
+    const patterns = ['#bc1a1a', '#ffa000', '#1a1a1a'];
     for(let i=0; i<6; i++) {
       const unit = document.createElement('div');
-      unit.className = 'koi-unit';
-      unit.innerHTML = createKoiSVG(i);
+      unit.className = 'koi-container';
+      
+      const shadow = document.createElement('div');
+      shadow.className = 'koi-shadow';
+      
+      const body = document.createElement('div');
+      body.className = 'koi-body';
+      body.style.backgroundImage = `radial-gradient(circle at ${Math.random()*70}% 50%, ${patterns[i%3]} 40%, transparent 42%)`;
+      
+      // Add Fins
+      const finL = document.createElement('div'); finL.className = 'koi-fin';
+      const finR = document.createElement('div'); finR.className = 'koi-fin right';
+      
+      // Add Tail
+      const tailWrap = document.createElement('div');
+      tailWrap.className = 'koi-tail-wrap';
+      const tailFin = document.createElement('div');
+      tailFin.className = 'koi-tail-fin';
+      tailWrap.appendChild(tailFin);
+      
+      body.appendChild(finL); body.appendChild(finR); body.appendChild(tailWrap);
+      unit.appendChild(shadow); unit.appendChild(body);
+      
       unit.style.left = Math.random()*80+'vw';
       unit.style.top = Math.random()*80+'vh';
       document.body.appendChild(unit);
@@ -163,32 +202,19 @@
   function moveFish() {
     setInterval(() => {
       fishList.forEach(f => {
-        // Gliding & Darting Logic
-        const isDarting = Math.random() > 0.7;
-        f.style.transitionDuration = isDarting ? '1.5s' : '5s';
         const x = Math.random()*80+'vw';
         const y = Math.random()*80+'vh';
         const deg = Math.random()*360;
         f.style.left = x; f.style.top = y;
         f.style.transform = `rotate(${deg}deg)`;
-        // Dynamic Shadow Offset
-        f.style.filter = `drop-shadow(${isDarting ? '40px 50px' : '15px 25px'} 15px rgba(0,0,0,0.2))`;
       });
-    }, 4000);
+    }, 4500);
   }
 
-  // --- FEEDING & RIPPLE ---
   document.getElementById('touch-layer').onclick = (e) => {
-    const rip = document.createElement('div');
-    rip.className = 'ripple';
-    rip.style.left = e.clientX+'px'; rip.style.top = e.clientY+'px';
-    document.body.appendChild(rip);
-    setTimeout(()=>rip.remove(), 800);
-
     fishList.forEach(f => {
-      f.style.transitionDuration = '1.2s';
-      f.style.left = (e.clientX - 50)+'px';
-      f.style.top = (e.clientY - 20)+'px';
+      f.style.left = (e.clientX - 40) + 'px';
+      f.style.top = (e.clientY - 20) + 'px';
     });
   };
 
@@ -197,10 +223,10 @@
     const items = [
       {ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa giat, pasti dapat."},
       {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, pasti beruntung."},
-      {ar:"العِلْمُ بِلَا عَمَلٍ كَالشَّجَرِ بِلَا ثَمَرٍ", id:"Ilmu tanpa amal bagai pohon tak berbuah."}
+      {ar:"خَيْرُ جَلِيْسٍ كِتَابٌ", id:"Teman duduk terbaik adalah buku."}
     ];
     track.innerHTML = [...items, ...items].map(d => `
-      <div class="mahfuzat-item"><span class="ar-text">${d.ar}</span><span class="id-text">${d.id}</span></div>
+      <div class="mahfuzat-item"><span style="font-family:'Noto Naskh Arabic'; font-size:20px; color:#ffd700; margin-right:15px;">${d.ar}</span><span style="color:white; font-size:13px;">${d.id}</span></div>
     `).join('');
   }
 
@@ -212,7 +238,7 @@
     if(user) {
       document.getElementById('app-header').classList.remove('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('welcome-msg').innerText = "Ahlan, " + (user.displayName || "Santri");
+      document.getElementById('welcome-msg').innerText = "Ahlan, " + user.displayName;
       const p = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName}&background=1b4d3e&color=fff`;
       document.getElementById('user-avatar').src = p;
       document.getElementById('sidebar-photo').src = p;
