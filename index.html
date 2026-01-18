@@ -3,57 +3,75 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Zen Premium Final</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<title>E-Santri | Smooth Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
   :root {
     --primary: #1f6f51;
     --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
     --bg: #f3fbf7;
-    --text: #2d3436;
+    --soft-shadow: 0 10px 30px rgba(0,0,0,0.05);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
+  body { background: var(--bg); overflow-x: hidden; }
 
-  /* --- LAYER IKAN KOI --- */
-  #pond-base { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-  .koi-fish {
-    position: absolute; width: 75px; height: 28px; background: #fff;
-    clip-path: polygon(0% 50%, 15% 20%, 40% 10%, 70% 20%, 85% 45%, 100% 50%, 85% 55%, 70% 80%, 40% 90%, 15% 80%);
-    transition: all 4s linear; z-index: 1; opacity: 0.5;
+  /* --- EFEK KLIK LEMBUT --- */
+  .menu-item, .btn-primary, .google-btn, .menu-trigger {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Ini yang bikin lembut */
+    cursor: pointer;
+  }
+
+  .menu-item:active, .btn-primary:active, .google-btn:active {
+    transform: scale(0.92); /* Efek membal lembut saat ditekan */
+    opacity: 0.8;
   }
 
   /* --- UI LAYOUT --- */
-  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
+  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 25px; }
   
-  /* Sidebar */
-  .menu-trigger { position: fixed; top: 20px; right: 20px; z-index: 2000; background: var(--primary); color: white; width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-  .sidebar { position: fixed; top: 0; right: -80%; width: 80%; height: 100%; background: white; z-index: 2100; transition: 0.4s; padding: 40px 25px; border-radius: 30px 0 0 30px; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
-  .sidebar.open { right: 0; }
-  .sidebar a { display: flex; align-items: center; padding: 15px; color: var(--text); text-decoration: none; font-weight: 600; border-bottom: 1px solid #f5f5f5; gap: 15px; }
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 2050; backdrop-filter: blur(4px); }
-
-  /* Cards */
   .header-box { text-align: center; padding: 20px 0; }
   .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
-  
-  .streak-card { background: var(--primary-grad); border-radius: 20px; padding: 18px; color: white; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
-  
-  .mahfuzat-ticker { background: white; padding: 12px; border-radius: 50px; margin-bottom: 20px; display: flex; align-items: center; border: 1px solid rgba(0,0,0,0.05); cursor: pointer; }
-  .ticker-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 10px; }
 
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { background: #fff; padding: 20px 5px; border-radius: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; border: 1px solid transparent; }
-  .menu-item:active { border-color: var(--primary); background: #f0fdf4; }
-  .menu-symbol { font-size: 28px; display: block; margin-bottom: 5px; }
+  .card-login { 
+    background: white; padding: 35px; border-radius: 30px; 
+    box-shadow: var(--soft-shadow); text-align: center; 
+  }
+
+  input { 
+    width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 15px; 
+    border: 1.5px solid #eee; outline: none; background: #fdfdfd; transition: 0.3s;
+  }
+  input:focus { border-color: var(--primary); background: #fff; }
+
+  .btn-primary { 
+    width: 100%; padding: 16px; border-radius: 15px; border: none; 
+    background: var(--primary-grad); color: white; font-weight: 700; font-size: 16px; 
+  }
+
+  .google-btn { 
+    width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #eee; 
+    background: white; display: flex; align-items: center; justify-content: center; 
+    gap: 12px; font-weight: 600; color: #555; margin-top: 10px;
+  }
+
+  /* DASHBOARD GRID */
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+  .menu-item { 
+    background: #fff; padding: 22px 10px; border-radius: 25px; text-align: center; 
+    box-shadow: var(--soft-shadow); border: 1px solid rgba(0,0,0,0.02);
+  }
+  .menu-symbol { font-size: 30px; display: block; margin-bottom: 8px; }
   .menu-item span { font-size: 11px; font-weight: 700; color: #444; }
 
-  .card-login { background: white; padding: 30px; border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center; }
-  input { width: 100%; padding: 15px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f8f9fa; }
-  .btn-primary { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--primary-grad); color: white; font-weight: bold; cursor: pointer; font-size: 16px; }
-
+  .sidebar { 
+    position: fixed; top: 0; right: -85%; width: 80%; height: 100%; background: white; 
+    z-index: 2100; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 50px 25px; 
+    border-radius: 35px 0 0 35px; box-shadow: -15px 0 40px rgba(0,0,0,0.1); 
+  }
+  .sidebar.open { right: 0; }
+  
   .hidden { display: none !important; }
 </style>
 
@@ -62,67 +80,57 @@
 </head>
 <body>
 
-<div id="pond-base"></div>
-<div class="overlay" id="overlay"></div>
-
-<div class="menu-trigger" id="menu-btn" style="display:none;"><i class="fa-solid fa-ellipsis-vertical"></i></div>
-
-<div class="sidebar" id="sidebar">
-  <div style="text-align: center; margin-bottom: 30px;">
-    <img id="user-photo" src="https://ui-avatars.com/api/?name=User&background=1f6f51&color=fff" style="width:70px; height:70px; border-radius:20px; margin-bottom:10px;">
-    <h4 id="sidebar-name">Santri</h4>
-    <p id="sidebar-email" style="font-size:11px; color:#999;">email@santri.com</p>
-  </div>
-  <nav>
-    <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
-    <a href="waktu-sholat.html"><i class="fa-solid fa-clock"></i> Waktu Sholat</a>
-    <a href="kalender.html"><i class="fa-solid fa-calendar"></i> Kalender</a>
-    <a href="pengaduan.html"><i class="fa-solid fa-comment-dots"></i> Pengaduan</a>
-    <a href="#" onclick="logout()" style="color:red; margin-top:20px;"><i class="fa-solid fa-power-off"></i> Logout</a>
-  </nav>
-</div>
-
 <main class="container">
   <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
 
   <div id="login-card" class="card-login hidden">
-    <h2 style="color:var(--primary); margin-bottom:20px;">Selamat Datang</h2>
+    <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
     <input type="email" id="email" placeholder="Email Santri">
     <input type="password" id="password" placeholder="Password">
     <button class="btn-primary" onclick="login()">MASUK</button>
-    <div style="margin: 15px 0; color: #ccc;">atau</div>
-    <button onclick="loginGoogle()" style="width:100%; padding:14px; border-radius:12px; border:1px solid #ddd; background:white; display:flex; align-items:center; justify-content:center; gap:10px; cursor:pointer; font-weight:600;">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Masuk dengan Google
+    <div style="margin: 20px 0; color: #ddd; font-size: 12px;">Atau masuk lebih mudah</div>
+    
+    <button class="google-btn" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="20">
+      Masuk dengan Google
     </button>
   </div>
 
   <section id="dashboard" class="hidden">
-    <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.8;">Quran Daily Streak</p><h2 id="streak-count">0 Hari</h2></div>
-      <div style="font-size:35px;">🔥</div>
-    </div>
-
-    <div class="mahfuzat-ticker" onclick="window.location.href='mahfuzat.html'">
-      <div class="ticker-label">MAHFUZAT</div>
-      <marquee scrollamount="4">
-        <span style="font-family:'Noto Naskh Arabic'; font-weight:bold; color:var(--primary); font-size:16px;" id="runArab"></span>
-        <span id="runIndo" style="color:#666; margin-left:10px; font-weight:600;"></span>
-      </marquee>
+    <div onclick="openSidebar()" style="text-align:right; margin-bottom:20px; color:var(--primary); font-size:24px; cursor:pointer;">
+      <i class="fa-solid fa-bars-staggered"></i>
     </div>
 
     <div class="menu-grid">
-      <div class="menu-item" onclick="window.location.href='alquran.html'"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="window.location.href='absensi.html'"><span class="menu-symbol">📝</span><span>Absensi</span></div>
-      <div class="menu-item" onclick="window.location.href='tahfidz.html'"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="window.location.href='kamus.html'"><span class="menu-symbol">📑</span><span>Kamus</span></div>
-      <div class="menu-item" onclick="window.location.href='perpustakaan.html'"><span class="menu-symbol">📚</span><span>Perpus</span></div>
-      <div class="menu-item" onclick="window.location.href='budayasekolah.html'"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
+      <div class="menu-item" onclick="nav('alquran.html')"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="nav('absensi.html')"><span class="menu-symbol">📝</span><span>Absensi</span></div>
+      <div class="menu-item" onclick="nav('tahfidz.html')"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="nav('kamus.html')"><span class="menu-symbol">📑</span><span>Kamus</span></div>
+      <div class="menu-item" onclick="nav('perpustakaan.html')"><span class="menu-symbol">📚</span><span>Perpus</span></div>
+      <div class="menu-item" onclick="nav('budaya.html')"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
     </div>
   </section>
 </main>
 
+<div class="sidebar" id="sidebar">
+  <div onclick="closeSidebar()" style="margin-bottom:30px; font-size:24px; color:#ccc;">✕</div>
+  <div style="text-align:center; margin-bottom:30px;">
+    <img id="u-img" src="https://ui-avatars.com/api/?name=Santri&background=1f6f51&color=fff" style="width:80px; height:80px; border-radius:25px; margin-bottom:15px;">
+    <h3 id="u-name">Santri</h3>
+    <p id="u-email" style="font-size:12px; color:#999;"></p>
+  </div>
+  <hr style="border:0; border-top:1px solid #f5f5f5; margin-bottom:20px;">
+  <div style="display:flex; flex-direction:column; gap:15px;">
+    <div onclick="nav('sholat.html')" style="font-weight:600; cursor:pointer;">🕌 Waktu Sholat</div>
+    <div onclick="nav('kalender.html')" style="font-weight:600; cursor:pointer;">📅 Kalender</div>
+    <div onclick="nav('pengaduan.html')" style="font-weight:600; cursor:pointer;">📣 Pengaduan</div>
+    <div onclick="logout()" style="font-weight:600; color:red; cursor:pointer; margin-top:20px;">🚪 Logout</div>
+  </div>
+</div>
+
 <script>
-  const firebaseConfig = {
+  // KONEKSI FIREBASE USTADZ (b62be)
+  const config = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
     projectId: "e-santri-b62be",
@@ -130,54 +138,42 @@
     messagingSenderId: "6560427635",
     appId: "1:6560427635:web:368b4fbf95163e8d214406"
   };
-  firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(config);
   const auth = firebase.auth();
 
-  // IKAN KOI
-  const fishList = [];
-  function initPond() {
-    const container = document.getElementById('pond-base');
-    for(let i=0; i<6; i++) {
-      const f = document.createElement('div'); f.className = 'koi-fish';
-      f.style.backgroundImage = `radial-gradient(circle at 30% 50%, #d32f2f 40%, transparent 41%)`;
-      container.appendChild(f); fishList.push(f);
-    }
-    setInterval(() => {
-      fishList.forEach(f => {
-        f.style.left = Math.random()*85+'vw'; f.style.top = Math.random()*85+'vh';
-        f.style.transform = `rotate(${Math.random()*360}deg)`;
-      });
-    }, 4000);
+  // NAVIGASI LEMBUT
+  function nav(url) {
+    setTimeout(() => { window.location.href = url; }, 200);
   }
 
-  // SIDEBAR CONTROL
-  const sb = document.getElementById("sidebar"), ov = document.getElementById("overlay");
-  document.getElementById("menu-btn").onclick = () => { sb.classList.add("open"); ov.style.display="block"; }
-  ov.onclick = () => { sb.classList.remove("open"); ov.style.display="none"; }
+  function openSidebar() { document.getElementById("sidebar").classList.add("open"); }
+  function closeSidebar() { document.getElementById("sidebar").classList.remove("open"); }
 
-  // AUTH
-  function loginGoogle() { auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); }
-  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e => alert(e.message)); }
+  // FUNGSI GOOGLE LOGIN ASLI
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(e => alert(e.message));
+  }
+
+  function login() {
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+  }
+
   function logout() { auth.signOut().then(() => location.reload()); }
 
+  // MONITOR STATUS USER
   auth.onAuthStateChanged(user => {
     if(user){
       document.getElementById("dashboard").classList.remove("hidden");
       document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("menu-btn").style.display="flex";
-      document.getElementById("sidebar-name").innerText = user.displayName || "Santri";
-      document.getElementById("sidebar-email").innerText = user.email;
-      if(user.photoURL) document.getElementById("user-photo").src = user.photoURL;
-      
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
-      const d = m[new Date().getDate() % m.length];
-      document.getElementById('runArab').innerText = d.ar;
-      document.getElementById('runIndo').innerText = " — " + d.id;
-      
-      document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
-      initPond();
+      document.getElementById("u-name").innerText = user.displayName || "Santri";
+      document.getElementById("u-email").innerText = user.email;
+      if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
     } else {
       document.getElementById("login-card").classList.remove("hidden");
+      document.getElementById("dashboard").classList.add("hidden");
     }
   });
 </script>
