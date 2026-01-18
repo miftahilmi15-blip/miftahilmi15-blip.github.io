@@ -3,111 +3,180 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Nishikigoi Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<title>E-Santri | Zen Premium Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
---primary: #1b4d3e;
---primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
---bg: #d4e9e2;
---koi-white: #f5f5f5;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
-#pond-base { position: fixed; inset: 0; z-index: 999; pointer-events: none; }
-.koi-fish {
-position: absolute; width: 80px; height: 30px; background: var(--koi-white);
-clip-path: polygon(0% 50%, 15% 20%, 40% 10%, 70% 20%, 85% 45%, 100% 50%, 85% 55%, 70% 80%, 40% 90%, 15% 80%);
-transition: all 4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1000; box-shadow: 0 15px 25px rgba(0,0,0,0.2);
-}
-.koi-tail {
-position: absolute; right: -5px; width: 25px; height: 25px; background: rgba(255,255,255,0.6);
-clip-path: polygon(0 50%, 100% 0, 80% 50%, 100% 100%); animation: tail-swing 0.3s infinite alternate ease-in-out;
-}
-@keyframes tail-swing { from { transform: rotate(-20deg); } to { transform: rotate(20deg); } }
-#touch-layer { position: fixed; inset: 0; z-index: 2; }
-.container { width: 92%; max-width: 400px; margin: 40px auto; position: relative; z-index: 50; }
-.menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.menu-item { background: rgba(255, 255, 255, 0.9); padding: 20px 5px; border-radius: 20px; text-align: center; }
-.hidden { display: none !important; }
+  :root {
+    --primary: #1f6f51;
+    --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
+    --bg: #f3fbf7;
+    --glass: rgba(255, 255, 255, 0.9);
+    --text: #2d3436;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; position: relative; }
+
+  /* --- LAYER IKAN KOI (Z-INDEX RENDAH AGAR DI BELAKANG MENU) --- */
+  #pond-base { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .koi-fish {
+    position: absolute; width: 70px; height: 25px; background: #fff;
+    clip-path: polygon(0% 50%, 15% 20%, 40% 10%, 70% 20%, 85% 45%, 100% 50%, 85% 55%, 70% 80%, 40% 90%, 15% 80%);
+    transition: all 4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1; opacity: 0.6;
+  }
+  .koi-tail {
+    position: absolute; right: -5px; width: 20px; height: 20px; background: rgba(255,255,255,0.4);
+    clip-path: polygon(0 50%, 100% 0, 80% 50%, 100% 100%); animation: tail-swing 0.3s infinite alternate;
+  }
+  @keyframes tail-swing { from { transform: rotate(-15deg); } to { transform: rotate(15deg); } }
+
+  /* --- UI CONTENT --- */
+  #loading-screen { position: fixed; inset: 0; background: #f3fbf7; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+  .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
+
+  .header-box { text-align: center; padding: 30px 0 10px; }
+  .title { 
+    font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: #ffffff;
+    -webkit-text-stroke: 1.5px var(--primary); text-shadow: 0 5px 15px rgba(31,111,81,0.2);
+  }
+
+  .streak-card {
+    background: var(--primary-grad); border-radius: 20px; padding: 15px 20px; color: white; margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between; box-shadow: 0 10px 20px rgba(31,111,81,0.2);
+  }
+
+  .mahfuzat-ticker {
+    background: white; padding: 10px 15px; border-radius: 50px; margin-bottom: 20px;
+    display: flex; align-items: center; border: 1px solid rgba(31,111,81,0.1);
+  }
+  .ticker-label { background: var(--primary); color: white; font-size: 9px; font-weight: 800; padding: 4px 10px; border-radius: 50px; margin-right: 10px; }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .menu-item { 
+    background: #fff; padding: 20px 10px; border-radius: 20px; text-align: center; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer;
+  }
+  .menu-symbol { font-size: 28px; display: block; margin-bottom: 5px; }
+
+  /* LOGIN CARD */
+  .card-login { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+  input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; outline: none; }
+  .btn-primary { width: 100%; padding: 14px; border-radius: 12px; border: none; background: var(--primary-grad); color: white; font-weight: bold; cursor: pointer; }
+
+  .hidden { display: none !important; }
 </style>
-</head>
-<body>
-<div id="pond-base"></div>
-<div id="touch-layer"></div>
-<main class="container">
-    <div id="login-card" class="hidden" style="background:white; padding:40px; border-radius:30px; text-align:center;">
-        <h2 style="color:var(--primary); margin-bottom:20px;">E-Santri</h2>
-        <input type="email" id="email" placeholder="Email" style="width:100%; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-        <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">
-        <button onclick="login()" style="width:100%; padding:15px; border-radius:10px; background:var(--primary-grad); color:white; border:none; font-weight:bold;">MASUK</button>
-        <button onclick="loginGoogle()" style="width:100%; padding:15px; border-radius:10px; background:white; border:1px solid #ddd; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:10px;">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="18"> Google Login
-        </button>
-    </div>
-    <section id="dashboard" class="hidden">
-        <div style="background:white; padding:20px; border-radius:20px; margin-bottom:20px; text-align:center;">
-            <h3 id="welcome-msg">Ahlan, Santri!</h3>
-            <button onclick="logout()" style="color:red; border:none; background:none;">LOGOUT</button>
-        </div>
-        <div class="menu-grid">
-            <div class="menu-item"><span>📖 Al-Quran</span></div>
-            <div class="menu-item"><span>🏆 Tahfidz</span></div>
-            <div class="menu-item"><span>🕌 Budaya</span></div>
-        </div>
-    </section>
-</main>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<div id="loading-screen"><b>Bismillah...</b></div>
+<div id="pond-base"></div>
+
+<main class="container">
+  <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
+
+  <div id="login-card" class="card-login hidden">
+    <h3 style="text-align:center; color:var(--primary); margin-bottom:20px;">Ahlan wa Sahlan</h3>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button class="btn-primary" onclick="login()">MASUK</button>
+    <button onclick="loginGoogle()" style="width:100%; padding:12px; border-radius:12px; border:1px solid #ddd; background:white; margin-top:10px; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg" width="16"> Google Login
+    </button>
+  </div>
+
+  <section id="dashboard" class="hidden">
+    <div class="streak-card">
+      <div><p style="font-size:11px; opacity:0.9;">Quran Daily Streak</p><h2 id="streak-count">0 Hari</h2></div>
+      <div style="font-size:30px;">🔥</div>
+    </div>
+
+    <div class="mahfuzat-ticker">
+      <div class="ticker-label">MAHFUZAT</div>
+      <marquee scrollamount="4" style="font-size:13px;">
+        <span style="font-family:'Noto Naskh Arabic'; font-weight:bold; color:var(--primary);" id="runArab"></span>
+        <span id="runIndo" style="color:#666; margin-left:10px;"></span>
+      </marquee>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-item" onclick="openQuran()"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
+      <div class="menu-item" onclick="alert('Fitur Absensi')"><span class="menu-symbol">📝</span><span>Absensi</span></div>
+      <div class="menu-item" onclick="alert('Fitur Tahfidz')"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="alert('Fitur Kamus')"><span class="menu-symbol">📑</span><span>Kamus</span></div>
+      <div class="menu-item" onclick="alert('Fitur Perpus')"><span class="menu-symbol">📚</span><span>Perpus</span></div>
+      <div class="menu-item" onclick="logout()" style="background:#fff0f0;"><span class="menu-symbol">🚪</span><span style="color:red">Keluar</span></div>
+    </div>
+  </section>
+</main>
+
 <script>
-const firebaseConfig = {
+  // MESIN FIREBASE ASLI (b62be)
+  const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
     projectId: "e-santri-b62be",
     storageBucket: "e-santri-b62be.firebasestorage.app",
     messagingSenderId: "6560427635",
     appId: "1:6560427635:web:368b4fbf95163e8d214406"
-};
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const fishList = [];
-function initPond() {
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // IKAN KOI SYSTEM
+  const fishList = [];
+  function initPond() {
     const container = document.getElementById('pond-base');
-    for(let i=0; i<6; i++) {
-        const fish = document.createElement('div');
-        fish.className = 'koi-fish';
-        fish.style.backgroundImage = `radial-gradient(circle at 30% 50%, #d32f2f 40%, transparent 41%)`;
-        const tail = document.createElement('div');
-        tail.className = 'koi-tail';
-        fish.appendChild(tail);
-        container.appendChild(fish);
-        fishList.push(fish);
+    for(let i=0; i<5; i++) {
+      const fish = document.createElement('div');
+      fish.className = 'koi-fish';
+      fish.style.backgroundImage = `radial-gradient(circle at 30% 50%, #d32f2f 40%, transparent 41%)`;
+      const tail = document.createElement('div');
+      tail.className = 'koi-tail';
+      fish.appendChild(tail);
+      container.appendChild(fish);
+      fishList.push(fish);
     }
-    moveFish(4000);
-}
-function moveFish(speed) {
+    moveFish();
+  }
+  function moveFish() {
     fishList.forEach(f => {
-        f.style.transition = `all ${speed/1000}s cubic-bezier(0.4, 0, 0.2, 1)`;
-        f.style.left = Math.random()*80+'vw';
-        f.style.top = Math.random()*80+'vh';
-        f.style.transform = `rotate(${Math.random()*360}deg)`;
+      f.style.left = Math.random()*80+'vw';
+      f.style.top = Math.random()*80+'vh';
+      f.style.transform = `rotate(${Math.random()*360}deg)`;
     });
-}
-setInterval(() => moveFish(4000), 4500);
-function loginGoogle() { auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); }
-function login(){ auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
-function logout(){ auth.signOut().then(()=>location.reload()); }
-auth.onAuthStateChanged(user => {
+  }
+  setInterval(moveFish, 4500);
+
+  // AUTH LOGIC
+  function loginGoogle() { auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider()); }
+  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e => alert(e.message)); }
+  function logout() { auth.signOut().then(() => location.reload()); }
+  
+  function openQuran() {
+    let s = parseInt(localStorage.getItem('q_streak') || "0") + 1;
+    localStorage.setItem('q_streak', s);
+    location.reload();
+  }
+
+  auth.onAuthStateChanged(user => {
+    document.getElementById("loading-screen").classList.add("hidden");
     if(user){
-        document.getElementById("dashboard").classList.remove("hidden");
-        document.getElementById("login-card").classList.add("hidden");
-        document.getElementById("welcome-msg").innerText = "Assalamu'alaikum, " + (user.displayName || "Santri");
-        initPond();
+      document.getElementById("dashboard").classList.remove("hidden");
+      document.getElementById("login-card").classList.add("hidden");
+      document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
+      
+      const list = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa sungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
+      const d = list[new Date().getDate() % list.length];
+      document.getElementById('runArab').innerText = d.ar;
+      document.getElementById('runIndo').innerText = " — " + d.id;
+      initPond();
     } else {
-        document.getElementById("login-card").classList.remove("hidden");
+      document.getElementById("login-card").classList.remove("hidden");
     }
-});
+  });
 </script>
 </body>
 </html>
