@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-SANTRI | Zen Final</title>
+    <title>E-SANTRI | Zen Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -12,111 +12,79 @@
         
         body { 
             height: 100vh; width: 100vw; 
-            background: radial-gradient(circle, #4a7c6d, #1b4d3e); 
-            overflow: hidden; font-family: sans-serif; 
+            background: radial-gradient(circle, #5d8a7d, #1b4d3e); 
+            overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
         }
 
-        /* LAYER 1: KOLAM (Paling Belakang) */
-        #pond-area {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none; /* Biar gak ganggu klik tombol */
-        }
+        /* LAYER DASAR: KOLAM & IKAN */
+        #pond-base { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .koi { position: absolute; width: 85px; z-index: 2; transition: all 4s ease-in-out; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.3)); }
 
-        /* IKAN KOI */
-        .koi {
-            position: absolute; width: 90px; z-index: 2;
-            transition: all 4s ease-in-out; opacity: 0.9;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
-        }
-
-        /* LAYER 2: INTERAKSI (Hanya untuk efek air) */
-        #touch-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 3; pointer-events: auto;
-        }
-
-        .ripple {
-            position: absolute; border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%; animation: ripple-ani 0.8s linear; pointer-events: none;
-        }
+        /* LAYER INTERAKSI: RIAK AIR */
+        #touch-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; }
+        .ripple { position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-ani 0.8s linear; pointer-events: none; }
         @keyframes ripple-ani { to { transform: scale(4); opacity: 0; } }
 
-        /* LAYER 3: UI DASHBOARD (Paling Depan - HARUS BISA DIKLIK) */
-        .ui-overlay {
-            position: relative; z-index: 100; /* Kasta Tertinggi */
-            height: 100vh; display: flex; flex-direction: column; padding: 20px;
-            pointer-events: none; /* Klik tembus ke tombol di dalamnya */
-        }
-
-        .header, .stone, .nav-trigger, footer { pointer-events: auto; } /* Tombol-tombol AKTIF */
+        /* LAYER UI: TOMBOL (KASTA TERTINGGI) */
+        .ui-main { position: relative; z-index: 100; height: 100vh; display: flex; flex-direction: column; padding: 20px; pointer-events: none; }
+        .header, .stone, .btn-menu, footer { pointer-events: auto; }
 
         .header { display: flex; justify-content: space-between; align-items: center; }
-        .glass-ui {
-            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
-            padding: 8px 15px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.3);
-            color: white; display: flex; align-items: center; gap: 10px;
-        }
+        .glass { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.3); color: white; display: flex; align-items: center; gap: 10px; }
 
-        .nav-trigger {
-            position: absolute; top: 90px; right: 20px;
-            width: 45px; height: 45px; background: white; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--sage); font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
+        .btn-menu { position: absolute; top: 85px; right: 20px; width: 45px; height: 45px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--sage); font-size: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; }
 
         /* MENU BATU MUNGIL */
-        .menu-container { flex-grow: 1; position: relative; }
-        .stone {
-            position: absolute; width: 72px; height: 72px; background: white;
-            border-radius: 50%; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; box-shadow: 0 8px 15px rgba(0,0,0,0.2);
-            transition: 0.2s; border: 1px solid #ddd;
+        .grid-menu { flex-grow: 1; position: relative; }
+        .stone { 
+            position: absolute; width: 72px; height: 72px; background: white; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15); cursor: pointer; transition: 0.2s; border: 1px solid #ddd;
         }
-        .stone:active { transform: scale(0.9); background: #eee; }
+        .stone:active { transform: scale(0.9); }
         .stone i { font-size: 20px; color: var(--sage); margin-bottom: 3px; }
         .stone span { font-size: 8px; font-weight: 900; color: var(--sage); letter-spacing: 0.5px; }
 
-        /* Posisi Batu */
-        #m1 { top: 15%; left: 5%; } #m2 { top: 15%; right: 5%; }
-        #m3 { top: 40%; left: 50%; transform: translate(-50%, -50%); width: 95px; height: 95px; border: 3px solid var(--sage); }
-        #m4 { bottom: 25%; left: 10%; } #m5 { bottom: 25%; right: 10%; }
-        #m6 { bottom: 40%; right: 5%; }
+        /* POSISI BATU RAPI */
+        #m1 { top: 15%; left: 5%; } #m2 { top: 18%; right: 5%; }
+        #m3 { top: 40%; left: 50%; transform: translate(-50%, -50%); width: 95px; height: 95px; border: 2px solid var(--sage); }
+        #m4 { bottom: 25%; left: 10%; } #m5 { bottom: 20%; right: 15%; }
+        #m6 { bottom: 35%; right: 5%; }
 
-        /* FOOTER */
+        /* FOOTER MAHFUZAT */
         footer { background: var(--sage); padding: 10px; border-radius: 50px; overflow: hidden; margin-top: auto; }
-        .marquee { color: white; font-size: 10px; white-space: nowrap; animation: move 15s linear infinite; }
-        @keyframes move { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        .marquee { color: white; font-size: 10px; white-space: nowrap; animation: flow 20s linear infinite; }
+        @keyframes flow { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed; top: 0; right: -100%; width: 260px; height: 100%;
-            background: white; z-index: 200; transition: 0.4s; padding: 40px 20px;
-        }
-        .sidebar.open { right: 0; box-shadow: -5px 0 15px rgba(0,0,0,0.2); }
-        .sidebar a { display: block; padding: 15px; color: #333; text-decoration: none; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        /* SIDEBAR LENGKAP */
+        .sidebar { position: fixed; top: 0; right: -100%; width: 270px; height: 100%; background: white; z-index: 200; transition: 0.4s; padding: 50px 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+        .sidebar.open { right: 0; }
+        .sidebar h3 { color: var(--sage); border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 10px; font-size: 16px; }
+        .sidebar a { display: flex; align-items: center; padding: 18px 10px; color: #333; text-decoration: none; border-bottom: 1px solid #eee; font-size: 14px; gap: 12px; }
+        .sidebar i { color: var(--sage); font-size: 18px; width: 25px; text-align: center; }
+        .sidebar a.logout { color: #d32f2f; margin-top: 20px; border-bottom: none; font-weight: bold; }
+        .sidebar a.logout i { color: #d32f2f; }
     </style>
 </head>
 <body>
 
-    <div id="pond-area"></div>
+    <div id="pond-base"></div>
+    <div id="touch-layer" onclick="doRipple(event)"></div>
 
-    <div id="touch-layer" onclick="rippleEffect(event)"></div>
-
-    <div class="ui-overlay">
+    <div class="ui-main">
         <div class="header">
-            <div class="glass-ui">
+            <div class="glass">
                 <img src="https://ui-avatars.com/api/?name=Zaki&background=1b4d3e&color=fff" style="width:30px; border-radius:50%">
                 <b style="font-size:11px">AHMAD ZAKI</b>
             </div>
-            <div class="glass-ui" style="text-align:right; flex-direction:column; padding: 5px 15px;">
+            <div class="glass" style="flex-direction:column; padding: 5px 15px;">
                 <small style="font-size:7px; opacity:0.8">STREAK</small>
                 <b style="color:#ffd700; font-size:13px">12 HARI ✨</b>
             </div>
         </div>
 
-        <div class="nav-trigger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></div>
+        <div class="btn-menu" onclick="openSidebar()"><i class="fa-solid fa-bars"></i></div>
 
-        <div class="menu-container">
+        <div class="grid-menu">
             <div class="stone" id="m1" onclick="alert('Buka Absensi')"><i class="fa-solid fa-fingerprint"></i><span>ABSENSI</span></div>
             <div class="stone" id="m2" onclick="alert('Buka Tahfidz')"><i class="fa-solid fa-medal"></i><span>TAHFIDZ</span></div>
             <div class="stone" id="m3" onclick="alert('Buka Quran')"><i class="fa-solid fa-book-quran"></i><span>AL-QURAN</span></div>
@@ -130,49 +98,46 @@
         </footer>
     </div>
 
-    <div class="sidebar" id="sb">
-        <h3>Menu Utama</h3><br>
-        <a href="#"><i class="fa-solid fa-clock"></i> Jadwal Sholat</a>
-        <a href="#"><i class="fa-solid fa-calendar"></i> Kalender Hijriah</a>
-        <a href="#" style="color:red; margin-top:20px;"><i class="fa-solid fa-power-off"></i> Logout</a>
+    <div class="sidebar" id="side">
+        <h3>Menu Aplikasi</h3>
+        <a href="#" onclick="alert('Fitur Jadwal Sholat')"><i class="fa-solid fa-clock"></i> Jadwal Sholat</a>
+        <a href="#" onclick="alert('Fitur Kalender Hijriah')"><i class="fa-solid fa-calendar-days"></i> Kalender</a>
+        <a href="#" onclick="alert('Fitur Pengaduan')"><i class="fa-solid fa-circle-exclamation"></i> Pengaduan</a>
+        <a href="#" class="logout" onclick="confirm('Yakin ingin Log Out?')"><i class="fa-solid fa-right-from-bracket"></i> Log Out</a>
     </div>
 
     <script>
-        const pond = document.getElementById('pond-area');
+        const streak = 12;
         const fishList = [];
 
-        // 1. Fungsi Bikin Ikan (Link Gambar yang Lebih Stabil)
-        function initFishes() {
-            for(let i=0; i<8; i++) {
+        function init() {
+            const pond = document.getElementById('pond-base');
+            for(let i=0; i<Math.min(streak, 10); i++) {
                 const img = document.createElement('img');
-                img.src = 'https://i.ibb.co/3NYYmS8/koi-fish.png'; // Link cadangan stabil
-                img.onerror = () => { img.src = 'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-Transparent-Background.png'; };
+                img.src = 'https://www.pngplay.com/wp-content/uploads/12/Koi-Fish-Transparent-Background.png';
                 img.className = 'koi';
-                img.style.left = Math.random()*80+'vw';
-                img.style.top = Math.random()*80+'vh';
+                img.style.left = Math.random()*70+'vw';
+                img.style.top = Math.random()*70+'vh';
                 pond.appendChild(img);
                 fishList.push(img);
             }
-            animateFishes();
+            swim();
         }
 
-        // 2. Fungsi Riak Air
-        function rippleEffect(e) {
-            const r = document.createElement('div');
-            r.className = 'ripple';
-            r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
-            document.body.appendChild(r);
-            setTimeout(() => r.remove(), 800);
+        function doRipple(e) {
+            const rip = document.createElement('div');
+            rip.className = 'ripple';
+            rip.style.left = e.clientX + 'px'; rip.style.top = e.clientY + 'px';
+            document.body.appendChild(rip);
+            setTimeout(() => rip.remove(), 800);
             
-            // Ikan mendekat sedikit
             fishList.forEach(f => {
-                f.style.left = (e.clientX - 45) + 'px';
-                f.style.top = (e.clientY - 45) + 'px';
+                f.style.left = (e.clientX - 40) + 'px';
+                f.style.top = (e.clientY - 40) + 'px';
             });
         }
 
-        // 3. Gerakan Ikan Halus
-        function animateFishes() {
+        function swim() {
             setInterval(() => {
                 fishList.forEach(f => {
                     f.style.left = Math.random()*80+'vw';
@@ -182,9 +147,18 @@
             }, 5000);
         }
 
-        function toggleSidebar() { document.getElementById('sb').classList.toggle('open'); }
+        function openSidebar() { document.getElementById('side').classList.toggle('open'); }
         
-        window.onload = initFishes;
+        // Tutup sidebar jika klik di luar
+        document.addEventListener('click', (e) => {
+            const side = document.getElementById('side');
+            const btn = document.querySelector('.btn-menu');
+            if(side.classList.contains('open') && !side.contains(e.target) && !btn.contains(e.target)) {
+                side.classList.remove('open');
+            }
+        });
+
+        window.onload = init;
     </script>
 </body>
 </html>
