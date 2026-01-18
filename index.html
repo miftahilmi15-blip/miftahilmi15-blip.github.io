@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Nishikigoi Champion Edition</title>
+<title>E-Santri | Digital Zen Garden</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
@@ -12,170 +12,150 @@
     --primary: #1b4d3e;
     --primary-grad: linear-gradient(135deg, #1b4d3e 0%, #3e7c6d 100%);
     --bg: #d4e9e2;
-    --koi-red: #d32f2f;
-    --koi-white: #f5f5f5;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: #2d3436; min-height: 100vh; overflow: hidden; position: relative; }
 
-  /* --- LAYER 1: PROCEDURAL NISHIKIGOI KOI --- */
-  #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at center, #3e7c6d, #1b4d3e); }
+  /* --- LAYER 1: ADVANCED PROCEDURAL POND --- */
+  #pond-base { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at center, #4a7a6c, #163d32); }
   
-  /* Water Caustics (Efek Cahaya Air) */
-  #pond-base::before {
-    content: ''; position: absolute; inset: 0;
-    background: url('https://www.transparenttextures.com/patterns/water-reflection.png');
-    opacity: 0.15; animation: caustics 10s infinite linear;
+  /* Advanced Ripple */
+  .ripple {
+    position: absolute; border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50%; animation: ripple-ani 0.8s cubic-bezier(0, 0.5, 0.5, 1);
+    pointer-events: none; z-index: 4; box-shadow: inset 0 0 10px rgba(255,255,255,0.2);
   }
-  @keyframes caustics { from { transform: scale(1) rotate(0deg); } to { transform: scale(1.5) rotate(5deg); } }
+  @keyframes ripple-ani { from { transform: scale(0.5); opacity: 1; } to { transform: scale(5); opacity: 0; } }
 
-  .koi-fish {
-    position: absolute; width: 60px; height: 25px;
-    background: var(--koi-white);
-    border-radius: 50% 70% 70% 50%;
-    transition: all 4.5s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 2;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-    /* GINRIN EFFECT: Tekstur sisik berkilau */
-    background-image: 
-      radial-gradient(circle at 20% 50%, var(--koi-red) 40%, transparent 41%),
-      repeating-linear-gradient(45deg, rgba(255,255,255,0.2) 0px, rgba(255,255,255,0.2) 1px, transparent 1px, transparent 3px);
+  /* ORGANIC KOI ANATOMY */
+  .koi-container { position: absolute; transition: all 5s cubic-bezier(0.45, 0.05, 0.55, 0.95); z-index: 2; }
+  
+  /* Bayangan Terpisah untuk Kedalaman */
+  .koi-shadow {
+    position: absolute; top: 30px; left: 20px;
+    width: 60px; height: 25px; background: rgba(0,0,0,0.2);
+    filter: blur(8px); border-radius: 50%; z-index: 1;
   }
 
-  /* Sirip Ikan (Transparan) */
-  .koi-fish::before {
-    content: ''; position: absolute; top: -5px; left: 10px;
-    width: 15px; height: 35px;
-    background: rgba(255,255,255,0.3);
-    border-radius: 50%; z-index: -1;
-    box-shadow: inset 0 0 5px white;
+  .koi-body {
+    position: relative; width: 65px; height: 28px;
+    background: #f5f5f5; border-radius: 50% 80% 80% 50%;
+    box-shadow: inset -5px -2px 10px rgba(0,0,0,0.1);
+    animation: body-wave 2s infinite ease-in-out;
+  }
+  
+  .koi-head {
+    position: absolute; left: -5px; top: 0;
+    width: 25px; height: 28px; background: inherit;
+    border-radius: 50% 20% 20% 50%;
   }
 
   .koi-tail {
-    position: absolute; right: -18px; top: 0;
-    width: 25px; height: 25px;
-    background: rgba(255,255,255,0.4);
-    clip-path: polygon(0 50%, 100% 0, 70% 50%, 100% 100%);
-    animation: tail-wiggle 0.4s infinite alternate ease-in-out;
-    transform-origin: left center;
+    position: absolute; right: -18px; top: 4px;
+    width: 25px; height: 20px; background: rgba(255,255,255,0.4);
+    clip-path: polygon(0 50%, 100% 0, 75% 50%, 100% 100%);
+    animation: tail-flex 0.5s infinite alternate;
   }
 
-  @keyframes tail-wiggle {
-    from { transform: rotate(-15deg) scaleY(0.8); }
-    to { transform: rotate(15deg) scaleY(1.2); }
+  @keyframes body-wave {
+    0%, 100% { transform: skewY(0deg); }
+    50% { transform: skewY(5deg); }
+  }
+  @keyframes tail-flex {
+    from { transform: rotate(-20deg); } to { transform: rotate(20deg); }
   }
 
-  /* --- LAYER 2: INTERAKSI --- */
-  #touch-layer { position: fixed; inset: 0; z-index: 3; }
-  .ripple { position: absolute; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; animation: ripple-ani 0.7s ease-out; pointer-events: none; z-index: 4; }
-  @keyframes ripple-ani { to { transform: scale(4); opacity: 0; } }
+  /* --- DYNAMIC MAHFUZAT CAROUSEL --- */
+  .mahfuzat-box {
+    background: rgba(27, 77, 62, 0.85); backdrop-filter: blur(12px);
+    border-radius: 20px; margin-bottom: 20px; padding: 15px;
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+  .mahfuzat-track { display: flex; white-space: nowrap; animation: marquee-scroll 25s linear infinite; }
+  .mahfuzat-item { display: flex; align-items: center; padding-right: 50px; }
+  .ar-text { font-family: 'Noto Naskh Arabic'; font-size: 20px; color: #ffd700; margin-right: 15px; }
+  .id-text { font-size: 13px; color: white; font-weight: 500; font-style: italic; }
 
-  /* --- HEADER & PROFIL --- */
+  @keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* --- UI ELEMENTS --- */
   header {
     background: var(--primary-grad); height: 160px; padding: 30px 25px;
-    border-radius: 0 0 40px 40px; position: relative; text-align: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); z-index: 1000;
+    border-radius: 0 0 45px 45px; position: relative; z-index: 1000;
   }
   .profile-trigger {
     position: absolute; top: 30px; right: 25px;
-    width: 50px; height: 50px; border: 3px solid rgba(255,255,255,0.8);
-    border-radius: 18px; overflow: hidden; cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1100;
-    transition: 0.3s;
+    width: 50px; height: 50px; border: 2.5px solid white;
+    border-radius: 16px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
   }
-  .profile-trigger:active { transform: scale(0.9); }
-  .profile-trigger img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* --- UI CONTENT --- */
   .container { width: 92%; max-width: 400px; margin: -50px auto 20px; position: relative; z-index: 2000; }
-
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .menu-item { 
-    background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-    padding: 22px 5px; border-radius: 25px; text-align: center; 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer; transition: 0.2s;
-    border: 1px solid white;
+    background: rgba(255,255,255,0.95); padding: 25px 5px; border-radius: 28px;
+    text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    transition: 0.2s; border: 1.5px solid white;
   }
-  .menu-item:active { transform: translateY(4px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-  .menu-item .icon { font-size: 26px; margin-bottom: 6px; display: block; }
-  .menu-item span { display: block; font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
-
-  /* STREAK & MAHFUZAT */
-  .streak-card { background: white; border-radius: 25px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-  .mahfuzat-box { background: rgba(27, 77, 62, 0.92); backdrop-filter: blur(5px); border-radius: 50px; padding: 12px 20px; margin-bottom: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
-  .mahfuzat-text { white-space: nowrap; display: inline-block; animation: marquee 20s linear infinite; color: white; font-size: 14px; }
-  @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+  .menu-item:active { transform: scale(0.9); background: #e8f5e9; }
 
   /* SIDEBAR */
-  .sidebar { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: white; transition: 0.5s cubic-bezier(0.6, 0, 0.3, 1); z-index: 5000; padding: 40px 25px; border-radius: 35px 0 0 35px; }
-  .sidebar.open { right: 0; box-shadow: -15px 0 50px rgba(0,0,0,0.4); }
-  .sidebar a { display: flex; align-items: center; padding: 16px; color: #333; text-decoration: none; font-weight: 600; border-radius: 15px; margin-bottom: 8px; gap: 15px; transition: 0.2s; }
-  .sidebar a:active { background: #f0fdf4; color: var(--primary); }
+  .sidebar { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: white; transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1); z-index: 5000; padding: 40px 30px; }
+  .sidebar.open { right: 0; box-shadow: -20px 0 60px rgba(0,0,0,0.3); }
 
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); z-index: 4000; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(5px); z-index: 4000; }
   .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
 <div id="pond-base"></div>
-<div id="touch-layer"></div>
+<div id="touch-layer" style="position:fixed; inset:0; z-index:3;"></div>
 
 <header id="app-header" class="hidden">
   <div class="profile-trigger" id="menu-btn">
-    <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=1b4d3e&color=fff">
+    <img id="user-avatar" src="">
   </div>
-  <h1 class="title-app">E-SANTRI</h1>
-  <p id="welcome-msg" style="color:white; opacity:0.9; font-size:13px; font-weight:600; margin-top:5px;"></p>
+  <h1 style="color:white; font-size:24px; letter-spacing:2px;">E-SANTRI</h1>
+  <p id="welcome-msg" style="color:white; opacity:0.8; font-size:12px; font-weight:600;"></p>
 </header>
 
 <main class="container">
-  <div id="login-card" class="hidden" style="background:white; padding:40px 30px; border-radius:35px; text-align:center; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
-    <h2 style="color:var(--primary); margin-bottom:25px; font-weight:800;">Ahlan wa Sahlan</h2>
-    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:18px; border-radius:18px; border:1.5px solid #eee; margin-bottom:12px; outline:none; background:#f9f9f9;">
-    <input type="password" id="password" placeholder="Password" style="width:100%; padding:18px; border-radius:18px; border:1.5px solid #eee; margin-bottom:25px; outline:none; background:#f9f9f9;">
-    <button onclick="login()" style="width:100%; padding:18px; border-radius:18px; background:var(--primary-grad); color:white; border:none; font-weight:800; box-shadow: 0 8px 20px rgba(31,111,81,0.3);">MASUK APLIKASI</button>
-  </div>
-
   <section id="dashboard" class="hidden">
-    <div class="streak-card">
-      <div><p style="font-size:11px; color:#888; font-weight:700; letter-spacing:1px;">QURAN STREAK</p><h2 id="streak-count" style="color:var(--primary); font-size:24px;">0 Hari</h2></div>
-      <div style="font-size:35px; filter: drop-shadow(0 0 10px orange);">🔥</div>
+    <div style="background:white; border-radius:25px; padding:20px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+       <div><p style="font-size:10px; color:#aaa; font-weight:700;">DAILY STREAK</p><h2 id="streak-count" style="color:var(--primary)">0 Hari</h2></div>
+       <div style="font-size:32px">✨</div>
     </div>
 
     <div class="mahfuzat-box">
-      <div class="mahfuzat-text">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; font-weight:bold; font-size:18px;"></span>
-        <span id="runIndo" style="font-weight:600; margin-left:15px; opacity:0.8;"></span>
-      </div>
+      <div class="mahfuzat-track" id="mahfuzat-list">
+        </div>
     </div>
 
     <div class="menu-grid">
-      <div class="menu-item" onclick="goTo('absensi.html')"><span class="icon">🌐</span><span>Absensi</span></div>
-      <div class="menu-item" onclick="goTo('tahfidz.html')"><span class="icon">🏆</span><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="handleQuran()"><span class="icon">📖</span><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="goTo('kamus.html')"><span class="icon">📑</span><span>Kamus</span></div>
-      <div class="menu-item" onclick="goTo('perpustakaan.html')"><span class="icon">📚</span><span>Perpus</span></div>
-      <div class="menu-item" onclick="goTo('budayasekolah.html')"><span class="icon">🕌</span><span>Budaya</span></div>
+      <div class="menu-item" onclick="goTo('absensi.html')"><span>🌐</span><p style="font-size:10px; font-weight:800; margin-top:5px; color:var(--primary)">ABSENSI</p></div>
+      <div class="menu-item" onclick="goTo('tahfidz.html')"><span>🏆</span><p style="font-size:10px; font-weight:800; margin-top:5px; color:var(--primary)">TAHFIDZ</p></div>
+      <div class="menu-item" onclick="handleQuran()"><span>📖</span><p style="font-size:10px; font-weight:800; margin-top:5px; color:var(--primary)">AL-QURAN</p></div>
+      <div class="menu-item" onclick="goTo('kamus.html')"><span>📑</span><p style="font-size:10px; font-weight:800; margin-top:5px; color:var(--primary)">KAMUS</p></div>
+      <div class="menu-item" onclick="goTo('perpustakaan.html')"><span>📚</span><p style="font-size:10px; font-weight:800; margin-top:5px; color:var(--primary)">PERPUS</p></div>
+      <div class="menu-item" onclick="goTo('budaya.html')"><span>🕌</span><p style="font-size:10px; font-weight:800; margin-top:5px; color:var(--primary)">BUDAYA</p></div>
     </div>
   </section>
 </main>
 
 <div class="overlay" id="overlay"></div>
 <div class="sidebar" id="sidebar">
-  <div style="text-align:center; margin-bottom:35px;">
-     <div style="width:90px; height:90px; margin:0 auto; border:4px solid var(--bg); border-radius:25px; overflow:hidden; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
-        <img id="sidebar-photo" src="" style="width:100%; height:100%; object-fit:cover;">
-     </div>
-     <h3 id="sidebar-name" style="margin-top:15px; color:var(--primary); font-weight:800;">Santri</h3>
-     <p style="font-size:11px; color:#aaa; font-weight:600; text-transform:uppercase; letter-spacing:1px;">ID Santri Aktif</p>
+  <div style="text-align:center; margin-bottom:30px;">
+    <img id="sidebar-photo" src="" style="width:100px; height:100px; border-radius:20px; border:4px solid var(--bg);">
+    <h3 id="sidebar-name" style="margin-top:15px; color:var(--primary); font-weight:800;">Santri</h3>
   </div>
-  <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
-  <a href="#" onclick="goTo('waktu-sholat.html')"><i class="fa-solid fa-clock"></i> Jadwal Sholat</a>
-  <a href="#" onclick="goTo('kalender.html')"><i class="fa-solid fa-calendar-days"></i> Kalender</a>
-  <a href="#" onclick="goTo('pengaduan.html')"><i class="fa-solid fa-comment-dots"></i> Pengaduan</a>
-  <a href="#" onclick="logout()" style="color:#d32f2f; border-top:1.5px solid #f5f5f5; margin-top:20px; padding-top:20px;"><i class="fa-solid fa-power-off"></i> Logout</a>
+  <a href="#" onclick="location.reload()" style="display:flex; align-items:center; padding:15px; color:#333; text-decoration:none; gap:15px;"><i class="fa-solid fa-house"></i> Beranda</a>
+  <a href="#" onclick="logout()" style="display:flex; align-items:center; padding:15px; color:red; text-decoration:none; gap:15px; margin-top:30px;"><i class="fa-solid fa-power-off"></i> Keluar Akun</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -186,98 +166,105 @@
   const auth = firebase.auth();
   const fishList = [];
 
-  // PROCEDURAL NISHIKIGOI GENERATOR
+  // 🐠 PROCEDURAL ORGANIC KOI
   function initPond() {
     const container = document.getElementById('pond-base');
-    const colors = ['#d32f2f', '#ffa000', '#212121']; // Variasi corak merah, emas, hitam
+    const patterns = ['#d32f2f', '#ffa000', '#2d3436']; 
+    
     for(let i=0; i<6; i++) {
-      const fish = document.createElement('div');
-      fish.className = 'koi-fish';
+      const koiWrap = document.createElement('div');
+      koiWrap.className = 'koi-container';
       
-      // Corak acak untuk tiap ikan
-      const randomColor = colors[Math.floor(Math.random()*colors.length)];
-      fish.style.backgroundImage = `radial-gradient(circle at ${Math.random()*80}% 50%, ${randomColor} 45%, transparent 46%), repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 4px)`;
+      const shadow = document.createElement('div');
+      shadow.className = 'koi-shadow';
+      
+      const body = document.createElement('div');
+      body.className = 'koi-body';
+      // Asymmetric Pattern
+      body.style.backgroundImage = `radial-gradient(circle at ${Math.random()*70}% ${Math.random()*70}%, ${patterns[i%3]} 40%, transparent 42%)`;
+      
+      const head = document.createElement('div');
+      head.className = 'koi-head';
       
       const tail = document.createElement('div');
       tail.className = 'koi-tail';
-      fish.appendChild(tail);
       
-      fish.style.left = Math.random()*80+'vw';
-      fish.style.top = Math.random()*80+'vh';
-      container.appendChild(fish);
-      fishList.push(fish);
+      body.appendChild(head);
+      body.appendChild(tail);
+      koiWrap.appendChild(shadow);
+      koiWrap.appendChild(body);
+      
+      koiWrap.style.left = Math.random()*80+'vw';
+      koiWrap.style.top = Math.random()*80+'vh';
+      container.appendChild(koiWrap);
+      fishList.push(koiWrap);
     }
-    moveFish();
+    animateFishes();
   }
 
-  function moveFish() {
+  function animateFishes() {
     setInterval(() => {
       fishList.forEach(f => {
-        const x = Math.random()*85+'vw';
-        const y = Math.random()*85+'vh';
-        // Hitung sudut rotasi agar ikan menghadap ke tujuan
-        const angle = Math.random()*360;
+        const x = Math.random()*80+'vw';
+        const y = Math.random()*80+'vh';
+        const deg = Math.random()*360;
         f.style.left = x; f.style.top = y;
-        f.style.transform = `rotate(${angle}deg)`;
+        f.style.transform = `rotate(${deg}deg)`;
       });
-    }, 4500);
+    }, 5000);
   }
 
-  // RIAK AIR & IKAN MENDEKAT
+  // 📜 INFINITE MAHFUZAT CAROUSEL
+  function initMahfuzat() {
+    const track = document.getElementById('mahfuzat-list');
+    const items = [
+      {ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa giat, dia dapat."},
+      {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, dia beruntung."},
+      {ar:"الصَّبْرُ يُعِيْنُ عَلى كُلِّ عَمَلٍ", id:"Sabar menolong tiap pekerjaan."},
+      {ar:"طَلَبُ العِلْمِ فَرِيْضَةٌ", id:"Menuntut ilmu itu wajib."}
+    ];
+    
+    // Double items for seamless loop
+    const content = [...items, ...items].map(d => `
+      <div class="mahfuzat-item">
+        <span class="ar-text">${d.ar}</span>
+        <span class="id-text">${d.id}</span>
+      </div>
+    `).join('');
+    track.innerHTML = content;
+  }
+
+  // INTERACTION
   document.getElementById('touch-layer').onclick = (e) => {
     const r = document.createElement('div');
     r.className = 'ripple';
     r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
     document.body.appendChild(r);
-    setTimeout(() => r.remove(), 700);
-    // Ikan mendekat ke arah sentuhan
-    fishList.forEach((f, index) => { 
-      setTimeout(() => {
-        f.style.left = (e.clientX + (index*10) - 30)+'px'; 
-        f.style.top = (e.clientY + (index*10) - 15)+'px'; 
-      }, index * 100);
+    setTimeout(() => r.remove(), 800);
+    
+    // Fishes react to touch
+    fishList.forEach(f => {
+      f.style.left = (e.clientX - 40) + 'px';
+      f.style.top = (e.clientY - 40) + 'px';
     });
   };
 
-  function goTo(url) { window.location.href = url; }
-
-  function handleQuran() {
-    const today = new Date().toDateString();
-    const last = localStorage.getItem('last_q_date');
-    let s = parseInt(localStorage.getItem('q_streak') || "0");
-    if (last !== today) {
-      const yest = new Date(); yest.setDate(yest.getDate()-1);
-      s = (last === yest.toDateString()) ? s + 1 : 1;
-      localStorage.setItem('q_streak', s); localStorage.setItem('last_q_date', today);
-    }
-    window.location.href = 'alquran.html';
-  }
-
-  function login(){ auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
-  function logout(){ auth.signOut().then(()=>location.reload()); }
+  function goTo(u) { window.location.href = u; }
+  function handleQuran() { window.location.href = 'alquran.html'; }
+  function logout() { auth.signOut().then(() => location.reload()); }
 
   auth.onAuthStateChanged(user => {
-    if(user){
-      document.getElementById("app-header").classList.remove("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("login-card").classList.add("hidden");
-      
-      const name = user.displayName || "Santri";
-      document.getElementById("welcome-msg").innerText = "Assalamu'alaikum, " + name;
-      document.getElementById("sidebar-name").innerText = name;
-      
-      const photo = user.photoURL || `https://ui-avatars.com/api/?name=${name}&background=1b4d3e&color=fff&rounded=true&bold=true`;
-      document.getElementById("user-avatar").src = photo;
-      document.getElementById("sidebar-photo").src = photo;
-
-      document.getElementById('streak-count').innerText = (localStorage.getItem('q_streak') || "0") + " Hari";
+    if(user) {
+      document.getElementById('app-header').classList.remove('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('welcome-msg').innerText = "Ahlan wa Sahlan, " + (user.displayName || "Santri");
+      document.getElementById('user-avatar').src = user.photoURL || 'https://ui-avatars.com/api/?name=Santri';
+      document.getElementById('sidebar-photo').src = user.photoURL || 'https://ui-avatars.com/api/?name=Santri';
+      document.getElementById('sidebar-name').innerText = user.displayName || "Santri";
       initPond();
-      
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:" — Barangsiapa bersungguh-sungguh, dapatlah ia."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:" — Barangsiapa sabar, beruntunglah ia."}];
-      const d = m[new Date().getDate() % m.length];
-      document.getElementById('runArab').innerText = d.ar; document.getElementById('runIndo').innerText = d.id;
+      initMahfuzat();
     } else {
-      document.getElementById("login-card").classList.remove("hidden");
+      // Redirect to Login if needed
     }
   });
 
