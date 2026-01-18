@@ -185,7 +185,22 @@
       document.getElementById("u-name").innerText = user.displayName || "Santri";
       document.getElementById("u-email").innerText = user.email;
       if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
+<div id="ai-button" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; background: #15803d; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000;">
+    <span style="font-size: 24px;">🌙</span>
+</div>
 
+<div id="ai-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; flex-direction: column; overflow: hidden;">
+    <div style="background: #15803d; color: white; p: 15px; padding: 10px; font-weight: bold; text-align: center;">
+        Asisten E-Santri
+    </div>
+    <div id="chatContent" style="flex: 1; padding: 10px; overflow-y: auto; font-size: 14px;">
+        <p>Assalamu'alaikum! Ada yang bisa saya bantu?</p>
+    </div>
+    <div style="padding: 10px; border-top: 1px solid #eee; display: flex;">
+        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." style="flex: 1; border: none; outline: none;">
+        <button onclick="kirimKeAI()" style="color: #15803d; font-weight: bold; background: none; border: none;">Kirim</button>
+    </div>
+</div>
       // Logika Streak Api Timbul
       const lastVisit = localStorage.getItem('last_visit');
       const today = new Date().toDateString();
