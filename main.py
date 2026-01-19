@@ -1,22 +1,18 @@
 from flask import Flask, render_template_string, request, jsonify
 import google.generativeai as genai
+import os
 
 app = Flask(__name__)
 
-# API Key kamu
+# Gunakan API Key dari Environment Variable (lebih aman) atau biarkan seperti ini jika untuk belajar
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 
 # --- KODE PINTAR: MENCARI MODEL YANG TERSEDIA ---
 try:
-    # Google akan kasih daftar model yang akun kamu boleh pakai
     models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-    # Kita ambil model pertama yang dia kasih
-    model_name = models[0]
-    print(f"BERHASIL: Menggunakan model {model_name}")
+    model_name = models[0] if models else 'gemini-pro'
     model = genai.GenerativeModel(model_name)
 except Exception as e:
-    print(f"Gagal deteksi otomatis: {e}")
-    # Jika gagal deteksi, kita paksa pakai gemini-pro (tanpa embel-embel models/)
     model = genai.GenerativeModel('gemini-pro')
 
 HTML_CODE = """
@@ -86,5 +82,7 @@ def proses():
     except Exception as e:
         return jsonify({"jawaban": f"Kendala: {str(e)}"})
 
+# PENTING: Untuk Vercel, variabel app harus bisa diakses secara global
+# Hapus atau comment app.run(debug=True) jika di server production
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
