@@ -7,9 +7,15 @@ app = Flask(__name__)
 # Menggunakan API Key yang kamu miliki
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 
-# Inisialisasi model dengan versi yang paling stabil untuk menghindari error 404
-model = genai.GenerativeModel('gemini-1.5-flash')
+# --- KONFIGURASI GOOGLE GEMINI AI ---
+genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 
+# Kita paksa menggunakan model 'gemini-1.5-flash-latest' 
+# atau 'gemini-pro' yang lebih stabil di jalur lama
+try:
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+except:
+    model = genai.GenerativeModel('gemini-pro')
 # --- KODE HTML DASHBOARD PRO ---
 # Kode HTML yang kamu berikan disisipkan ke dalam variabel ini
 HTML_CODE = """
@@ -278,4 +284,5 @@ def proses():
 
 # Wajib untuk Vercel
 app = app
+
 
