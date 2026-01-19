@@ -212,12 +212,12 @@
     box.innerHTML += `<div class="msg-ai" id="${loadingId}">...</div>`;
 
     try {
-        // Fetch ke endpoint /proses yang ada di index.py
-        const res = await fetch('/proses', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ pesan: text })
-        });
+        // Ubah baris fetch menjadi seperti ini agar lebih stabil
+const res = await fetch(window.location.origin + '/proses', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ pesan: text })
+});
         
         if (!res.ok) throw new Error("Server Error");
 
