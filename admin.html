@@ -11,7 +11,6 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
   body { background: var(--bg); color: #2d3436; }
   
-  /* Navigasi Atas */
   .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
   .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 12px; transition: 0.3s; color: #666; }
   .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
@@ -19,15 +18,12 @@
   .content { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
   .card { background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
   
-  h2 { font-family: 'Montserrat'; font-size: 18px; margin-bottom: 15px; color: var(--primary); text-align: center; }
   h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; }
-
   label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; }
-  input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 14px; }
+  input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; }
   
   .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; }
   
-  /* List Styling */
   .item-row { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
   .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
   .status-sudah { border-left: 5px solid #2ecc71; }
@@ -43,7 +39,7 @@
 
 <div class="sidebar">
     <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)">Mahfuzat</button>
-    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Input Tahfidz</button>
+    <button class="nav-btn" onclick="showTab('tab-data-tahfidz', this)">Data Tahfidz</button>
     <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Monitoring Budaya</button>
     <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
 </div>
@@ -58,26 +54,17 @@
       <button class="btn-action" onclick="saveMahfuzat()">UPDATE MAHFUZAT</button>
     </div>
 
-    <div id="tab-tahfidz" class="tab-content card hidden">
-      <h3>Input Hafalan Santri</h3>
-      <label>Email Santri (Tanpa titik, contoh: miftah_at_gmail_com)</label>
-      <input type="text" id="t-santri" placeholder="contoh: miftahilmi_gmail_com">
-      <label>Surah & Ayat</label>
-      <input type="text" id="t-surah" placeholder="Al-Baqarah 1-10">
-      <label>Nilai</label>
-      <select id="t-nilai">
-        <option value="Mumtaz">Mumtaz</option>
-        <option value="Jayyid Jiddan">Jayyid Jiddan</option>
-        <option value="Jayyid">Jayyid</option>
-      </select>
-      <button class="btn-action" onclick="saveTahfidz()">SIMPAN HAFALAN</button>
+    <div id="tab-data-tahfidz" class="tab-content hidden">
+      <div class="card">
+        <h3>Laporan Setoran Terbaru</h3>
+        <div id="list-tahfidz">Memuat data setoran...</div>
+      </div>
     </div>
 
     <div id="tab-monitoring" class="tab-content hidden">
       <div class="card">
-        <h3>Status Budaya Sekolah Hari Ini</h3>
-        <p style="font-size: 11px; color: #888; margin-bottom: 10px;">*Data ditarik dari folder users dan laporan_budaya</p>
-        <div id="list-monitoring">Memuat data...</div>
+        <h3>Absensi Budaya Hari Ini</h3>
+        <div id="list-monitoring">Memuat data santri...</div>
       </div>
     </div>
 
@@ -90,6 +77,7 @@
 </div>
 
 <script>
+  // Konfigurasi Firebase Kakak
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -104,58 +92,67 @@
   const db = firebase.database();
   const auth = firebase.auth();
 
-  // Proteksi Admin
   auth.onAuthStateChanged(user => {
     if (!user || user.email !== "miftahilmi15@gmail.com") {
-      alert("Akses Khusus Admin!");
       window.location.href = "index.html";
     }
   });
 
-  // Fungsi Pindah Tab
   function showTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabId).classList.remove('hidden');
     btn.classList.add('active');
     
+    if(tabId === 'tab-data-tahfidz') loadDataTahfidz();
     if(tabId === 'tab-monitoring') loadMonitoring();
     if(tabId === 'tab-pengaduan') loadPengaduan();
   }
 
-  // --- LOGIKA DATA ---
-
+  // 1. UPDATE MAHFUZAT
   function saveMahfuzat() {
     db.ref('fitur/mahfuzat').set({
       arab: document.getElementById('m-arab').value,
       indo: document.getElementById('m-indo').value
-    }).then(() => alert("Berhasil Update Mahfuzat!"));
+    }).then(() => alert("Berhasil Update!"));
   }
 
-  function saveTahfidz() {
-    const sId = document.getElementById('t-santri').value;
-    db.ref('tahfidz/' + sId).push({
-      surah: document.getElementById('t-surah').value,
-      nilai: document.getElementById('t-nilai').value,
-      tanggal: new Date().toLocaleDateString()
-    }).then(() => alert("Data Tahfidz Tersimpan!"));
+  // 2. TARIK DATA TAHFIDZ (Dari folder 'tahfidz')
+  function loadDataTahfidz() {
+    const list = document.getElementById('list-tahfidz');
+    db.ref('tahfidz').on('value', snap => {
+      list.innerHTML = "";
+      snap.forEach(userFolder => {
+        userFolder.forEach(setoran => {
+          const val = setoran.val();
+          list.innerHTML += `
+            <div class="item-row">
+              <div>
+                <b>${val.nama || userFolder.key}</b><br>
+                <span>${val.surah}</span>
+              </div>
+              <span class="badge" style="background:#2ecc71">${val.nilai || 'Terdata'}</span>
+            </div>`;
+        });
+      });
+      if(!snap.exists()) list.innerHTML = "Belum ada data setoran.";
+    });
   }
 
+  // 3. MONITORING BUDAYA (Cek Siapa yang BELUM)
   function loadMonitoring() {
     const list = document.getElementById('list-monitoring');
     const hariIni = new Date().toISOString().split('T')[0];
-    
-    db.ref('users').once('value', (uSnap) => {
-      db.ref('laporan_budaya/' + hariIni).once('value', (lSnap) => {
+    db.ref('users').once('value', uSnap => {
+      db.ref('laporan_budaya/' + hariIni).once('value', lSnap => {
         const laporan = lSnap.val() || {};
         list.innerHTML = "";
         uSnap.forEach(u => {
           const user = u.val();
-          const uid = u.key;
-          const sudah = laporan[uid];
+          const sudah = laporan[u.key];
           list.innerHTML += `
             <div class="item-row ${sudah ? 'status-sudah' : 'status-belum'}">
-              <div><b>${user.name || 'Santri'}</b><br><small>${user.email}</small></div>
+              <div><b>${user.name || 'Santri'}</b></div>
               <span class="badge" style="background:${sudah ? '#2ecc71' : '#e74c3c'}">${sudah ? 'SUDAH' : 'BELUM'}</span>
             </div>`;
         });
@@ -163,19 +160,14 @@
     });
   }
 
+  // 4. PENGADUAN
   function loadPengaduan() {
     const list = document.getElementById('list-pengaduan');
     db.ref('pengaduan').on('value', snap => {
       list.innerHTML = "";
       snap.forEach(child => {
         const data = child.val();
-        list.innerHTML += `
-          <div class="item-row" style="flex-direction:column; align-items:flex-start;">
-            <div style="width:100%; display:flex; justify-content:space-between;">
-              <b>${data.nama}</b> <span class="badge" style="background:#f39c12">LAPORAN</span>
-            </div>
-            <p style="margin-top:5px;">${data.pesan}</p>
-          </div>`;
+        list.innerHTML += `<div class="item-row"><div><b>${data.nama}</b><p>${data.pesan}</p></div></div>`;
       });
     });
   }
