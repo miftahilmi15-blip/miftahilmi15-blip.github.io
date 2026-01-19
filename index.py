@@ -3,21 +3,18 @@ import google.generativeai as genai
 
 app = Flask(__name__)
 
-# --- KONFIGURASI AI ---
-# Gunakan API Key Kakak
+# Konfigurasi AI
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-# --- TEMPLATE HTML ---
-# Pastikan HTML Kakak ada di dalam tanda kutip tiga ini
+# Masukkan kode HTML v16 Kakak di dalam tanda kutip ini
 HTML_CODE = """
 <!doctype html>
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>E-Santri | Pro v16</title>
-    </head>
+</head>
 <body>
     </body>
 </html>
@@ -31,13 +28,11 @@ def home():
 def proses():
     try:
         data = request.get_json()
-        pesan_user = data.get('pesan', 'Halo')
-        
-        # Panggil AI
-        response = model.generate_content(pesan_user)
+        pesan = data.get('pesan', '')
+        response = model.generate_content(pesan)
         return jsonify({"jawaban": response.text})
     except Exception as e:
-        return jsonify({"jawaban": f"Afwan, sistem sedang sinkronisasi. ({str(e)})"})
+        return jsonify({"jawaban": f"Error: {str(e)}"})
 
-# Pastikan baris terakhir HANYA SEPERTI INI
+# HANYA INI, JANGAN ADA JAVASCRIPT DI BAWAH SINI
 app = app
