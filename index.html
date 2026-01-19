@@ -102,18 +102,30 @@
 <div class="menu-trigger" id="menu-btn" style="display:none;"><i class="fa-solid fa-bars"></i></div>
 
 <div class="sidebar" id="sidebar">
-  <div class="close-sidebar" id="close-btn">✕</div>
-  <div class="user-profile">
-    <img id="u-img" src="https://ui-avatars.com/api/?background=1f6f51&color=fff&name=Santri">
-    <h3 id="u-name">Santri</h3>
-    <p id="u-email" style="color:#999; font-size:12px;"></p>
+  <div class="close" id="closeBtn">✕</div>
+  
+  <div class="profile">
+    <img id="uImg" src="https://ui-avatars.com/api/?background=1f6f51&color=fff&name=Santri">
+    <h3 id="uName">Santri</h3>
+    <p id="uEmail" style="font-size:12px;color:#888"></p>
   </div>
-  <div class="sidebar-nav">
-    <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
+
+  <div class="nav">
+    <a href="#" onclick="location.reload()">
+      <i class="fa-solid fa-house"></i> Dashboard
+    </a>
+
+    <a href="admin.html" id="admin-menu" class="hidden" style="background: #fff5f5; color: #e74c3c; border: 1px solid #ffcccc;">
+      <i class="fa-solid fa-user-shield"></i> Menu Admin
+    </a>
+
     <a href="sholat.html"><i class="fa-solid fa-mosque"></i> Waktu Sholat</a>
     <a href="kalender.html"><i class="fa-solid fa-calendar-alt"></i> Kalender</a>
     <a href="pengaduan.html"><i class="fa-solid fa-bullhorn"></i> Pengaduan</a>
-    <a href="#" onclick="logout()" style="color:#e74c3c;"><i class="fa-solid fa-power-off"></i> Keluar</a>
+
+    <a href="#" onclick="logout()" style="color:#e74c3c; margin-top: 10px;">
+      <i class="fa-solid fa-power-off"></i> Keluar
+    </a>
   </div>
 </div>
 
