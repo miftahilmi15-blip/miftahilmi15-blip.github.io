@@ -132,48 +132,7 @@
     <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:15px; margin-bottom:12px; border-radius:12px; border:1px solid #eee; outline:none;">
     <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:1px solid #eee; outline:none;">
     <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700;">MASUK</button>
-    <div style="margin: 20px 0; color:#ccc;">— ATAU —</div>
-    <button class="btn-google" onclick="loginGoogle()">
-      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg"> Masuk dengan Google
-    </button>
-  </div>
-
-  <section id="dashboard" class="hidden">
-    <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.8;">Hadir Hari Ini</p><h2 id="streak-text">0 Hari</h2></div>
-      <div id="fire-api" class="fire-icon">🔥</div>
-    </div>
-
-    <div class="mahfuzat-box" onclick="location.href='mahfuzat.html'">
-      <div class="m-label">MAHFUZAT</div>
-      <marquee scrollamount="4" style="color:#555; font-weight:600;">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;"></span>
-        <span id="runIndo" style="margin-left:15px;"></span>
-      </marquee>
-    </div>
-
-    <div class="menu-grid">
-      <div class="menu-item" onclick="location.href='alquran.html'"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
-      <div class="menu-item" onclick="location.href='absensi.html'"><span class="menu-symbol">📝</span><span>Absensi</span></div>
-      <div class="menu-item" onclick="location.href='tahfidz.html'"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
-      <div class="menu-item" onclick="location.href='kamus.html'"><span class="menu-symbol">📑</span><span>Kamus</span></div>
-      <div class="menu-item" onclick="location.href='perpustakaan.html'"><span class="menu-symbol">📚</span><span>Perpus</span></div>
-      <div class="menu-item" onclick="location.href='budayasekolah.html'"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
-    </div>
-  </section>
-</main>
-
-<div id="ai-button" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; background: #15803d; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000; display: none;">
-    <span style="font-size: 24px;">🌙</span>
-</div>
-
-<div id="ai-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; flex-direction: column; overflow: hidden;">
-    <div style="background: #15803d; color: white; padding: 10px; font-weight: bold; text-align: center;">Asisten E-Santri</div>
-    <div id="chatContent" style="flex: 1; padding: 10px; overflow-y: auto; font-size: 14px; display: flex; flex-direction: column;">
-        <div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu?</div>
-    </div>
-    <div style="padding: 10px; border-top: 1px solid #eee; display: flex;">
-        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." style="flex: 1; border: none; outline: none;" onkeypress="if(event.key==='Enter') kirimKeAI()">
+ess="if(event.key==='Enter') kirimKeAI()">
         <button onclick="kirimKeAI()" style="color: #15803d; font-weight: bold; background: none; border: none; cursor: pointer;">Kirim</button>
     </div>
 </div>
