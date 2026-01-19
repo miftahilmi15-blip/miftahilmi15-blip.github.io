@@ -1,89 +1,148 @@
 from flask import Flask, render_template_string, request, jsonify
 import google.generativeai as genai
-import os
 
 app = Flask(__name__)
 
-# API Key - Pastikan tidak ada spasi di awal/akhir
+# Konfigurasi Google Gemini AI
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
+model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Konfigurasi Model AI
-try:
-    # Mencoba menggunakan Gemini 1.5 Flash (lebih cepat dan stabil untuk web)
-    model = genai.GenerativeModel('gemini-1.5-flash')
-except Exception:
-    # Cadangan jika model di atas tidak tersedia
-    model = genai.GenerativeModel('gemini-pro')
-
+# Gabungan HTML Dashboard + AI Chat
 HTML_CODE = """
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Santri AI Pro</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>E-Santri | Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0fdf4; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .header { background: #15803d; color: white; width: 100%; max-width: 500px; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        #chatbox { width: 95%; max-width: 500px; height: 450px; overflow-y: auto; background: white; margin-top: 15px; padding: 15px; border-radius: 15px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); display: flex; flex-direction: column; box-sizing: border-box; }
-        .msg { margin: 8px 0; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; max-width: 85%; word-wrap: break-word; }
-        .ai { background: #f0fdf4; align-self: flex-start; color: #166534; border: 1px solid #dcfce7; border-bottom-left-radius: 2px; }
-        .user { background: #15803d; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .input-area { width: 95%; max-width: 500px; display: flex; padding: 20px 0; gap: 10px; }
-        input { flex: 1; padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 30px; outline: none; transition: border 0.3s; }
-        input:focus { border-color: #15803d; }
-        button { width: 50px; height: 50px; background: #15803d; color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        button:hover { background: #166534; transform: scale(1.05); }
-        .loading { font-style: italic; color: #64748b; font-size: 12px; }
+        :root { --primary: #1f6f51; --grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f8faf9; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { margin: 0; background: var(--bg); color: #2d3436; }
+        .hidden { display: none !important; }
+        .container { max-width: 420px; margin: auto; padding: 20px; min-height: 100vh; }
+        .header { text-align: center; padding: 25px 0; }
+        .header h1 { font-family: 'Montserrat', sans-serif; font-size: 32px; color: var(--primary); margin: 0; }
+        
+        /* Dashboard & Cards */
+        .card { background: #fff; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        input { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #eee; margin-bottom: 14px; outline: none; }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--grad); color: #fff; font-weight: 700; cursor: pointer; }
+        
+        .streak { background: var(--grad); border-radius: 24px; padding: 20px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
+        .menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .item { background: #fff; border-radius: 20px; padding: 15px 5px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; }
+        .item i { font-size: 22px; color: var(--primary); margin-bottom: 8px; display: block; }
+        .item span { font-size: 10px; font-weight: 700; }
+
+        /* AI Floating Chat */
+        #ai-btn { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: #15803d; color: #fff; display: none; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 1000; }
+        #ai-box { position: fixed; bottom: 95px; right: 20px; width: 320px; height: 450px; background: #fff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 1000; border: 1px solid #eee; }
+        .chat-header { background: #15803d; color: #fff; padding: 15px; text-align: center; font-weight: bold; }
+        .chat-content { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f9f9f9; }
+        .msg { padding: 10px 14px; border-radius: 15px; font-size: 13px; max-width: 85%; line-height: 1.4; }
+        .msg-ai { background: #fff; align-self: flex-start; border: 1px solid #eee; color: #333; }
+        .msg-user { background: #15803d; color: #fff; align-self: flex-end; }
+        .chat-input { display: flex; padding: 10px; background: #fff; border-top: 1px solid #eee; }
+        .chat-input input { margin-bottom: 0; border: none; font-size: 13px; }
     </style>
 </head>
 <body>
-    <div class="header">🌙 E-SANTRI AI PRO</div>
-    <div id="chatbox">
-        <div class="msg ai">Assalamu'alaikum! Saya asisten E-Santri. Ada yang bisa saya bantu hari ini?</div>
+    <main class="container">
+        <div class="header"><h1>E-SANTRI</h1></div>
+
+        <section id="login" class="card">
+            <input id="email" type="email" placeholder="Email Santri">
+            <input id="password" type="password" placeholder="Password">
+            <button class="btn" onclick="login()">MASUK</button>
+        </section>
+
+        <section id="dash" class="hidden">
+            <div class="streak">
+                <div><small>Status Absensi</small><h2 id="streakText" style="margin:0">Ketuk Absensi</h2></div>
+                <div style="font-size:30px">🔥</div>
+            </div>
+            <div class="menu">
+                <div class="item"><i class="fa fa-book-quran"></i><span>Al-Qur’an</span></div>
+                <div class="item"><i class="fa fa-calendar-check"></i><span>Absensi</span></div>
+                <div class="item"><i class="fa fa-star"></i><span>Tahfidz</span></div>
+                <div class="item"><i class="fa fa-language"></i><span>Kamus</span></div>
+                <div class="item"><i class="fa fa-book"></i><span>Perpus</span></div>
+                <div class="item"><i class="fa fa-mosque"></i><span>Budaya</span></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="ai-btn" onclick="toggleAI()">🌙</div>
+    <div id="ai-box">
+        <div class="chat-header">Asisten E-Santri</div>
+        <div id="chat" class="chat-content">
+            <div class="msg msg-ai">Assalamu’alaikum! Ada yang bisa saya bantu terkait pelajaran atau kehidupan di pesantren? 😊</div>
+        </div>
+        <div class="chat-input">
+            <input id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') sendAI()">
+            <button onclick="sendAI()" style="border:none;background:none;color:#15803d;font-weight:bold;cursor:pointer">Kirim</button>
+        </div>
     </div>
-    <div class="input-area">
-        <input type="text" id="text" placeholder="Tulis pesan..." autocomplete="off">
-        <button onclick="send()">➤</button>
-    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
     <script>
-        const chatbox = document.getElementById('chatbox');
-        const input = document.getElementById('text');
+        const firebaseConfig = {
+            apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+            authDomain: "e-santri-b62be.firebaseapp.com",
+            projectId: "e-santri-b62be"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
 
-        input.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") { send(); }
+        function login() {
+            const e = document.getElementById('email').value;
+            const p = document.getElementById('password').value;
+            auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
+        }
+
+        auth.onAuthStateChanged(user => {
+            if(user) {
+                document.getElementById('login').classList.add('hidden');
+                document.getElementById('dash').classList.remove('hidden');
+                document.getElementById('ai-btn').style.display = 'flex';
+            }
         });
 
-        async function send() {
+        function toggleAI() {
+            const box = document.getElementById('ai-box');
+            box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
+        }
+
+        async function sendAI() {
+            const input = document.getElementById('aiInput');
+            const chat = document.getElementById('chat');
             const val = input.value.trim();
             if(!val) return;
-            
-            // Tampilkan pesan user
-            chatbox.innerHTML += `<div class="msg user">${val}</div>`;
-            input.value = "";
-            chatbox.scrollTop = chatbox.scrollHeight;
 
-            // Loading state
-            const loadingId = "load-" + Date.now();
-            chatbox.innerHTML += `<div class="msg ai" id="${loadingId}"><span class="loading">Sedang berpikir...</span></div>`;
-            chatbox.scrollTop = chatbox.scrollHeight;
+            chat.innerHTML += `<div class="msg msg-user">${val}</div>`;
+            input.value = "";
+            chat.scrollTop = chat.scrollHeight;
+
+            const loadId = "load-" + Date.now();
+            chat.innerHTML += `<div class="msg msg-ai" id="${loadId}">Sedang mengetik...</div>`;
 
             try {
                 const res = await fetch('/proses', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({pesan: val})
+                    body: JSON.stringify({ pesan: val })
                 });
-                
-                if (!res.ok) throw new Error('Server bermasalah');
-                
                 const d = await res.json();
-                document.getElementById(loadingId).innerText = d.jawaban;
-            } catch (e) {
-                document.getElementById(loadingId).innerText = "Maaf, koneksi terputus atau server sibuk. Coba lagi ya.";
+                document.getElementById(loadId).innerText = d.jawaban;
+            } catch {
+                document.getElementById(loadId).innerText = "Maaf, koneksi terputus.";
             }
-            chatbox.scrollTop = chatbox.scrollHeight;
+            chat.scrollTop = chat.scrollHeight;
         }
     </script>
 </body>
@@ -98,23 +157,10 @@ def home():
 def proses():
     try:
         data = request.get_json()
-        pertanyaan = data.get('pesan', '')
-        
-        if not pertanyaan:
-            return jsonify({"jawaban": "Pesan kosong."})
-
-        # Memberikan instruksi tambahan agar AI menjawab seperti asisten pesantren
-        prompt = f"Berperanlah sebagai asisten santri yang ramah dan berilmu. Pertanyaan: {pertanyaan}"
-        response = model.generate_content(prompt)
-        
-        return jsonify({"jawaban": response.text})
+        p = data.get('pesan', '')
+        r = model.generate_content(f"Berperanlah sebagai asisten santri yang ramah. Jawab pertanyaan ini: {p}")
+        return jsonify({"jawaban": r.text})
     except Exception as e:
-        print(f"Error: {str(e)}") # Muncul di Logs Vercel
-        return jsonify({"jawaban": f"Maaf, sedang ada kendala teknis. (Error: {str(e)})"})
+        return jsonify({"jawaban": f"Error: {str(e)}"})
 
-# PENTING UNTUK VERCEL
 app = app
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
