@@ -4,9 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>E-Santri | Pro v16 Premium</title>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#1f6f51">
-<link rel="apple-touch-icon" href="/logo-assunnah.png">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
@@ -18,116 +15,60 @@
     --shadow: 0 10px 30px rgba(31, 111, 81, 0.1);
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+  body { background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-  /* CONTAINER & HEADER */
   .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; }
   .header-box { text-align: center; padding: 25px 0; }
-  .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
+  .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); }
 
-  /* SIDEBAR PREMIUM */
-  .menu-trigger { 
-    position: fixed; top: 25px; right: 25px; z-index: 1400; 
-    background: white; color: var(--primary); width: 48px; height: 48px; 
-    border-radius: 14px; display: flex; align-items: center; justify-content: center; 
-    font-size: 20px; box-shadow: var(--shadow); cursor: pointer; border: 1px solid #eee;
-  }
-  .sidebar { 
-    position: fixed; top: 0; right: -100%; width: 280px; height: 100%; 
-    background: white; z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex; flex-direction: column; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-  }
+  /* SIDEBAR FIX */
+  .menu-trigger { position: fixed; top: 25px; right: 25px; z-index: 1400; background: white; color: var(--primary); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); cursor: pointer; }
+  .sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: white; z-index: 2000; transition: 0.4s; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
   .sidebar.open { right: 0; }
-  .close-sidebar { align-self: flex-end; font-size: 24px; color: #ccc; cursor: pointer; margin-bottom: 15px; }
 
-  .profile { text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; width: 100%; }
-  .profile img { width: 75px; height: 75px; border-radius: 20px; margin-bottom: 10px; box-shadow: var(--shadow); border: 2px solid white; object-fit: cover; }
-  .profile h3 { font-size: 15px; font-weight: 700; color: var(--text); }
-
-  .nav { display: flex; flex-direction: column; gap: 5px; width: 100%; }
-  .nav a { 
-    display: flex; align-items: center; gap: 12px; padding: 12px 15px; 
-    text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px;
-    border-radius: 12px; transition: 0.2s;
-  }
-  .nav a i { font-size: 16px; color: var(--primary); width: 20px; text-align: center; }
-  .nav a:hover { background: #f0f7f4; color: var(--primary); }
-
-  /* DASHBOARD COMPONENTS */
-  .streak-card { 
-    background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; 
-    margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
-    box-shadow: 0 15px 35px rgba(31,111,81,0.2);
-  }
-  .fire-icon { font-size: 40px; filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); transition: 0.5s; }
-  .fire-off { filter: grayscale(1) opacity(0.3) !important; transform: scale(0.8); }
-
+  /* MAHFUZAT ANIMATION (FIXED) */
   .mahfuzat-box { 
-    background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
-    display: flex; align-items: center; box-shadow: var(--shadow); border: 1px solid #f0f0f0; cursor: pointer;
+    background: white; padding: 15px; border-radius: 50px; margin-bottom: 25px; 
+    display: flex; align-items: center; box-shadow: var(--shadow); overflow: hidden; white-space: nowrap;
   }
-  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; }
-
-  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { 
-    background: white; padding: 22px 10px; border-radius: 24px; text-align: center; 
-    box-shadow: var(--shadow); transition: 0.3s; cursor: pointer;
+  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; z-index: 2; }
+  
+  .running-text { display: inline-block; animation: jalan 15s linear infinite; }
+  @keyframes jalan {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
   }
-  .menu-item:active { transform: scale(0.9); }
-  .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
-  .menu-item span { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* LOGIN CARD */
-  .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
-  .btn-google { 
-    width: 100%; padding: 14px; border-radius: 16px; border: 1px solid #ddd; 
-    background: white; display: flex; align-items: center; justify-content: center; 
-    gap: 12px; font-weight: 600; color: #444; cursor: pointer; margin-top: 15px; transition: 0.2s;
-  }
-  .btn-google img { width: 20px; height: 20px; }
-
-  /* CHAT AI PREMIUM (FIXED SPACING) */
+  /* CHAT AI PREMIUM */
   #ai-window {
-    display: none; position: fixed; bottom: 90px; right: 20px; 
-    width: 320px; height: 450px; 
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(15px); 
-    border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); 
-    z-index: 2000; flex-direction: column; overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.4);
+    display: none; position: fixed; bottom: 95px; right: 20px; 
+    width: 320px; height: 450px; background: rgba(255, 255, 255, 0.98);
+    border-radius: 24px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); 
+    z-index: 2000; flex-direction: column; overflow: hidden; border: 1px solid #eee;
   }
-  .ai-header {
-    background: var(--primary-grad); color: white; padding: 15px 20px; 
-    display: flex; align-items: center; gap: 12px;
-  }
-  .status-dot { width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 8px #2ecc71; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-  #chatContent { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-  .msg-user { background: var(--primary-grad); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 80%; font-size: 13px; }
-  .msg-ai { background: white; color: #444; padding: 10px 15px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; font-size: 13px; border: 1px solid #eee; }
-
-  /* Input area with better padding */
+  .ai-header { background: var(--primary-grad); color: white; padding: 15px; display: flex; align-items: center; gap: 10px; }
+  #chatContent { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  
+  /* INPUT AREA FIX (TIDAK MEPET) */
   .ai-input-area { 
-    padding: 15px 20px 20px 20px; /* Ditambah padding bawah dan samping */
-    background: white; border-top: 1px solid #f0f0f0; 
-    display: flex; gap: 12px; align-items: center;
+    padding: 15px; background: #fff; border-top: 1px solid #eee;
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
   }
   .ai-input-area input { 
-    flex: 1; border: none; background: #f0f2f1; 
-    padding: 12px 15px; border-radius: 12px; 
-    outline: none; font-size: 13px; color: #333;
+    flex: 1; border: none; background: #f1f3f2; padding: 12px; border-radius: 12px; outline: none;
   }
   .btn-send { 
-    background: var(--primary); color: white; 
-    width: 42px; height: 42px; border-radius: 12px; 
-    border: none; cursor: pointer; 
+    background: var(--primary); color: white; min-width: 45px; height: 45px; 
+    border-radius: 12px; border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: 0.3s;
   }
-  .btn-send:active { transform: scale(0.9); }
 
+  /* LOGIN & DASHBOARD */
+  .card-login { background: white; padding: 30px; border-radius: 30px; box-shadow: var(--shadow); text-align: center; }
+  .btn-google { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #ddd; background: white; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; margin-top: 15px; font-weight: 600; }
+  .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .menu-item { background: white; padding: 20px 10px; border-radius: 20px; text-align: center; box-shadow: var(--shadow); }
   .hidden { display: none !important; }
 </style>
 
@@ -139,21 +80,14 @@
 <div class="menu-trigger" id="menu-btn" style="display:none;"><i class="fa-solid fa-bars"></i></div>
 
 <div class="sidebar" id="sidebar">
-  <div class="close-sidebar" id="closeBtn">✕</div> 
-  <div class="profile">
-    <img id="uImg" src="https://ui-avatars.com/api/?background=1f6f51&color=fff&name=Santri">
+  <div onclick="document.getElementById('sidebar').classList.remove('open')" style="text-align:right; cursor:pointer;">✕</div>
+  <div style="text-align:center; margin: 20px 0;">
+    <img id="uImg" src="https://ui-avatars.com/api/?name=Santri" style="width:70px; border-radius:20px;">
     <h3 id="uName">Santri</h3>
-    <p id="uEmail" style="font-size:11px;color:#888"></p>
   </div>
-  <div class="nav">
-    <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
-    <a href="admin.html" id="admin-menu" class="hidden" style="background: #fff5f5; color: #e74c3c;"><i class="fa-solid fa-user-shield"></i> Menu Admin</a>
-    <a href="sholat.html"><i class="fa-solid fa-mosque"></i> Waktu Sholat</a>
-    <a href="kalender.html"><i class="fa-solid fa-calendar-alt"></i> Kalender</a>
-    <a href="pengaduan.html"><i class="fa-solid fa-bullhorn"></i> Pengaduan</a>
-    <a href="#" onclick="logout()" style="color:#e74c3c; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 15px;">
-      <i class="fa-solid fa-power-off"></i> Keluar
-    </a>
+  <div style="display:flex; flex-direction:column; gap:10px;">
+    <a href="#" style="text-decoration:none; color:333; font-weight:600;"><i class="fa-solid fa-house"></i> Beranda</a>
+    <a href="#" onclick="auth.signOut()" style="color:red; text-decoration:none;"><i class="fa-solid fa-power-off"></i> Keluar</a>
   </div>
 </div>
 
@@ -161,39 +95,133 @@
   <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
 
   <div id="login-card" class="card-login hidden">
-    <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
-    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:15px; margin-bottom:12px; border-radius:12px; border:1px solid #eee; outline:none;">
-    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:1px solid #eee; outline:none;">
-    
-    <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer;">MASUK</button>
-    
-    <p style="margin-top: 15px; font-size: 13px; color: #777;">
-      Belum punya akun? <a href="#" onclick="register()" style="color: var(--primary); font-weight: 700; text-decoration: none;">Daftar</a>
-    </p>
-
-    <div style="margin: 20px 0; color:#ccc; font-size: 11px;">— ATAU —</div>
-    
+    <h2 style="color:var(--primary); margin-bottom:20px;">Masuk Akun</h2>
+    <input type="email" id="email" placeholder="Email" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
+    <input type="password" id="password" placeholder="Password" style="width:100%; padding:12px; margin-bottom:20px; border-radius:10px; border:1px solid #ddd;">
+    <button onclick="login()" style="width:100%; padding:14px; border-radius:12px; border:none; background:var(--primary-grad); color:white; font-weight:bold;">LOGIN</button>
+    <p style="margin-top:10px; font-size:12px;">Belum punya akun? <a href="#" onclick="register()" style="color:var(--primary);">Daftar</a></p>
     <button class="btn-google" onclick="loginGoogle()">
-      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"> Lanjutkan dengan Google
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" width="20"> Google Login
     </button>
   </div>
 
   <section id="dashboard" class="hidden">
-    <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.8;">Hadir Hari Ini</p><h2 id="streak-text">0 Hari</h2></div>
-      <div id="fire-api" class="fire-icon">🔥</div>
+    <div style="background:var(--primary-grad); padding:20px; border-radius:20px; color:white; margin-bottom:20px;">
+        <p>Ahlan wa Sahlan,</p>
+        <h2 id="streak-text">Santri Rajin</h2>
     </div>
 
-    <div class="mahfuzat-box" onclick="location.href='mahfuzat.html'">
+    <div class="mahfuzat-box">
       <div class="m-label">MAHFUZAT</div>
-      <marquee scrollamount="4" style="color:#555; font-weight:600;">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;"></span>
-        <span id="runIndo" style="margin-left:15px;"></span>
-      </marquee>
+      <div class="running-text">
+        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:18px;"></span>
+        <span id="runIndo" style="margin-left:20px; font-weight:600; color:#666;"></span>
+      </div>
     </div>
 
     <div class="menu-grid">
-      <div class="menu-item" onclick="location.href='alquran.html'"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
+      <div class="menu-item">📖<br><span>Al-Quran</span></div>
+      <div class="menu-item">📝<br><span>Absensi</span></div>
+      <div class="menu-item">🏆<br><span>Tahfidz</span></div>
+    </div>
+  </section>
+</main>
+
+<div id="ai-button" onclick="toggleChat()" style="position:fixed; bottom:25px; right:25px; background:var(--primary-grad); color:white; width:60px; height:60px; border-radius:20px; display:none; align-items:center; justify-content:center; box-shadow:0 10px 20px rgba(0,0,0,0.2); z-index:1000;">
+    <i class="fa-solid fa-comment-dots" style="font-size:24px;"></i>
+</div>
+
+<div id="ai-window">
+    <div class="ai-header">
+        <div style="width:8px; height:8px; background:#2ecc71; border-radius:50%;"></div>
+        <div style="font-weight:bold;">Asisten E-Santri</div>
+        <div onclick="toggleChat()" style="margin-left:auto; cursor:pointer;">✕</div>
+    </div>
+    <div id="chatContent">
+        <div style="background:#f1f1f1; padding:10px; border-radius:10px; align-self:flex-start; font-size:13px;">Assalamu'alaikum! Ada yang bisa dibantu?</div>
+    </div>
+    <div class="ai-input-area">
+        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') kirimKeAI()">
+        <button class="btn-send" onclick="kirimKeAI()">
+            <i class="fa-solid fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+    authDomain: "e-santri-b62be.firebaseapp.com",
+    projectId: "e-santri-b62be",
+    storageBucket: "e-santri-b62be.firebasestorage.app",
+    messagingSenderId: "6560427635",
+    appId: "1:6560427635:web:368b4fbf95163e8d214406"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  function toggleChat() {
+    const win = document.getElementById("ai-window");
+    win.style.display = (win.style.display === "none" || win.style.display === "") ? "flex" : "none";
+  }
+
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(e => alert(e.message));
+  }
+
+  function login() {
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(e, p).catch(e => alert(e.message));
+  }
+
+  function register() {
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    auth.createUserWithEmailAndPassword(e, p).then(() => alert("Berhasil!")).catch(e => alert(e.message));
+  }
+
+  auth.onAuthStateChanged(user => {
+    const dash = document.getElementById("dashboard");
+    const loginCard = document.getElementById("login-card");
+    const menuBtn = document.getElementById("menu-btn");
+    const aiBtn = document.getElementById("ai-button");
+
+    if(user){
+      dash.classList.remove("hidden");
+      loginCard.classList.add("hidden");
+      menuBtn.style.display = "flex";
+      aiBtn.style.display = "flex";
+      document.getElementById("uName").innerText = user.displayName || "Santri";
+      if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+      
+      // Mahfuzat Data
+      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
+      const d = m[new Date().getDate() % m.length];
+      document.getElementById('runArab').innerText = d.ar;
+      document.getElementById('runIndo').innerText = " — " + d.id;
+    } else {
+      loginCard.classList.remove("hidden");
+      dash.classList.add("hidden");
+      menuBtn.style.display = "none";
+      aiBtn.style.display = "none";
+    }
+  });
+
+  async function kirimKeAI() {
+    const input = document.getElementById('aiInput');
+    const box = document.getElementById('chatContent');
+    if(!input.value.trim()) return;
+    box.innerHTML += `<div style="background:var(--primary); color:white; padding:10px; border-radius:10px; align-self:flex-end; font-size:13px;">${input.value}</div>`;
+    input.value = "";
+    box.scrollTop = box.scrollHeight;
+  }
+
+  document.getElementById("menu-btn").onclick = () => document.getElementById("sidebar").classList.add("open");
+</script>
+</body>
+</html>>Al-Quran</span></div>
       <div class="menu-item" onclick="location.href='absensi.html'"><span class="menu-symbol">📝</span><span>Absensi</span></div>
       <div class="menu-item" onclick="location.href='tahfidz.html'"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
       <div class="menu-item" onclick="location.href='kamus.html'"><span class="menu-symbol">📑</span><span>Kamus</span></div>
