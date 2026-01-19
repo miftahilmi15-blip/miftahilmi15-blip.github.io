@@ -36,3 +36,4 @@ def proses():
 
 # HANYA INI, JANGAN ADA JAVASCRIPT DI BAWAH SINI
 app = app
+
