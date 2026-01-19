@@ -6,10 +6,8 @@ app = Flask(__name__)
 # API Key
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 
-# GANTI BAGIAN KONFIGURASI MODEL DENGAN INI:
-try:
-# GANTI BAGIAN MODEL DENGAN INI
-model = genai.GenerativeModel('gemini-1.0-pro')
+# Gunakan model yang paling universal
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 HTML_CODE = """
 <!DOCTYPE html>
@@ -150,7 +148,4 @@ def proses():
     except Exception as e:
         return jsonify({"jawaban": f"Error AI: {str(e)}"})
 
-# Baris ini wajib ada untuk Vercel
 app = app
-
-
