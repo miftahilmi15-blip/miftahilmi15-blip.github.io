@@ -65,8 +65,9 @@
   .mahfuzat-box { 
     background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
     display: flex; align-items: center; box-shadow: var(--shadow); border: 1px solid #f0f0f0; cursor: pointer;
+    overflow: hidden;
   }
-  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; }
+  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; z-index: 2; position: relative; }
 
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .menu-item { 
@@ -158,15 +159,15 @@
 
   <section id="dashboard" class="hidden">
     <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.8;">Status</p><h2 id="streak-text">Menghubungkan...</h2></div>
+      <div><p style="font-size:11px; opacity:0.8;">Status</p><h2 id="streak-text">Memuat...</h2></div>
       <div id="fire-api" class="fire-icon">🔥</div>
     </div>
 
-    <div class="mahfuzat-box" onclick="location.href='mahfuzat.html'">
+    <div class="mahfuzat-box">
       <div class="m-label">MAHFUZAT</div>
-      <marquee scrollamount="4" style="color:#555; font-weight:600;">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;">Memuat hikmah...</span>
-        <span id="runIndo" style="margin-left:15px;"></span>
+      <marquee scrollamount="4" style="color:#555; font-weight:600; width: 100%;">
+        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;">...</span>
+        <span id="runIndo" style="margin-left:15px;">Mencari mutiara hikmah...</span>
       </marquee>
     </div>
 
@@ -195,6 +196,7 @@
 </div>
 
 <script>
+  // CONFIG DISESUAIKAN DENGAN URL SINGAPORE KAKAK
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -202,8 +204,9 @@
     storageBucket: "e-santri-b62be.firebasestorage.app",
     messagingSenderId: "6560427635",
     appId: "1:6560427635:web:368b4fbf95163e8d214406",
-    databaseURL: "https://e-santri-b62be-default-rtdb.firebaseio.com"
+    databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
   };
+  
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.database();
@@ -235,14 +238,19 @@
       document.getElementById("uName").innerText = user.displayName || "Santri";
       document.getElementById("uEmail").innerText = user.email;
       if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+      
+      // Khusus Email Admin
       if (user.email === "miftahilmi15@gmail.com") adminMenu.classList.remove("hidden");
 
-      // REALTIME MAHFUZAT LISTENER
+      // REALTIME MAHFUZAT - LISTENER OTOMATIS
       db.ref('fitur/mahfuzat').on('value', (snapshot) => {
           const data = snapshot.val();
           if(data) {
               document.getElementById('runArab').innerText = data.arab;
               document.getElementById('runIndo').innerText = " — " + data.indo;
+          } else {
+              document.getElementById('runArab').innerText = "مَنْ جَدَّ وَجَدَ";
+              document.getElementById('runIndo').innerText = " — Siapa bersungguh-sungguh dapat.";
           }
       });
 
@@ -253,7 +261,7 @@
         document.getElementById('streak-text').innerText = "Sudah Absen";
       } else {
         fire.classList.add('fire-off');
-        document.getElementById('streak-text').innerText = "Belum Absen";
+        document.getElementById('streak-text').innerText = "Hadir!";
         localStorage.setItem('last_visit', today);
       }
     } else {
