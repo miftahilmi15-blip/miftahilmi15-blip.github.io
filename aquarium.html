@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aquarium Mengaji</title>
+    <style>
+        body { margin: 0; background: #00b4d8; overflow: hidden; font-family: sans-serif; }
+        #sea { position: relative; width: 100vw; height: 100vh; background: linear-gradient(#00b4d8, #0077b6); }
+        .fish { position: absolute; font-size: 40px; transition: 5s linear; }
+        .info { position: fixed; top: 20px; left: 20px; color: white; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; }
+    </style>
+</head>
+<body>
+    <div id="sea">
+        <div class="info">
+            <h2>Aquarium Hafalan</h2>
+            <p>Ikan Kamu: <span id="count">0</span></p>
+            <small>Baca Al-Qur'an 30 menit untuk tambah ikan!</small>
+        </div>
+    </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = { /* PASTE CONFIG FIREBASE KAKAK DI SINI */ };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            const uid = user.uid.replace(/\./g, ',');
+            db.ref('users/' + uid + '/ikan').on('value', snap => {
+                const jumlahIkan = snap.val() || 0;
+                document.getElementById('count').innerText = jumlahIkan;
+                generateFish(jumlahIkan);
+            });
+        }
+    });
+
+    function generateFish(count) {
+        const sea = document.getElementById('sea');
+        // Hapus ikan lama sebelum gambar ulang
+        document.querySelectorAll('.fish').forEach(f => f.remove());
+        
+        const jenisIkan = ['🐟', '🐠', '🐡', '🐬'];
+
+        for (let i = 0; i < count; i++) {
+            let f = document.createElement('div');
+            f.className = 'fish';
+            f.innerText = jenisIkan[i % jenisIkan.length];
+            f.style.top = Math.random() * 80 + 'vh';
+            f.style.left = Math.random() * 80 + 'vw';
+            sea.appendChild(f);
+            
+            // Animasi ikan bergerak sederhana
+            setInterval(() => {
+                f.style.left = Math.random() * 90 + 'vw';
+                f.style.top = Math.random() * 90 + 'vh';
+            }, 5000);
+        }
+    }
+</script>
+</body>
+</html>
