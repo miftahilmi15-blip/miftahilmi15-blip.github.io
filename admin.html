@@ -3,36 +3,43 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Admin Panel | E-Santri Pro</title>
+<title>Admin Dashboard | E-Santri Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
   :root {
     --primary: #1f6f51;
     --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71);
-    --bg: #f8faf9;
+    --bg: #f4f7f6;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  body { background: var(--bg); color: #2d3436; padding: 20px; }
+  body { background: var(--bg); color: #2d3436; }
   
-  .header-admin { display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; }
-  .btn-back { text-decoration: none; color: var(--primary); font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 5px; }
+  /* SIDEBAR KIRI (DESKTOP) / TOP NAV (MOBILE) */
+  .admin-wrapper { display: flex; min-height: 100vh; flex-direction: column; }
   
-  .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #eee; }
-  .card h3 { font-size: 16px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--primary); font-weight: 700; }
+  .sidebar { background: white; padding: 20px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
+  .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.3s; color: #666; }
+  .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
+
+  .content { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
+  .card { background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; animation: fadeIn 0.4s ease; }
   
-  label { font-size: 12px; font-weight: 700; color: #555; display: block; margin-bottom: 5px; margin-left: 5px; }
-  input, textarea { width: 100%; padding: 12px 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; font-size: 13px; background: #fafafa; transition: 0.3s; }
-  input:focus, textarea:focus { border-color: var(--primary); background: #fff; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  h2 { font-family: 'Montserrat'; font-size: 20px; margin-bottom: 20px; color: var(--primary); text-align: center; }
+  h3 { font-size: 15px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; }
+
+  label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; text-transform: uppercase; }
+  input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 14px; }
   
-  .btn-save { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(31,111,81,0.2); transition: 0.3s; }
-  .btn-save:active { transform: scale(0.95); }
+  .btn-action { width: 100%; padding: 16px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
   
+  /* TABLE STYLE UNTUK PENGADUAN */
+  .report-item { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 10px; font-size: 13px; }
+  .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; color: white; }
+  .bg-red { background: #e74c3c; }
   .hidden { display: none !important; }
-  #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:white; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; }
-  
-  .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px; }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -41,28 +48,60 @@
 </head>
 <body>
 
-<div id="loader">
-    <div class="spinner"></div>
-    <b style="color:var(--primary)">Memuat Panel Admin...</b>
-</div>
+<div class="admin-wrapper">
+  <div class="sidebar">
+    <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)"><i class="fa-solid fa-quote-left"></i> Mahfuzat</button>
+    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)"><i class="fa-solid fa-star"></i> Input Tahfidz</button>
+    <button class="nav-btn" onclick="showTab('tab-budaya', this)"><i class="fa-solid fa-mosque"></i> Budaya</button>
+    <button class="nav-btn" onclick="showTab('tab-pengaduan', this)"><i class="fa-solid fa-bell"></i> Pengaduan</button>
+  </div>
 
-<div class="header-admin">
-    <a href="index.html" class="btn-back"><i class="fa-solid fa-chevron-left"></i> Kembali</a>
-    <h2 style="font-family:'Montserrat'; font-size: 18px; color: var(--primary);">KONTROL MAHFUZAT</h2>
-</div>
+  <div class="content">
+    <h2 id="title-page">Manajemen Santri</h2>
 
-<div class="card">
-    <h3><i class="fa-solid fa-pen-to-square"></i> Edit Mahfuzat</h3>
-    
-    <label>Teks Arab</label>
-    <input type="text" id="newArab" placeholder="Ketik Arab di sini..." style="font-size: 18px; text-align: right;">
-    
-    <label>Arti / Terjemahan</label>
-    <textarea id="newIndo" rows="3" placeholder="Ketik artinya di sini..."></textarea>
-    
-    <button class="btn-save" onclick="updateMahfuzat()">
-        <i class="fa-solid fa-cloud-arrow-up"></i> UPDATE KE HP SANTRI
-    </button>
+    <div id="tab-mahfuzat" class="tab-content card">
+      <h3>Edit Mahfuzat Hari Ini</h3>
+      <label>Teks Arab</label>
+      <input type="text" id="m-arab" placeholder="Ketik Arab..." style="text-align: right; font-size: 18px;">
+      <label>Terjemahan</label>
+      <textarea id="m-indo" rows="2" placeholder="Ketik Arti..."></textarea>
+      <button class="btn-action" onclick="saveMahfuzat()">UPDATE MAHFUZAT</button>
+    </div>
+
+    <div id="tab-tahfidz" class="tab-content card hidden">
+      <h3>Input Setoran Hafalan</h3>
+      <label>Nama Santri / Email</label>
+      <input type="text" id="t-santri" placeholder="email@gmail.com">
+      <label>Surah & Ayat</label>
+      <input type="text" id="t-surah" placeholder="Contoh: Al-Baqarah 1-10">
+      <label>Predikat</label>
+      <select id="t-nilai">
+        <option value="Mumtaz">Mumtaz (Sempurna)</option>
+        <option value="Jayyid Jiddan">Jayyid Jiddan (Sangat Baik)</option>
+        <option value="Jayyid">Jayyid (Baik)</option>
+      </select>
+      <button class="btn-action" onclick="saveTahfidz()">SIMPAN HAFALAN</button>
+    </div>
+
+    <div id="tab-budaya" class="tab-content card hidden">
+      <h3>Kontrol Budaya Sekolah</h3>
+      <label>Judul Kegiatan</label>
+      <input type="text" id="b-judul" placeholder="Contoh: Sholat Dhuha Berjamaah">
+      <label>Deskripsi/Tugas</label>
+      <textarea id="b-desc" rows="3" placeholder="Apa yang harus santri lakukan?"></textarea>
+      <button class="btn-action" onclick="saveBudaya()">UPDATE TUGAS BUDAYA</button>
+    </div>
+
+    <div id="tab-pengaduan" class="tab-content hidden">
+      <div class="card">
+        <h3>Laporan Masuk Santri</h3>
+        <div id="list-pengaduan">
+          <p style="text-align: center; color: #999; font-size: 12px;">Memuat data laporan...</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -77,54 +116,71 @@
   };
   
   firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
   const db = firebase.database();
+  const auth = firebase.auth();
 
-  // 1. Cek Login Admin
+  // Proteksi Admin
   auth.onAuthStateChanged(user => {
-    if (user) {
-      if (user.email === "miftahilmi15@gmail.com") {
-        document.getElementById('loader').classList.add('hidden');
-        loadCurrentData();
-      } else {
-        alert("Akses Ditolak! Khusus miftahilmi15@gmail.com");
-        window.location.href = "index.html";
-      }
-    } else {
+    if (!user || user.email !== "miftahilmi15@gmail.com") {
+      alert("Akses Khusus Admin!");
       window.location.href = "index.html";
     }
   });
 
-  // 2. Ambil data yang ada di server sekarang
-  function loadCurrentData() {
-    db.ref('fitur/mahfuzat').once('value', (snap) => {
-        const data = snap.val();
-        if(data) {
-            document.getElementById('newArab').value = data.arab || "";
-            document.getElementById('newIndo').value = data.indo || "";
-        }
-    });
+  // Fungsi Pindah Tab
+  function showTab(tabId, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.remove('hidden');
+    btn.classList.add('active');
+    
+    if(tabId === 'tab-pengaduan') loadPengaduan();
   }
 
-  // 3. Update ke Firebase
-  function updateMahfuzat() {
-    const ar = document.getElementById('newArab').value.trim();
-    const id = document.getElementById('newIndo').value.trim();
-    
-    if(!ar || !id) return alert("Mohon isi Arab dan Artinya!");
+  // --- LOGIKA SIMPAN DATA ---
 
+  function saveMahfuzat() {
     db.ref('fitur/mahfuzat').set({
-        arab: ar,
-        indo: id,
-        updatedAt: firebase.database.ServerValue.TIMESTAMP
-    })
-    .then(() => {
-        alert("Alhamdulillah! Berhasil diupdate.");
-    })
-    .catch(err => {
-        alert("Error: " + err.message);
+      arab: document.getElementById('m-arab').value,
+      indo: document.getElementById('m-indo').value
+    }).then(() => alert("Mahfuzat Berhasil Diupdate!"));
+  }
+
+  function saveTahfidz() {
+    const email = document.getElementById('t-santri').value.replace(/\./g, ',');
+    db.ref('tahfidz/' + email).push({
+      surah: document.getElementById('t-surah').value,
+      nilai: document.getElementById('t-nilai').value,
+      tanggal: new Date().toLocaleDateString()
+    }).then(() => alert("Hafalan Berhasil Dicatat!"));
+  }
+
+  function saveBudaya() {
+    db.ref('fitur/budayasekolah').set({
+      judul: document.getElementById('b-judul').value,
+      deskripsi: document.getElementById('b-desc').value,
+      update: new Date().getTime()
+    }).then(() => alert("Budaya Sekolah Berhasil Diupdate!"));
+  }
+
+  function loadPengaduan() {
+    const list = document.getElementById('list-pengaduan');
+    db.ref('pengaduan').on('value', snap => {
+      list.innerHTML = "";
+      snap.forEach(child => {
+        const item = child.val();
+        list.innerHTML += `
+          <div class="report-item">
+            <span class="badge bg-red">LAPORAN</span>
+            <div style="margin-top:8px"><b>Santri:</b> ${item.nama || 'Anonim'}</div>
+            <div><b>Pesan:</b> ${item.pesan}</div>
+            <div style="font-size:10px; color:#999; margin-top:5px;">${new Date(item.waktu).toLocaleString()}</div>
+          </div>
+        `;
+      });
+      if(!snap.exists()) list.innerHTML = "<p>Belum ada pengaduan masuk.</p>";
     });
   }
 </script>
 </body>
-</html>
+  </html>
