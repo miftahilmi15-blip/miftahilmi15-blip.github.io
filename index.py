@@ -1,19 +1,19 @@
 from flask import Flask, render_template_string, request, jsonify
 import google.generativeai as genai
+import os
 
 app = Flask(__name__)
 
 # --- KONFIGURASI GOOGLE GEMINI AI ---
-# Menggunakan API Key Anda
-genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
+API_KEY = "AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4"
+genai.configure(api_key=API_KEY)
 
-# Menggunakan model paling stabil untuk menghindari error 404
-try:
-    model = genai.GenerativeModel('gemini-1.5-flash')
-except:
-    model = genai.GenerativeModel('gemini-pro')
+# Gunakan satu inisialisasi model yang pasti
+# Jalur 'gemini-1.5-flash' biasanya memerlukan library versi terbaru
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 # --- KODE HTML DASHBOARD PRO ---
+# Simpan HTML dalam variabel agar rapi
 HTML_CODE = """
 <!DOCTYPE html>
 <html lang="id">
@@ -57,7 +57,7 @@ HTML_CODE = """
         #ai-box { position: fixed; bottom: 90px; right: 20px; width: 300px; max-height: 400px; background: #fff; border-radius: 16px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); display: none; flex-direction: column; overflow: hidden; z-index: 1200; }
         .chat-content { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; }
         .msg-ai { background: #f1f1f1; padding: 10px; border-radius: 12px 12px 12px 0; margin-bottom: 10px; align-self: flex-start; max-width: 85%; }
-        .msg-user { background: var(--primary); color: #fff; padding: 10px; border-radius: 12px 12px 0 12px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; text-align: right; }
+        .msg-user { background: var(--primary); color: #fff; padding: 10px; border-radius: 12px 12px 0 12px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; }
     </style>
 </head>
 <body>
@@ -127,6 +127,56 @@ HTML_CODE = """
         function login() { auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(e => alert(e.message)); }
         function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
         function logout() { auth.signOut().then(() => location.reload()); }
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('login').classList.add("hidden");
+                document.getElementById('dash').classList.remove("hidden");
+                menuBtn.style.display = aiBtn.style.display = "flex";
+                document.getElementById('uName').innerText = user.displayName || "Santri";
+                document.getElementById('uEmail').innerText = user.email;
+                if (user.photoURL) document.getElementById('uImg').src = user.photoURL;
+            }
+        });
+        async function sendAI() {
+            const input = document.getElementById('aiInput'), chat = document.getElementById('chat'), text = input.value.trim();
+            if (!text) return;
+            chat.innerHTML += `<div class="msg-user">${text}</div>`;
+            input.value = "";
+            const loadId = "load-" + Date.now();
+            chat.innerHTML += `<div class="msg-ai" id="${loadId}">...</div>`;
+            chat.scrollTop = chat.scrollHeight;
+            try {
+                const res = await fetch("/proses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pesan: text }) });
+                const data = await res.json();
+                document.getElementById(loadId).innerText = data.jawaban;
+            } catch { document.getElementById(loadId).innerText = "Error koneksi."; }
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+</html>
+"""
+
+@app.route('/')
+def home():
+    return render_template_string(HTML_CODE)
+
+@app.route('/proses', methods=['POST'])
+def proses():
+    try:
+        data = request.get_json()
+        user_message = data.get('pesan', '')
+        
+        # Panggil AI dengan penanganan error internal
+        response = model.generate_content(f"Jawablah sebagai asisten santri yang ramah: {user_message}")
+        
+        return jsonify({"jawaban": response.text})
+    except Exception as e:
+        # Kembalikan pesan error santun jika AI gagal, tapi server tidak crash
+        return jsonify({"jawaban": f"Afwan, ada gangguan teknis kecil: {str(e)}"})
+
+# Wajib untuk Vercel
+app = appcation.reload()); }
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('login').classList.add("hidden");
@@ -255,6 +305,7 @@ def proses():
 
 # Wajib untuk Vercel
 app = app
+
 
 
 
