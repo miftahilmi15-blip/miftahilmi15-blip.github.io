@@ -26,7 +26,7 @@
   .header-box { text-align: center; padding: 25px 0; }
   .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
 
-  /* SIDEBAR PREMIUM (RAFI DI KANAN) */
+  /* SIDEBAR PREMIUM */
   .menu-trigger { 
     position: fixed; top: 25px; right: 25px; z-index: 1400; 
     background: white; color: var(--primary); width: 48px; height: 48px; 
@@ -78,26 +78,24 @@
   .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
   .menu-item span { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* LOGIN CARD & GOOGLE BUTTON */
+  /* LOGIN CARD */
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
   .btn-google { 
     width: 100%; padding: 14px; border-radius: 16px; border: 1px solid #ddd; 
     background: white; display: flex; align-items: center; justify-content: center; 
     gap: 12px; font-weight: 600; color: #444; cursor: pointer; margin-top: 15px; transition: 0.2s;
   }
-  .btn-google:hover { background: #f8f8f8; }
   .btn-google img { width: 20px; height: 20px; }
 
-  /* CHAT AI MEWAH (GLASSMORPHISM) */
+  /* CHAT AI PREMIUM (FIXED SPACING) */
   #ai-window {
     display: none; position: fixed; bottom: 90px; right: 20px; 
     width: 320px; height: 450px; 
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(15px); 
-    border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+    border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.15); 
     z-index: 2000; flex-direction: column; overflow: hidden;
     border: 1px solid rgba(255,255,255,0.4);
-    transition: 0.3s;
   }
   .ai-header {
     background: var(--primary-grad); color: white; padding: 15px 20px; 
@@ -107,12 +105,28 @@
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
   #chatContent { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-  .msg-user { background: var(--primary-grad); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 80%; font-size: 13px; box-shadow: 0 4px 10px rgba(31,111,81,0.1); }
-  .msg-ai { background: white; color: #444; padding: 10px 15px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; font-size: 13px; border: 1px solid #eee; line-height: 1.5; }
+  .msg-user { background: var(--primary-grad); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 80%; font-size: 13px; }
+  .msg-ai { background: white; color: #444; padding: 10px 15px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; font-size: 13px; border: 1px solid #eee; }
 
-  .ai-input-area { padding: 15px; background: white; border-top: 1px solid #f0f0f0; display: flex; gap: 10px; }
-  .ai-input-area input { flex: 1; border: none; background: #f5f7f6; padding: 10px 15px; border-radius: 12px; outline: none; font-size: 13px; }
-  .btn-send { background: var(--primary); color: white; width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  /* Input area with better padding */
+  .ai-input-area { 
+    padding: 15px 20px 20px 20px; /* Ditambah padding bawah dan samping */
+    background: white; border-top: 1px solid #f0f0f0; 
+    display: flex; gap: 12px; align-items: center;
+  }
+  .ai-input-area input { 
+    flex: 1; border: none; background: #f0f2f1; 
+    padding: 12px 15px; border-radius: 12px; 
+    outline: none; font-size: 13px; color: #333;
+  }
+  .btn-send { 
+    background: var(--primary); color: white; 
+    width: 42px; height: 42px; border-radius: 12px; 
+    border: none; cursor: pointer; 
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.3s;
+  }
+  .btn-send:active { transform: scale(0.9); }
 
   .hidden { display: none !important; }
 </style>
@@ -154,7 +168,7 @@
     <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer;">MASUK</button>
     
     <p style="margin-top: 15px; font-size: 13px; color: #777;">
-      Belum punya akun? <a href="#" onclick="register()" style="color: var(--primary); font-weight: 700; text-decoration: none;">Daftar Sekarang</a>
+      Belum punya akun? <a href="#" onclick="register()" style="color: var(--primary); font-weight: 700; text-decoration: none;">Daftar</a>
     </p>
 
     <div style="margin: 20px 0; color:#ccc; font-size: 11px;">— ATAU —</div>
@@ -181,6 +195,144 @@
     <div class="menu-grid">
       <div class="menu-item" onclick="location.href='alquran.html'"><span class="menu-symbol">📖</span><span>Al-Quran</span></div>
       <div class="menu-item" onclick="location.href='absensi.html'"><span class="menu-symbol">📝</span><span>Absensi</span></div>
+      <div class="menu-item" onclick="location.href='tahfidz.html'"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
+      <div class="menu-item" onclick="location.href='kamus.html'"><span class="menu-symbol">📑</span><span>Kamus</span></div>
+      <div class="menu-item" onclick="location.href='perpustakaan.html'"><span class="menu-symbol">📚</span><span>Perpus</span></div>
+      <div class="menu-item" onclick="location.href='budayasekolah.html'"><span class="menu-symbol">🕌</span><span>Budaya</span></div>
+    </div>
+  </section>
+</main>
+
+<div id="ai-button" onclick="toggleChat()" style="position: fixed; bottom: 25px; right: 25px; background: var(--primary-grad); color: white; width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 25px rgba(31,111,81,0.3); z-index: 1000; display: none;">
+    <i class="fa-solid fa-comment-dots" style="font-size: 24px;"></i>
+</div>
+
+<div id="ai-window">
+    <div class="ai-header">
+        <div class="status-dot"></div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 14px;">Asisten E-Santri</div>
+          <div style="font-size: 10px; opacity: 0.8;">Online | Gemini Pro AI</div>
+        </div>
+        <div onclick="toggleChat()" style="cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div id="chatContent">
+        <div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu hari ini?</div>
+    </div>
+    <div class="ai-input-area">
+        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') kirimKeAI()">
+        <button class="btn-send" onclick="kirimKeAI()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+    authDomain: "e-santri-b62be.firebaseapp.com",
+    projectId: "e-santri-b62be",
+    storageBucket: "e-santri-b62be.firebasestorage.app",
+    messagingSenderId: "6560427635",
+    appId: "1:6560427635:web:368b4fbf95163e8d214406"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  const sb = document.getElementById("sidebar");
+  const mBtn = document.getElementById("menu-btn");
+  const cBtn = document.getElementById("closeBtn");
+  if(mBtn) mBtn.onclick = () => sb.classList.add("open");
+  if(cBtn) cBtn.onclick = () => sb.classList.remove("open");
+
+  function toggleChat() {
+    const win = document.getElementById("ai-window");
+    win.style.display = (win.style.display === "none" || win.style.display === "") ? "flex" : "none";
+  }
+
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => alert("Gagal Login: " + err.message));
+  }
+  function login() { 
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    if(!e || !p) return alert("Email/Password kosong!");
+    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message)); 
+  }
+  function register() {
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    if(!e || !p) return alert("Isi email & password!");
+    auth.createUserWithEmailAndPassword(e, p).then(() => alert("Berhasil! Silakan Login.")).catch(err => alert(err.message));
+  }
+  function logout() { auth.signOut().then(() => location.reload()); }
+
+  auth.onAuthStateChanged(user => {
+    const dash = document.getElementById("dashboard");
+    const loginCard = document.getElementById("login-card");
+    const menuBtn = document.getElementById("menu-btn");
+    const aiBtn = document.getElementById("ai-button");
+    const adminMenu = document.getElementById("admin-menu");
+
+    if(user){
+      dash.classList.remove("hidden");
+      loginCard.classList.add("hidden");
+      menuBtn.style.display = "flex";
+      aiBtn.style.display = "flex";
+      document.getElementById("uName").innerText = user.displayName || "Santri";
+      document.getElementById("uEmail").innerText = user.email;
+      if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+      if (user.email === "miftahilmi15@gmail.com") adminMenu.classList.remove("hidden");
+
+      const lastVisit = localStorage.getItem('last_visit');
+      const today = new Date().toDateString();
+      const fire = document.getElementById('fire-api');
+      if(lastVisit === today) {
+        fire.classList.remove('fire-off');
+        document.getElementById('streak-text').innerText = "Sudah Absen";
+      } else {
+        fire.classList.add('fire-off');
+        document.getElementById('streak-text').innerText = "Hadir Hari Ini";
+        localStorage.setItem('last_visit', today);
+      }
+      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
+      const d = m[new Date().getDate() % m.length];
+      document.getElementById('runArab').innerText = d.ar;
+      document.getElementById('runIndo').innerText = " — " + d.id;
+    } else {
+      loginCard.classList.remove("hidden");
+      dash.classList.add("hidden");
+      menuBtn.style.display = "none";
+      aiBtn.style.display = "none";
+      adminMenu.classList.add("hidden");
+    }
+  });
+
+  async function kirimKeAI() {
+    const input = document.getElementById('aiInput');
+    const box = document.getElementById('chatContent');
+    const text = input.value.trim();
+    if(!text) return;
+    box.innerHTML += `<div class="msg-user">${text}</div>`;
+    input.value = "";
+    const loadingId = "load-" + Date.now();
+    box.innerHTML += `<div class="msg-ai" id="${loadingId}">...</div>`;
+    box.scrollTop = box.scrollHeight;
+    try {
+        const res = await fetch('/proses', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ pesan: text })
+        });
+        const d = await res.json();
+        document.getElementById(loadingId).innerText = d.jawaban;
+    } catch (e) {
+        document.getElementById(loadingId).innerText = "Afwan, asisten sedang rehat.";
+    }
+    box.scrollTop = box.scrollHeight;
+  }
+</script>
+</body>
+</html>ml'"><span class="menu-symbol">📝</span><span>Absensi</span></div>
       <div class="menu-item" onclick="location.href='tahfidz.html'"><span class="menu-symbol">🏆</span><span>Tahfidz</span></div>
       <div class="menu-item" onclick="location.href='kamus.html'"><span class="menu-symbol">📑</span><span>Kamus</span></div>
       <div class="menu-item" onclick="location.href='perpustakaan.html'"><span class="menu-symbol">📚</span><span>Perpus</span></div>
