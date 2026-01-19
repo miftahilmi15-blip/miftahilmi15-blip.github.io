@@ -21,7 +21,6 @@
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-  /* CONTAINER & HEADER */
   .container { width: 100%; max-width: 420px; margin: 0 auto; padding: 20px; }
   .header-box { text-align: center; padding: 25px 0; }
   .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
@@ -89,7 +88,7 @@
 
   .hidden { display: none !important; }
 
-  /* AI CHAT - REVISED SPACING */
+  /* AI CHAT */
   #ai-window {
     display: none; position: fixed; bottom: 90px; right: 20px; 
     width: 300px; height: 420px; background: white; 
@@ -103,9 +102,8 @@
   .msg-user { background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; }
   .msg-ai { background: #f1f1f1; color: #333; padding: 10px 15px; border-radius: 15px 15px 15px 0; margin-bottom: 10px; align-self: flex-start; max-width: 85%; line-height: 1.5; }
 
-  /* INPUT AREA - FIXED PADDING */
   .ai-input-area { 
-    padding: 10px 15px 15px 15px; /* Memberi ruang di bawah dan kanan */
+    padding: 10px 15px 15px 15px; 
     border-top: 1px solid #eee; display: flex; background: white; align-items: center;
   }
   .ai-input-area input { 
@@ -114,13 +112,13 @@
   }
   .btn-send-ai { 
     color: #15803d; font-weight: bold; background: none; border: none; 
-    cursor: pointer; padding: 5px 0 5px 12px; /* Jarak tombol dari input */
-    font-size: 14px;
+    cursor: pointer; padding: 5px 0 5px 12px; font-size: 14px;
   }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -160,14 +158,14 @@
 
   <section id="dashboard" class="hidden">
     <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.8;">Hadir Hari Ini</p><h2 id="streak-text">0 Hari</h2></div>
+      <div><p style="font-size:11px; opacity:0.8;">Status</p><h2 id="streak-text">Menghubungkan...</h2></div>
       <div id="fire-api" class="fire-icon">🔥</div>
     </div>
 
     <div class="mahfuzat-box" onclick="location.href='mahfuzat.html'">
       <div class="m-label">MAHFUZAT</div>
       <marquee scrollamount="4" style="color:#555; font-weight:600;">
-        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;"></span>
+        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;">Memuat hikmah...</span>
         <span id="runIndo" style="margin-left:15px;"></span>
       </marquee>
     </div>
@@ -188,13 +186,8 @@
 </div>
 
 <div id="ai-window">
-    <div class="ai-header">
-        Asisten E-Santri
-        <span class="close-ai" onclick="toggleChat()">✕</span>
-    </div>
-    <div id="chatContent">
-        <div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu?</div>
-    </div>
+    <div class="ai-header">Asisten E-Santri <span class="close-ai" onclick="toggleChat()">✕</span></div>
+    <div id="chatContent"><div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu?</div></div>
     <div class="ai-input-area">
         <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') kirimKeAI()">
         <button onclick="kirimKeAI()" class="btn-send-ai">Kirim</button>
@@ -208,10 +201,12 @@
     projectId: "e-santri-b62be",
     storageBucket: "e-santri-b62be.firebasestorage.app",
     messagingSenderId: "6560427635",
-    appId: "1:6560427635:web:368b4fbf95163e8d214406"
+    appId: "1:6560427635:web:368b4fbf95163e8d214406",
+    databaseURL: "https://e-santri-b62be-default-rtdb.firebaseio.com"
   };
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
+  const db = firebase.database();
 
   function toggleChat() {
     const win = document.getElementById("ai-window");
@@ -242,6 +237,15 @@
       if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
       if (user.email === "miftahilmi15@gmail.com") adminMenu.classList.remove("hidden");
 
+      // REALTIME MAHFUZAT LISTENER
+      db.ref('fitur/mahfuzat').on('value', (snapshot) => {
+          const data = snapshot.val();
+          if(data) {
+              document.getElementById('runArab').innerText = data.arab;
+              document.getElementById('runIndo').innerText = " — " + data.indo;
+          }
+      });
+
       const today = new Date().toDateString();
       const fire = document.getElementById('fire-api');
       if(localStorage.getItem('last_visit') === today) {
@@ -249,13 +253,9 @@
         document.getElementById('streak-text').innerText = "Sudah Absen";
       } else {
         fire.classList.add('fire-off');
+        document.getElementById('streak-text').innerText = "Belum Absen";
         localStorage.setItem('last_visit', today);
       }
-
-      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
-      const d = m[new Date().getDate() % m.length];
-      document.getElementById('runArab').innerText = d.ar;
-      document.getElementById('runIndo').innerText = " — " + d.id;
     } else {
       loginCard.classList.remove("hidden");
       dash.classList.add("hidden");
