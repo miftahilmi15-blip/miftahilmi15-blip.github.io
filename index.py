@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Konfigurasi Client AI Terbaru
-client = genai.Client(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
+client = genai.Client(api_key="AIzaSyA2XKM64g3ouFO7sLU1VPTehgnvPrlQ5s8")
 
 @app.route('/proses', methods=['POST'])
 def proses():
@@ -30,3 +30,4 @@ def home():
     return "Server AI E-Santri Aktif"
 
 app = app
+
