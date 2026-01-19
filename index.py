@@ -3,11 +3,12 @@ import google.generativeai as genai
 
 app = Flask(__name__)
 
-# Konfigurasi Google Gemini AI
+# API Key
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
-model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Gabungan HTML Dashboard + AI Chat
+# Gunakan gemini-pro agar stabil dan tidak error 404
+model = genai.GenerativeModel('gemini-pro')
+
 HTML_CODE = """
 <!DOCTYPE html>
 <html lang="id">
@@ -25,19 +26,14 @@ HTML_CODE = """
         .container { max-width: 420px; margin: auto; padding: 20px; min-height: 100vh; }
         .header { text-align: center; padding: 25px 0; }
         .header h1 { font-family: 'Montserrat', sans-serif; font-size: 32px; color: var(--primary); margin: 0; }
-        
-        /* Dashboard & Cards */
         .card { background: #fff; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         input { width: 100%; padding: 15px; border-radius: 14px; border: 1px solid #eee; margin-bottom: 14px; outline: none; }
         .btn { width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--grad); color: #fff; font-weight: 700; cursor: pointer; }
-        
         .streak { background: var(--grad); border-radius: 24px; padding: 20px; color: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
         .menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .item { background: #fff; border-radius: 20px; padding: 15px 5px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); cursor: pointer; }
         .item i { font-size: 22px; color: var(--primary); margin-bottom: 8px; display: block; }
         .item span { font-size: 10px; font-weight: 700; }
-
-        /* AI Floating Chat */
         #ai-btn { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; background: #15803d; color: #fff; display: none; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.2); z-index: 1000; }
         #ai-box { position: fixed; bottom: 95px; right: 20px; width: 320px; height: 450px; background: #fff; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); display: none; flex-direction: column; overflow: hidden; z-index: 1000; border: 1px solid #eee; }
         .chat-header { background: #15803d; color: #fff; padding: 15px; text-align: center; font-weight: bold; }
@@ -52,13 +48,11 @@ HTML_CODE = """
 <body>
     <main class="container">
         <div class="header"><h1>E-SANTRI</h1></div>
-
         <section id="login" class="card">
             <input id="email" type="email" placeholder="Email Santri">
             <input id="password" type="password" placeholder="Password">
             <button class="btn" onclick="login()">MASUK</button>
         </section>
-
         <section id="dash" class="hidden">
             <div class="streak">
                 <div><small>Status Absensi</small><h2 id="streakText" style="margin:0">Ketuk Absensi</h2></div>
@@ -74,22 +68,19 @@ HTML_CODE = """
             </div>
         </section>
     </main>
-
     <div id="ai-btn" onclick="toggleAI()">🌙</div>
     <div id="ai-box">
         <div class="chat-header">Asisten E-Santri</div>
         <div id="chat" class="chat-content">
-            <div class="msg msg-ai">Assalamu’alaikum! Ada yang bisa saya bantu terkait pelajaran atau kehidupan di pesantren? 😊</div>
+            <div class="msg msg-ai">Assalamu’alaikum! Ada yang bisa saya bantu? 😊</div>
         </div>
         <div class="chat-input">
             <input id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') sendAI()">
             <button onclick="sendAI()" style="border:none;background:none;color:#15803d;font-weight:bold;cursor:pointer">Kirim</button>
         </div>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
@@ -98,13 +89,11 @@ HTML_CODE = """
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-
         function login() {
             const e = document.getElementById('email').value;
             const p = document.getElementById('password').value;
             auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
         }
-
         auth.onAuthStateChanged(user => {
             if(user) {
                 document.getElementById('login').classList.add('hidden');
@@ -112,25 +101,20 @@ HTML_CODE = """
                 document.getElementById('ai-btn').style.display = 'flex';
             }
         });
-
         function toggleAI() {
             const box = document.getElementById('ai-box');
             box.style.display = (box.style.display === 'flex') ? 'none' : 'flex';
         }
-
         async function sendAI() {
             const input = document.getElementById('aiInput');
             const chat = document.getElementById('chat');
             const val = input.value.trim();
             if(!val) return;
-
             chat.innerHTML += `<div class="msg msg-user">${val}</div>`;
             input.value = "";
             chat.scrollTop = chat.scrollHeight;
-
             const loadId = "load-" + Date.now();
             chat.innerHTML += `<div class="msg msg-ai" id="${loadId}">Sedang mengetik...</div>`;
-
             try {
                 const res = await fetch('/proses', {
                     method: 'POST',
@@ -158,9 +142,11 @@ def proses():
     try:
         data = request.get_json()
         p = data.get('pesan', '')
-        r = model.generate_content(f"Berperanlah sebagai asisten santri yang ramah. Jawab pertanyaan ini: {p}")
-        return jsonify({"jawaban": r.text})
+        # Pastikan prompt dikirim dengan benar ke Gemini
+        response = model.generate_content(f"Berperanlah sebagai asisten santri yang ramah. Jawab: {p}")
+        return jsonify({"jawaban": response.text})
     except Exception as e:
-        return jsonify({"jawaban": f"Error: {str(e)}"})
+        return jsonify({"jawaban": f"Error AI: {str(e)}"})
 
+# Baris ini wajib ada untuk Vercel
 app = app
