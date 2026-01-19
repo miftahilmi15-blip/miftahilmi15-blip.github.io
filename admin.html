@@ -7,38 +7,31 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
-  :root {
-    --primary: #1f6f51;
-    --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71);
-    --bg: #f4f7f6;
-  }
+  :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
   body { background: var(--bg); color: #2d3436; }
   
-  /* SIDEBAR KIRI (DESKTOP) / TOP NAV (MOBILE) */
-  .admin-wrapper { display: flex; min-height: 100vh; flex-direction: column; }
-  
-  .sidebar { background: white; padding: 20px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
-  .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.3s; color: #666; }
+  /* Navigasi Atas */
+  .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
+  .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 12px; transition: 0.3s; color: #666; }
   .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
 
   .content { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
-  .card { background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; animation: fadeIn 0.4s ease; }
+  .card { background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
   
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  h2 { font-family: 'Montserrat'; font-size: 18px; margin-bottom: 15px; color: var(--primary); text-align: center; }
+  h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; }
 
-  h2 { font-family: 'Montserrat'; font-size: 20px; margin-bottom: 20px; color: var(--primary); text-align: center; }
-  h3 { font-size: 15px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; }
-
-  label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; text-transform: uppercase; }
-  input, textarea, select { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 14px; }
+  label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; }
+  input, textarea, select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 14px; }
   
-  .btn-action { width: 100%; padding: 16px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+  .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; }
   
-  /* TABLE STYLE UNTUK PENGADUAN */
-  .report-item { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 10px; font-size: 13px; }
-  .badge { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; color: white; }
-  .bg-red { background: #e74c3c; }
+  /* List Styling */
+  .item-row { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+  .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
+  .status-sudah { border-left: 5px solid #2ecc71; }
+  .status-belum { border-left: 5px solid #e74c3c; }
   .hidden { display: none !important; }
 </style>
 
@@ -48,19 +41,16 @@
 </head>
 <body>
 
-<div class="admin-wrapper">
-  <div class="sidebar">
-    <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)"><i class="fa-solid fa-quote-left"></i> Mahfuzat</button>
-    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)"><i class="fa-solid fa-star"></i> Input Tahfidz</button>
-    <button class="nav-btn" onclick="showTab('tab-budaya', this)"><i class="fa-solid fa-mosque"></i> Budaya</button>
-    <button class="nav-btn" onclick="showTab('tab-pengaduan', this)"><i class="fa-solid fa-bell"></i> Pengaduan</button>
-  </div>
+<div class="sidebar">
+    <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)">Mahfuzat</button>
+    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Input Tahfidz</button>
+    <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Monitoring Budaya</button>
+    <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
+</div>
 
-  <div class="content">
-    <h2 id="title-page">Manajemen Santri</h2>
-
+<div class="content">
     <div id="tab-mahfuzat" class="tab-content card">
-      <h3>Edit Mahfuzat Hari Ini</h3>
+      <h3>Edit Teks Berjalan</h3>
       <label>Teks Arab</label>
       <input type="text" id="m-arab" placeholder="Ketik Arab..." style="text-align: right; font-size: 18px;">
       <label>Terjemahan</label>
@@ -69,39 +59,34 @@
     </div>
 
     <div id="tab-tahfidz" class="tab-content card hidden">
-      <h3>Input Setoran Hafalan</h3>
-      <label>Nama Santri / Email</label>
-      <input type="text" id="t-santri" placeholder="email@gmail.com">
+      <h3>Input Hafalan Santri</h3>
+      <label>Email Santri (Tanpa titik, contoh: miftah_at_gmail_com)</label>
+      <input type="text" id="t-santri" placeholder="contoh: miftahilmi_gmail_com">
       <label>Surah & Ayat</label>
-      <input type="text" id="t-surah" placeholder="Contoh: Al-Baqarah 1-10">
-      <label>Predikat</label>
+      <input type="text" id="t-surah" placeholder="Al-Baqarah 1-10">
+      <label>Nilai</label>
       <select id="t-nilai">
-        <option value="Mumtaz">Mumtaz (Sempurna)</option>
-        <option value="Jayyid Jiddan">Jayyid Jiddan (Sangat Baik)</option>
-        <option value="Jayyid">Jayyid (Baik)</option>
+        <option value="Mumtaz">Mumtaz</option>
+        <option value="Jayyid Jiddan">Jayyid Jiddan</option>
+        <option value="Jayyid">Jayyid</option>
       </select>
       <button class="btn-action" onclick="saveTahfidz()">SIMPAN HAFALAN</button>
     </div>
 
-    <div id="tab-budaya" class="tab-content card hidden">
-      <h3>Kontrol Budaya Sekolah</h3>
-      <label>Judul Kegiatan</label>
-      <input type="text" id="b-judul" placeholder="Contoh: Sholat Dhuha Berjamaah">
-      <label>Deskripsi/Tugas</label>
-      <textarea id="b-desc" rows="3" placeholder="Apa yang harus santri lakukan?"></textarea>
-      <button class="btn-action" onclick="saveBudaya()">UPDATE TUGAS BUDAYA</button>
+    <div id="tab-monitoring" class="tab-content hidden">
+      <div class="card">
+        <h3>Status Budaya Sekolah Hari Ini</h3>
+        <p style="font-size: 11px; color: #888; margin-bottom: 10px;">*Data ditarik dari folder users dan laporan_budaya</p>
+        <div id="list-monitoring">Memuat data...</div>
+      </div>
     </div>
 
     <div id="tab-pengaduan" class="tab-content hidden">
       <div class="card">
-        <h3>Laporan Masuk Santri</h3>
-        <div id="list-pengaduan">
-          <p style="text-align: center; color: #999; font-size: 12px;">Memuat data laporan...</p>
-        </div>
+        <h3>Laporan Santri</h3>
+        <div id="list-pengaduan">Memuat...</div>
       </div>
     </div>
-
-  </div>
 </div>
 
 <script>
@@ -134,33 +119,48 @@
     document.getElementById(tabId).classList.remove('hidden');
     btn.classList.add('active');
     
+    if(tabId === 'tab-monitoring') loadMonitoring();
     if(tabId === 'tab-pengaduan') loadPengaduan();
   }
 
-  // --- LOGIKA SIMPAN DATA ---
+  // --- LOGIKA DATA ---
 
   function saveMahfuzat() {
     db.ref('fitur/mahfuzat').set({
       arab: document.getElementById('m-arab').value,
       indo: document.getElementById('m-indo').value
-    }).then(() => alert("Mahfuzat Berhasil Diupdate!"));
+    }).then(() => alert("Berhasil Update Mahfuzat!"));
   }
 
   function saveTahfidz() {
-    const email = document.getElementById('t-santri').value.replace(/\./g, ',');
-    db.ref('tahfidz/' + email).push({
+    const sId = document.getElementById('t-santri').value;
+    db.ref('tahfidz/' + sId).push({
       surah: document.getElementById('t-surah').value,
       nilai: document.getElementById('t-nilai').value,
       tanggal: new Date().toLocaleDateString()
-    }).then(() => alert("Hafalan Berhasil Dicatat!"));
+    }).then(() => alert("Data Tahfidz Tersimpan!"));
   }
 
-  function saveBudaya() {
-    db.ref('fitur/budayasekolah').set({
-      judul: document.getElementById('b-judul').value,
-      deskripsi: document.getElementById('b-desc').value,
-      update: new Date().getTime()
-    }).then(() => alert("Budaya Sekolah Berhasil Diupdate!"));
+  function loadMonitoring() {
+    const list = document.getElementById('list-monitoring');
+    const hariIni = new Date().toISOString().split('T')[0];
+    
+    db.ref('users').once('value', (uSnap) => {
+      db.ref('laporan_budaya/' + hariIni).once('value', (lSnap) => {
+        const laporan = lSnap.val() || {};
+        list.innerHTML = "";
+        uSnap.forEach(u => {
+          const user = u.val();
+          const uid = u.key;
+          const sudah = laporan[uid];
+          list.innerHTML += `
+            <div class="item-row ${sudah ? 'status-sudah' : 'status-belum'}">
+              <div><b>${user.name || 'Santri'}</b><br><small>${user.email}</small></div>
+              <span class="badge" style="background:${sudah ? '#2ecc71' : '#e74c3c'}">${sudah ? 'SUDAH' : 'BELUM'}</span>
+            </div>`;
+        });
+      });
+    });
   }
 
   function loadPengaduan() {
@@ -168,19 +168,17 @@
     db.ref('pengaduan').on('value', snap => {
       list.innerHTML = "";
       snap.forEach(child => {
-        const item = child.val();
+        const data = child.val();
         list.innerHTML += `
-          <div class="report-item">
-            <span class="badge bg-red">LAPORAN</span>
-            <div style="margin-top:8px"><b>Santri:</b> ${item.nama || 'Anonim'}</div>
-            <div><b>Pesan:</b> ${item.pesan}</div>
-            <div style="font-size:10px; color:#999; margin-top:5px;">${new Date(item.waktu).toLocaleString()}</div>
-          </div>
-        `;
+          <div class="item-row" style="flex-direction:column; align-items:flex-start;">
+            <div style="width:100%; display:flex; justify-content:space-between;">
+              <b>${data.nama}</b> <span class="badge" style="background:#f39c12">LAPORAN</span>
+            </div>
+            <p style="margin-top:5px;">${data.pesan}</p>
+          </div>`;
       });
-      if(!snap.exists()) list.innerHTML = "<p>Belum ada pengaduan masuk.</p>";
     });
   }
 </script>
 </body>
-  </html>
+</html>
