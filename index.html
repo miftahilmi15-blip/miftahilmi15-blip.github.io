@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Pro v16</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>E-Santri | Final</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -16,180 +16,217 @@
   --primary:#1f6f51;
   --primary-grad:linear-gradient(135deg,#1f6f51,#2ecc71);
   --bg:#f8faf9;
-  --text:#2d3436;
   --shadow:0 10px 30px rgba(31,111,81,.1);
 }
+
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
-body{background:var(--bg);color:var(--text);min-height:100vh}
+body{background:var(--bg);min-height:100vh}
 
+/* ===== HEADER ===== */
 .container{max-width:420px;margin:auto;padding:20px}
-.header-box{text-align:center;padding:25px 0}
-.title{font-family:Montserrat;font-size:32px;font-weight:900;color:var(--primary)}
+.title{text-align:center;font-size:32px;font-weight:900;color:var(--primary);margin:20px 0}
 
+/* ===== MENU BUTTON ===== */
 .menu-trigger{
-  position:fixed;top:25px;right:25px;z-index:1400;
-  width:48px;height:48px;background:#fff;border-radius:14px;
+  position:fixed;top:20px;right:20px;
+  width:46px;height:46px;
+  background:#fff;border-radius:14px;
   display:none;align-items:center;justify-content:center;
-  box-shadow:var(--shadow);cursor:pointer
+  box-shadow:var(--shadow);z-index:2000;cursor:pointer
 }
 
+/* ===== SIDEBAR ===== */
 .sidebar{
-  position:fixed;top:0;right:-100%;width:100%;height:100%;
-  background:rgba(255,255,255,.98);z-index:2000;
-  transition:.4s;display:flex;flex-direction:column;
-  align-items:center;justify-content:center
+  position:fixed;top:0;right:-100%;
+  width:100%;height:100%;
+  background:#fff;z-index:3000;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  transition:.4s;
+  pointer-events:none;
 }
-.sidebar.open{right:0}
-.close-sidebar{position:absolute;top:30px;right:30px;font-size:30px;color:#ccc;cursor:pointer}
+.sidebar.open{right:0;pointer-events:auto}
 
-.card-login{
-  background:#fff;padding:40px 30px;border-radius:35px;
-  box-shadow:var(--shadow);text-align:center;
-  position:relative;z-index:9999;isolation:isolate
+.sidebar a{
+  margin:10px 0;padding:14px 20px;
+  border-radius:18px;background:#f8faf9;
+  text-decoration:none;color:#333;font-weight:600;
 }
+
+/* ===== LOGIN ===== */
+.card-login{
+  background:#fff;padding:35px;border-radius:30px;
+  box-shadow:var(--shadow);text-align:center
+}
+input{width:100%;padding:14px;margin-bottom:12px;border-radius:12px;border:1px solid #eee}
+button{cursor:pointer}
 
 .btn-google{
-  width:100%;padding:14px;border-radius:16px;
-  border:1.5px solid #eee;background:#fff;
-  display:flex;gap:12px;justify-content:center;
-  font-weight:700;cursor:pointer;
-  position:relative;z-index:10000
+  display:flex;align-items:center;justify-content:center;
+  gap:12px;padding:14px;border-radius:14px;
+  border:1px solid #eee;background:#fff;font-weight:600
 }
 .btn-google img{width:22px}
 
-.hidden{display:none!important}
+/* ===== DASHBOARD ===== */
+#dashboard{position:relative;z-index:10}
 
 .streak-card{
   background:var(--primary-grad);color:#fff;
-  border-radius:24px;padding:20px;
+  border-radius:22px;padding:20px;
   display:flex;justify-content:space-between;
   margin-bottom:20px
 }
 
 .mahfuzat-box{
-  background:#fff;padding:15px 20px;
-  border-radius:50px;margin-bottom:25px;
+  background:#fff;padding:14px 18px;border-radius:40px;
   display:flex;align-items:center;
-  box-shadow:var(--shadow)
+  box-shadow:var(--shadow);margin-bottom:25px
 }
-.m-label{background:#d4b96a;color:#fff;font-size:9px;
-  font-weight:800;padding:5px 12px;border-radius:50px;margin-right:12px}
-
+.m-label{
+  background:#d4b96a;color:#fff;
+  font-size:10px;font-weight:700;
+  padding:5px 12px;border-radius:20px;margin-right:10px
+}
 .mahfuzat-track{overflow:hidden;white-space:nowrap;flex:1}
-.mahfuzat-track span{
+.mahfuzat-text{
   display:inline-block;
-  animation:scroll 15s linear infinite;
-  padding-right:40px
+  padding-left:100%;
+  animation:scroll 18s linear infinite;
 }
+.mahfuzat-ar{font-family:'Noto Naskh Arabic';font-size:18px;color:var(--primary)}
+.mahfuzat-id{margin-left:14px;color:#555}
+
 @keyframes scroll{
-  0%{transform:translateX(100%)}
+  0%{transform:translateX(0)}
   100%{transform:translateX(-100%)}
 }
 
-.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+/* ===== MENU GRID ===== */
+.menu-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:15px;position:relative;z-index:20
+}
 .menu-item{
-  background:#fff;padding:22px 10px;border-radius:24px;
-  text-align:center;box-shadow:var(--shadow)
+  background:#fff;border-radius:22px;
+  padding:22px 10px;text-align:center;
+  box-shadow:var(--shadow);
+  cursor:pointer;user-select:none
 }
 
-#ai-button{
+/* ===== AI ===== */
+#ai-btn{
   position:fixed;bottom:20px;right:20px;
   width:60px;height:60px;border-radius:50%;
   background:#15803d;color:#fff;
   display:none;align-items:center;justify-content:center;
-  z-index:1000;cursor:pointer
+  z-index:1500
 }
 #ai-window{
-  display:none;position:fixed;bottom:90px;right:20px;
-  width:300px;height:400px;background:#fff;
-  border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,.3);
-  z-index:1000;flex-direction:column
+  position:fixed;bottom:90px;right:20px;
+  width:300px;height:380px;background:#fff;
+  border-radius:16px;box-shadow:var(--shadow);
+  display:none;flex-direction:column;
+  z-index:1600;pointer-events:none
 }
+#ai-window.show{display:flex;pointer-events:auto}
+
+.hidden{display:none!important}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
+
 <body>
 
-<div class="menu-trigger" id="menuBtn"><i class="fa fa-bars"></i></div>
+<div id="menuBtn" class="menu-trigger"><i class="fa fa-ellipsis-v"></i></div>
 
-<main class="container">
-<header class="header-box"><h1 class="title">E-SANTRI</h1></header>
-
-<div id="loginCard" class="card-login hidden">
-  <input id="email" placeholder="Email" style="width:100%;padding:15px;margin-bottom:10px">
-  <input id="password" type="password" placeholder="Password" style="width:100%;padding:15px">
-  <button id="loginBtn" style="width:100%;margin-top:15px;padding:16px;background:var(--primary-grad);color:#fff;border:none;border-radius:16px">MASUK</button>
-  <div style="margin:20px 0;color:#ccc">— ATAU —</div>
-  <button type="button" class="btn-google" id="googleBtn">
-    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg">
-    Masuk dengan Google
-  </button>
+<div id="sidebar" class="sidebar">
+  <a href="#">Dashboard</a>
+  <a href="#">Waktu Sholat</a>
+  <a href="#">Kalender</a>
+  <a href="#" onclick="logout()" style="color:red">Keluar</a>
 </div>
 
-<section id="dashboard" class="hidden">
-  <div class="streak-card">
-    <div><small>Hadir Hari Ini</small><h2>0 Hari</h2></div>
-    <div>🔥</div>
+<div class="container">
+  <div class="title">E-SANTRI</div>
+
+  <div id="loginCard" class="card-login hidden">
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()" style="width:100%;padding:14px;border:none;border-radius:14px;background:var(--primary-grad);color:#fff">MASUK</button>
+    <div style="margin:15px 0;color:#ccc">— ATAU —</div>
+    <button class="btn-google" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg"> Login Google
+    </button>
   </div>
 
-  <div class="mahfuzat-box">
-    <div class="m-label">MAHFUZAT</div>
-    <div class="mahfuzat-track">
-      <span id="runArab"></span>
-      <span id="runIndo"></span>
+  <section id="dashboard" class="hidden">
+    <div class="streak-card">
+      <div><small>Hadir Hari Ini</small><h2>Aktif</h2></div>
+      <div style="font-size:34px">🔥</div>
     </div>
-  </div>
 
-  <div class="menu-grid">
-    <div class="menu-item">📖<br>Al-Qur'an</div>
-    <div class="menu-item">📝<br>Absensi</div>
-    <div class="menu-item">🏆<br>Tahfidz</div>
-    <div class="menu-item">📚<br>Perpus</div>
-    <div class="menu-item">📑<br>Kamus</div>
-    <div class="menu-item">🕌<br>Budaya</div>
-  </div>
-</section>
-</main>
+    <div class="mahfuzat-box">
+      <div class="m-label">MAHFUZAT</div>
+      <div class="mahfuzat-track">
+        <div id="mahfuzatText" class="mahfuzat-text"></div>
+      </div>
+    </div>
 
-<div id="ai-button">🌙</div>
+    <div class="menu-grid">
+      <div class="menu-item">📖<br>Al-Qur’an</div>
+      <div class="menu-item">📝<br>Absensi</div>
+      <div class="menu-item">🏆<br>Tahfidz</div>
+      <div class="menu-item">📚<br>Perpus</div>
+      <div class="menu-item">📑<br>Kamus</div>
+      <div class="menu-item">🕌<br>Budaya</div>
+    </div>
+  </section>
+</div>
+
+<div id="ai-btn" onclick="toggleAI()">🌙</div>
 <div id="ai-window"></div>
 
 <script>
-const firebaseConfig={
+firebase.initializeApp({
   apiKey:"AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
   authDomain:"e-santri-b62be.firebaseapp.com",
-  projectId:"e-santri-b62be",
-  appId:"1:6560427635:web:368b4fbf95163e8d214406"
-};
-firebase.initializeApp(firebaseConfig);
+  projectId:"e-santri-b62be"
+});
 const auth=firebase.auth();
 
-const loginCard=document.getElementById("loginCard");
-const dashboard=document.getElementById("dashboard");
-const googleBtn=document.getElementById("googleBtn");
-const loginBtn=document.getElementById("loginBtn");
-const aiBtn=document.getElementById("ai-button");
+const menuBtn=document.getElementById("menuBtn");
+const sidebar=document.getElementById("sidebar");
+menuBtn.onclick=()=>sidebar.classList.toggle("open");
 
-googleBtn.onclick=()=>auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
-loginBtn.onclick=()=>auth.signInWithEmailAndPassword(email.value,password.value);
+function login(){auth.signInWithEmailAndPassword(email.value,password.value)}
+function loginGoogle(){auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())}
+function logout(){auth.signOut()}
 
 auth.onAuthStateChanged(u=>{
   if(u){
     dashboard.classList.remove("hidden");
     loginCard.classList.add("hidden");
+    menuBtn.style.display="flex";
     aiBtn.style.display="flex";
-    runArab.innerText="مَنْ جَدَّ وَجَدَ";
-    runIndo.innerText=" — Siapa bersungguh-sungguh, dapat";
   }else{
     loginCard.classList.remove("hidden");
   }
 });
 
+const m={ar:"مَنْ جَدَّ وَجَدَ",id:"Siapa bersungguh-sungguh akan berhasil"};
+mahfuzatText.innerHTML=`<span class="mahfuzat-ar">${m.ar}</span><span class="mahfuzat-id">— ${m.id}</span>`;
+
+function toggleAI(){
+  document.getElementById("ai-window").classList.toggle("show");
+}
+
 if("serviceWorker"in navigator){
   navigator.serviceWorker.register("sw.js");
 }
 </script>
+
 </body>
 </html>
