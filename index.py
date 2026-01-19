@@ -8,15 +8,8 @@ genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 
 # GANTI BAGIAN KONFIGURASI MODEL DENGAN INI:
 try:
-    # Model terbaru dan paling didukung saat ini
-    model = genai.GenerativeModel('gemini-1.5-flash-latest')
-except Exception:
-    try:
-        # Jika gagal, coba versi pro tanpa prefix 'models/'
-        model = genai.GenerativeModel('gemini-pro')
-    except Exception:
-        # Pilihan terakhir jika semua gagal
-        model = genai.GenerativeModel('gemini-1.5-pro')
+# GANTI BAGIAN MODEL DENGAN INI
+model = genai.GenerativeModel('gemini-1.0-pro')
 
 HTML_CODE = """
 <!DOCTYPE html>
@@ -159,4 +152,5 @@ def proses():
 
 # Baris ini wajib ada untuk Vercel
 app = app
+
 
