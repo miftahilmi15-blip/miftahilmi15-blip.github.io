@@ -278,3 +278,4 @@ def proses():
 
 # Wajib untuk Vercel
 app = app
+
