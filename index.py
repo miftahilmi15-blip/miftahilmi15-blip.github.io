@@ -1,12 +1,14 @@
 from flask import Flask, render_template_string, request, jsonify
-from google import genai
+import google.generativeai as genai
+import os
 
 app = Flask(__name__)
 
-# --- CONFIG AI (Versi Terbaru) ---
-client = genai.Client(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
+# --- CONFIG AI ---
+genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
+model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Gunakan r''' agar simbol { } di CSS/JS Kakak tidak merusak Python
+# Gunakan r''' agar simbol { } di CSS/JS tidak bentrok dengan f-string Python
 HTML_CODE = r'''
 <!doctype html>
 <html lang="id">
@@ -20,23 +22,23 @@ def home():
 @app.route('/proses', methods=['POST'])
 def proses():
     try:
-        # Mengambil data dengan lebih aman
-        data = request.get_json(silent=True) or {}
-        pesan_user = data.get('pesan', '')
-
-        if not pesan_user:
-            return jsonify({"jawaban": "Pesan kosong, silakan ketik sesuatu."})
-
-        # Panggil AI Gemini
-        response = client.models.generate_content(
-            model="gemini-1.5-flash",
-            contents=f"Jawablah sebagai asisten santri yang ramah: {pesan_user}"
-        )
+        # Cek apakah data masuk
+        data = request.get_json(silent=True)
+        if not data or 'pesan' not in data:
+            return jsonify({"jawaban": "Gagal menerima pesan. Pastikan format JSON benar."}), 400
+            
+        pesan_user = data.get('pesan')
         
-        return jsonify({"jawaban": response.text})
+        # Panggil AI Gemini
+        response = model.generate_content(pesan_user)
+        
+        if response and response.text:
+            return jsonify({"jawaban": response.text})
+        else:
+            return jsonify({"jawaban": "AI memberikan respon kosong."})
 
     except Exception as e:
-        # Jika error, tampilkan detailnya agar kita bisa perbaiki lagi
-        return jsonify({"jawaban": f"Afwan, sistem sedang sinkronisasi. (Detail: {str(e)})"})
+        # Menampilkan pesan error asli agar mudah diperbaiki
+        return jsonify({"jawaban": f"Sistem Sibuk (Detail Error: {str(e)})"}), 500
 
 app = app
