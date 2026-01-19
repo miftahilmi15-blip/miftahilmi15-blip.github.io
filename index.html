@@ -2,258 +2,186 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>E-Santri Pro</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>E-Santri | Pro</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Naskh+Arabic:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#166534">
 
 <style>
-*{box-sizing:border-box;font-family:Poppins;margin:0;padding:0}
-body{background:#f8faf9;color:#111}
-
-header{
-  background:#166534;
-  color:#fff;
-  padding:14px 16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+:root{
+ --primary:#1f6f51;
+ --grad:linear-gradient(135deg,#1f6f51,#2ecc71);
+ --bg:#f8faf9;
+ --shadow:0 10px 30px rgba(31,111,81,.12);
 }
+*{box-sizing:border-box;font-family:Poppins;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:#2d3436}
 
-header h1{font-size:20px}
-header button{background:none;border:none;color:#fff;font-size:22px}
+.hidden{display:none!important}
 
-.container{padding:16px;max-width:420px;margin:auto}
+/* HEADER */
+.container{max-width:420px;margin:auto;padding:20px}
+.header{text-align:center;padding:25px 0}
+.header h1{font-family:Montserrat;font-size:32px;font-weight:900;color:var(--primary)}
 
-.card{
-  background:#fff;
-  padding:16px;
-  border-radius:14px;
-  margin-bottom:16px;
-  box-shadow:0 6px 18px rgba(0,0,0,.08)
-}
-
-button{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  background:#166534;
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.btn-google{
-  background:#fff;
-  color:#444;
-  border:1px solid #ddd;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-}
-
-.btn-google img{width:20px}
-
-.menu-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-}
-
-.menu-item{
-  background:#f1f5f3;
-  padding:14px;
-  border-radius:12px;
-  text-align:center;
-  cursor:pointer;
-}
-
-.menu-item i{font-size:22px;margin-bottom:6px}
-
-.mah-box{
-  overflow:hidden;
-  background:#fff;
-  border-radius:12px;
-  padding:12px;
-}
-
-.mah-move{
-  animation:marquee 18s linear infinite;
-}
-
-.mah-ar{
-  font-family:"Noto Naskh Arabic";
-  direction:rtl;
-  font-size:20px;
-}
-
-.mah-id{
-  font-size:14px;
-  color:#555;
-}
-
-@keyframes marquee{
-  0%{transform:translateX(100%)}
-  100%{transform:translateX(-100%)}
+/* MENU BUTTON */
+.menu-btn{
+ position:fixed;top:22px;right:22px;z-index:2100;
+ width:48px;height:48px;border-radius:14px;
+ background:#fff;color:var(--primary);
+ display:none;align-items:center;justify-content:center;
+ box-shadow:var(--shadow);cursor:pointer
 }
 
 /* SIDEBAR */
-#sidebar{
-  position:fixed;
-  inset:0;
-  background:#fff;
-  transform:translateX(100%);
-  transition:.3s;
-  z-index:1000;
-  padding:20px;
+.sidebar{
+ position:fixed;inset:0;background:rgba(255,255,255,.98);
+ z-index:2000;transform:translateX(100%);
+ transition:.4s ease;display:flex;
+ flex-direction:column;align-items:center;justify-content:center
 }
-
-#sidebar.active{transform:translateX(0)}
-
-#overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:none;
-  z-index:900;
-}
-
-#overlay.active{display:block}
-
-.profile{
-  text-align:center;
-  margin-bottom:20px;
-}
-
-.profile img{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-}
-
+.sidebar.open{transform:none}
+.close{position:absolute;top:25px;right:25px;font-size:28px;cursor:pointer;color:#aaa}
+.profile{text-align:center;margin-bottom:35px}
+.profile img{width:90px;height:90px;border-radius:25px;box-shadow:var(--shadow)}
+.nav{width:100%;max-width:280px;display:flex;flex-direction:column;gap:14px}
 .nav a{
-  display:block;
-  padding:14px;
-  border-bottom:1px solid #eee;
-  color:#166534;
-  text-decoration:none;
-  font-weight:600;
+ padding:15px;border-radius:18px;text-decoration:none;
+ background:#fff;color:#333;font-weight:600;
+ display:flex;gap:10px;align-items:center;justify-content:center;
+ box-shadow:0 4px 10px rgba(0,0,0,.04)
 }
+
+/* LOGIN */
+.card{background:#fff;padding:35px 30px;border-radius:35px;box-shadow:var(--shadow)}
+input{
+ width:100%;padding:15px;border-radius:14px;
+ border:1px solid #eee;margin-bottom:14px;outline:none
+}
+.btn{width:100%;padding:16px;border:none;border-radius:16px;background:var(--grad);color:#fff;font-weight:700;cursor:pointer}
+.btn-google{
+ margin-top:20px;border:1.5px solid #eee;background:#fff;
+ display:flex;gap:12px;align-items:center;justify-content:center;
+ font-weight:700;border-radius:16px;padding:14px;cursor:pointer
+}
+.btn-google img{width:22px}
+
+/* DASHBOARD */
+.streak{
+ background:var(--grad);border-radius:24px;padding:20px;
+ color:#fff;display:flex;justify-content:space-between;
+ box-shadow:0 15px 35px rgba(31,111,81,.25)
+}
+.fire{font-size:38px}
+.fire.off{filter:grayscale(1) opacity(.4);transform:scale(.85)}
+
+.mah{
+ background:#fff;border-radius:50px;padding:14px 18px;
+ margin:22px 0;box-shadow:var(--shadow);
+ display:flex;align-items:center
+}
+.label{background:#d4b96a;color:#fff;font-size:9px;
+ padding:5px 12px;border-radius:50px;margin-right:12px;font-weight:800}
+
+.menu{
+ display:grid;grid-template-columns:repeat(3,1fr);gap:15px
+}
+.item{
+ background:#fff;border-radius:24px;padding:22px 10px;
+ text-align:center;box-shadow:var(--shadow);
+ cursor:pointer;transition:.2s
+}
+.item:active{transform:scale(.92)}
+.item span{display:block;font-size:11px;font-weight:700;color:#555}
 
 /* AI */
-#aiBtn{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  width:56px;
-  height:56px;
-  background:#166534;
-  color:#fff;
-  border-radius:50%;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
+#ai-btn{
+ position:fixed;bottom:20px;right:20px;z-index:1200;
+ width:60px;height:60px;border-radius:50%;
+ background:#15803d;color:#fff;
+ display:none;align-items:center;justify-content:center;
+ font-size:24px;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,.3)
 }
-
-#aiBox{
-  position:fixed;
-  bottom:90px;
-  right:20px;
-  width:300px;
-  background:#fff;
-  border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
-  display:none;
-  flex-direction:column;
+#ai-box{
+ position:fixed;bottom:90px;right:20px;width:300px;height:400px;
+ background:#fff;border-radius:16px;box-shadow:0 5px 20px rgba(0,0,0,.3);
+ display:none;flex-direction:column;overflow:hidden;z-index:1200
 }
-
-#aiBox textarea{
-  width:100%;
-  height:80px;
-  padding:10px;
-  border:none;
-}
-
-.hidden{display:none}
+.msg-ai{background:#f1f1f1;padding:8px;border-radius:10px;margin-bottom:6px}
+.msg-user{background:#1f6f51;color:#fff;padding:8px;border-radius:10px;margin-bottom:6px;text-align:right}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 </head>
-
 <body>
 
-<header>
-<h1>E-Santri</h1>
-<button onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
-</header>
+<div class="menu-btn" id="menuBtn"><i class="fa fa-bars"></i></div>
 
-<div id="overlay" onclick="toggleSidebar()"></div>
-
-<div id="sidebar">
-<div class="profile">
-<img id="pImg" src="https://ui-avatars.com/api/?name=Santri">
-<h3 id="pName">Santri</h3>
-<p id="pEmail"></p>
-</div>
-<div class="nav">
-<a onclick="show('dash')">Dashboard</a>
-<a onclick="show('ai')">AI</a>
-<a onclick="show('aduan')">Pengaduan</a>
-<a onclick="logout()" style="color:red">Keluar</a>
-</div>
+<div class="sidebar" id="sidebar">
+ <div class="close" id="closeBtn">✕</div>
+ <div class="profile">
+  <img id="uImg" src="https://ui-avatars.com/api/?background=1f6f51&color=fff&name=Santri">
+  <h3 id="uName">Santri</h3>
+  <p id="uEmail" style="font-size:12px;color:#888"></p>
+ </div>
+ <div class="nav">
+  <a onclick="location.reload()">Dashboard</a>
+  <a href="waktu-sholat.html">Waktu Sholat</a>
+  <a href="kalender.html">Kalender</a>
+  <a href="pengaduan.html">Pengaduan</a>
+  <a onclick="logout()" style="color:#e74c3c">Keluar</a>
+ </div>
 </div>
 
-<div class="container">
+<main class="container">
+ <div class="header"><h1>E-SANTRI</h1></div>
 
-<div id="login" class="card hidden">
-<input id="email" placeholder="Email" style="margin-bottom:10px;width:100%">
-<input id="pass" type="password" placeholder="Password">
-<button onclick="login()">Masuk</button>
-<div style="margin:10px;text-align:center">atau</div>
-<button class="btn-google" onclick="loginGoogle()">
-<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
-Masuk dengan Google
-</button>
-</div>
+ <div id="login" class="card hidden">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button class="btn" onclick="login()">MASUK</button>
+  <div style="margin:20px 0;color:#ccc;text-align:center">— ATAU —</div>
+  <div class="btn-google" onclick="loginGoogle()">
+   <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/pwa/google.svg">
+   Masuk dengan Google
+  </div>
+ </div>
 
-<div id="dash" class="hidden">
-<div class="card">
-<h3>Mahfudzat</h3>
-<div class="mah-box">
-<div class="mah-move">
-<div class="mah-ar">مَنْ جَدَّ وَجَدَ</div>
-<div class="mah-id">Barang siapa bersungguh-sungguh akan berhasil</div>
-</div>
-</div>
-</div>
+ <section id="dash" class="hidden">
+  <div class="streak">
+   <div><small>Hadir Hari Ini</small><h2 id="streakText">0</h2></div>
+   <div id="fire" class="fire">🔥</div>
+  </div>
 
-<div class="menu-grid">
-<div class="menu-item"><i class="fa fa-book"></i><br>Qur'an</div>
-<div class="menu-item"><i class="fa fa-check"></i><br>Absensi</div>
-<div class="menu-item"><i class="fa fa-star"></i><br>Tahfidz</div>
-</div>
-</div>
+  <div class="mah" onclick="location.href='mahfuzat.html'">
+   <div class="label">MAHFUZAT</div>
+   <marquee id="mahText" scrollamount="4"></marquee>
+  </div>
 
-<div id="aduan" class="card hidden">
-<textarea placeholder="Tulis pengaduan..." style="width:100%;height:100px"></textarea>
-<button>Kirim</button>
-</div>
+  <div class="menu">
+   <div class="item" onclick="location.href='alquran.html'">📖<span>Al-Qur’an</span></div>
+   <div class="item" onclick="location.href='absensi.html'">📝<span>Absensi</span></div>
+   <div class="item" onclick="location.href='tahfidz.html'">🏆<span>Tahfidz</span></div>
+   <div class="item" onclick="location.href='kamus.html'">📑<span>Kamus</span></div>
+   <div class="item" onclick="location.href='perpustakaan.html'">📚<span>Perpus</span></div>
+   <div class="item" onclick="location.href='budayasekolah.html'">🕌<span>Budaya</span></div>
+  </div>
+ </section>
+</main>
 
-</div>
-
-<div id="aiBtn" onclick="toggleAI()">🌙</div>
-
-<div id="aiBox">
-<textarea placeholder="Tanya AI..."></textarea>
-<button>Kirim</button>
+<div id="ai-btn" onclick="toggleAI()">🌙</div>
+<div id="ai-box">
+ <div style="background:#15803d;color:#fff;padding:10px;text-align:center">Asisten E-Santri</div>
+ <div id="chat" style="flex:1;padding:10px;overflow:auto">
+  <div class="msg-ai">Assalamu’alaikum 😊</div>
+ </div>
+ <div style="display:flex;padding:10px;border-top:1px solid #eee">
+  <input id="aiInput" placeholder="Tanya..." style="flex:1;border:none;outline:none">
+  <button onclick="sendAI()" style="border:none;background:none;color:#15803d;font-weight:700">Kirim</button>
+ </div>
 </div>
 
 <script>
@@ -264,48 +192,57 @@ firebase.initializeApp({
 });
 const auth=firebase.auth();
 
-function toggleSidebar(){
- sidebar.classList.toggle("active");
- overlay.classList.toggle("active");
-}
-
-function show(id){
- document.querySelectorAll(".container > div").forEach(e=>e.classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
- toggleSidebar();
-}
-
-function toggleAI(){
- aiBox.style.display=aiBox.style.display==="flex"?"none":"flex";
-}
+/* UI */
+menuBtn.onclick=()=>sidebar.classList.add("open");
+closeBtn.onclick=()=>sidebar.classList.remove("open");
+function toggleAI(){aiBox.style.display=aiBox.style.display==="flex"?"none":"flex"}
 
 function login(){
- auth.signInWithEmailAndPassword(email.value,pass.value);
+ auth.signInWithEmailAndPassword(email.value,password.value)
+  .catch(e=>alert(e.message))
 }
-
 function loginGoogle(){
- auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+ const p=new firebase.auth.GoogleAuthProvider();
+ auth.signInWithPopup(p).catch(e=>alert(e.message))
 }
-
-function logout(){auth.signOut()}
+function logout(){auth.signOut().then(()=>location.reload())}
 
 auth.onAuthStateChanged(u=>{
  if(u){
   login.classList.add("hidden");
   dash.classList.remove("hidden");
+  menuBtn.style.display="flex";
   aiBtn.style.display="flex";
-  pName.innerText=u.displayName||"Santri";
-  pEmail.innerText=u.email;
-  pImg.src=u.photoURL||pImg.src;
+  uName.innerText=u.displayName||"Santri";
+  uEmail.innerText=u.email;
+  if(u.photoURL)uImg.src=u.photoURL;
+
+  const today=new Date().toDateString();
+  const last=localStorage.getItem("visit");
+  if(last===today){fire.classList.remove("off");streakText.innerText="Sudah Absen"}
+  else{fire.classList.add("off");streakText.innerText="Ketuk Absensi";localStorage.setItem("visit",today)}
+
+  const m=[
+   "مَنْ جَدَّ وَجَدَ — Siapa bersungguh-sungguh akan berhasil",
+   "مَنْ صَبَرَ ظَفِرَ — Siapa sabar akan beruntung"
+  ];
+  mahText.innerText=m[new Date().getDate()%m.length];
  }else{
   login.classList.remove("hidden");
  }
 });
 
-if("serviceWorker"in navigator){
- navigator.serviceWorker.register("sw.js");
+/* AI */
+async function sendAI(){
+ const t=aiInput.value.trim();if(!t)return;
+ chat.innerHTML+=`<div class="msg-user">${t}</div>`;aiInput.value="";
+ chat.innerHTML+=`<div class="msg-ai" id="load">Mengetik...</div>`;
+ const r=await fetch("/proses",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({pesan:t})});
+ const j=await r.json();load.innerText=j.jawaban;
+ chat.scrollTop=chat.scrollHeight;
 }
-</script>
 
+if("serviceWorker"in navigator){navigator.serviceWorker.register("sw.js")}
+</script>
 </body>
-</html>
+  </html>
