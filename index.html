@@ -189,6 +189,7 @@
 </div>
 
 <script>
+  // 1. KONFIGURASI FIREBASE
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -200,111 +201,122 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // SIDEBAR
+  // 2. SIDEBAR & UI
   const sb = document.getElementById("sidebar");
-  document.getElementById("menu-btn").onclick = () => { sb.classList.add("open"); }
-  document.getElementById("close-btn").onclick = () => { sb.classList.remove("open"); }
+  const mBtn = document.getElementById("menu-btn");
+  const cBtn = document.getElementById("close-btn");
 
-  // FUNGSI TOGGLE CHAT AI
+  if(mBtn) mBtn.onclick = () => { sb.classList.add("open"); }
+  if(cBtn) cBtn.onclick = () => { sb.classList.remove("open"); }
+
   function toggleChat() {
     const win = document.getElementById("ai-window");
-    win.style.display = win.style.display === "none" ? "flex" : "none";
+    if(win) win.style.display = win.style.display === "none" ? "flex" : "none";
   }
-// FUNGSI KIRIM KE AI (Sudah Disinkronkan dengan api.py)
-  async function kirimKeAI() {
-    const input = document.getElementById('aiInput');
-    const box = document.getElementById('chatContent');
-    const text = input.value.trim();
-    
-    // 1. Validasi jika input kosong
-    if(!text) return;
 
-    // 2. Tampilkan pesan user ke layar chat
-    box.innerHTML += `<div class="msg-user">${text}</div>`;
-    input.value = ""; // Kosongkan input
-    box.scrollTop = box.scrollHeight; // Scroll ke bawah
-
-    // 3. Tampilkan animasi loading (...)
-    const loadingId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadingId}">...</div>`;
-    box.scrollTop = box.scrollHeight;
-
-    try {
-        // 4. Panggil endpoint /proses (Akan diarahkan Vercel ke api.py)
-        const res = await fetch('/proses', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ pesan: text })
-        });
-        
-        // 5. Cek jika server error
-        if (!res.ok) throw new Error("Server Error");
-
-        // 6. Ambil data jawaban dari Python
-        const d = await res.json();
-        
-        // 7. Tampilkan jawaban AI ke layar (menggantikan loading ...)
-        const loadingElement = document.getElementById(loadingId);
-        if (loadingElement) {
-            loadingElement.innerText = d.jawaban;
-        }
-        
-    } catch (e) {
-        // 8. Jika gagal koneksi, tampilkan pesan error
-        const loadingElement = document.getElementById(loadingId);
-        if (loadingElement) {
-            loadingElement.innerText = "Afwan, asisten sedang sinkronisasi. Coba kirim pesan lagi ya.";
-        }
-        console.error("Error AI:", e);
-    }
-    
-    // 9. Pastikan scroll selalu di paling bawah
-    box.scrollTop = box.scrollHeight;
-  }
-  // LOGIN GOOGLE REDIRECT
+  // 3. FUNGSI LOGIN & LOGOUT
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithRedirect(provider);
   }
-  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e=>alert(e.message)); }
-  function logout() { auth.signOut().then(()=>location.reload()); }
+  function login() { 
+    auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value)
+    .catch(e => alert(e.message)); 
+  }
+  function logout() { 
+    auth.signOut().then(() => location.reload()); 
+  }
 
+  // 4. LOGIKA UTAMA (AUTH STATE)
   auth.onAuthStateChanged(user => {
+    const dash = document.getElementById("dashboard");
+    const loginCard = document.getElementById("login-card");
+    const menuBtn = document.getElementById("menu-btn");
+    const aiBtn = document.getElementById("ai-button");
+    const adminMenu = document.getElementById("admin-menu");
+
     if(user){
-      document.getElementById("dashboard").classList.remove("hidden");
-      document.getElementById("login-card").classList.add("hidden");
-      document.getElementById("menu-btn").style.display="flex";
-      document.getElementById("ai-button").style.display="flex"; // Munculkan tombol AI saat login
+      // Tampilkan Dashboard
+      if(dash) dash.classList.remove("hidden");
+      if(loginCard) loginCard.classList.add("hidden");
+      if(menuBtn) menuBtn.style.display = "flex";
+      if(aiBtn) aiBtn.style.display = "flex";
+
+      // Isi Profil
       document.getElementById("u-name").innerText = user.displayName || "Santri";
       document.getElementById("u-email").innerText = user.email;
       if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
 
-      // Logika Streak Api Timbul
+      // --- LOGIKA MENU ADMIN ---
+      const adminEmail = "miftahilmi15@gmail.com"; // Email Admin Kamu
+      if (user.email === adminEmail) {
+          if(adminMenu) adminMenu.classList.remove("hidden");
+      }
+
+      // Logika Streak Api
       const lastVisit = localStorage.getItem('last_visit');
       const today = new Date().toDateString();
       const fire = document.getElementById('fire-api');
-      
-      if(lastVisit === today) {
-        fire.classList.remove('fire-off');
-        document.getElementById('streak-text').innerText = "Sudah Absen";
-      } else {
-        fire.classList.add('fire-off');
-        document.getElementById('streak-text').innerText = "Ketuk Menu Absensi";
-        localStorage.setItem('last_visit', today);
+      if(fire) {
+          if(lastVisit === today) {
+            fire.classList.remove('fire-off');
+            document.getElementById('streak-text').innerText = "Sudah Absen";
+          } else {
+            fire.classList.add('fire-off');
+            document.getElementById('streak-text').innerText = "Ketuk Menu Absensi";
+            localStorage.setItem('last_visit', today);
+          }
       }
 
       // Mahfuzat Berjalan
       const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
       const d = m[new Date().getDate() % m.length];
-      document.getElementById('runArab').innerText = d.ar;
-      document.getElementById('runIndo').innerText = " — " + d.id;
+      if(document.getElementById('runArab')) document.getElementById('runArab').innerText = d.ar;
+      if(document.getElementById('runIndo')) document.getElementById('runIndo').innerText = " — " + d.id;
+
     } else {
-      document.getElementById("login-card").classList.remove("hidden");
-      document.getElementById("ai-button").style.display="none"; // Sembunyikan jika logout
+      // Logika Saat Logout
+      if(loginCard) loginCard.classList.remove("hidden");
+      if(dash) dash.classList.add("hidden");
+      if(menuBtn) menuBtn.style.display = "none";
+      if(aiBtn) aiBtn.style.display = "none";
+      if(adminMenu) adminMenu.classList.add("hidden");
     }
   });
+
+  // 5. FUNGSI AI
+  async function kirimKeAI() {
+    const input = document.getElementById('aiInput');
+    const box = document.getElementById('chatContent');
+    if(!input || !box) return;
+    const text = input.value.trim();
+    
+    if(!text) return;
+
+    box.innerHTML += `<div class="msg-user">${text}</div>`;
+    input.value = "";
+    
+    const loadingId = "load-" + Date.now();
+    box.innerHTML += `<div class="msg-ai" id="${loadingId}">...</div>`;
+    box.scrollTop = box.scrollHeight;
+
+    try {
+        const res = await fetch('/proses', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ pesan: text })
+        });
+        const d = await res.json();
+        const loadingElement = document.getElementById(loadingId);
+        if (loadingElement) loadingElement.innerText = d.jawaban;
+    } catch (e) {
+        const loadingElement = document.getElementById(loadingId);
+        if (loadingElement) loadingElement.innerText = "Afwan, server sedang sinkronisasi.";
+    }
+    box.scrollTop = box.scrollHeight;
+  }
 
   auth.getRedirectResult().catch(e => console.log(e.message));
 </script>
 </body>
-    </html>
+</html>
