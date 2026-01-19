@@ -243,3 +243,156 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aquarium Mengaji | Koi Jepang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body { margin: 0; background: #0077b6; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Background Laut/Air */
+        #sea { 
+            position: relative; width: 100vw; height: 100vh; 
+            background: linear-gradient(180deg, #48cae4 0%, #0077b6 100%);
+            overflow: hidden;
+        }
+
+        /* Info Overlay */
+        .info-panel { 
+            position: fixed; top: 20px; left: 20px; color: white; 
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+            padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
+            z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .btn-back {
+            position: fixed; top: 20px; right: 20px; padding: 10px 20px;
+            background: white; color: #0077b6; border-radius: 12px;
+            text-decoration: none; font-weight: 800; font-size: 14px; z-index: 1000;
+        }
+
+        /* Ikan Koi Jepang */
+        .fish-koi {
+            position: absolute; width: 120px; height: auto;
+            transition: 5s ease-in-out;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            z-index: 5;
+        }
+
+        /* Animasi Gelembung Air */
+        .bubble {
+            position: absolute; background: rgba(255,255,255,0.3);
+            border-radius: 50%; bottom: -50px; animation: floatUp 10s infinite;
+        }
+        @keyframes floatUp {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-110vh); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="sea">
+    <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> KEMBALI</a>
+    
+    <div class="info-panel">
+        <h2 style="margin-bottom: 5px;">Aquarium Santri</h2>
+        <p style="font-size: 14px; opacity: 0.9;">Ikan Koi Jepang Kamu: <b id="fish-count">0</b></p>
+        <div style="margin-top: 10px; font-size: 11px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 8px;">
+            <i class="fa-solid fa-circle-info"></i> Baca Al-Qur'an 30 menit untuk dapat 1 Koi
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+        authDomain: "e-santri-b62be.firebaseapp.com",
+        projectId: "e-santri-b62be",
+        storageBucket: "e-santri-b62be.firebasestorage.app",
+        messagingSenderId: "6560427635",
+        appId: "1:6560427635:web:368b4fbf95163e8d214406",
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 1. Cek User dan Ambil Data Ikan
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            const uid = user.uid.replace(/\./g, ',');
+            db.ref('users/' + uid + '/ikan').on('value', snap => {
+                const count = snap.val() || 0;
+                document.getElementById('fish-count').innerText = count;
+                updateAquarium(count);
+            });
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+
+    // 2. Fungsi Gambar Ikan Koi
+    function updateAquarium(count) {
+        const sea = document.getElementById('sea');
+        // Bersihkan ikan lama agar tidak numpuk
+        document.querySelectorAll('.fish-koi').forEach(f => f.remove());
+
+        for (let i = 0; i < count; i++) {
+            const img = document.createElement('img');
+            // Menggunakan gambar Koi Jepang (Kohaku)
+            img.src = "https://cdn-icons-png.flaticon.com/512/2316/2316335.png"; 
+            img.className = 'fish-koi';
+            
+            // Posisi acak awal
+            let x = Math.random() * 80 + 'vw';
+            let y = Math.random() * 80 + 'vh';
+            img.style.left = x;
+            img.style.top = y;
+            
+            sea.appendChild(img);
+
+            // Jalankan animasi renang
+            animateFish(img);
+        }
+    }
+
+    function animateFish(fish) {
+        setInterval(() => {
+            let nextX = Math.random() * 80;
+            let nextY = Math.random() * 80;
+            
+            // Logika agar ikan menghadap ke arah dia berenang
+            let currentX = parseFloat(fish.style.left);
+            if (nextX < currentX) {
+                fish.style.transform = "scaleX(-1)"; // Balik arah ke kiri
+            } else {
+                fish.style.transform = "scaleX(1)"; // Hadap kanan
+            }
+
+            fish.style.left = nextX + 'vw';
+            fish.style.top = nextY + 'vh';
+        }, 5000);
+    }
+
+    // 3. Efek Gelembung (Hiasan)
+    setInterval(() => {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        let size = Math.random() * 20 + 10 + 'px';
+        bubble.style.width = size;
+        bubble.style.height = size;
+        bubble.style.left = Math.random() * 100 + 'vw';
+        document.getElementById('sea').appendChild(bubble);
+        setTimeout(() => bubble.remove(), 10000);
+    }, 1000);
+</script>
+</body>
+</html>
