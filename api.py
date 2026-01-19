@@ -5,7 +5,6 @@ import google.generativeai as genai
 app = Flask(__name__)
 CORS(app)
 
-# --- CONFIG AI ---
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -13,13 +12,11 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 def proses():
     try:
         data = request.get_json(silent=True)
-        if not data or 'pesan' not in data:
-            return jsonify({"jawaban": "Pesan tidak terbaca."}), 400
-            
-        pesan_user = data.get('pesan')
+        pesan_user = data.get('pesan', '')
         response = model.generate_content(pesan_user)
         return jsonify({"jawaban": response.text})
     except Exception as e:
-        return jsonify({"jawaban": f"Maaf, server sibuk: {str(e)}"}), 500
+        return jsonify({"jawaban": f"Kendala teknis: {str(e)}"}), 500
 
+# Nama variabel harus tetap app
 app = app
