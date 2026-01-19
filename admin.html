@@ -87,6 +87,67 @@
 </div>
 
 <script>
+  // Konfigurasi Firebase yang sudah disesuaikan dengan database Kakak
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+    authDomain: "e-santri-b62be.firebaseapp.com",
+    projectId: "e-santri-b62be",
+    storageBucket: "e-santri-b62be.firebasestorage.app",
+    messagingSenderId: "6560427635",
+    appId: "1:6560427635:web:368b4fbf95163e8d214406",
+    databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" // LINK SUDAH SAMA
+  };
+  
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  // 1. Proteksi Admin
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      if (user.email === "miftahilmi15@gmail.com") {
+        document.getElementById('loader').classList.add('hidden');
+        initAdminData();
+      } else {
+        alert("Akses Ditolak! Hanya untuk email miftahilmi15@gmail.com");
+        window.location.href = "index.html";
+      }
+    } else {
+      window.location.href = "index.html";
+    }
+  });
+
+  // 2. Ambil data saat ini dari database
+  function initAdminData() {
+    db.ref('fitur/mahfuzat').on('value', (snap) => {
+        const data = snap.val();
+        if(data) {
+            document.getElementById('newArab').value = data.arab || "";
+            document.getElementById('newIndo').value = data.indo || "";
+        }
+    });
+  }
+
+  // 3. Simpan Update ke Database
+  function updateMahfuzat() {
+    const ar = document.getElementById('newArab').value.trim();
+    const id = document.getElementById('newIndo').value.trim();
+    
+    if(!ar || !id) return alert("Isi Arab dan Artinya dulu ya Kak!");
+
+    db.ref('fitur/mahfuzat').set({
+        arab: ar,
+        indo: id,
+        lastUpdate: firebase.database.ServerValue.TIMESTAMP
+    })
+    .then(() => {
+        alert("Alhamdulillah! Mahfuzat di HP Santri sudah berubah.");
+    })
+    .catch(err => {
+        alert("Gagal menyimpan: " + err.message);
+    });
+  }
+</script>
   // Konfigurasi Firebase (Sama dengan index.html)
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
