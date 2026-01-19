@@ -195,35 +195,41 @@
     const win = document.getElementById("ai-window");
     win.style.display = win.style.display === "none" ? "flex" : "none";
   }
-
-  // FUNGSI KIRIM KE AI
+// FUNGSI KIRIM KE AI (Versi Sinkron dengan index.py)
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const text = input.value.trim();
     if(!text) return;
 
+    // Tampilkan pesan user
     box.innerHTML += `<div class="msg-user">${text}</div>`;
     input.value = "";
     box.scrollTop = box.scrollHeight;
 
+    // Animasi loading sederhana
     const loadingId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadingId}">Sedang mengetik...</div>`;
+    box.innerHTML += `<div class="msg-ai" id="${loadingId}">...</div>`;
 
     try {
+        // Fetch ke endpoint /proses yang ada di index.py
         const res = await fetch('/proses', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({pesan: text})
+            body: JSON.stringify({ pesan: text })
         });
+        
+        if (!res.ok) throw new Error("Server Error");
+
         const d = await res.json();
+        // Masukkan jawaban dari AI
         document.getElementById(loadingId).innerText = d.jawaban;
     } catch (e) {
-        document.getElementById(loadingId).innerText = "Maaf, koneksi terputus.";
+        // Jika server 500 atau koneksi mati
+        document.getElementById(loadingId).innerText = "Afwan, asisten sedang sinkronisasi. Coba kirim pesan lagi ya.";
     }
     box.scrollTop = box.scrollHeight;
   }
-
   // LOGIN GOOGLE REDIRECT
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
