@@ -3,115 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>5D Premium Aquarium | E-Santri Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>Premium 5D Aquarium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --dark-navy: #001219;
-            --ocean-blue: #003049;
-            --neon-glow: rgba(0, 180, 216, 0.5);
+            --bg: #001219;
+            --glow: #00b4d8;
         }
+        body { margin: 0; background: var(--bg); overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        body { 
-            background: var(--dark-navy); 
-            overflow: hidden; 
-            height: 100vh;
-        }
-
-        /* 5D UI BACKGROUND */
-        #aquarium-container {
+        /* DEEP WATER EFFECT */
+        #ocean {
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 30%, #005f73 0%, #001219 100%);
             position: relative;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle at 50% 50%, #005f73 0%, #001219 100%);
-            box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
         }
 
-        /* OVERLAY UI */
-        .ui-header {
-            position: fixed; top: 0; left: 0; right: 0;
-            padding: 25px; display: flex; justify-content: space-between;
-            align-items: flex-start; z-index: 100;
-            background: linear-gradient(to bottom, rgba(0,18,25,0.8), transparent);
+        /* PREMIUM UI CARD */
+        .info-card {
+            position: fixed; top: 20px; left: 20px; z-index: 100;
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(15px);
+            padding: 15px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .stats-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            padding: 15px 25px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        /* TEXT HADIAH (REQUEST KAKAK) */
+        .badge-reward {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 180, 216, 0.15); border: 1px solid var(--glow);
+            color: #caf0f8; padding: 10px 25px; border-radius: 50px;
+            font-size: 13px; font-weight: 600; text-align: center;
+            backdrop-filter: blur(10px); animation: pulse 2s infinite;
         }
 
-        .btn-back {
-            width: 45px; height: 45px; background: white;
-            color: var(--dark-navy); border-radius: 15px;
+        @keyframes pulse {
+            0% { opacity: 0.7; box-shadow: 0 0 0px var(--glow); }
+            50% { opacity: 1; box-shadow: 0 0 20px var(--glow); }
+            100% { opacity: 0.7; box-shadow: 0 0 0px var(--glow); }
+        }
+
+        /* FISH ANIMATION */
+        .fish {
+            position: absolute; width: 120px; pointer-events: none;
+            filter: drop-shadow(0 0 15px var(--glow));
+            transition: all 10s ease-in-out; /* Gerakan lambat cinematic */
+        }
+
+        .fish img { width: 100%; height: auto; }
+
+        .btn-exit {
+            position: fixed; top: 20px; right: 20px; width: 45px; height: 45px;
+            background: rgba(255,255,255,0.1); border-radius: 15px;
             display: flex; align-items: center; justify-content: center;
-            text-decoration: none; font-size: 20px; transition: 0.3s;
-        }
-
-        /* FISH STYLING (5D UI MASTER) */
-        .fish-entity {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: 5s ease-in-out; /* Pergerakan cinematic */
-            z-index: 10;
-        }
-
-        .fish-visual {
-            width: 100%;
-            height: auto;
-            filter: drop-shadow(0 0 15px var(--neon-glow));
-            transform-origin: center;
-            transition: transform 1s ease-in-out;
-        }
-
-        .fish-label {
-            font-size: 10px;
-            color: rgba(255,255,255,0.5);
-            margin-top: 5px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* WATER EFFECTS */
-        .caustics {
-            position: absolute; inset: 0;
-            background: url('https://www.transparenttextures.com/patterns/p6.png');
-            opacity: 0.1; pointer-events: none; animation: moveCaustics 20s linear infinite;
-        }
-
-        @keyframes moveCaustics {
-            from { transform: translate(0,0); }
-            to { transform: translate(100px, 100px); }
+            color: white; text-decoration: none; font-size: 24px;
         }
     </style>
 </head>
 <body>
 
-<div id="aquarium-container">
-    <div class="caustics"></div>
+<div id="ocean">
+    <div class="info-card">
+        <div style="font-size: 10px; opacity: 0.6; letter-spacing: 2px;">COLLECTION</div>
+        <div style="font-size: 28px; font-weight: 800;"><span id="count">0</span> <small style="font-size: 14px;">IKAN</small></div>
+    </div>
 
-    <div class="ui-header">
-        <div class="stats-card">
-            <h4 style="font-size: 12px; opacity: 0.6; margin-bottom: 5px;">AQUARIUM COLLECTION</h4>
-            <div style="display: flex; align-items: baseline; gap: 8px;">
-                <span id="fish-count" style="font-size: 32px; font-weight: 800;">0</span>
-                <span style="font-size: 14px; opacity: 0.8;">Premium Fish</span>
-            </div>
-        </div>
-        <a href="index.html" class="btn-back"><i class="fa-solid fa-xmark"></i></a>
+    <a href="index.html" class="btn-exit">×</a>
+
+    <div class="badge-reward">
+        ✨ Membaca Al-Qur'an 30 Menit = Dapat 1 Ikan Baru
     </div>
 </div>
 
@@ -120,83 +79,65 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
+    // PASTE FIREBASE CONFIG KAKAK DI SINI
     const firebaseConfig = {
         apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
         authDomain: "e-santri-b62be.firebaseapp.com",
         projectId: "e-santri-b62be",
-        storageBucket: "e-santri-b62be.firebasestorage.app",
-        messagingSenderId: "6560427635",
-        appId: "1:6560427635:web:368b4fbf95163e8d214406",
         databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
     };
-    
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
 
-    // DAFTAR IKAN SESUAI PROMPT 5D UI KAKAK
-    const libraryIkan = [
-        { name: "Neon Tetra", img: "https://api.iconify.design/noto:fish.svg" },
-        { name: "Guppy Premium", img: "https://api.iconify.design/noto:tropical-fish.svg" },
-        { name: "Bioluminescent Glow", img: "https://api.iconify.design/noto:blowfish.svg" },
-        { name: "Ornamental Shrimp", img: "https://api.iconify.design/noto:shrimp.svg" },
-        { name: "Black Ghost", img: "https://api.iconify.design/noto:eel.svg" },
-        { name: "Layang Silver", img: "https://api.iconify.design/noto:fish.svg" }
+    const libIkan = [
+        "https://api.iconify.design/noto:tropical-fish.svg",
+        "https://api.iconify.design/noto:fish.svg",
+        "https://api.iconify.design/noto:blowfish.svg",
+        "https://api.iconify.design/noto:shrimp.svg"
     ];
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            const uid = user.uid.replace(/\./g, ',');
-            db.ref('users/' + uid + '/ikan').on('value', snap => {
-                const count = snap.val() || 0;
-                document.getElementById('fish-count').innerText = count;
-                renderFish(count);
+            firebase.database().ref('users/' + user.uid.replace(/\./g, ',') + '/ikan').on('value', snap => {
+                const total = snap.val() || 0;
+                document.getElementById('count').innerText = total;
+                renderIkan(total);
             });
         }
     });
 
-    function renderFish(count) {
-        const container = document.getElementById('aquarium-container');
-        document.querySelectorAll('.fish-entity').forEach(f => f.remove());
+    function renderIkan(total) {
+        const container = document.getElementById('ocean');
+        document.querySelectorAll('.fish').forEach(f => f.remove());
+        
+        let jml = (total === 0) ? 1 : total;
 
-        // JIKA MASIH 0, KITA TAMPILKAN 1 RANDOM SEBAGAI PREVIEW
-        let total = (count === 0) ? 1 : count;
-
-        for (let i = 0; i < total; i++) {
-            const dataIkan = libraryIkan[Math.floor(Math.random() * libraryIkan.length)];
-            const fishDiv = document.createElement('div');
-            fishDiv.className = 'fish-entity';
+        for (let i = 0; i < jml; i++) {
+            const f = document.createElement('div');
+            f.className = 'fish';
+            const randomIkan = libIkan[Math.floor(Math.random() * libIkan.length)];
+            f.innerHTML = `<img src="${randomIkan}">`;
             
-            fishDiv.innerHTML = `
-                <img src="${dataIkan.img}" class="fish-visual">
-                <span class="fish-label">${dataIkan.name}</span>
-            `;
-
-            // Posisi acak cinematik
-            fishDiv.style.left = Math.random() * 70 + 10 + 'vw';
-            fishDiv.style.top = Math.random() * 70 + 10 + 'vh';
+            f.style.left = Math.random() * 80 + 'vw';
+            f.style.top = Math.random() * 80 + 'vh';
             
-            container.appendChild(fishDiv);
-            startCinematicMovement(fishDiv);
+            container.appendChild(f);
+            berenang(f);
         }
     }
 
-    function startCinematicMovement(el) {
+    function berenang(el) {
         setInterval(() => {
-            const nextX = Math.random() * 70 + 10;
-            const nextY = Math.random() * 70 + 10;
-            const img = el.querySelector('.fish-visual');
+            const x = Math.random() * 80;
+            const y = Math.random() * 80;
+            const img = el.querySelector('img');
+            
+            // Flip ikan sesuai arah berenang
+            const curX = parseFloat(el.style.left);
+            img.style.transform = (x < curX) ? "scaleX(-1)" : "scaleX(1)";
 
-            // Cek arah hadap (Flip)
-            const currentX = parseFloat(el.style.left);
-            if (nextX < currentX) {
-                img.style.transform = "scaleX(-1)";
-            } else {
-                img.style.transform = "scaleX(1)";
-            }
-
-            el.style.left = nextX + 'vw';
-            el.style.top = nextY + 'vh';
-        }, 5000 + Math.random() * 3000); // Random timing agar tidak bebarengan
+            el.style.left = x + 'vw';
+            el.style.top = y + 'vh';
+        }, 10000); // Gerakan super lambat biar tenang
     }
 </script>
 </body>
