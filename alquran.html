@@ -204,6 +204,41 @@
 
     surahSelect.onchange = () => loadSurah(surahSelect.value);
     init();
+    // --- FITUR AQUARIUM (TAMBAHAN) ---
+    let startTime = Date.now();
+    const DURASI_MINIMAL = 30 * 60 * 1000; // 30 Menit dalam milidetik
+    let sudahDapatIkan = false;
+
+    // Fungsi untuk mengecek waktu secara berkala (setiap 1 menit)
+    setInterval(() => {
+        if (sudahDapatIkan) return;
+
+        let currentTime = Date.now();
+        let selisih = currentTime - startTime;
+
+        if (selisih >= DURASI_MINIMAL) {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                const uid = user.uid.replace(/\./g, ',');
+                const userRef = firebase.database().ref('users/' + uid + '/ikan');
+                
+                userRef.transaction((currentIkan) => {
+                    return (currentIkan || 0) + 1;
+                });
+
+                sudahDapatIkan = true; // Agar tidak terus bertambah di sesi yang sama
+                alert("Maa Syaa Allah! Kamu sudah mengaji selama 30 menit. 1 Ikan baru ditambahkan ke Aquarium kamu! 🐟");
+            }
+        }
+    }, 60000); // Cek setiap 60 detik
+
+    // Tambahan: Reset timer jika ganti surah agar benar-benar dihitung dari awal mengaji
+    const originalLoadSurah = loadSurah;
+    loadSurah = async function(no) {
+        startTime = Date.now(); // Reset waktu setiap ganti surah
+        sudahDapatIkan = false;
+        return originalLoadSurah(no);
+    };
 </script>
 
 </body>
