@@ -3,7 +3,7 @@ from flask_cors import CORS
 import google.generativeai as genai
 
 app = Flask(__name__)
-CORS(app) # Penting agar index.html diizinkan memanggil Python ini
+CORS(app)
 
 # --- CONFIG AI ---
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
@@ -20,6 +20,6 @@ def proses():
         response = model.generate_content(pesan_user)
         return jsonify({"jawaban": response.text})
     except Exception as e:
-        return jsonify({"jawaban": f"Sistem Sibuk: {str(e)}"}), 500
+        return jsonify({"jawaban": f"Maaf, server sibuk: {str(e)}"}), 500
 
 app = app
