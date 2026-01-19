@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Pro v16</title>
+<title>E-Santri | Pro v16 Premium</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1f6f51">
 <link rel="apple-touch-icon" href="/logo-assunnah.png">
@@ -26,7 +26,7 @@
   .header-box { text-align: center; padding: 25px 0; }
   .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
 
-  /* SIDEBAR REVISION */
+  /* SIDEBAR PREMIUM (RAFI DI KANAN) */
   .menu-trigger { 
     position: fixed; top: 25px; right: 25px; z-index: 1400; 
     background: white; color: var(--primary); width: 48px; height: 48px; 
@@ -54,13 +54,13 @@
   .nav a i { font-size: 16px; color: var(--primary); width: 20px; text-align: center; }
   .nav a:hover { background: #f0f7f4; color: var(--primary); }
 
-  /* DASHBOARD */
+  /* DASHBOARD COMPONENTS */
   .streak-card { 
     background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; 
     margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
     box-shadow: 0 15px 35px rgba(31,111,81,0.2);
   }
-  .fire-icon { font-size: 40px; filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); }
+  .fire-icon { font-size: 40px; filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); transition: 0.5s; }
   .fire-off { filter: grayscale(1) opacity(0.3) !important; transform: scale(0.8); }
 
   .mahfuzat-box { 
@@ -78,21 +78,43 @@
   .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
   .menu-item span { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* LOGIN CARD */
+  /* LOGIN CARD & GOOGLE BUTTON */
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
   .btn-google { 
-    width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #eee; 
+    width: 100%; padding: 14px; border-radius: 16px; border: 1px solid #ddd; 
     background: white; display: flex; align-items: center; justify-content: center; 
-    gap: 12px; font-weight: 700; color: #444; cursor: pointer; margin-top: 15px; transition: 0.3s;
+    gap: 12px; font-weight: 600; color: #444; cursor: pointer; margin-top: 15px; transition: 0.2s;
   }
-  .btn-google:active { background: #f9f9f9; }
+  .btn-google:hover { background: #f8f8f8; }
   .btn-google img { width: 20px; height: 20px; }
 
-  .hidden { display: none !important; }
+  /* CHAT AI MEWAH (GLASSMORPHISM) */
+  #ai-window {
+    display: none; position: fixed; bottom: 90px; right: 20px; 
+    width: 320px; height: 450px; 
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px); 
+    border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+    z-index: 2000; flex-direction: column; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.4);
+    transition: 0.3s;
+  }
+  .ai-header {
+    background: var(--primary-grad); color: white; padding: 15px 20px; 
+    display: flex; align-items: center; gap: 12px;
+  }
+  .status-dot { width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; box-shadow: 0 0 8px #2ecc71; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-  /* AI CHAT */
-  .msg-user { background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; font-size: 13px; }
-  .msg-ai { background: #f1f1f1; color: #333; padding: 10px 15px; border-radius: 15px 15px 15px 0; margin-bottom: 10px; align-self: flex-start; max-width: 85%; font-size: 13px; line-height: 1.5; }
+  #chatContent { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .msg-user { background: var(--primary-grad); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 80%; font-size: 13px; box-shadow: 0 4px 10px rgba(31,111,81,0.1); }
+  .msg-ai { background: white; color: #444; padding: 10px 15px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; font-size: 13px; border: 1px solid #eee; line-height: 1.5; }
+
+  .ai-input-area { padding: 15px; background: white; border-top: 1px solid #f0f0f0; display: flex; gap: 10px; }
+  .ai-input-area input { flex: 1; border: none; background: #f5f7f6; padding: 10px 15px; border-radius: 12px; outline: none; font-size: 13px; }
+  .btn-send { background: var(--primary); color: white; width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+  .hidden { display: none !important; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -132,13 +154,13 @@
     <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer;">MASUK</button>
     
     <p style="margin-top: 15px; font-size: 13px; color: #777;">
-      Belum punya akun? <a href="#" onclick="register()" style="color: var(--primary); font-weight: 700; text-decoration: none;">Daftar</a>
+      Belum punya akun? <a href="#" onclick="register()" style="color: var(--primary); font-weight: 700; text-decoration: none;">Daftar Sekarang</a>
     </p>
 
     <div style="margin: 20px 0; color:#ccc; font-size: 11px;">— ATAU —</div>
     
     <button class="btn-google" onclick="loginGoogle()">
-      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"> Masuk dengan Google
+      <img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"> Lanjutkan dengan Google
     </button>
   </div>
 
@@ -167,13 +189,148 @@
   </section>
 </main>
 
-<div id="ai-button" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; background: #15803d; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000; display: none;">
-    <span style="font-size: 24px;">🌙</span>
+<div id="ai-button" onclick="toggleChat()" style="position: fixed; bottom: 25px; right: 25px; background: var(--primary-grad); color: white; width: 60px; height: 60px; border-radius: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 25px rgba(31,111,81,0.3); z-index: 1000; display: none;">
+    <i class="fa-solid fa-comment-dots" style="font-size: 24px;"></i>
 </div>
 
-<div id="ai-window" style="display: none; position: fixed; bottom: 90px; right: 20px; width: 300px; height: 400px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; flex-direction: column; overflow: hidden;">
-    <div style="background: #15803d; color: white; padding: 12px; font-weight: bold; text-align: center; font-size: 14px;">Asisten E-Santri</div>
-    <div id="chatContent" style="flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; background: #fdfdfd;">
+<div id="ai-window">
+    <div class="ai-header">
+        <div class="status-dot"></div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 14px;">Asisten E-Santri</div>
+          <div style="font-size: 10px; opacity: 0.8;">Online | Gemini Pro AI</div>
+        </div>
+        <div onclick="toggleChat()" style="cursor: pointer;"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div id="chatContent">
+        <div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu hari ini?</div>
+    </div>
+    <div class="ai-input-area">
+        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') kirimKeAI()">
+        <button class="btn-send" onclick="kirimKeAI()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script>
+  // 1. FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+    authDomain: "e-santri-b62be.firebaseapp.com",
+    projectId: "e-santri-b62be",
+    storageBucket: "e-santri-b62be.firebasestorage.app",
+    messagingSenderId: "6560427635",
+    appId: "1:6560427635:web:368b4fbf95163e8d214406"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // 2. SIDEBAR LOGIC
+  const sb = document.getElementById("sidebar");
+  const mBtn = document.getElementById("menu-btn");
+  const cBtn = document.getElementById("closeBtn");
+  if(mBtn) mBtn.onclick = () => sb.classList.add("open");
+  if(cBtn) cBtn.onclick = () => sb.classList.remove("open");
+
+  function toggleChat() {
+    const win = document.getElementById("ai-window");
+    win.style.display = (win.style.display === "none" || win.style.display === "") ? "flex" : "none";
+  }
+
+  // 3. AUTH FUNCTIONS
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider).catch(err => alert("Gagal Login Google: " + err.message));
+  }
+  function login() { 
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    if(!e || !p) return alert("Email & Password harus diisi!");
+    auth.signInWithEmailAndPassword(e, p).catch(err => alert("Login Gagal: " + err.message)); 
+  }
+  function register() {
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    if(!e || !p) return alert("Isi Email & Password untuk mendaftar!");
+    auth.createUserWithEmailAndPassword(e, p)
+      .then(() => alert("Berhasil Terdaftar! Silakan Login."))
+      .catch(err => alert("Gagal Daftar: " + err.message));
+  }
+  function logout() { auth.signOut().then(() => location.reload()); }
+
+  // 4. AUTH MONITOR
+  auth.onAuthStateChanged(user => {
+    const dash = document.getElementById("dashboard");
+    const loginCard = document.getElementById("login-card");
+    const menuBtn = document.getElementById("menu-btn");
+    const aiBtn = document.getElementById("ai-button");
+    const adminMenu = document.getElementById("admin-menu");
+
+    if(user){
+      dash.classList.remove("hidden");
+      loginCard.classList.add("hidden");
+      menuBtn.style.display = "flex";
+      aiBtn.style.display = "flex";
+
+      document.getElementById("uName").innerText = user.displayName || "Santri";
+      document.getElementById("uEmail").innerText = user.email;
+      if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+
+      if (user.email === "miftahilmi15@gmail.com") adminMenu.classList.remove("hidden");
+
+      // Streak & Mahfuzat
+      const lastVisit = localStorage.getItem('last_visit');
+      const today = new Date().toDateString();
+      const fire = document.getElementById('fire-api');
+      if(lastVisit === today) {
+        fire.classList.remove('fire-off');
+        document.getElementById('streak-text').innerText = "Sudah Absen";
+      } else {
+        fire.classList.add('fire-off');
+        document.getElementById('streak-text').innerText = "Hadir Hari Ini";
+        localStorage.setItem('last_visit', today);
+      }
+      const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
+      const d = m[new Date().getDate() % m.length];
+      document.getElementById('runArab').innerText = d.ar;
+      document.getElementById('runIndo').innerText = " — " + d.id;
+    } else {
+      loginCard.classList.remove("hidden");
+      dash.classList.add("hidden");
+      menuBtn.style.display = "none";
+      aiBtn.style.display = "none";
+      adminMenu.classList.add("hidden");
+    }
+  });
+
+  // 5. AI FUNCTION
+  async function kirimKeAI() {
+    const input = document.getElementById('aiInput');
+    const box = document.getElementById('chatContent');
+    const text = input.value.trim();
+    if(!text) return;
+
+    box.innerHTML += `<div class="msg-user">${text}</div>`;
+    input.value = "";
+    const loadingId = "load-" + Date.now();
+    box.innerHTML += `<div class="msg-ai" id="${loadingId}">...</div>`;
+    box.scrollTop = box.scrollHeight;
+
+    try {
+        const res = await fetch('/proses', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ pesan: text })
+        });
+        const d = await res.json();
+        document.getElementById(loadingId).innerText = d.jawaban;
+    } catch (e) {
+        document.getElementById(loadingId).innerText = "Afwan, asisten sedang rehat sebentar.";
+    }
+    box.scrollTop = box.scrollHeight;
+  }
+</script>
+</body>
+</html>: 1; padding: 15px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; background: #fdfdfd;">
         <div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu?</div>
     </div>
     <div style="padding: 10px; border-top: 1px solid #eee; display: flex; background: white;">
