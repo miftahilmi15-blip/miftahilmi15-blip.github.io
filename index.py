@@ -6,8 +6,17 @@ app = Flask(__name__)
 # API Key
 genai.configure(api_key="AIzaSyCZmCTKtlYKcte4ytLmqhQbvZy7O3k5Ar4")
 
-# Gunakan gemini-pro agar stabil dan tidak error 404
-model = genai.GenerativeModel('gemini-pro')
+# GANTI BAGIAN KONFIGURASI MODEL DENGAN INI:
+try:
+    # Model terbaru dan paling didukung saat ini
+    model = genai.GenerativeModel('gemini-1.5-flash-latest')
+except Exception:
+    try:
+        # Jika gagal, coba versi pro tanpa prefix 'models/'
+        model = genai.GenerativeModel('gemini-pro')
+    except Exception:
+        # Pilihan terakhir jika semua gagal
+        model = genai.GenerativeModel('gemini-1.5-pro')
 
 HTML_CODE = """
 <!DOCTYPE html>
@@ -150,3 +159,4 @@ def proses():
 
 # Baris ini wajib ada untuk Vercel
 app = app
+
