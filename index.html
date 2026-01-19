@@ -201,10 +201,10 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
 
-  // 2. SIDEBAR & UI
+  // 2. SIDEBAR & UI LOGIC
   const sb = document.getElementById("sidebar");
   const mBtn = document.getElementById("menu-btn");
-  const cBtn = document.getElementById("close-btn");
+  const cBtn = document.getElementById("closeBtn"); // Sesuaikan ID HTML
 
   if(mBtn) mBtn.onclick = () => { sb.classList.add("open"); }
   if(cBtn) cBtn.onclick = () => { sb.classList.remove("open"); }
@@ -214,20 +214,21 @@
     if(win) win.style.display = win.style.display === "none" ? "flex" : "none";
   }
 
-  // 3. FUNGSI LOGIN & LOGOUT
+  // 3. AUTH FUNCTIONS
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithRedirect(provider);
   }
   function login() { 
-    auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value)
-    .catch(e => alert(e.message)); 
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message)); 
   }
   function logout() { 
     auth.signOut().then(() => location.reload()); 
   }
 
-  // 4. LOGIKA UTAMA (AUTH STATE)
+  // 4. MONITOR STATUS LOGIN
   auth.onAuthStateChanged(user => {
     const dash = document.getElementById("dashboard");
     const loginCard = document.getElementById("login-card");
@@ -236,24 +237,23 @@
     const adminMenu = document.getElementById("admin-menu");
 
     if(user){
-      // Tampilkan Dashboard
       if(dash) dash.classList.remove("hidden");
       if(loginCard) loginCard.classList.add("hidden");
       if(menuBtn) menuBtn.style.display = "flex";
       if(aiBtn) aiBtn.style.display = "flex";
 
-      // Isi Profil
-      document.getElementById("u-name").innerText = user.displayName || "Santri";
-      document.getElementById("u-email").innerText = user.email;
-      if(user.photoURL) document.getElementById("u-img").src = user.photoURL;
+      // Update Profil (Sesuaikan ID HTML uName, uEmail, uImg)
+      document.getElementById("uName").innerText = user.displayName || "Santri";
+      document.getElementById("uEmail").innerText = user.email;
+      if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
 
-      // --- LOGIKA MENU ADMIN ---
-      const adminEmail = "miftahilmi15@gmail.com"; // Email Admin Kamu
+      // Menu Admin
+      const adminEmail = "miftahilmi15@gmail.com"; 
       if (user.email === adminEmail) {
           if(adminMenu) adminMenu.classList.remove("hidden");
       }
 
-      // Logika Streak Api
+      // Streak & Mahfuzat
       const lastVisit = localStorage.getItem('last_visit');
       const today = new Date().toDateString();
       const fire = document.getElementById('fire-api');
@@ -263,19 +263,16 @@
             document.getElementById('streak-text').innerText = "Sudah Absen";
           } else {
             fire.classList.add('fire-off');
-            document.getElementById('streak-text').innerText = "Ketuk Menu Absensi";
+            document.getElementById('streak-text').innerText = "Hadir Hari Ini";
             localStorage.setItem('last_visit', today);
           }
       }
-
-      // Mahfuzat Berjalan
       const m = [{ar:"مَنْ جَدَّ وَجَدَ", id:"Siapa bersungguh-sungguh, dapat."}, {ar:"مَنْ صَبَرَ ظَفِرَ", id:"Siapa sabar, beruntung."}];
       const d = m[new Date().getDate() % m.length];
-      if(document.getElementById('runArab')) document.getElementById('runArab').innerText = d.ar;
-      if(document.getElementById('runIndo')) document.getElementById('runIndo').innerText = " — " + d.id;
+      document.getElementById('runArab').innerText = d.ar;
+      document.getElementById('runIndo').innerText = " — " + d.id;
 
     } else {
-      // Logika Saat Logout
       if(loginCard) loginCard.classList.remove("hidden");
       if(dash) dash.classList.add("hidden");
       if(menuBtn) menuBtn.style.display = "none";
@@ -284,13 +281,12 @@
     }
   });
 
-  // 5. FUNGSI AI
+  // 5. AI CHAT FUNCTION
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     if(!input || !box) return;
     const text = input.value.trim();
-    
     if(!text) return;
 
     box.innerHTML += `<div class="msg-user">${text}</div>`;
@@ -307,16 +303,10 @@
             body: JSON.stringify({ pesan: text })
         });
         const d = await res.json();
-        const loadingElement = document.getElementById(loadingId);
-        if (loadingElement) loadingElement.innerText = d.jawaban;
+        document.getElementById(loadingId).innerText = d.jawaban;
     } catch (e) {
-        const loadingElement = document.getElementById(loadingId);
-        if (loadingElement) loadingElement.innerText = "Afwan, server sedang sinkronisasi.";
+        document.getElementById(loadingId).innerText = "Afwan, asisten sedang rehat sebentar.";
     }
     box.scrollTop = box.scrollHeight;
   }
-
-  auth.getRedirectResult().catch(e => console.log(e.message));
 </script>
-</body>
-</html>
