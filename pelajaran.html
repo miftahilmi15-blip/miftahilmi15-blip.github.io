@@ -71,7 +71,6 @@
     </div>
 
 <script>
-    // LINK CSV KAKAK (SUDAH SAYA PASANG)
     const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/gviz/tq?tqx=out:csv&sheet=Sheet1"; 
     const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/gviz/tq?tqx=out:csv&sheet=Sheet1"; 
 
@@ -100,26 +99,30 @@
         try {
             const resp = await fetch(urlPelajaran);
             const data = await resp.text();
-            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '')));
+            // Pembersihan data yang lebih kuat
+            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             
             let html = "", currentDay = "";
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
-                if (!col[0] || col[0].trim() === "") continue;
+                if (!col[0] || col[0] === "") continue;
 
-                if (col[0] !== currentDay) {
+                // Cek Nama Hari
+                let namaHari = col[0];
+                if (namaHari !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
-                    currentDay = col[0];
+                    currentDay = namaHari;
                     html += `<div class="hari-box"><span class="hari-nama">${currentDay}</span>`;
                 }
+                
                 html += `
                 <div class="slot">
-                    <span class="waktu">${col[1]}</span>
+                    <span class="waktu">${col[1] || ''}</span>
                     <span class="mapel">${col[kolomIdx] || '-'}</span>
                 </div>`;
             }
             container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat jadwal pelajaran.</p>"; }
+        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat jadwal.</p>"; }
     }
 
     async function muatPiketGuru() {
@@ -129,12 +132,12 @@
         try {
             const resp = await fetch(urlPiket);
             const data = await resp.text();
-            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '')));
+            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             
             let html = "", currentDay = "";
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
-                if (!col[0] || col[0].trim() === "") continue;
+                if (!col[0] || col[0] === "") continue;
 
                 if (col[0] !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
@@ -143,12 +146,12 @@
                 }
                 html += `
                 <div class="slot" style="flex-direction:column; align-items:flex-start;">
-                    <span class="waktu" style="color:var(--primary)">${col[1]} - ${col[3]}</span>
-                    <span class="mapel" style="text-align:left; font-size:14px; margin-top:5px; font-weight:700;">${col[2]}</span>
+                    <span class="waktu" style="color:var(--primary)">${col[1] || ''} - ${col[3] || ''}</span>
+                    <span class="mapel" style="text-align:left; font-size:14px; margin-top:5px; font-weight:700;">${col[2] || '-'}</span>
                 </div>`;
             }
             container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat jadwal piket.</p>"; }
+        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat data.</p>"; }
     }
 </script>
 </body>
