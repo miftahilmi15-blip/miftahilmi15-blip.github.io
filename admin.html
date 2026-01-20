@@ -3,125 +3,144 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Management & Rewards | E-Santri Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Master Admin & Rewards | E-Santri Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Amiri&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --primary: #1f6f51; --gold: #f1c40f; --bg: #f4f7f6; }
+        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; --gold: #f1c40f; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-        
-        body { background: var(--bg); color: #2d3436; }
+        body { background: var(--bg); color: #2d3436; padding-bottom: 50px; }
 
-        /* HEADER REWARD SECTION */
-        .reward-page { 
-            background: linear-gradient(180deg, #1f6f51 0%, #133b2c 100%); 
-            min-height: 100vh; padding: 30px 20px; color: white;
-            display: flex; flex-direction: column; align-items: center;
+        /* HALAMAN REWARD GURU (TAMPIL PERTAMA) */
+        #reward-screen {
+            background: linear-gradient(180deg, #1f6f51 0%, #133b2c 100%);
+            min-height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 2000;
+            padding: 30px 20px; color: white; display: flex; flex-direction: column; align-items: center;
+            overflow-y: auto;
         }
-
-        .trophy-icon { font-size: 50px; color: var(--gold); margin-bottom: 10px; filter: drop-shadow(0 0 10px rgba(241,196,15,0.5)); }
-        .reward-page h2 { font-weight: 800; letter-spacing: 1px; text-transform: uppercase; font-size: 20px; }
-        .reward-page p { font-size: 11px; opacity: 0.8; margin-bottom: 30px; }
-
-        /* LEADERBOARD CARD */
-        .leaderboard-container { width: 100%; max-width: 500px; }
-        .guru-rank-card { 
-            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-            padding: 15px 20px; border-radius: 20px; margin-bottom: 12px;
+        .trophy { font-size: 50px; color: var(--gold); margin-bottom: 10px; }
+        .leaderboard-item {
+            background: rgba(255,255,255,0.1); width: 100%; max-width: 450px;
+            padding: 15px 20px; border-radius: 20px; margin-bottom: 10px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .rank-1 { background: rgba(241,196,15,0.2); border: 1px solid var(--gold); transform: scale(1.05); margin-bottom: 20px; }
-        
-        .guru-info { display: flex; align-items: center; gap: 15px; }
-        .rank-num { font-weight: 800; font-size: 18px; width: 30px; }
-        .guru-name b { font-size: 14px; display: block; }
-        .guru-name small { font-size: 10px; opacity: 0.7; }
-        .points { text-align: right; }
-        .points b { font-size: 16px; color: var(--gold); }
-        .points span { font-size: 9px; display: block; opacity: 0.8; }
-
-        /* FLOATING ACTION BUTTON TO ADMIN */
+        .top-1 { border: 1px solid var(--gold); background: rgba(241,196,15,0.15); }
         .btn-to-admin {
-            position: fixed; bottom: 30px; right: 20px;
-            background: white; color: var(--primary);
-            padding: 15px 25px; border-radius: 50px; font-weight: 800;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            text-decoration: none; display: flex; align-items: center; gap: 10px;
-            font-size: 13px; z-index: 1000; border: none; cursor: pointer;
+            position: fixed; bottom: 30px; right: 20px; background: white; color: var(--primary);
+            padding: 15px 25px; border-radius: 50px; font-weight: 800; border: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; font-size: 13px; z-index: 2100;
         }
 
-        /* OVERLAY ADMIN PANEL (Hidden by default) */
-        #admin-panel {
-            position: fixed; inset: 0; background: var(--bg);
-            z-index: 2000; overflow-y: auto; display: none;
-        }
-        .admin-header { background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .btn-back { border: none; background: #eee; padding: 8px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; }
-
-        /* SHARED STYLES */
-        .content { padding: 20px; max-width: 600px; margin: 0 auto; }
+        /* DASHBOARD ADMIN (HIDDEN) */
+        #admin-screen { display: none; }
+        
+        /* CSS ASLI KAKAK (JANGAN DIUBAH) */
+        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
+        .content { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
         .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .nav-scroller { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #fff; font-weight: 600; white-space: nowrap; font-size: 11px; cursor: pointer; border: 1px solid #eee; }
-        .nav-btn.active { background: var(--primary); color: white; }
-        .item-row { background: #f9f9f9; padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 13px; }
-        .badge { padding: 4px 8px; border-radius: 6px; color: white; font-size: 10px; font-weight: bold; }
-        .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary); color: white; border-radius: 15px; font-weight: 700; margin-top: 10px; cursor: pointer; }
-        .hidden { display: none; }
+        h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
+        label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-top: 10px; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; transition: 0.3s; }
+        .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-excel { display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d4d3f; color: white; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-top: 10px; font-size: 13px; }
+        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
+        .hidden { display: none !important; }
+        .arabic { font-family: 'Amiri', serif; font-size: 20px; text-align: right; color: var(--primary); direction: rtl; }
+        .delete-btn { color: #e74c3c; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<div class="reward-page" id="reward-page">
-    <div class="trophy-icon"><i class="fas fa-crown"></i></div>
-    <h2>Teacher of the Month</h2>
-    <p id="current-month">Periode: Januari 2026</p>
-
-    <div class="leaderboard-container" id="leaderboard-list">
-        <div style="text-align: center; opacity: 0.5; margin-top: 50px;">Memuat Papan Peringkat...</div>
+<div id="reward-screen">
+    <div class="trophy"><i class="fas fa-crown"></i></div>
+    <h2 style="font-weight: 800; margin-bottom: 5px;">TEACHER REWARDS</h2>
+    <p style="font-size: 11px; opacity: 0.8; margin-bottom: 30px;">Peringkat Keaktifan Guru Bulan Ini</p>
+    
+    <div id="leaderboard-list" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <small>Memuat data prestasi...</small>
     </div>
 
-    <button class="btn-to-admin" onclick="openAdmin()">
-        MASUK CONTROL PANEL <i class="fas fa-arrow-right"></i>
+    <button class="btn-to-admin" onclick="bukaAdmin()">
+        KONTROL ADMIN <i class="fas fa-arrow-right" style="margin-left:8px"></i>
     </button>
 </div>
 
-<div id="admin-panel">
-    <div class="admin-header">
-        <b style="color: var(--primary);">MASTER CONTROL</b>
-        <button class="btn-back" onclick="closeAdmin()"><i class="fas fa-times"></i> Tutup</button>
+<div id="admin-screen">
+    <div class="sidebar">
+        <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi & Guru</button>
+        <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
+        <button class="nav-btn" onclick="showTab('tab-materi', this)">Doa & Mahfuzat</button>
+        <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
+        <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
+        <button class="nav-btn" onclick="showTab('tab-jadwal', this)">Jadwal</button>
+        <button class="nav-btn" onclick="tutupAdmin()" style="background:#f8d7da; color:#721c24">Keluar</button>
     </div>
 
     <div class="content">
-        <div class="nav-scroller">
-            <button class="nav-btn active" onclick="switchTab('tab-absen', this)">Absensi</button>
-            <button class="nav-btn" onclick="switchTab('tab-tahfidz', this)">Tahfidz</button>
-            <button class="nav-btn" onclick="switchTab('tab-aquarium', this)">Aquarium</button>
-            <button class="nav-btn" onclick="switchTab('tab-aduan', this)">Aduan</button>
-            <button class="nav-btn" onclick="switchTab('tab-materi', this)">Materi</button>
+        <div id="tab-monitoring" class="tab-content">
+            <div class="card">
+                <h3>Monitoring Guru Input Budaya</h3>
+                <div id="list-guru-input"></div>
+            </div>
+            <div class="card">
+                <h3>Presensi Santri Hari Ini</h3>
+                <select id="pilih-kelas-mon" onchange="loadAbsensi()"><option value="7A">Kelas 7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="8B">8B</option></select>
+                <div id="list-absensi" style="margin-top:15px;"></div>
+            </div>
         </div>
 
-        <div id="tab-absen" class="tab-content card">
-            <h3>Monitoring Guru Aktif</h3>
-            <div id="mon-guru" style="margin-bottom: 20px;"></div>
-            <h3>Absensi Santri</h3>
-            <select id="sel-kls" onchange="loadAbsen()" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
-                <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option><option value="8A">Kelas 8A</option>
-            </select>
-            <div id="list-absen" style="margin-top:15px;"></div>
+        <div id="tab-tahfidz" class="tab-content hidden">
+            <div class="card">
+                <h3>Laporan Tahfidz Terbaru</h3>
+                <div id="list-tahfidz"></div>
+            </div>
         </div>
 
-        <div id="tab-aquarium" class="tab-content card hidden">
-            <h3>Kirim Hadiah Ikan</h3>
-            <label style="font-size:11px; font-weight:700;">Email Santri</label>
-            <input type="email" id="aq-email" placeholder="santri@gmail.com" style="width:100%; padding:12px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;">
-            <button class="btn-action" onclick="kirimIkan()">KIRIM IKAN</button>
+        <div id="tab-materi" class="tab-content hidden">
+            <div class="card">
+                <h3>Update Mahfuzat</h3>
+                <input type="text" id="m-arab" placeholder="Teks Arab..." style="text-align:right">
+                <textarea id="m-indo" rows="2" placeholder="Terjemahan..."></textarea>
+                <button class="btn-action" onclick="saveMahfuzat()">UPDATE MAHFUZAT</button>
+            </div>
+            <div class="card">
+                <h3>Input Doa Baru</h3>
+                <input type="text" id="d-judul" placeholder="Judul Doa">
+                <input type="text" id="d-arab" placeholder="Teks Arab..." style="text-align:right">
+                <textarea id="d-arti" rows="2" placeholder="Arti..."></textarea>
+                <button class="btn-action" onclick="saveDoa()" style="background:#2ecc71">SIMPAN DOA</button>
+            </div>
         </div>
 
-        <div id="tab-aduan" class="tab-content card hidden">
-            <h3>Pengaduan Santri</h3>
-            <div id="list-aduan"></div>
+        <div id="tab-aquarium" class="tab-content hidden">
+            <div class="card">
+                <h3>Hadiah Ikan (Reward Al-Qur'an)</h3>
+                <label>Email Google Santri</label>
+                <input type="email" id="aq-email" placeholder="contoh: santri@gmail.com">
+                <label>Jumlah Ikan</label>
+                <input type="number" id="aq-jumlah" value="1" min="1">
+                <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM IKAN SEKARANG</button>
+            </div>
+        </div>
+
+        <div id="tab-pengaduan" class="tab-content hidden">
+            <div class="card">
+                <h3>Laporan Pengaduan Masuk</h3>
+                <div id="list-pengaduan"></div>
+            </div>
+        </div>
+
+        <div id="tab-jadwal" class="tab-content hidden">
+            <div class="card">
+                <h3>Google Sheets Control</h3>
+                <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">Edit Jadwal Pelajaran</a>
+                <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">Edit Jadwal Piket</a>
+            </div>
         </div>
     </div>
 </div>
@@ -134,96 +153,147 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 1. FUNGSI LEADERBOARD REWARD
+    // FUNGSI KHUSUS HALAMAN REWARD
+    function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; }
+    function tutupAdmin() { document.getElementById('reward-screen').style.display = 'flex'; document.getElementById('admin-screen').style.display = 'none'; }
+
     function loadLeaderboard() {
         const list = document.getElementById('leaderboard-list');
         const now = new Date();
-        const bln = now.getMonth() + 1;
+        const path = `budaya/${now.getFullYear()}/${now.getMonth() + 1}`;
         
-        db.ref(`budaya/2026/${bln}`).on('value', snap => {
-            let guruData = {};
+        db.ref(path).on('value', snap => {
+            let guruSkor = {};
             snap.forEach(tgl => tgl.forEach(kls => kls.forEach(s => {
                 const d = s.val();
                 if(d.guru) {
-                    if(!guruData[d.guru]) guruData[d.guru] = { n: d.guru, p: 0 };
-                    guruData[d.guru].p += 1;
+                    if(!guruSkor[d.guru]) guruSkor[d.guru] = { nama: d.guru, poin: 0 };
+                    guruSkor[d.guru].poin += 1;
                 }
             })));
-
-            const sorted = Object.values(guruData).sort((a,b) => b.p - a.p);
+            
+            const sorted = Object.values(guruSkor).sort((a,b) => b.poin - a.poin);
             list.innerHTML = "";
             sorted.forEach((g, i) => {
-                let isTop = i === 0 ? 'rank-1' : '';
-                let icon = i === 0 ? '🥇' : (i===1 ? '🥈' : (i===2 ? '🥉' : '🎖️'));
+                let medali = i === 0 ? "🥇" : (i === 1 ? "🥈" : (i === 2 ? "🥉" : "🎖️"));
+                let kelasTop = i === 0 ? "top-1" : "";
                 list.innerHTML += `
-                    <div class="guru-rank-card ${isTop}">
-                        <div class="guru-info">
-                            <div class="rank-num">${icon}</div>
-                            <div class="guru-name"><b>${g.n}</b><small>Guru Aktif Bulan Ini</small></div>
-                        </div>
-                        <div class="points"><b>${g.p}</b><span>POIN</span></div>
-                    </div>`;
+                <div class="leaderboard-item ${kelasTop}">
+                    <div style="display:flex; align-items:center; gap:15px">
+                        <span style="font-size:20px">${medali}</span>
+                        <div><b>${g.nama}</b><br><small style="opacity:0.7">Aktif Input Budaya</small></div>
+                    </div>
+                    <div style="text-align:right"><b>${g.poin}</b><br><small style="font-size:9px">POIN</small></div>
+                </div>`;
             });
+            if(sorted.length === 0) list.innerHTML = "<small>Belum ada data prestasi bulan ini.</small>";
         });
     }
 
-    // 2. NAVIGASI HALAMAN
-    function openAdmin() { document.getElementById('admin-panel').style.display = 'block'; loadAbsen(); loadMonitorGuru(); }
-    function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
-    function switchTab(tabId, btn) {
+    // LOGIKA ASLI KAKAK (TIDAK DIUBAH SAMA SEKALI)
+    function showTab(id, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.remove('hidden');
+        document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
-        if(tabId === 'tab-aduan') loadAduan();
+        if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
+        if(id === 'tab-tahfidz') loadTahfidz();
+        if(id === 'tab-pengaduan') loadPengaduan();
     }
 
-    // 3. FUNGSI ADMIN TOOLS
     function loadMonitorGuru() {
-        const mon = document.getElementById('mon-guru');
+        const list = document.getElementById('list-guru-input');
         const now = new Date();
         const path = `budaya/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
         db.ref(path).on('value', snap => {
-            mon.innerHTML = "";
-            let aktif = new Set();
-            snap.forEach(k => k.forEach(s => { if(s.val().guru) aktif.add(s.val().guru); }));
-            aktif.forEach(name => {
-                mon.innerHTML += `<div class="item-row"><b>Ust. ${name}</b> <span class="badge" style="background:#1f6f51">READY</span></div>`;
+            list.innerHTML = "";
+            let guruSet = {};
+            snap.forEach(kelas => {
+                kelas.forEach(santri => {
+                    const d = santri.val();
+                    if(d.guru) guruSet[d.guru] = d.kelas;
+                });
             });
+            for(let name in guruSet) {
+                list.innerHTML += `<div class="item-row"><b>Ust. ${name}</b><span class="badge" style="background:var(--primary)">Input ${guruSet[name]}</span></div>`;
+            }
+            if(Object.keys(guruSet).length === 0) list.innerHTML = "<small>Belum ada input guru.</small>";
         });
     }
 
-    function loadAbsen() {
-        const list = document.getElementById('list-absen');
-        const kls = document.getElementById('sel-kls').value;
+    function loadAbsensi() {
+        const list = document.getElementById('list-absensi');
+        const kls = document.getElementById('pilih-kelas-mon').value;
         const now = new Date();
         const path = `absensi/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/${kls}`;
         db.ref(path).on('value', snap => {
             list.innerHTML = "";
+            if(!snap.exists()) return list.innerHTML = "<center><small>Belum ada data absen.</small></center>";
             snap.forEach(s => {
                 const v = s.val();
-                list.innerHTML += `<div class="item-row"><b>${v.nama}</b> <b>${v.status}</b></div>`;
+                let col = v.status === 'H' ? '#2ecc71' : '#e74c3c';
+                list.innerHTML += `<div class="item-row"><b>${v.nama}</b><span class="badge" style="background:${col}">${v.status}</span></div>`;
             });
         });
     }
 
-    function kirimIkan() {
-        const email = document.getElementById('aq-email').value.replace(/\./g, ',');
-        if(!email) return alert("Isi Email!");
-        db.ref('users/'+email+'/ikan').transaction(c => (c||0)+1).then(()=>alert("Ikan Terkirim!"));
+    function kirimIkanByEmail() {
+        const email = document.getElementById('aq-email').value.trim().toLowerCase();
+        const jml = parseInt(document.getElementById('aq-jumlah').value);
+        if(!email.includes('@')) return alert("Email tidak valid!");
+        const emailKey = email.replace(/\./g, ',');
+        db.ref('users/' + emailKey + '/ikan').transaction(val => (val || 0) + jml)
+        .then(() => { alert("Ikan terkirim ke " + email); document.getElementById('aq-email').value = ""; });
     }
 
-    function loadAduan() {
-        const list = document.getElementById('list-aduan');
+    function loadPengaduan() {
+        const list = document.getElementById('list-pengaduan');
         db.ref('pengaduan').on('value', snap => {
             list.innerHTML = "";
-            snap.forEach(a => {
-                list.innerHTML += `<div class="item-row" style="flex-direction:column;"><b>${a.val().nama}</b><p>${a.val().pesan}</p></div>`;
+            if(!snap.exists()) return list.innerHTML = "<small>Tidak ada laporan.</small>";
+            snap.forEach(item => {
+                const d = item.val();
+                list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;">
+                    <div style="display:flex; justify-content:space-between; width:100%;">
+                        <b>${d.nama || 'Anonim'}</b>
+                        <i class="fas fa-trash-alt delete-btn" onclick="hapus('pengaduan/${item.key}')"></i>
+                    </div>
+                    <p style="font-size:12px; margin-top:5px; color:#666;">${d.pesan || d.laporan}</p>
+                </div>`;
             });
         });
     }
 
+    function saveMahfuzat() {
+        const arab = document.getElementById('m-arab').value;
+        const indo = document.getElementById('m-indo').value;
+        db.ref('fitur/mahfuzat').set({ arab, indo }).then(() => alert("Berhasil!"));
+    }
+
+    function saveDoa() {
+        const j = document.getElementById('d-judul').value;
+        const a = document.getElementById('d-arab').value;
+        const r = document.getElementById('d-arti').value;
+        db.ref('doa_harian').push({ judul:j, arab:a, arti:r }).then(() => alert("Doa Tersimpan!"));
+    }
+
+    function loadTahfidz() {
+        const list = document.getElementById('list-tahfidz');
+        db.ref('tahfidz').limitToLast(10).on('value', snap => {
+            list.innerHTML = "";
+            snap.forEach(y => y.forEach(m => m.forEach(s => {
+                const v = s.val();
+                list.innerHTML += `<div class="item-row"><b>${v.nama}</b><small>${v.materi}</small></div>`;
+            })));
+        });
+    }
+
+    function hapus(path) { if(confirm("Hapus data?")) db.ref(path).remove(); }
+
+    // Jalankan awal
     loadLeaderboard();
+    loadMonitorGuru(); 
+    loadAbsensi();
 </script>
 </body>
 </html>
