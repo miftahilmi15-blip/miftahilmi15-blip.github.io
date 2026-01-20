@@ -280,6 +280,7 @@
   });
 
   async function kirimKeAI() {
+  async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const text = input.value.trim();
@@ -291,37 +292,32 @@
     box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // --- PAKAI KUNCI YANG BARU DIBUAT TADI ---
+    // Pakai API KEY baru Kakak
     const API_KEY = "AIzaSyCLgxNb4sNFHMtscaTztvZIrZaGZIUoCTA"; 
     
-    // Kita pakai v1 (bukan v1beta) supaya lebih stabil
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    // Alamat v1beta adalah kunci keberhasilannya
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
-            // Kita hapus beberapa header yang sering bikin blokir browser
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "Jawablah dengan singkat: " + text }] }]
+                contents: [{ parts: [{ text: "Jawablah dengan singkat dan ramah sebagai asisten E-Santri: " + text }] }]
             })
         });
 
         const data = await response.json();
 
         if (data.error) {
-            // Kalau Google nolak, kita tampilkan alasannya di sini
             document.getElementById(loadId).innerText = "Info: " + data.error.message;
-        } else if (data.candidates && data.candidates[0].content) {
+        } else {
             const jawaban = data.candidates[0].content.parts[0].text;
             document.getElementById(loadId).innerText = jawaban;
-        } else {
-            document.getElementById(loadId).innerText = "Sistem sibuk, coba tanya lagi.";
         }
 
     } catch (e) { 
-        // Kalau masuk ke sini, berarti browser Kakak yang memblokir
-        console.error(e);
-        document.getElementById(loadId).innerText = "Browser memblokir koneksi. Coba buka lewat Vercel/HP."; 
+        document.getElementById(loadId).innerText = "Maaf, koneksi terputus. Coba lagi."; 
     }
     box.scrollTop = box.scrollHeight;
   }
