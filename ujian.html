@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Sistem Ujian Digital | E-Santri Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root { --primary: #1f6f51; --danger: #e74c3c; --bg: #f4f7f6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: var(--bg); padding: 20px; }
+
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 20px; }
+        
+        /* CARD LOGIN */
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .timer-box { position: sticky; top: 10px; z-index: 100; background: var(--danger); color: white; padding: 10px; border-radius: 12px; text-align: center; font-weight: 800; margin-bottom: 15px; display: none; }
+
+        /* SOAL STYLING */
+        .soal-item { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        .soal-text { font-weight: 600; margin-bottom: 10px; display: block; }
+        .opsi-label { display: block; background: #f9f9f9; padding: 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; border: 1px solid #eee; font-size: 14px; transition: 0.3s; }
+        input[type="radio"] { margin-right: 10px; }
+        input[type="radio"]:checked + span { color: var(--primary); font-weight: 700; }
+        
+        .btn-start { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="login-area" class="card">
+        <div class="header">
+            <h2>Portal Ujian</h2>
+            <p style="font-size: 12px; opacity: 0.7;">Silakan pilih kelas dan masukkan nama</p>
+        </div>
+        <label style="font-size: 12px; font-weight: 700;">Pilih Kelas</label>
+        <select id="user-kelas" style="width:100%; padding:12px; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;">
+            <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+            <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+            <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+        </select>
+        <label style="font-size: 12px; font-weight: 700;">Nama Lengkap</label>
+        <input type="text" id="user-nama" placeholder="Ketik nama sesuai absen..." style="width:100%; padding:12px; border-radius:10px; margin-bottom:20px; border:1px solid #ddd;">
+        <button class="btn-start" onclick="cekUjian()">MASUK UJIAN</button>
+    </div>
+
+    <div id="exam-area" class="hidden">
+        <div id="timer" class="timer-box">SISA WAKTU: <span id="time-left">00:00</span></div>
+        <div class="card">
+            <div id="list-soal"></div>
+            <button class="btn-start" style="background:#2ecc71" onclick="submitUjian()">SELESAI & KIRIM</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let dataUjian = [];
+    let intervalTimer;
+
+    function cekUjian() {
+        const kelas = document.getElementById('user-kelas').value;
+        const nama = document.getElementById('user-nama').value;
+        if(!nama) return alert("Masukkan Nama!");
+
+        db.ref(`ujian/${kelas}`).once('value', snap => {
+            const val = snap.val();
+            if(!val || val.status !== 'aktif') return alert("Ujian untuk kelas ini belum dibuka oleh Admin!");
+            
+            dataUjian = val.soal;
+            mulaiUjian(val.durasi);
+        });
+    }
+
+    function mulaiUjian(durasi) {
+        document.getElementById('login-area').classList.add('hidden');
+        document.getElementById('exam-area').classList.remove('hidden');
+        document.getElementById('timer').style.display = 'block';
+
+        // Render Soal
+        const list = document.getElementById('list-soal');
+        list.innerHTML = "";
+        dataUjian.forEach((s, i) => {
+            list.innerHTML += `
+                <div class="soal-item">
+                    <span class="soal-text">${i+1}. ${s.t}</span>
+                    <label class="opsi-label"><input type="radio" name="q${i}" value="A"> <span>${s.a}</span></label>
+                    <label class="opsi-label"><input type="radio" name="q${i}" value="B"> <span>${s.b}</span></label>
+                    <label class="opsi-label"><input type="radio" name="q${i}" value="C"> <span>${s.c}</span></label>
+                    <label class="opsi-label"><input type="radio" name="q${i}" value="D"> <span>${s.d}</span></label>
+                </div>
+            `;
+        });
+
+        // Timer Logic
+        let totalWaktu = durasi * 60;
+        intervalTimer = setInterval(() => {
+            let m = Math.floor(totalWaktu / 60);
+            let s = totalWaktu % 60;
+            document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            if(totalWaktu <= 0) { clearInterval(intervalTimer); submitUjian(true); }
+            totalWaktu--;
+        }, 1000);
+    }
+
+    function submitUjian(auto = false) {
+        if(!auto && !confirm("Yakin ingin mengirim jawaban?")) return;
+        clearInterval(intervalTimer);
+
+        const kelas = document.getElementById('user-kelas').value;
+        const nama = document.getElementById('user-nama').value;
+        let skor = 0;
+
+        dataUjian.forEach((s, i) => {
+            const r = document.querySelector(`input[name="q${i}"]:checked`);
+            if(r && r.value === s.k) skor++;
+        });
+
+        const nilaiAkhir = Math.round((skor / dataUjian.length) * 100);
+
+        db.ref(`ujian/${kelas}/hasil`).push({
+            nama: nama,
+            nilai: nilaiAkhir,
+            waktu: new Date().toLocaleString()
+        }).then(() => {
+            alert(`Ujian Selesai! Nilai kamu: ${nilaiAkhir}`);
+            location.reload();
+        });
+    }
+</script>
+</body>
+</html>
