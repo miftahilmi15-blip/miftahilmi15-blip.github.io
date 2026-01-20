@@ -1,232 +1,180 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Admin Dashboard | E-Santri Pro v16</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Amiri&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<style>
-  :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; }
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-  body { background: var(--bg); color: #2d3436; padding-bottom: 50px; }
-  
-  /* Navigation */
-  .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
-  .sidebar::-webkit-scrollbar { display: none; }
-  .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 12px; transition: 0.3s; color: #666; }
-  .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Admin Dashboard | E-Santri Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Amiri&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: var(--bg); color: #2d3436; padding-bottom: 80px; }
+        
+        /* Sidebar/Header */
+        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
 
-  /* Content */
-  .content { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
-  .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
-  
-  h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
-  .btn-excel { display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d4d3f; color: white; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-top: 10px; font-size: 13px; }
-  
-  label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; margin-top: 10px; }
-  input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 13px; transition: 0.3s; }
-  
-  .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; }
-  
-  .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
-  .badge { padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; text-transform: uppercase; }
-  .status-sudah { border-left: 5px solid #2ecc71; }
-  .status-belum { border-left: 5px solid #e74c3c; }
-  .hidden { display: none !important; }
-  
-  .arabic-text { font-family: 'Amiri', serif; font-size: 20px; text-align: right; direction: rtl; color: var(--primary); margin: 5px 0; }
-  .delete-btn { color: #e74c3c; cursor: pointer; padding: 5px; }
-</style>
+        .content { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        
+        h3 { font-size: 14px; margin-bottom: 15px; color: var(--primary); border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
+        label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; margin-top: 10px; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
+        
+        .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-excel { display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d4d3f; color: white; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-top: 10px; font-size: 13px; }
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+        .item-row { background: #fcfcfc; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
+        .hidden { display: none !important; }
+        .loading-text { text-align: center; color: #999; font-size: 12px; padding: 20px; }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
 <div class="sidebar">
-    <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)">Mahfuzat</button>
-    <button class="nav-btn" onclick="showTab('tab-doa', this)">Input Doa</button>
-    <button class="nav-btn" onclick="showTab('tab-jadwal', this)">Kelola Jadwal</button>
-    <button class="nav-btn" onclick="showTab('tab-data-tahfidz', this)">Data Tahfidz</button>
-    <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Absensi</button>
+    <button class="nav-btn active" onclick="showTab('tab-jadwal', this)">Jadwal</button>
+    <button class="nav-btn" onclick="showTab('tab-budaya', this)">Input Budaya</button>
+    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Data Tahfidz</button>
+    <button class="nav-btn" onclick="showTab('tab-absensi', this)">Absensi</button>
     <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
 </div>
 
 <div class="content">
-    <div id="tab-mahfuzat" class="tab-content card">
-      <h3>Edit Mahfuzat Berjalan</h3>
-      <label>Teks Arab</label>
-      <input type="text" id="m-arab" placeholder="Ketik Arab..." style="text-align: right; font-size: 18px;">
-      <label>Terjemahan</label>
-      <textarea id="m-indo" rows="2" placeholder="Ketik Arti..."></textarea>
-      <button class="btn-action" onclick="saveMahfuzat()">UPDATE DASHBOARD</button>
+    <div id="tab-jadwal" class="tab-content card">
+        <h3>Kelola Jadwal (Google Sheets)</h3>
+        <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">Jadwal Pelajaran</a>
+        <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">Jadwal Piket Guru</a>
     </div>
 
-    <div id="tab-doa" class="tab-content card hidden">
-      <h3>Tambah Doa Baru</h3>
-      <label>Judul Doa</label>
-      <input type="text" id="judulDoa" placeholder="Contoh: Doa Masuk Masjid">
-      <label>Teks Arab</label>
-      <input type="text" id="arabDoa" dir="rtl" placeholder="Ketik/Paste Arab di sini" style="text-align: right; font-size: 18px;">
-      <label>Arti</label>
-      <textarea id="artiDoa" rows="2" placeholder="Terjemahan doa"></textarea>
-      <button class="btn-action" onclick="simpanDoa()" style="background: #2ecc71;">SIMPAN KE DATABASE</button>
-
-      <h3 style="margin-top: 35px; border-color: #e67e22;">Daftar Doa Tersimpan</h3>
-      <div id="daftarDoaAdmin" style="max-height: 400px; overflow-y: auto; margin-top: 10px;"></div>
+    <div id="tab-budaya" class="tab-content card hidden">
+        <h3>Input Budaya Sekolah</h3>
+        <label>Nama Budaya / Kegiatan</label>
+        <input type="text" id="b-nama" placeholder="Contoh: Shalat Dhuha">
+        <label>Poin Reward</label>
+        <input type="number" id="b-poin" placeholder="Contoh: 10">
+        <button class="btn-action" onclick="saveBudaya()">SIMPAN KE APLIKASI</button>
     </div>
 
-    <div id="tab-jadwal" class="tab-content card hidden">
-      <h3>Kelola Jadwal (Real-time Excel)</h3>
-      <p style="font-size: 11px; color: #666; margin-bottom: 15px;">Klik tombol untuk edit data di Google Sheets. Aplikasi santri otomatis terupdate.</p>
-      
-      <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">
-          <i class="fa-solid fa-table"></i> Edit Jadwal Pelajaran
-      </a>
-      
-      <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">
-          <i class="fa-solid fa-user-tie"></i> Edit Jadwal Piket Guru
-      </a>
+    <div id="tab-tahfidz" class="tab-content card hidden">
+        <h3>Laporan Tahfidz</h3>
+        <div id="list-tahfidz" class="loading-text">Memuat data setoran...</div>
     </div>
 
-    <div id="tab-data-tahfidz" class="tab-content hidden">
-      <div class="card">
-        <h3>Laporan Setoran Terbaru</h3>
-        <div id="list-tahfidz"></div>
-      </div>
-    </div>
-
-    <div id="tab-monitoring" class="tab-content hidden">
-      <div class="card">
+    <div id="tab-absensi" class="tab-content card hidden">
         <h3>Absensi Santri Hari Ini</h3>
-        <div id="list-monitoring"></div>
-      </div>
+        <div id="list-absensi" class="loading-text">Mengecek daftar hadir...</div>
     </div>
 
-    <div id="tab-pengaduan" class="tab-content hidden">
-      <div class="card">
-        <h3>Laporan & Pengaduan</h3>
-        <div id="list-pengaduan"></div>
-      </div>
+    <div id="tab-pengaduan" class="tab-content card hidden">
+        <h3>Laporan Pengaduan</h3>
+        <div id="list-pengaduan" class="loading-text">Memuat pengaduan...</div>
     </div>
 </div>
 
 <script>
-  // Konfigurasi Firebase tetap sama
-  const firebaseConfig = {
-    apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
-    authDomain: "e-santri-b62be.firebaseapp.com",
-    projectId: "e-santri-b62be",
-    storageBucket: "e-santri-b62be.firebasestorage.app",
-    messagingSenderId: "6560427635",
-    appId: "1:6560427635:web:368b4fbf95163e8d214406",
-    databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
-  
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  const auth = firebase.auth();
-
-  auth.onAuthStateChanged(user => {
-    if (!user || user.email !== "miftahilmi15@gmail.com") {
-      alert("Akses ditolak!");
-      window.location.href = "index.html";
-    }
-  });
-
-  function showTab(tabId, btn) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(tabId).classList.remove('hidden');
-    btn.classList.add('active');
+    const firebaseConfig = {
+        apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+        authDomain: "e-santri-b62be.firebaseapp.com",
+        projectId: "e-santri-b62be",
+        storageBucket: "e-santri-b62be.firebasestorage.app",
+        messagingSenderId: "6560427635",
+        appId: "1:6560427635:web:368b4fbf95163e8d214406",
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
     
-    if(tabId === 'tab-doa') loadDaftarDoa();
-    if(tabId === 'tab-data-tahfidz') loadDataTahfidz();
-    if(tabId === 'tab-monitoring') loadMonitoring();
-    if(tabId === 'tab-pengaduan') loadPengaduan();
-  }
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  // --- FUNGSI DATABASE TETAP ---
-  function saveMahfuzat() {
-    const arab = document.getElementById('m-arab').value;
-    const indo = document.getElementById('m-indo').value;
-    if(!arab || !indo) return alert("Isi lengkap!");
-    db.ref('fitur/mahfuzat').set({ arab, indo }).then(() => alert("Berhasil Update Mahfuzat!"));
-  }
+    function showTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.remove('hidden');
+        btn.classList.add('active');
 
-  function simpanDoa() {
-    const judul = document.getElementById('judulDoa').value;
-    const arab = document.getElementById('arabDoa').value;
-    const arti = document.getElementById('artiDoa').value;
-    if(!judul || !arab || !arti) return alert("Lengkapi data!");
-    db.ref('doa_harian').push({ judul, arab, arti }).then(() => {
-        alert("Doa Berhasil Disimpan!");
-        document.getElementById('judulDoa').value = ""; document.getElementById('arabDoa').value = ""; document.getElementById('artiDoa').value = "";
-    });
-  }
+        if(tabId === 'tab-tahfidz') loadTahfidz();
+        if(tabId === 'tab-absensi') loadAbsensi();
+        if(tabId === 'tab-pengaduan') loadPengaduan();
+    }
 
-  function loadDaftarDoa() {
-    const list = document.getElementById('daftarDoaAdmin');
-    db.ref('doa_harian').on('value', snap => {
-        list.innerHTML = "";
-        snap.forEach(child => {
-            const d = child.val();
-            list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;">
-                    <div style="display:flex; justify-content:space-between; width:100%;">
-                        <b style="color:var(--primary)">${d.judul}</b>
-                        <i class="fa-solid fa-trash-can delete-btn" onclick="hapusDoa('${child.key}')"></i>
-                    </div>
-                    <p class="arabic-text">${d.arab}</p>
-                    <p style="font-size:11px; color:#666; font-style:italic;">${d.arti}</p>
+    // --- FUNGSI SAVE BUDAYA ---
+    function saveBudaya() {
+        const nama = document.getElementById('b-nama').value;
+        const poin = document.getElementById('b-poin').value;
+        if(!nama || !poin) return alert("Isi lengkap!");
+        
+        db.ref('pengaturan/budaya_sekolah').push({ nama, poin })
+        .then(() => {
+            alert("Budaya Berhasil Ditambahkan!");
+            document.getElementById('b-nama').value = "";
+            document.getElementById('b-poin').value = "";
+        });
+    }
+
+    // --- FUNGSI LOAD TAHFIDZ (ANTI UNDEFINED) ---
+    function loadTahfidz() {
+        const list = document.getElementById('list-tahfidz');
+        db.ref('tahfidz').on('value', snap => {
+            list.innerHTML = "";
+            if(!snap.exists()) return list.innerHTML = "Belum ada data.";
+            snap.forEach(userNode => {
+                userNode.forEach(setoran => {
+                    const d = setoran.val();
+                    list.innerHTML += `
+                    <div class="item-row">
+                        <div><b>${d.nama || 'Santri'}</b><br><small>${d.surah || '-'}</small></div>
+                        <span class="badge" style="background:#2ecc71">${d.tanggal || 'Baru'}</span>
+                    </div>`;
+                });
+            });
+        });
+    }
+
+    // --- FUNGSI LOAD ABSENSI ---
+    function loadAbsensi() {
+        const list = document.getElementById('list-absensi');
+        const tgl = new Date().toISOString().split('T')[0];
+        db.ref('users').once('value', uSnap => {
+            db.ref('laporan_budaya/' + tgl).on('value', lSnap => {
+                const hadir = lSnap.val() || {};
+                list.innerHTML = "";
+                uSnap.forEach(u => {
+                    const sudahAbsen = hadir[u.key];
+                    list.innerHTML += `
+                    <div class="item-row">
+                        <b>${u.val().name || 'No Name'}</b>
+                        <span class="badge" style="background:${sudahAbsen ? '#2ecc71' : '#e74c3c'}">
+                            ${sudahAbsen ? 'HADIR' : 'ABSEN'}
+                        </span>
+                    </div>`;
+                });
+            });
+        });
+    }
+
+    // --- FUNGSI LOAD PENGADUAN ---
+    function loadPengaduan() {
+        const list = document.getElementById('list-pengaduan');
+        db.ref('pengaduan').on('value', snap => {
+            list.innerHTML = "";
+            if(!snap.exists()) return list.innerHTML = "Tidak ada laporan.";
+            snap.forEach(c => {
+                const d = c.val();
+                list.innerHTML += `
+                <div class="item-row" style="flex-direction:column; align-items:flex-start;">
+                    <b style="color:var(--primary)">${d.nama || 'Anonim'}</b>
+                    <p style="font-size:12px; margin-top:5px;">${d.pesan || '-'}</p>
                 </div>`;
+            });
         });
-    });
-  }
-
-  function hapusDoa(id) {
-    if(confirm("Hapus doa ini?")) db.ref('doa_harian/' + id).remove();
-  }
-
-  function loadDataTahfidz() {
-    const list = document.getElementById('list-tahfidz');
-    db.ref('tahfidz').on('value', snap => {
-      list.innerHTML = "";
-      snap.forEach(user => {
-        user.forEach(s => {
-          const v = s.val();
-          list.innerHTML += `<div class="item-row"><div><b>${v.nama || 'Santri'}</b><br><small>${v.surah}</small></div><span class="badge" style="background:#2ecc71">${v.nilai || 'Diterima'}</span></div>`;
-        });
-      });
-    });
-  }
-
-  function loadMonitoring() {
-    const list = document.getElementById('list-monitoring');
-    const tgl = new Date().toISOString().split('T')[0];
-    db.ref('users').once('value', uSnap => {
-      db.ref('laporan_budaya/' + tgl).once('value', lSnap => {
-        const laporan = lSnap.val() || {};
-        list.innerHTML = "";
-        uSnap.forEach(u => {
-          const sudah = laporan[u.key];
-          list.innerHTML += `<div class="item-row ${sudah ? 'status-sudah' : 'status-belum'}"><div><b>${u.val().name || 'No Name'}</b></div><span class="badge" style="background:${sudah ? '#2ecc71' : '#e74c3c'}">${sudah ? 'HADIR' : 'ABSEN'}</span></div>`;
-        });
-      });
-    });
-  }
-
-  function loadPengaduan() {
-    const list = document.getElementById('list-pengaduan');
-    db.ref('pengaduan').on('value', snap => {
-      list.innerHTML = "";
-      snap.forEach(c => {
-        const d = c.val();
-        list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;"><b>${d.nama}</b><p style="font-size:11px; margin-top:5px;">${d.pesan}</p></div>`;
-      });
-    });
-  }
+    }
 </script>
 </body>
 </html>
