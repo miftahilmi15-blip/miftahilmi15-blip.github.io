@@ -203,7 +203,7 @@
 </div>
 
 <script>
-  // 1. JANTUNG APLIKASI (Firebase)
+  // 1. JANTUNG APLIKASI (Firebase) - JANGAN ADA YANG DIHAPUS
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -215,27 +215,25 @@
     measurementId: "G-X0NSEGDDC0"
   };
 
-  // Inisialisasi Firebase (Gunakan versi Compat agar cocok dengan script di atas)
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.database();
-  // Tambahan Fungsi Auth
+
+  // 2. FUNGSI AUTH (PENTING SUPAYA TOMBOL JALAN)
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider);
   }
-
   function logout() {
     auth.signOut().then(() => location.reload());
   }
-
   function login() {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
     auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
   }
 
-  // 2. FUNGSI SIDEBAR & CHAT
+  // 3. FUNGSI SIDEBAR & CHAT TOGGLE
   function toggleChat() {
     const win = document.getElementById('ai-window');
     win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
@@ -243,7 +241,7 @@
   document.getElementById('menu-btn').onclick = () => document.getElementById('sidebar').classList.add('open');
   document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-  // 3. LOGIKA LOGIN & DASHBOARD
+  // 4. LOGIKA DASHBOARD
   auth.onAuthStateChanged(user => {
     const dash = document.getElementById("dashboard");
     const loginCard = document.getElementById("login-card");
@@ -274,8 +272,7 @@
     }
   });
 
-  // 4. FUNGSI AI GEMINI
-  async function kirimKeAI() {
+  // 5. FUNGSI AI GEMINI (DENGAN PENDETEKSI ERROR)
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
@@ -288,34 +285,24 @@
     box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // Pastikan API Key ini sudah aktif di Google AI Studio
-    const API_KEY = "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo"; 
+    const API_KEY = firebaseConfig.apiKey; 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: "Jawab dengan singkat sebagai ustadz ramah: " + text }] }]
-            })
+            body: JSON.stringify({ contents: [{ parts: [{ text: "Jawab singkat sebagai ustadz ramah: " + text }] }] })
         });
-
         const data = await response.json();
-
-        if (data.error) {
-            // Ini akan memunculkan alasan kenapa Google menolak
+        
+        if(data.error) {
             document.getElementById(loadId).innerText = "Google Info: " + data.error.message;
-        } else if (data.candidates && data.candidates[0].content) {
-            const jawaban = data.candidates[0].content.parts[0].text;
-            document.getElementById(loadId).innerText = jawaban;
         } else {
-            document.getElementById(loadId).innerText = "Maaf, sistem sedang sibuk.";
+            document.getElementById(loadId).innerText = data.candidates[0].content.parts[0].text;
         }
-
     } catch (e) { 
-        // Kalau masuk ke sini, berarti browser/jaringan yang blokir
-        document.getElementById(loadId).innerText = "Koneksi diblokir browser. Coba pakai VPN atau ganti koneksi HP."; 
+        document.getElementById(loadId).innerText = "Koneksi diblokir atau mati."; 
     }
     box.scrollTop = box.scrollHeight;
   }
