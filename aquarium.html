@@ -35,6 +35,7 @@
         .stats-card {
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
             padding: 15px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
         .btn-exit {
@@ -74,6 +75,7 @@
         .fish-label {
             font-size: 10px; font-weight: 800; letter-spacing: 1px;
             margin-top: 8px; text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
         .tier-tag {
@@ -148,42 +150,41 @@
         "https://api.iconify.design/noto:blowfish.svg"
     ];
 
-    // FIX: Sinkronisasi dengan Admin (Menggunakan Email sebagai Key)
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             const emailKey = user.email.toLowerCase().replace(/\./g, ',');
             
-            // Dengarkan perubahan data ikan secara real-time
             db.ref('users/' + emailKey + '/ikan').on('value', snap => {
                 const count = snap.val() || 0;
                 document.getElementById('fish-count').innerText = count;
                 renderAquarium(count);
                 
-                // Aktifkan suara saat pertama kali layar diklik
                 document.body.onclick = () => {
                     const sound = document.getElementById('waterSound');
                     if(sound.paused) sound.play();
                 };
             });
         } else {
-            // Jika tidak login, arahkan kembali
             window.location.href = "login.html";
         }
     });
 
     function renderAquarium(total) {
         const container = document.getElementById('ocean');
-        // Bersihkan ikan lama sebelum render ulang agar tidak menumpuk parah
         document.querySelectorAll('.fish-entity').forEach(f => f.remove());
 
         if (total === 0) return;
 
-        for (let i = 1; i <= total; i++) {
+        // OPTIMASI: Maksimal 25 ikan visual agar tidak lag
+        let visualCount = total > 25 ? 25 : total;
+
+        for (let i = 1; i <= visualCount; i++) {
             let data = { name: "", tier: "", color: "" };
 
-            if (i <= 10) {
+            // Penentuan Tier berdasarkan total asli
+            if (total <= 15) {
                 data = { name: lib.low[Math.floor(Math.random()*lib.low.length)], tier: "COMMON", color: "#00b4d8" };
-            } else if (i <= 25) {
+            } else if (total <= 40) {
                 data = { name: lib.med[Math.floor(Math.random()*lib.med.length)], tier: "RARE", color: "#f1c40f" };
             } else {
                 data = { name: lib.high[Math.floor(Math.random()*lib.high.length)], tier: "LEGENDARY", color: "#e74c3c" };
@@ -193,11 +194,10 @@
             el.className = 'fish-entity';
             el.innerHTML = `
                 <img src="${icons[Math.floor(Math.random()*icons.length)]}" class="fish-img" style="filter: drop-shadow(0 0 15px ${data.color})">
-                <span class="fish-label" style="color:white; text-shadow: 0 2px 4px rgba(0,0,0,0.5)">${data.name}</span>
+                <span class="fish-label" style="color:white">${data.name}</span>
                 <span class="tier-tag" style="background:${data.color}">${data.tier}</span>
             `;
 
-            // Posisi awal acak
             el.style.left = Math.random() * 80 + 10 + 'vw';
             el.style.top = Math.random() * 80 + 10 + 'vh';
             
@@ -207,27 +207,22 @@
     }
 
     function animateFish(el) {
-        // Fungsi gerak ikan secara halus
         const move = () => {
             const x = Math.random() * 80 + 10;
             const y = Math.random() * 80 + 10;
             const img = el.querySelector('.fish-img');
             const curX = parseFloat(el.style.left);
 
-            // Balik badan ikan sesuai arah tujuan
             img.style.transform = (x < curX) ? "scaleX(-1)" : "scaleX(1)";
-            
             el.style.left = x + 'vw';
             el.style.top = y + 'vh';
         };
 
-        // Gerakkan pertama kali
         setTimeout(move, 100);
-        // Gerakkan rutin tiap 8-10 detik
         setInterval(move, 8000 + Math.random() * 4000);
     }
 
-    // EFEK GELEMBUNG (BUBBLES)
+    // BUBBLE EFFECT
     setInterval(() => {
         const b = document.createElement('div');
         b.className = 'bubble';
