@@ -22,15 +22,14 @@
   .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
   
   h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .btn-excel { display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d4d3f; color: white; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-top: 10px; font-size: 13px; }
+  
   label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; margin-top: 10px; }
   input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 13px; transition: 0.3s; }
-  input:focus, textarea:focus, select:focus { border-color: var(--primary); background: #fff; }
   
   .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; }
-  .btn-action:active { transform: scale(0.98); }
   
-  /* List Styling */
-  .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
+  .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
   .badge { padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; text-transform: uppercase; }
   .status-sudah { border-left: 5px solid #2ecc71; }
   .status-belum { border-left: 5px solid #e74c3c; }
@@ -49,8 +48,7 @@
 <div class="sidebar">
     <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)">Mahfuzat</button>
     <button class="nav-btn" onclick="showTab('tab-doa', this)">Input Doa</button>
-    <button class="nav-btn" onclick="showTab('tab-piket', this)">Jadwal Piket</button>
-    <button class="nav-btn" onclick="showTab('tab-pelajaran', this)">Jadwal Pelajaran</button>
+    <button class="nav-btn" onclick="showTab('tab-jadwal', this)">Kelola Jadwal</button>
     <button class="nav-btn" onclick="showTab('tab-data-tahfidz', this)">Data Tahfidz</button>
     <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Absensi</button>
     <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
@@ -77,74 +75,46 @@
       <button class="btn-action" onclick="simpanDoa()" style="background: #2ecc71;">SIMPAN KE DATABASE</button>
 
       <h3 style="margin-top: 35px; border-color: #e67e22;">Daftar Doa Tersimpan</h3>
-      <div id="daftarDoaAdmin" style="max-height: 400px; overflow-y: auto; margin-top: 10px;">
-          <p style="text-align:center; font-size:11px; color:#999;">Memuat data...</p>
-      </div>
+      <div id="daftarDoaAdmin" style="max-height: 400px; overflow-y: auto; margin-top: 10px;"></div>
     </div>
 
-    <div id="tab-piket" class="tab-content card hidden">
-      <h3>Update Jadwal Piket</h3>
-      <label>Pilih Hari</label>
-      <select id="piketHari">
-          <option>Senin</option><option>Selasa</option><option>Rabu</option>
-          <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
-      </select>
-      <label>Nama Petugas Piket</label>
-      <textarea id="piketNama" rows="3" placeholder="Masukkan nama petugas..."></textarea>
-      <button class="btn-action" onclick="savePiket()">SIMPAN JADWAL PIKET</button>
-    </div>
-
-    <div id="tab-pelajaran" class="tab-content card hidden">
-      <h3>Input Jadwal Pelajaran</h3>
-      <label>Pilih Kelas</label>
-      <select id="pelKelas">
-          <option value="VIIA">VII A</option><option value="VIIB">VII B</option>
-          <option value="VIIC">VII C</option><option value="VIID">VII D</option>
-          <option value="VIIIA">VIII A</option><option value="VIIIB">VIII B</option>
-          <option value="VIIIC">VIII C</option><option value="VIIID">VIII D</option>
-          <option value="IXA">IX A</option><option value="IXB">IX B</option>
-          <option value="IXC">IX C</option><option value="IXD">IX D</option>
-      </select>
-      <label>Pilih Hari</label>
-      <select id="pelHari">
-          <option>Senin</option><option>Selasa</option><option>Rabu</option>
-          <option>Kamis</option><option>Jumat</option><option>Sabtu</option>
-      </select>
-      <label>Jam Pelajaran</label>
-      <input type="text" id="pelJam" placeholder="Contoh: 07.20 - 08.00">
-      <label>Nama Mata Pelajaran</label>
-      <input type="text" id="pelMapel" placeholder="Contoh: PJOK">
-      <label>Nama Pengajar (Ustadz)</label>
-      <input type="text" id="pelGuru" placeholder="Contoh: Ust. Ari">
-      <button class="btn-action" onclick="savePelajaran()">TAMBAH KE JADWAL</button>
+    <div id="tab-jadwal" class="tab-content card hidden">
+      <h3>Kelola Jadwal (Real-time Excel)</h3>
+      <p style="font-size: 11px; color: #666; margin-bottom: 15px;">Klik tombol untuk edit data di Google Sheets. Aplikasi santri otomatis terupdate.</p>
       
-      <h3 style="margin-top: 30px; border-color: #3498db;">Info</h3>
-      <p style="font-size: 11px; color: #777;">Input data satu per satu sesuai urutan jam pelajaran.</p>
+      <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">
+          <i class="fa-solid fa-table"></i> Edit Jadwal Pelajaran
+      </a>
+      
+      <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">
+          <i class="fa-solid fa-user-tie"></i> Edit Jadwal Piket Guru
+      </a>
     </div>
 
     <div id="tab-data-tahfidz" class="tab-content hidden">
       <div class="card">
         <h3>Laporan Setoran Terbaru</h3>
-        <div id="list-tahfidz">Memuat data setoran...</div>
+        <div id="list-tahfidz"></div>
       </div>
     </div>
 
     <div id="tab-monitoring" class="tab-content hidden">
       <div class="card">
         <h3>Absensi Santri Hari Ini</h3>
-        <div id="list-monitoring">Memuat data...</div>
+        <div id="list-monitoring"></div>
       </div>
     </div>
 
     <div id="tab-pengaduan" class="tab-content hidden">
       <div class="card">
         <h3>Laporan & Pengaduan</h3>
-        <div id="list-pengaduan">Memuat...</div>
+        <div id="list-pengaduan"></div>
       </div>
     </div>
 </div>
 
 <script>
+  // Konfigurasi Firebase tetap sama
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -159,7 +129,6 @@
   const db = firebase.database();
   const auth = firebase.auth();
 
-  // Proteksi Admin
   auth.onAuthStateChanged(user => {
     if (!user || user.email !== "miftahilmi15@gmail.com") {
       alert("Akses ditolak!");
@@ -167,7 +136,6 @@
     }
   });
 
-  // Navigasi Tab
   function showTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -180,7 +148,7 @@
     if(tabId === 'tab-pengaduan') loadPengaduan();
   }
 
-  // --- FUNGSI ASLI KAKAK (TANPA UBAH) ---
+  // --- FUNGSI DATABASE TETAP ---
   function saveMahfuzat() {
     const arab = document.getElementById('m-arab').value;
     const indo = document.getElementById('m-indo').value;
@@ -203,7 +171,6 @@
     const list = document.getElementById('daftarDoaAdmin');
     db.ref('doa_harian').on('value', snap => {
         list.innerHTML = "";
-        if(!snap.exists()) return list.innerHTML = "<p style='text-align:center;font-size:12px;color:#999;'>Kosong.</p>";
         snap.forEach(child => {
             const d = child.val();
             list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;">
@@ -226,7 +193,6 @@
     const list = document.getElementById('list-tahfidz');
     db.ref('tahfidz').on('value', snap => {
       list.innerHTML = "";
-      if(!snap.exists()) list.innerHTML = "Belum ada setoran.";
       snap.forEach(user => {
         user.forEach(s => {
           const v = s.val();
@@ -255,34 +221,10 @@
     const list = document.getElementById('list-pengaduan');
     db.ref('pengaduan').on('value', snap => {
       list.innerHTML = "";
-      if(!snap.exists()) list.innerHTML = "Tidak ada pengaduan.";
       snap.forEach(c => {
         const d = c.val();
         list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;"><b>${d.nama}</b><p style="font-size:11px; margin-top:5px;">${d.pesan}</p></div>`;
       });
-    });
-  }
-
-  // --- FUNGSI BARU (JADWAL PIKET & PELAJARAN) ---
-  function savePiket() {
-    const hari = document.getElementById('piketHari').value;
-    const nama = document.getElementById('piketNama').value;
-    if(!nama) return alert("Isi nama petugas!");
-    db.ref('jadwal_piket/' + hari).set(nama).then(() => alert("Jadwal Piket " + hari + " Terupdate!"));
-  }
-
-  function savePelajaran() {
-    const kelas = document.getElementById('pelKelas').value;
-    const hari = document.getElementById('pelHari').value;
-    const jam = document.getElementById('pelJam').value;
-    const mapel = document.getElementById('pelMapel').value;
-    const guru = document.getElementById('pelGuru').value;
-    if(!jam || !mapel) return alert("Lengkapi data!");
-
-    db.ref('jadwal_pelajaran/' + kelas + '/' + hari).push({ jam, mapel, pengajar: guru })
-    .then(() => {
-        alert("Pelajaran Berhasil Ditambah!");
-        document.getElementById('pelJam').value = ""; document.getElementById('pelMapel').value = ""; document.getElementById('pelGuru').value = "";
     });
   }
 </script>
