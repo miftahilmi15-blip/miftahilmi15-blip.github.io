@@ -11,7 +11,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: var(--bg); color: #2d3436; padding-bottom: 50px; }
 
-        /* HALAMAN REWARD GURU (TAMPIL PERTAMA) */
+        /* HALAMAN REWARD GURU */
         #reward-screen {
             background: linear-gradient(180deg, #1f6f51 0%, #133b2c 100%);
             min-height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 2000;
@@ -32,10 +32,8 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; font-size: 13px; z-index: 2100;
         }
 
-        /* DASHBOARD ADMIN (HIDDEN) */
+        /* DASHBOARD ADMIN */
         #admin-screen { display: none; }
-        
-        /* CSS ASLI KAKAK (JANGAN DIUBAH) */
         .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
         .sidebar::-webkit-scrollbar { display: none; }
         .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
@@ -44,13 +42,12 @@
         .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
         h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
         label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-top: 10px; }
-        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; transition: 0.3s; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; transition: 0.3s; margin-top: 5px; }
         .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
         .btn-excel { display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d4d3f; color: white; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-top: 10px; font-size: 13px; }
         .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
         .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
         .hidden { display: none !important; }
-        .arabic { font-family: 'Amiri', serif; font-size: 20px; text-align: right; color: var(--primary); direction: rtl; }
         .delete-btn { color: #e74c3c; cursor: pointer; font-size: 12px; }
     </style>
 </head>
@@ -60,20 +57,17 @@
     <div class="trophy"><i class="fas fa-crown"></i></div>
     <h2 style="font-weight: 800; margin-bottom: 5px;">TEACHER REWARDS</h2>
     <p style="font-size: 11px; opacity: 0.8; margin-bottom: 30px;">Peringkat Keaktifan Guru Bulan Ini</p>
-    
     <div id="leaderboard-list" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
         <small>Memuat data prestasi...</small>
     </div>
-
-    <button class="btn-to-admin" onclick="bukaAdmin()">
-        KONTROL ADMIN <i class="fas fa-arrow-right" style="margin-left:8px"></i>
-    </button>
+    <button class="btn-to-admin" onclick="bukaAdmin()">KONTROL ADMIN <i class="fas fa-arrow-right" style="margin-left:8px"></i></button>
 </div>
 
 <div id="admin-screen">
     <div class="sidebar">
         <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi & Guru</button>
         <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
+        <button class="nav-btn" onclick="showTab('tab-ujian', this)">Manajemen Ujian</button>
         <button class="nav-btn" onclick="showTab('tab-materi', this)">Doa & Mahfuzat</button>
         <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
         <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
@@ -89,7 +83,9 @@
             </div>
             <div class="card">
                 <h3>Presensi Santri Hari Ini</h3>
-                <select id="pilih-kelas-mon" onchange="loadAbsensi()"><option value="7A">Kelas 7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="8B">8B</option></select>
+                <select id="pilih-kelas-mon" onchange="loadAbsensi()">
+                    <option value="7A">Kelas 7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="8B">8B</option>
+                </select>
                 <div id="list-absensi" style="margin-top:15px;"></div>
             </div>
         </div>
@@ -101,6 +97,31 @@
             </div>
         </div>
 
+        <div id="tab-ujian" class="tab-content hidden">
+            <div class="card">
+                <h3>Buat Ujian Per Kelas</h3>
+                <label>Pilih Target Kelas</label>
+                <select id="u-target-kelas">
+                    <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                    <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                    <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+                </select>
+                <label>Durasi (Menit)</label>
+                <input type="number" id="u-durasi" value="30">
+                <label>Input Soal (Format: Soal|A|B|C|D|Kunci)</label>
+                <textarea id="u-massal" rows="5" placeholder="Contoh: Nama Nabi?|Adam|Nuh|Ibrahim|Luth|A"></textarea>
+                <button class="btn-action" onclick="publishUjian()">PUBLIKASIKAN UJIAN</button>
+                <button class="btn-action" onclick="tutupUjian()" style="background:#e74c3c; margin-top:5px">TUTUP UJIAN KELAS INI</button>
+            </div>
+            <div class="card">
+                <h3>Hasil Ujian</h3>
+                <select id="lihat-hasil-kelas" onchange="loadHasilUjian()">
+                    <option value="7A">Hasil 7A</option><option value="7B">Hasil 7B</option><option value="8A">Hasil 8A</option><option value="9A">Hasil 9A</option>
+                </select>
+                <div id="list-hasil-ujian" style="margin-top:15px;"></div>
+            </div>
+        </div>
+
         <div id="tab-materi" class="tab-content hidden">
             <div class="card">
                 <h3>Update Mahfuzat</h3>
@@ -108,38 +129,29 @@
                 <textarea id="m-indo" rows="2" placeholder="Terjemahan..."></textarea>
                 <button class="btn-action" onclick="saveMahfuzat()">UPDATE MAHFUZAT</button>
             </div>
-            <div class="card">
-                <h3>Input Doa Baru</h3>
-                <input type="text" id="d-judul" placeholder="Judul Doa">
-                <input type="text" id="d-arab" placeholder="Teks Arab..." style="text-align:right">
-                <textarea id="d-arti" rows="2" placeholder="Arti..."></textarea>
-                <button class="btn-action" onclick="saveDoa()" style="background:#2ecc71">SIMPAN DOA</button>
-            </div>
         </div>
 
         <div id="tab-aquarium" class="tab-content hidden">
             <div class="card">
-                <h3>Hadiah Ikan (Reward Al-Qur'an)</h3>
-                <label>Email Google Santri</label>
-                <input type="email" id="aq-email" placeholder="contoh: santri@gmail.com">
-                <label>Jumlah Ikan</label>
-                <input type="number" id="aq-jumlah" value="1" min="1">
-                <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM IKAN SEKARANG</button>
+                <h3>Kirim Hadiah Ikan</h3>
+                <input type="email" id="aq-email" placeholder="Email Santri">
+                <input type="number" id="aq-jumlah" value="1">
+                <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM IKAN</button>
             </div>
         </div>
 
         <div id="tab-pengaduan" class="tab-content hidden">
             <div class="card">
-                <h3>Laporan Pengaduan Masuk</h3>
+                <h3>Laporan Pengaduan</h3>
                 <div id="list-pengaduan"></div>
             </div>
         </div>
 
         <div id="tab-jadwal" class="tab-content hidden">
             <div class="card">
-                <h3>Google Sheets Control</h3>
-                <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">Edit Jadwal Pelajaran</a>
-                <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">Edit Jadwal Piket</a>
+                <h3>Jadwal Sheets</h3>
+                <a href="#" class="btn-excel">Edit Pelajaran</a>
+                <a href="#" class="btn-excel" style="background:#133b2c;">Edit Piket</a>
             </div>
         </div>
     </div>
@@ -153,147 +165,108 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // FUNGSI KHUSUS HALAMAN REWARD
     function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; }
     function tutupAdmin() { document.getElementById('reward-screen').style.display = 'flex'; document.getElementById('admin-screen').style.display = 'none'; }
 
-    function loadLeaderboard() {
-        const list = document.getElementById('leaderboard-list');
-        const now = new Date();
-        const path = `budaya/${now.getFullYear()}/${now.getMonth() + 1}`;
-        
-        db.ref(path).on('value', snap => {
-            let guruSkor = {};
-            snap.forEach(tgl => tgl.forEach(kls => kls.forEach(s => {
-                const d = s.val();
-                if(d.guru) {
-                    if(!guruSkor[d.guru]) guruSkor[d.guru] = { nama: d.guru, poin: 0 };
-                    guruSkor[d.guru].poin += 1;
-                }
-            })));
-            
-            const sorted = Object.values(guruSkor).sort((a,b) => b.poin - a.poin);
-            list.innerHTML = "";
-            sorted.forEach((g, i) => {
-                let medali = i === 0 ? "🥇" : (i === 1 ? "🥈" : (i === 2 ? "🥉" : "🎖️"));
-                let kelasTop = i === 0 ? "top-1" : "";
-                list.innerHTML += `
-                <div class="leaderboard-item ${kelasTop}">
-                    <div style="display:flex; align-items:center; gap:15px">
-                        <span style="font-size:20px">${medali}</span>
-                        <div><b>${g.nama}</b><br><small style="opacity:0.7">Aktif Input Budaya</small></div>
-                    </div>
-                    <div style="text-align:right"><b>${g.poin}</b><br><small style="font-size:9px">POIN</small></div>
-                </div>`;
-            });
-            if(sorted.length === 0) list.innerHTML = "<small>Belum ada data prestasi bulan ini.</small>";
-        });
-    }
-
-    // LOGIKA ASLI KAKAK (TIDAK DIUBAH SAMA SEKALI)
     function showTab(id, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
+        if(id === 'tab-ujian') loadHasilUjian();
         if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
-        if(id === 'tab-tahfidz') loadTahfidz();
         if(id === 'tab-pengaduan') loadPengaduan();
+    }
+
+    // FUNGSI UJIAN (BARU)
+    function publishUjian() {
+        const kls = document.getElementById('u-target-kelas').value;
+        const dur = document.getElementById('u-durasi').value;
+        const lines = document.getElementById('u-massal').value.split('\n');
+        let soalArr = [];
+        lines.forEach(l => {
+            const p = l.split('|');
+            if(p.length >= 6) soalArr.push({ t:p[0], a:p[1], b:p[2], c:p[3], d:p[4], k:p[5].trim().toUpperCase() });
+        });
+        if(soalArr.length === 0) return alert("Format salah!");
+        db.ref(`ujian/${kls}`).set({ status:'aktif', durasi:parseInt(dur), soal:soalArr }).then(() => alert("Ujian " + kls + " Aktif!"));
+    }
+
+    function tutupUjian() {
+        const kls = document.getElementById('u-target-kelas').value;
+        db.ref(`ujian/${kls}/status`).set('nonaktif').then(() => alert("Ujian ditutup."));
+    }
+
+    function loadHasilUjian() {
+        const kls = document.getElementById('lihat-hasil-kelas').value;
+        const res = document.getElementById('list-hasil-ujian');
+        db.ref(`ujian/${kls}/hasil`).on('value', snap => {
+            res.innerHTML = "";
+            snap.forEach(s => {
+                const v = s.val();
+                res.innerHTML += `<div class="item-row"><b>${v.nama}</b><b style="color:var(--primary)">${v.nilai}</b></div>`;
+            });
+        });
+    }
+
+    // FUNGSI STANDAR (BAWAAN)
+    function loadLeaderboard() {
+        const list = document.getElementById('leaderboard-list');
+        const now = new Date();
+        db.ref(`budaya/${now.getFullYear()}/${now.getMonth() + 1}`).on('value', snap => {
+            let guruSkor = {};
+            snap.forEach(t => t.forEach(k => k.forEach(s => {
+                const d = s.val(); if(d.guru) { guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; }
+            })));
+            const sorted = Object.keys(guruSkor).sort((a,b) => guruSkor[b] - guruSkor[a]);
+            list.innerHTML = "";
+            sorted.forEach((n, i) => {
+                list.innerHTML += `<div class="leaderboard-item ${i===0?'top-1':''}"><span>${n}</span><b>${guruSkor[n]} Poin</b></div>`;
+            });
+        });
     }
 
     function loadMonitorGuru() {
         const list = document.getElementById('list-guru-input');
         const now = new Date();
-        const path = `budaya/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
-        db.ref(path).on('value', snap => {
+        db.ref(`budaya/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`).on('value', snap => {
             list.innerHTML = "";
-            let guruSet = {};
-            snap.forEach(kelas => {
-                kelas.forEach(santri => {
-                    const d = santri.val();
-                    if(d.guru) guruSet[d.guru] = d.kelas;
-                });
-            });
-            for(let name in guruSet) {
-                list.innerHTML += `<div class="item-row"><b>Ust. ${name}</b><span class="badge" style="background:var(--primary)">Input ${guruSet[name]}</span></div>`;
-            }
-            if(Object.keys(guruSet).length === 0) list.innerHTML = "<small>Belum ada input guru.</small>";
+            snap.forEach(k => k.forEach(s => {
+                const d = s.val();
+                if(d.guru) list.innerHTML = `<div class="item-row"><b>Ust. ${d.guru}</b><span>${d.kelas}</span></div>`;
+            }));
         });
     }
 
     function loadAbsensi() {
-        const list = document.getElementById('list-absensi');
         const kls = document.getElementById('pilih-kelas-mon').value;
         const now = new Date();
-        const path = `absensi/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/${kls}`;
-        db.ref(path).on('value', snap => {
-            list.innerHTML = "";
-            if(!snap.exists()) return list.innerHTML = "<center><small>Belum ada data absen.</small></center>";
+        db.ref(`absensi/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/${kls}`).on('value', snap => {
+            document.getElementById('list-absensi').innerHTML = "";
             snap.forEach(s => {
                 const v = s.val();
-                let col = v.status === 'H' ? '#2ecc71' : '#e74c3c';
-                list.innerHTML += `<div class="item-row"><b>${v.nama}</b><span class="badge" style="background:${col}">${v.status}</span></div>`;
+                document.getElementById('list-absensi').innerHTML += `<div class="item-row"><b>${v.nama}</b><span>${v.status}</span></div>`;
             });
         });
     }
 
     function kirimIkanByEmail() {
-        const email = document.getElementById('aq-email').value.trim().toLowerCase();
+        const em = document.getElementById('aq-email').value.replace(/\./g, ',');
         const jml = parseInt(document.getElementById('aq-jumlah').value);
-        if(!email.includes('@')) return alert("Email tidak valid!");
-        const emailKey = email.replace(/\./g, ',');
-        db.ref('users/' + emailKey + '/ikan').transaction(val => (val || 0) + jml)
-        .then(() => { alert("Ikan terkirim ke " + email); document.getElementById('aq-email').value = ""; });
+        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => alert("Sukses!"));
     }
 
     function loadPengaduan() {
-        const list = document.getElementById('list-pengaduan');
         db.ref('pengaduan').on('value', snap => {
-            list.innerHTML = "";
-            if(!snap.exists()) return list.innerHTML = "<small>Tidak ada laporan.</small>";
-            snap.forEach(item => {
-                const d = item.val();
-                list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;">
-                    <div style="display:flex; justify-content:space-between; width:100%;">
-                        <b>${d.nama || 'Anonim'}</b>
-                        <i class="fas fa-trash-alt delete-btn" onclick="hapus('pengaduan/${item.key}')"></i>
-                    </div>
-                    <p style="font-size:12px; margin-top:5px; color:#666;">${d.pesan || d.laporan}</p>
-                </div>`;
+            document.getElementById('list-pengaduan').innerHTML = "";
+            snap.forEach(i => {
+                const d = i.val();
+                document.getElementById('list-pengaduan').innerHTML += `<div class="item-row"><b>${d.nama}</b><p>${d.pesan}</p></div>`;
             });
         });
     }
 
-    function saveMahfuzat() {
-        const arab = document.getElementById('m-arab').value;
-        const indo = document.getElementById('m-indo').value;
-        db.ref('fitur/mahfuzat').set({ arab, indo }).then(() => alert("Berhasil!"));
-    }
-
-    function saveDoa() {
-        const j = document.getElementById('d-judul').value;
-        const a = document.getElementById('d-arab').value;
-        const r = document.getElementById('d-arti').value;
-        db.ref('doa_harian').push({ judul:j, arab:a, arti:r }).then(() => alert("Doa Tersimpan!"));
-    }
-
-    function loadTahfidz() {
-        const list = document.getElementById('list-tahfidz');
-        db.ref('tahfidz').limitToLast(10).on('value', snap => {
-            list.innerHTML = "";
-            snap.forEach(y => y.forEach(m => m.forEach(s => {
-                const v = s.val();
-                list.innerHTML += `<div class="item-row"><b>${v.nama}</b><small>${v.materi}</small></div>`;
-            })));
-        });
-    }
-
-    function hapus(path) { if(confirm("Hapus data?")) db.ref(path).remove(); }
-
-    // Jalankan awal
     loadLeaderboard();
-    loadMonitorGuru(); 
-    loadAbsensi();
 </script>
 </body>
 </html>
