@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Jadwal Pelajaran | E-Santri</title>
+    <style>
+        :root { --primary: #1f6f51; --bg: #f8faf9; }
+        body { background: var(--bg); font-family: 'Poppins', sans-serif; padding: 20px; }
+        
+        /* Dropdown pilih kelas agar tidak ruwet */
+        .pilih-kelas {
+            width: 100%; padding: 15px; border-radius: 15px;
+            border: 2px solid var(--primary); margin-bottom: 20px;
+            font-weight: 700; color: var(--primary); outline: none;
+        }
+
+        .hari-box {
+            background: white; border-radius: 20px; padding: 15px;
+            margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .hari-nama { 
+            background: var(--primary); color: white; display: inline-block;
+            padding: 5px 15px; border-radius: 10px; font-size: 14px; margin-bottom: 10px;
+        }
+        .slot {
+            display: flex; justify-content: space-between; padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0; font-size: 13px;
+        }
+        .waktu { color: #888; font-weight: 600; }
+        .mapel { color: #333; font-weight: 700; text-align: right; }
+    </style>
+</head>
+<body>
+
+    <h2>Jadwal Pelajaran</h2>
+    
+    <select class="pilih-kelas" id="pilihKelas" onchange="muatJadwal()">
+        <option value="">-- Pilih Kelas Anda --</option>
+        <option value="VIIA">VII A</option>
+        <option value="VIIB">VII B</option>
+        <option value="VIIC">VII C</option>
+        <option value="VIID">VII D</option>
+        <option value="VIIIA">VIII A</option>
+        </select>
+
+    <div id="hasilJadwal">
+        <p style="text-align: center; color: #999;">Silakan pilih kelas untuk melihat jadwal.</p>
+    </div>
+
+<script>
+    function muatJadwal() {
+        const kelas = document.getElementById('pilihKelas').value;
+        const container = document.getElementById('hasilJadwal');
+        
+        if(!kelas) return;
+
+        // Nanti datanya diambil dari Firebase berdasarkan ID kelas
+        // Contoh tampilan per hari:
+        container.innerHTML = `
+            <div class="hari-box">
+                <span class="hari-nama">SENIN</span>
+                <div class="slot"><span class="waktu">07.20</span> <span class="mapel">PJOK</span></div>
+                <div class="slot"><span class="waktu">08.00</span> <span class="mapel">PJOK</span></div>
+                <div class="slot"><span class="waktu">08.40</span> <span class="mapel">BK</span></div>
+            </div>
+            
+            <div class="hari-box">
+                <span class="hari-nama">SELASA</span>
+                <div class="slot"><span class="waktu">07.20</span> <span class="mapel">IPA (LIA)</span></div>
+                <div class="slot"><span class="waktu">08.00</span> <span class="mapel">IPA (LIA)</span></div>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>
