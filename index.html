@@ -203,84 +203,53 @@
 </div>
 
 <script>
-  // CONFIG DISESUAIKAN DENGAN URL SINGAPORE KAKAK
-  const firebaseConfig = {
-    apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
-    authDomain: "e-santri-b62be.firebaseapp.com",
-    projectId: "e-santri-b62be",
-    storageBucket: "e-santri-b62be.firebasestorage.app",
-    messagingSenderId: "6560427635",
-    appId: "1:6560427635:web:368b4fbf95163e8d214406",
-    databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
-  };
-  
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.database();
+  // 1. Pastikan Firebase Inisialisasi duluan
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
 
-  function toggleChat() {
-    const win = document.getElementById("ai-window");
-    win.style.display = win.style.display === "none" ? "flex" : "none";
-  }
-
-  document.getElementById("menu-btn").onclick = () => document.getElementById("sidebar").classList.add("open");
-  document.getElementById("closeBtn").onclick = () => document.getElementById("sidebar").classList.remove("open");
-
-  function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); }
-  function login() { auth.signInWithEmailAndPassword(document.getElementById("email").value, document.getElementById("password").value).catch(e => alert(e.message)); }
-  function logout() { auth.signOut().then(() => location.reload()); }
-
-  auth.onAuthStateChanged(user => {
+// 2. Fungsi Login & Dashboard (WAJIB JALAN DULUAN)
+auth.onAuthStateChanged(user => {
     const dash = document.getElementById("dashboard");
     const loginCard = document.getElementById("login-card");
     const menuBtn = document.getElementById("menu-btn");
     const aiBtn = document.getElementById("ai-button");
-    const adminMenu = document.getElementById("admin-menu");
 
     if(user){
-      dash.classList.remove("hidden");
-      loginCard.classList.add("hidden");
-      menuBtn.style.display = "flex";
-      aiBtn.style.display = "flex";
-      document.getElementById("uName").innerText = user.displayName || "Santri";
-      document.getElementById("uEmail").innerText = user.email;
-      if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
-      
-      // Khusus Email Admin
-      if (user.email === "miftahilmi15@gmail.com") adminMenu.classList.remove("hidden");
-
-      // REALTIME MAHFUZAT - LISTENER OTOMATIS
-      db.ref('fitur/mahfuzat').on('value', (snapshot) => {
-          const data = snapshot.val();
-          if(data) {
-              document.getElementById('runArab').innerText = data.arab;
-              document.getElementById('runIndo').innerText = " — " + data.indo;
-          } else {
-              document.getElementById('runArab').innerText = "مَنْ جَدَّ وَجَدَ";
-              document.getElementById('runIndo').innerText = " — Siapa bersungguh-sungguh dapat.";
-          }
-      });
-
-      const today = new Date().toDateString();
-      const fire = document.getElementById('fire-api');
-      if(localStorage.getItem('last_visit') === today) {
-        fire.classList.remove('fire-off');
-        document.getElementById('streak-text').innerText = "Sudah Absen";
-      } else {
-        fire.classList.add('fire-off');
-        document.getElementById('streak-text').innerText = "Hadir!";
-        localStorage.setItem('last_visit', today);
-      }
+        // Tampilkan Dashboard
+        dash.classList.remove("hidden");
+        loginCard.classList.add("hidden");
+        menuBtn.style.display = "flex";
+        aiBtn.style.display = "flex";
+        
+        document.getElementById("uName").innerText = user.displayName || "Santri";
+        document.getElementById("uEmail").innerText = user.email;
+        if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+        
+        // Cek Admin
+        if (user.email === "miftahilmi15@gmail.com") {
+            document.getElementById("admin-menu").classList.remove("hidden");
+        }
+        
+        // Panggil Mahfuzat
+        db.ref('fitur/mahfuzat').on('value', snap => {
+            const data = snap.val();
+            if(data) {
+                document.getElementById('runArab').innerText = data.arab;
+                document.getElementById('runIndo').innerText = " — " + data.indo;
+            }
+        });
     } else {
-      loginCard.classList.remove("hidden");
-      dash.classList.add("hidden");
-      menuBtn.style.display = "none";
-      aiBtn.style.display = "none";
+        // Tampilkan Login
+        loginCard.classList.remove("hidden");
+        dash.classList.add("hidden");
+        menuBtn.style.display = "none";
+        aiBtn.style.display = "none";
     }
-  });
+});
 
-  async function kirimKeAI() {
-  async function kirimKeAI() {
+// 3. Fungsi AI (Pakai jalur v1beta yang bener)
+async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const text = input.value.trim();
@@ -292,47 +261,25 @@
     box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // Pakai API KEY baru Kakak
-    const API_KEY = "AIzaSyCLgxNb4sNFHMtscaTztvZIrZaGZIUoCTA"; 
-    
-    // Alamat v1beta adalah kunci keberhasilannya
+    const API_KEY = "MASUKKAN_API_KEY_BARU_KAKAK"; 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-    async function kirimKeAI() {
-    const input = document.getElementById('aiInput');
-    const box = document.getElementById('chatContent');
-    const text = input.value.trim();
-    if(!text) return;
-
-    box.innerHTML += `<div class="msg-user">${text}</div>`;
-    input.value = "";
-    const loadId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
-    box.scrollTop = box.scrollHeight;
-
     try {
-        // Kita pakai API publik yang lebih santai
-        const response = await fetch(`https://api.duckduckgo.com/ac/?q=${encodeURIComponent(text)}&format=json`);
-        // Karena kita butuh jawaban pintar, kita pakai sistem sederhana dulu:
-        
-        // Simulasi Jawaban Pintar (Ustadz Digital)
-        setTimeout(() => {
-            const jawabanDefault = [
-                "Masya Allah, pertanyaan yang bagus! Teruslah belajar ya santriku.",
-                "Sabar ya, ustadz sedang mencari referensi kitab yang pas untuk menjawab ini.",
-                "Jangan lupa sholat dan mengaji, ilmu akan mudah masuk ke hati yang bersih.",
-                "Alhamdulillah, semangat belajarmu luar biasa!"
-            ];
-            const random = jawabanDefault[Math.floor(Math.random() * jawabanDefault.length)];
-            
-            document.getElementById(loadId).innerText = random + " (Asisten E-Santri)";
-            box.scrollTop = box.scrollHeight;
-        }, 1500);
-
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: "Jawab sebagai ustadz ramah: " + text }] }]
+            })
+        });
+        const data = await response.json();
+        const jawaban = data.candidates[0].content.parts[0].text;
+        document.getElementById(loadId).innerText = jawaban;
     } catch (e) { 
         document.getElementById(loadId).innerText = "Maaf, Ustadz sedang tidak di tempat."; 
     }
-}
+    box.scrollTop = box.scrollHeight;
+  }
 </script>
 </body>
 </html>
