@@ -3,22 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>40 Doa Harian | E-Santri Pro</title>
+    <title>Doa Harian | E-Santri Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         .arabic { font-family: 'Amiri', serif; line-height: 2.5; }
-        .glass-header {
-            background: rgba(16, 185, 129, 0.95);
-            backdrop-filter: blur(10px);
-        }
-        .doa-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .doa-card:active { transform: scale(0.98); }
-        .search-container input::placeholder { color: #cbd5e1; }
+        .glass-header { background: rgba(16, 185, 129, 0.95); backdrop-filter: blur(10px); }
+        .doa-card { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="pb-10">
@@ -26,117 +23,89 @@
     <div class="glass-header text-white p-6 sticky top-0 z-50 shadow-lg rounded-b-[30px]">
         <div class="max-w-2xl mx-auto">
             <div class="flex items-center justify-between mb-4">
-                <a href="/" class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full hover:bg-white/30 transition">
+                <a href="/" class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-                <h1 class="text-xl font-extrabold tracking-tight">DOA HARIAN</h1>
+                <h1 class="text-xl font-extrabold">DOA HARIAN</h1>
                 <div class="w-10"></div>
             </div>
-            
-            <div class="relative search-container">
+            <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-emerald-100"></i>
-                <input type="text" id="searchInput" onkeyup="searchDoa()" 
-                    placeholder="Cari doa (contoh: makan, tidur)..." 
-                    class="w-full p-4 pl-12 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-emerald-100 focus:bg-white focus:text-emerald-900 focus:ring-4 focus:ring-emerald-400/30 outline-none transition-all">
+                <input type="text" id="searchInput" onkeyup="searchDoa()" placeholder="Cari doa..." 
+                    class="w-full p-4 pl-12 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-emerald-100 outline-none focus:bg-white focus:text-emerald-900 transition-all">
             </div>
         </div>
     </div>
 
     <div id="doaContainer" class="p-5 max-w-2xl mx-auto space-y-5 mt-4">
-        </div>
+        <div class="text-center py-10 text-slate-400">Memuat doa dari database...</div>
+    </div>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-semibold opacity-0 transition-opacity pointer-events-none shadow-xl z-[60]">
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full text-sm opacity-0 transition-opacity pointer-events-none z-[60]">
         ✅ Doa berhasil disalin
     </div>
 
     <script>
-        const dataDoa = [
-            { j: "1. Tata Cara Wudhu", a: "نَوَيْتُ الْوُضُوْءَ لِرَفْعِ الْحَدَثِ الْأَصْغَرِ فَرْضًا لِلَّهِ تَعَالَى", l: "Nawaitul wudhuu-a liraf'il hadatsil ashghari fardhal lillaahi ta'aalaa", r: "Niat wudhu, bismillah, cuci tangan, kumur, basuh hidung, muka, tangan sampai siku, usap kepala, telinga, kaki, tertib." },
-            { j: "2. Doa Setelah Wudhu", a: "أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ", l: "Asyhadu an lā ilāha illallāh...", r: "Aku bersaksi tiada Tuhan selain Allah... Ya Allah jadikanlah aku golongan orang yang bertaubat & bersuci." },
-            { j: "3. Doa Sebelum Tidur", a: "بِاسْمِكَ اللَّهُمَّ أَحْيَا وَبِاسْمِكَ أَمُوتُ", l: "Bismikallāhumma aḥyā wa bismika amūt", r: "Dengan nama-Mu ya Allah aku hidup dan mati." },
-            { j: "4. Doa Bangun Tidur", a: "الْـحَمْدُ لِلّٰهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا، وَإِلَيْهِ النُّشُورُ", l: "Al-ḥamdu lillāhilladzī aḥyānā...", r: "Segala puji bagi Allah yang menghidupkan kami kembali." },
-            { j: "5. Masuk WC", a: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ", l: "Allāhumma innī a‘ūdzu bika minal khubutsi...", r: "Ya Allah aku berlindung dari setan laki-laki dan perempuan." },
-            { j: "6. Keluar WC", a: "غُفْرَانَكَ", l: "Ghufrānaka", r: "Aku memohon ampunan-Mu." },
-            { j: "7. Memakai Pakaian", a: "الْـحَمْدُ لِلّٰهِ الَّذِي كَسَانِي هٰذَا الثَّوْبَ", l: "Al-ḥamdu lillāhilladzī kasānī...", r: "Segala puji bagi Allah yang memberi pakaian ini tanpa dayaku." },
-            { j: "8. Keluar Rumah", a: "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ", l: "Bismillāh, tawakkaltu ‘alallāh...", r: "Dengan nama Allah, aku bertawakal kepada Allah." },
-            { j: "9. Berjalan Ke Masjid", a: "اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا", l: "Allāhummaj‘al fī qalbī nūrā...", r: "Ya Allah jadikanlah cahaya dalam hatiku, lisan, pendengaran..." },
-            { j: "10. Masuk Masjid", a: "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ", l: "Allāhummaftaḥ lī abwāba raḥmatik", r: "Ya Allah bukalah pintu-pintu rahmat-Mu." },
-            { j: "11. Keluar Masjid", a: "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ", l: "Allāhumma innī as’aluka min faḍlik", r: "Ya Allah aku memohon karunia-Mu." },
-            { j: "12. Masuk Rumah", a: "بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا", l: "Bismillāhi walajnā, wa bismillāhi kharajnā...", r: "Dengan nama Allah kami masuk dan keluar." },
-            { j: "13. Sebelum Makan", a: "بِسْمِ اللَّهِ", l: "Bismillāh", r: "Dengan nama Allah." },
-            { j: "14. Setelah Makan", a: "الْـحَمْدُ لِلّٰهِ الَّذِي أَطْعَمَنِي هٰذَا وَرَزَقَنِيهِ", l: "Al-ḥamdu lillāhilladzī aṭ‘amanī...", r: "Segala puji bagi Allah yang memberi makan tanpa dayaku." },
-            { j: "15. Bersin & Menjawab", a: "الْـحَمْدُ لِلّٰهِ -> يَرْحَمُكَ اللَّهُ", l: "Alhamdulillah -> Yarhamukallah", r: "Saling mendoakan saat bersin." },
-            { j: "16. Menjelang Belajar", a: "رَبِّ زِدْنِي عِلْمًا وَارْزُقْنِي فَهْمًا", l: "Rabbi zidnī ‘ilmā warzuqnī fahmā", r: "Ya Tuhanku tambahkanlah ilmu dan pemahaman." },
-            { j: "17. Penutup Majelis", a: "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ أَشْهَدُ أَنْ لَا إِلٰهَ إِلَّا أَنْتَ", l: "Subḥānaka Allāhumma wa bi ḥamdik...", r: "Maha Suci Allah, aku memohon ampun dan bertaubat." },
-            { j: "18. Setelah Adzan", a: "اللَّهُمَّ رَبَّ هٰذِهِ الدَّعْوَةِ التَّامَّةِ", l: "Allāhumma rabba hādzihid-da‘wah...", r: "Ya Allah berilah Nabi Muhammad wasilah dan kedudukan terpuji." },
-            { j: "19. Turun Hujan", a: "اللَّهُمَّ صَيِّبًا نَافِعًا", l: "Allāhumma ṣayyiban nāfi‘an", r: "Ya Allah turunkan hujan yang bermanfaat." },
-            { j: "20. Setelah Hujan", a: "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ", l: "Muṭirnā bi faḍlillāhi wa raḥmatih", r: "Hujan turun berkat karunia Allah." },
-            { j: "21. Mendengar Petir", a: "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ", l: "Subḥānal-lażī yusabbiḥur-ra‘du...", r: "Maha Suci Allah yang guntur bertasbih memuji-Nya." },
-            { j: "22. Menghadapi Musibah", a: "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ", l: "Innā lillāhi wa ilaihi rāji‘ūn", r: "Kami milik Allah. Berilah pahala dalam musibah ini." },
-            { j: "23. Naik Kendaraan", a: "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا", l: "Subḥānal-lażī sakhkhara lanā...", r: "Maha Suci Allah yang menundukkan kendaraan ini." },
-            { j: "24. Masuk Pasar", a: "لَا إِلٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ", l: "Lā ilāha illallāhu waḥdahū...", r: "Tiada Tuhan selain Allah, Maha Menghidupkan & Mematikan." },
-            { j: "25. Minum Susu", a: "اللَّهُمَّ بَارِكْ لَنَا فِيهِ وَزِدْنَا مِنْهُ", l: "Allāhumma bārik lanā fīhi wa zidnā minhu", r: "Berkahilah susu ini dan tambahkanlah untuk kami." },
-            { j: "26. Menghindari Syirik", a: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ أَنْ أُشْرِكَ بِكَ", l: "Allāhumma innī a‘ūdzu bika an usyrika...", r: "Lindungi aku dari syirik yang aku tahu maupun tidak." },
-            { j: "27. Akan Belajar (Singkat)", a: "رَبِّ زِدْنِي عِلْمًا", l: "Rabbi zidnī ‘ilmā", r: "Ya Tuhanku tambahkanlah ilmuku." },
-            { j: "28. Melewati Kuburan", a: "السَّلَامُ عَلَيْكُمْ أَهْلَ الدِّيَارِ", l: "As-salāmu ‘alaikum ahlad-diyār...", r: "Salam keselamatan wahai penghuni kubur." },
-            { j: "29. Kedua Orang Tua", a: "رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا", l: "Rabbi irḥamhumā kamā rabbayānī ṣaghīrā", r: "Sayangilah mereka seperti mereka mendidikku waktu kecil." },
-            { j: "30. Sapu Jagad", a: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً", l: "Rabbana ātinā fid-dunyā ḥasanah...", r: "Berikanlah kebaikan dunia dan akhirat." },
-            { j: "31. Kelapangan Hati", a: "رَبِّ اشْرَحْ لِي صَدْرِي، وَيَسِّرْ لِي أَمْرِي", l: "Rabbi ishraḥ lī ṣadrī, wa yassir lī amrī...", r: "Lapangkan dadaku, mudahkan urusanku." },
-            { j: "32. Bercermin", a: "اللَّهُمَّ كَمَا حَسَّنْتَ خَلْقِي فَحَسِّنْ خُلُقِي", l: "Allāhumma kamā ḥassanta khalqī...", r: "Baguskanlah akhlakku sebagaimana fisikku." },
-            { j: "33. Keteguhan Iman", a: "يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ", l: "Yā muqallibal-qulūbi tsabbit qalbī...", r: "Teguhkanlah hatiku di atas agama-Mu." },
-            { j: "34. Ayam Berkokok (Malam)", a: "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ", l: "Allāhumma innī as’aluka min faḍlik", r: "Ya Allah aku memohon karunia-Mu." },
-            { j: "35. Menjenguk Orang Sakit", a: "لاَ بَأْسَ طَهُورٌ إِنْ شَاءَ اللهُ", l: "Lā ba’sa ṭahūrun in syā’allāh", r: "Tidak apa-apa, semoga sakitmu membersihkan dosa." },
-            { j: "36. Sedang Marah", a: "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ", l: "A‘ūdzu billāhi minasy-syaiṭān...", r: "Aku berlindung kepada Allah dari setan." },
-            { j: "37. Susah Tidur", a: "اللَّهُمَّ غَارَتِ النُّجُومُ وَهَدَأَتِ الْعُيُونُ", l: "Allāhumma ghāratin-nujūmu...", r: "Bintang tenggelam, mata tenang, Engkau Maha Hidup." },
-            { j: "38. Masuk Rumah Kosong", a: "السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ", l: "As-salāmu ‘alainā wa ‘alā ‘ibādillāh...", r: "Salam bagi kami dan hamba Allah yang shalih." },
-            { j: "39. Membuka Pakaian", a: "بِسْمِ اللَّهِ الَّذِي لَا إِلَهَ إِلَّا هُوَ", l: "Bismillahil-ladzi la ilaha illa huwa", r: "Dengan nama Allah yang tiada Tuhan selain Dia." },
-            { j: "40. Menghadapi Kesulitan", a: "اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهُ سَهْلًا", l: "Allahumma la sahla illa ma ja'altahu sahla", r: "Ya Allah tiada kemudahan kecuali yang Engkau buat mudah." }
-        ];
+        // CONFIG FIREBASE (Sama dengan admin)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+            authDomain: "e-santri-b62be.firebaseapp.com",
+            projectId: "e-santri-b62be",
+            databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        function displayDoa(filter = "") {
+        let listDoa = [];
+
+        // AMBIL DATA DARI FIREBASE
+        db.ref('doa_harian').on('value', (snapshot) => {
             const container = document.getElementById('doaContainer');
             container.innerHTML = "";
-            const filtered = dataDoa.filter(d => 
-                d.j.toLowerCase().includes(filter.toLowerCase()) || 
-                d.r.toLowerCase().includes(filter.toLowerCase())
-            );
-            
-            if(filtered.length === 0) {
-                container.innerHTML = `<div class="text-center py-10 text-slate-400">Doa tidak ditemukan...</div>`;
-                return;
-            }
+            listDoa = [];
 
-            filtered.forEach((d, index) => {
-                container.innerHTML += `
-                    <div class="doa-card bg-white p-6 rounded-[24px] shadow-sm border border-slate-100 hover:shadow-md relative group">
-                        <div class="flex justify-between items-start mb-4">
-                            <h2 class="text-emerald-700 font-bold text-lg">${d.j}</h2>
-                            <button onclick="copyDoa('${d.a}', '${d.r}')" class="text-slate-300 hover:text-emerald-600 p-2 transition">
-                                <i class="fa-regular fa-copy"></i>
-                            </button>
-                        </div>
-                        <p class="arabic text-right text-3xl text-slate-800 mb-6 leading-relaxed" dir="rtl">${d.a}</p>
-                        <p class="text-[13px] italic text-emerald-600/70 font-medium mb-4 leading-relaxed bg-emerald-50 p-3 rounded-xl border border-emerald-100/50">${d.l}</p>
-                        <div class="pt-4 border-t border-slate-50 text-[14px] text-slate-600 leading-relaxed">
-                            <strong class="text-slate-800">Artinya:</strong> ${d.r}
-                        </div>
-                    </div>`;
-            });
+            if (snapshot.exists()) {
+                snapshot.forEach((childSnapshot) => {
+                    const data = childSnapshot.val();
+                    listDoa.push(data);
+                    renderCard(data);
+                });
+            } else {
+                container.innerHTML = `<div class="text-center py-10 text-slate-400">Belum ada doa di database.</div>`;
+            }
+        });
+
+        function renderCard(d) {
+            const container = document.getElementById('doaContainer');
+            container.innerHTML += `
+                <div class="doa-card bg-white p-6 rounded-[24px] shadow-sm border border-slate-100 relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-emerald-700 font-bold text-lg">${d.judul}</h2>
+                        <button onclick="copyDoa('${d.arab}', '${d.arti}')" class="text-slate-300 hover:text-emerald-600 p-2">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                    <p class="arabic text-right text-3xl text-slate-800 mb-6" dir="rtl">${d.arab}</p>
+                    <div class="pt-4 border-t border-slate-50 text-[14px] text-slate-600">
+                        <strong class="text-slate-800">Artinya:</strong> ${d.arti}
+                    </div>
+                </div>`;
+        }
+
+        function searchDoa() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('doaContainer');
+            container.innerHTML = "";
+            const filtered = listDoa.filter(d => d.judul.toLowerCase().includes(keyword));
+            filtered.forEach(d => renderCard(d));
         }
 
         function copyDoa(arab, arti) {
-            const text = `${arab}\n\nArtinya: ${arti}`;
-            navigator.clipboard.writeText(text);
+            navigator.clipboard.writeText(`${arab}\n\nArtinya: ${arti}`);
             const toast = document.getElementById('toast');
             toast.style.opacity = "1";
             setTimeout(() => toast.style.opacity = "0", 2000);
         }
-
-        function searchDoa() {
-            displayDoa(document.getElementById('searchInput').value);
-        }
-
-        displayDoa();
     </script>
 </body>
 </html>
