@@ -197,29 +197,76 @@
         const tgl = document.getElementById('u-jadwal').value;
         const raw = document.getElementById('u-massal').value;
 
-        if(!mapel || !tgl) return alert("Isi Mapel dan Jadwal!");
+        if(!mapel || !tgl || !raw) return alert("Mohon lengkapi Mapel, Jadwal, dan Isi Soal!");
 
         let soalPG = [];
         let soalEs = [];
         
-        const bagian = raw.split('[ESSAY]');
-        const pgPart = bagian[0].replace('[PG]', '').trim().split('\n');
-        const esPart = bagian[1] ? bagian[1].trim().split('\n') : [];
+        // Membagi teks berdasarkan penanda [PG] dan [ESSAY]
+        const segments = raw.split(/\[PG\]|\[ESSAY\]/i);
+        
+        // Mencari tahu urutan kategori karena user bisa input PG dulu atau Essay dulu
+        const firstIsPG = raw.toUpperCase().indexOf('[PG]') < raw.toUpperCase().indexOf('[ESSAY]');
 
-        pgPart.forEach(l => {
-            const p = l.split('|');
-            if(p.length >= 6) soalPG.push({ t:p[0], a:p[1], b:p[2], c:p[3], d:p[4], k:p[5].trim().toUpperCase() });
-        });
-        esPart.forEach(l => { if(l.trim()) soalEs.push(l.trim()); });
+        // segment[0] biasanya kosong jika teks diawali [PG] atau [ESSAY]
+        // segment[1] adalah kumpulan soal kategori pertama
+        // segment[2] adalah kumpulan soal kategori kedua
 
+        function parsePG(text) {
+            if(!text) return;
+            text.trim().split('\n').forEach(l => {
+                const p = l.split('|');
+                if(p.length >= 6) {
+                    soalPG.push({ 
+                        t: p[0].trim(), 
+                        a: p[1].trim(), 
+                        b: p[2].trim(), 
+                        c: p[3].trim(), 
+                        d: p[4].trim(), 
+                        k: p[5].trim().toUpperCase() 
+                    });
+                }
+            });
+        }
+
+        function parseEssay(text) {
+            if(!text) return;
+            text.trim().split('\n').forEach(l => {
+                const p = l.split('|');
+                if(l.trim()) {
+                    soalEs.push({
+                        t: p[0].trim(),
+                        k: p[1] ? p[1].trim() : "" // Kunci jawaban jika ada
+                    });
+                }
+            });
+        }
+
+        if (firstIsPG) {
+            parsePG(segments[1]);
+            parseEssay(segments[2]);
+        } else {
+            parseEssay(segments[1]);
+            parsePG(segments[2]);
+        }
+
+        if(soalPG.length === 0 && soalEs.length === 0) {
+            return alert("Format soal salah! Pastikan gunakan tanda | sebagai pemisah.");
+        }
+
+        // Simpan ke Firebase
         db.ref(`jadwal_ujian/${kls}`).push({
             mapel: mapel,
             durasi: parseInt(dur),
             jadwal: tgl.replace('T', ' '),
-            soal: { pg: soalPG, essay: soalEs }
+            soal: { pg: soalPG, essay: soalEs },
+            timestamp: Date.now()
         }).then(() => {
-            alert("Jadwal Ujian " + mapel + " Tersimpan!");
+            alert("✅ Sukses! Ujian " + mapel + " untuk kelas " + kls + " berhasil dipublish.");
             document.getElementById('u-massal').value = "";
+            document.getElementById('u-mapel').value = "";
+        }).catch(err => {
+            alert("Gagal menyimpan: " + err.message);
         });
     }
 
