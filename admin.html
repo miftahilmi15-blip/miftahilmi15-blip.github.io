@@ -185,41 +185,59 @@
 
     // --- LOGIKA TAHFIDZ ---
     function loadTahfidz() {
-        const list = document.getElementById('list-tahfidz');
-        list.innerHTML = "<p style='font-size:12px; color:#888;'>Sedang melacak data...</p>";
-        
-        db.ref('tahfidz').limitToLast(20).on('value', snap => {
-            list.innerHTML = "";
-            if (!snap.exists()) { 
-                list.innerHTML = "<div class='item-row'>Data tahfidz kosong.</div>"; 
-                return; 
-            }
-            
-            snap.forEach(c => {
-                const d = c.val();
-                let semuaInfo = Object.keys(d).map(key => `<b>${key}:</b> ${d[key]}`).join(' | ');
+    const kls = document.getElementById('kls-tahfidz').value;
+    const container = document.getElementById('list-tahfidz-check');
+    
+    if (!kls) return;
+    container.innerHTML = "<p style='text-align:center; font-size:12px;'>Mengecek laporan hari ini...</p>";
 
-                list.innerHTML += `
-                <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 5px; padding: 15px;">
-                    <div style="font-size: 13px; color: var(--primary); font-weight:700; border-bottom:1px solid #eee; width:100%; padding-bottom:5px; margin-bottom:5px;">
-                        <i class="fas fa-history"></i> Data Setoran Hafalan
+    // 1. Ambil tanggal hari ini (Format: YYYY-MM-DD)
+    const tglSekarang = new Date().toISOString().split('T')[0];
+
+    // 2. Ambil semua santri di kelas tersebut
+    db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapUsers => {
+        if (!snapUsers.exists()) {
+            container.innerHTML = "<p style='text-align:center; font-size:12px; color:red;'>Santri belum terdaftar di database.</p>";
+            return;
+        }
+
+        // 3. Ambil data setoran di folder tahfidz
+        db.ref('tahfidz').once('value', snapSetoran => {
+            const dataSetoran = snapSetoran.val() || {};
+            container.innerHTML = ""; 
+
+            snapUsers.forEach(u => {
+                const santri = u.val();
+                const nama = santri.nama;
+                
+                let sudahSetorHariIni = false;
+                let detailHafalan = "";
+
+                // 4. LOGIKA KUNCI: Cek apakah namanya ada DAN tanggalnya adalah HARI INI
+                Object.values(dataSetoran).forEach(t => {
+                    // Pastikan di database santri saat input, ada kolom 'tanggal' (YYYY-MM-DD)
+                    if (t.nama === nama && t.tanggal === tglSekarang) {
+                        sudahSetorHariIni = true;
+                        detailHafalan = `📖 ${t.surah || ''} ayat ${t.ayat || ''}`;
+                    }
+                });
+
+                // 5. Render Tampilan (Redup jika belum setor hari ini)
+                container.innerHTML += `
+                    <div class="item-row" style="border-left: 5px solid ${sudahSetorHariIni ? '#2ecc71' : '#ff7675'}; opacity: ${sudahSetorHariIni ? '1' : '0.6'}">
+                        <div style="flex:1;">
+                            <b style="display:block; color: ${sudahSetorHariIni ? '#1f6f51' : '#444'}">${nama}</b>
+                            <small style="color:#999;">${sudahSetorHariIni ? detailHafalan : 'Belum input hari ini'}</small>
+                        </div>
+                        <div class="${sudahSetorHariIni ? 'status-done' : 'status-pending'}" style="font-size:10px;">
+                            ${sudahSetorHariIni ? '✅ CEKLIS' : '❌ SILAU'}
+                        </div>
                     </div>
-                    <div style="font-size: 12px; line-height: 1.6; color: #444;">
-                        ${semuaInfo}
-                    </div>
-                    <div style="margin-top:10px; width:100%; text-align:right;">
-                         <button onclick="hapusData('tahfidz/${c.key}')" style="background:none; border:none; color:red; font-size:10px; cursor:pointer;"><i class="fas fa-trash"></i> Hapus</button>
-                    </div>
-                </div>`;
+                `;
             });
         });
-    }
-
-    function hapusData(path) {
-        if(confirm("Yakin ingin menghapus data ini secara permanen?")) {
-            db.ref(path).remove();
-        }
-    }
+    });
+}
 
     // --- LOGIKA REKAP & UJIAN ---
     function generateRekap() {
