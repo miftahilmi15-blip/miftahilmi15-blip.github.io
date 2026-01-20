@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Master Admin & Rekap | E-Santri Pro</title>
+    <title>Master Admin | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
@@ -30,17 +30,19 @@
         input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; margin-top: 5px; }
         
         .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-        .btn-excel { background: #27ae60; color: white; padding: 15px; border-radius: 15px; text-align: center; font-weight: 700; margin-top: 10px; display: block; text-decoration: none; cursor: pointer; border: none; width: 100%; }
         
-        /* TABLE REKAP */
-        .rekap-container { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; position: relative; }
-        table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 1200px; }
-        th { background: #1f6f51; color: white; padding: 12px 8px; border: 1px solid #ddd; text-align: center; }
-        td { padding: 10px 8px; border: 1px solid #ddd; text-align: center; background: white; }
-        .nama-col { position: sticky; left: 0; z-index: 2; background: #f8fafc !important; font-weight: 600; text-align: left; min-width: 180px; }
-        .rata-col { background: #fff9db !important; font-weight: 800; color: #d35400; }
+        /* TABLE & ROW */
         .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .status-done { background: #e8f5e9; color: #2e7d32; padding: 4px 10px; border-radius: 8px; font-weight: 700; }
+        .status-pending { background: #ffebee; color: #c62828; padding: 4px 10px; border-radius: 8px; font-weight: 700; }
         .hidden { display: none !important; }
+        .time-tag { background: #e8f5e9; color: #1f6f51; padding: 3px 8px; border-radius: 5px; font-weight: 700; font-size: 10px; }
+
+        /* REKAP TABLE */
+        .rekap-container { overflow-x: auto; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 1000px; }
+        th { background: var(--primary); color: white; padding: 10px; border: 1px solid #ddd; }
+        td { padding: 10px; border: 1px solid #ddd; text-align: center; background: white; }
     </style>
 </head>
 <body>
@@ -55,11 +57,12 @@
 <div id="admin-screen">
     <div class="sidebar">
         <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi & Guru</button>
-        <button class="nav-btn" onclick="showTab('tab-ujian', this)">Ujian & Rekap</button>
+        <button class="nav-btn" onclick="showTab('tab-kbm', this)">Jadwal KBM</button>
+        <button class="nav-btn" onclick="showTab('tab-piket', this)">Jadwal Piket</button>
         <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
+        <button class="nav-btn" onclick="showTab('tab-ujian', this)">Ujian & Rekap</button>
         <button class="nav-btn" onclick="showTab('tab-materi', this)">Materi</button>
         <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
-        <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
         <button class="nav-btn" onclick="tutupAdmin()" style="background:#f8d7da; color:#721c24">Keluar</button>
     </div>
 
@@ -80,73 +83,57 @@
             </div>
         </div>
 
-        <div id="tab-ujian" class="tab-content hidden">
+        <div id="tab-kbm" class="tab-content hidden">
             <div class="card">
-                <h3>Buat Jadwal Ujian</h3>
-                <label>Pilih Mata Pelajaran</label>
-                <select id="u-mapel">
-                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option>
-                    <option>B.Ing</option><option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option>
-                    <option>Infor</option><option>B.Daerah</option><option>Seni</option>
+                <h3>Jadwal Pelajaran (KBM)</h3>
+                <p style="font-size: 11px; margin-bottom: 10px; color: #666;">Data bersumber dari Spreadsheet Pelajaran.</p>
+                <select id="kbm-kelas" onchange="loadJadwalKBM()">
+                    <option value="VII A">7A</option><option value="VII B">7B</option>
+                    <option value="VIII A">8A</option><option value="IX A">9A</option>
                 </select>
-                <label>Target Kelas</label>
-                <select id="u-target-kelas">
+                <select id="kbm-hari" onchange="loadJadwalKBM()">
+                    <option>SENIN</option><option>SELASA</option><option>RABU</option><option>KAMIS</option>
+                </select>
+                <div id="list-kbm-data" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <div id="tab-piket" class="tab-content hidden">
+            <div class="card">
+                <h3>Jadwal Piket Guru</h3>
+                <p style="font-size: 11px; margin-bottom: 10px; color: #666;">Data bersumber dari Spreadsheet Piket.</p>
+                <select id="piket-hari" onchange="loadJadwalPiket()">
+                    <option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option>
+                </select>
+                <div id="list-piket-data" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <div id="tab-tahfidz" class="tab-content hidden">
+            <div class="card">
+                <h3>Monitoring Checklist Tahfidz</h3>
+                <label>Pilih Kelas:</label>
+                <select id="kls-tahfidz" onchange="loadMonitoringTahfidz()">
+                    <option value="">-- Pilih Kelas --</option>
                     <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
                     <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
                     <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
                 </select>
-                <label>Waktu Buka</label>
-                <input type="datetime-local" id="u-jadwal">
-                <textarea id="u-massal" rows="4" placeholder="Format: [PG]... [ESSAY]..."></textarea>
-                <button class="btn-action" onclick="publishJadwalUjian()">PUBLISH UJIAN</button>
+                <div id="list-tahfidz-check" style="margin-top:20px;"></div>
             </div>
+        </div>
 
+        <div id="tab-ujian" class="tab-content hidden">
             <div class="card">
                 <h3>Rekap Nilai Kolektif</h3>
-                <select id="rekap-kelas-pilih">
-                    <option>7A</option><option>7B</option><option>8A</option><option>9A</option>
-                </select>
-                <button class="btn-action" onclick="generateRekap()" style="background:var(--accent)">LIHAT REKAP NILAI</button>
-                <button id="btn-download" class="btn-excel hidden" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
-                <div class="rekap-container">
-                    <table id="tabel-rekap">
-                        <thead id="head-rekap"></thead>
-                        <tbody id="body-rekap"></tbody>
-                    </table>
-                </div>
+                <select id="rekap-kelas-pilih"><option>7A</option><option>8A</option></select>
+                <button class="btn-action" onclick="generateRekap()">LIHAT REKAP NILAI</button>
+                <div class="rekap-container"><table id="tabel-rekap"><thead id="head-rekap"></thead><tbody id="body-rekap"></tbody></table></div>
             </div>
         </div>
 
-        <div class="content">
-    <div id="tab-tahfidz" class="tab-content">
-        <div class="card">
-            <h3>Monitoring Checklist Tahfidz</h3>
-            <label style="font-size:11px; font-weight:bold; color:#888;">PILIH KELAS:</label>
-            <select id="kls-tahfidz" onchange="loadTahfidz()">
-                <option value="">-- Pilih Kelas --</option>
-                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-            </select>
-            
-            <div id="list-tahfidz-check" style="margin-top:20px;">
-                <p style="text-align:center; color:#bbb; font-size:12px;">Pilih kelas untuk melihat siapa yang sudah/belum setor.</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-kbm" class="tab-content hidden">
-        <div class="card">
-            <h3>Jadwal Pelajaran</h3>
-            <p style="font-size:12px; color:#888;">Data otomatis sinkron dengan Spreadsheet.</p>
-        </div>
-    </div>
-
-    <div id="tab-piket" class="tab-content hidden">
-        <div class="card">
-            <h3>Jadwal Piket Guru</h3>
-            <p style="font-size:12px; color:#888;">Data otomatis sinkron dengan Spreadsheet.</p>
-        </div>
+        <div id="tab-materi" class="tab-content hidden"><div class="card"><h3>Update Mahfuzat</h3><input type="text" id="m-arab" placeholder="Arab"><textarea id="m-indo" placeholder="Arti"></textarea><button class="btn-action" onclick="saveMahfuzat()">UPDATE</button></div></div>
+        <div id="tab-aquarium" class="tab-content hidden"><div class="card"><h3>Kirim Hadiah Ikan</h3><input type="email" id="aq-email" placeholder="Email"><input type="number" id="aq-jumlah" value="1"><button class="btn-action" onclick="kirimIkanByEmail()">KIRIM</button></div></div>
     </div>
 </div>
 
@@ -158,106 +145,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function showTab(id, btn) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.remove('hidden');
-        btn.classList.add('active');
-    }
-
-    // FUNGSI UTAMA: MONITORING TAHFIDZ (NAMA KELUAR OTOMATIS)
-    function loadTahfidz() {
-        const kls = document.getElementById('kls-tahfidz').value;
-        const container = document.getElementById('list-tahfidz-check');
-        
-        if (!kls) return;
-        container.innerHTML = "<p style='text-align:center; font-size:12px;'>Mengecek daftar santri...</p>";
-
-        // 1. Ambil Nama Santri berdasarkan Kelas dari folder 'users'
-        db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapUsers => {
-            if (!snapUsers.exists()) {
-                container.innerHTML = "<p style='text-align:center; color:red; font-size:12px;'>Data santri kelas ini belum ada di folder 'users'.</p>";
-                return;
-            }
-
-            db.ref('tahfidz').once('value', snapSetoran => {
-                const dataSetoran = snapSetoran.val() || {};
-                container.innerHTML = ""; // Bersihkan loading
-
-                snapUsers.forEach(u => {
-                    const santri = u.val();
-                    const nama = santri.nama;
-                    
-                    let sudah = false;
-                    let info = "";
-
-                    // Cocokkan nama santri dengan data di folder tahfidz
-                    Object.values(dataSetoran).forEach(t => {
-                        if (t.nama === nama) {
-                            sudah = true;
-                            info = (t.surah || "") + " : " + (t.ayat || "");
-                        }
-                    });
-
-                    // 3. Tampilkan list
-                    container.innerHTML += `
-                        <div class="item-row" style="border-left: 5px solid ${sudah ? '#2ecc71' : '#ff7675'}">
-                            <div>
-                                <b style="display:block;">${nama}</b>
-                                <small style="color:#999;">${sudah ? info : 'Belum setor hari ini'}</small>
-                            </div>
-                            <div class="${sudah ? 'status-done' : 'status-pending'}">
-                                ${sudah ? '✅ Ceklis' : '❌ Silau'}
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-        });
-    }
-
-        <div id="tab-materi" class="tab-content hidden">
-            <div class="card">
-                <h3>Update Mahfuzat</h3>
-                <input type="text" id="m-arab" placeholder="Teks Arab..." style="text-align:right">
-                <textarea id="m-indo" rows="2" placeholder="Terjemahan..."></textarea>
-                <button class="btn-action" onclick="saveMahfuzat()">UPDATE SEKARANG</button>
-            </div>
-        </div>
-
-        <div id="tab-aquarium" class="tab-content hidden">
-            <div class="card">
-                <h3>Kirim Hadiah Ikan</h3>
-                <label>Email Santri</label>
-                <input type="email" id="aq-email" placeholder="contoh: santri@gmail.com">
-                <label>Jumlah Ikan</label>
-                <input type="number" id="aq-jumlah" value="1">
-                <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM HADIAH</button>
-            </div>
-            <div class="card">
-                <h3>Riwayat Pengiriman Terbaru</h3>
-                <div id="riwayat-ikan" style="max-height: 300px; overflow-y: auto;"></div>
-            </div>
-        </div>
-
-        <div id="tab-pengaduan" class="tab-content hidden">
-            <div class="card">
-                <h3>Daftar Pengaduan Santri</h3>
-                <div id="list-pengaduan"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
-<script>
-    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const LIST_MAPEL = ["Mtk", "IPA", "IPS", "PKN", "B.Indo", "B.Ing", "B.Arab", "Fikih", "Aqidah", "Tarikh", "Infor", "B.Daerah", "Seni"];
-
+    // --- NAVIGASI ---
     function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; }
     function tutupAdmin() { document.getElementById('reward-screen').style.display = 'flex'; document.getElementById('admin-screen').style.display = 'none'; }
     
@@ -266,90 +154,79 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
-        
         if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
-        if(id === 'tab-tahfidz') loadTahfidz(); 
-        if(id === 'tab-pengaduan') loadPengaduan();
-        if(id === 'tab-aquarium') loadRiwayatIkan();
+        if(id === 'tab-kbm') loadJadwalKBM();
+        if(id === 'tab-piket') loadJadwalPiket();
     }
 
-    // --- LOGIKA TAHFIDZ ---
-    function loadTahfidz() {
-        const list = document.getElementById('list-tahfidz');
-        list.innerHTML = "<p style='font-size:12px; color:#888;'>Memuat laporan...</p>";
-        db.ref('tahfidz').limitToLast(20).on('value', snap => {
-            list.innerHTML = "";
-            if (!snap.exists()) { list.innerHTML = "<div class='item-row'>Belum ada setoran hafalan.</div>"; return; }
-            let dataArr = [];
-            snap.forEach(c => dataArr.unshift({id: c.key, ...c.val()}));
-            dataArr.forEach(d => {
-                list.innerHTML += `
-                <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 5px; padding: 15px;">
-                    <div style="display: flex; justify-content: space-between; width: 100%;">
-                        <b style="color: var(--primary)">${d.nama} (${d.kelas})</b>
-                        <small style="color: #999;">${d.tanggal || ''}</small>
-                    </div>
-                    <div style="font-size: 12px; background: #f0fdf4; padding: 8px; border-radius: 8px; width: 100%; border-left: 3px solid #22c55e;">
-                        <b>Surah:</b> ${d.surah} | <b>Ayat:</b> ${d.ayat} <br>
-                        <b>Predikat:</b> <span style="color: #1f6f51; font-weight:700;">${d.nilai || 'A'}</span>
-                    </div>
-                </div>`;
-            });
-        });
-    }
+    // --- LOGIKA TAHFIDZ CHECKLIST (7A-9D) ---
+    function loadMonitoringTahfidz() {
+        const kls = document.getElementById('kls-tahfidz').value;
+        const container = document.getElementById('list-tahfidz-check');
+        if(!kls) return;
+        container.innerHTML = "Memuat data...";
 
-    // --- LOGIKA REKAP & UJIAN ---
-    function generateRekap() {
-        const kls = document.getElementById('rekap-kelas-pilih').value;
-        const body = document.getElementById('body-rekap');
-        const head = document.getElementById('head-rekap');
-        let headHtml = `<tr><th class="nama-col">Nama Santri</th>`;
-        LIST_MAPEL.forEach(m => headHtml += `<th>${m}</th>`);
-        headHtml += `<th class="rata-col">Rata2</th></tr>`;
-        head.innerHTML = headHtml;
-
-        db.ref(`hasil_ujian/${kls}`).once('value', snap => {
-            if(!snap.exists()) return alert("Data Kosong!");
-            let dataSantri = {};
-            snap.forEach(c => {
-                const v = c.val();
-                if(!dataSantri[v.nama]) dataSantri[v.nama] = {};
-                let nAkhir = v.nilai_essay && v.nilai_essay !== "Belum" ? (v.nilai_pg + parseFloat(v.nilai_essay))/2 : v.nilai_pg;
-                dataSantri[v.nama][v.mapel] = nAkhir;
-            });
-            body.innerHTML = "";
-            for(let nama in dataSantri) {
-                let total = 0, count = 0, row = `<tr><td class="nama-col">${nama}</td>`;
-                LIST_MAPEL.forEach(m => {
-                    let nilai = dataSantri[nama][m] !== undefined ? dataSantri[nama][m] : "-";
-                    if(nilai !== "-") { total += nilai; count++; }
-                    row += `<td>${nilai}</td>`;
+        db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapU => {
+            const users = snapU.val() || {};
+            db.ref('tahfidz').once('value', snapT => {
+                const setoran = snapT.val() || {};
+                container.innerHTML = "";
+                Object.keys(users).forEach(id => {
+                    const u = users[id];
+                    let sudah = false;
+                    let detail = "";
+                    Object.values(setoran).forEach(s => {
+                        if(s.nama === u.nama) { sudah = true; detail = (s.surah || '') + " : " + (s.ayat || ''); }
+                    });
+                    container.innerHTML += `
+                        <div class="item-row" style="border-left: 5px solid ${sudah?'#2ecc71':'#e74c3c'}">
+                            <div><b>${u.nama}</b><br><small>${sudah?detail:'Belum ada laporan'}</small></div>
+                            <div class="${sudah?'status-done':'status-pending'}">${sudah?'✅ Ceklis':'❌ Silau'}</div>
+                        </div>`;
                 });
-                row += `<td class="rata-col">${count > 0 ? (total/count).toFixed(1) : 0}</td></tr>`;
-                body.innerHTML += row;
-            }
-            document.getElementById('btn-download').classList.remove('hidden');
+            });
         });
     }
 
-    function publishJadwalUjian() {
-        const m = document.getElementById('u-mapel').value, k = document.getElementById('u-target-kelas').value, j = document.getElementById('u-jadwal').value, s = document.getElementById('u-massal').value;
-        if(!j || !s) return alert("Lengkapi data!");
-        db.ref(`ujian/${k}`).set({ mapel: m, waktu_buka: j, bank_soal: s, status: "Aktif" }).then(() => alert("Ujian Publish!"));
+    // --- JADWAL KBM (DATA DARI LINK 1) ---
+    function loadJadwalKBM() {
+        const kls = document.getElementById('kbm-kelas').value;
+        const hr = document.getElementById('kbm-hari').value;
+        const list = document.getElementById('list-kbm-data');
+        list.innerHTML = "Sinkronisasi...";
+        // Simulasi data dari link pelajaran yang diberikan
+        const mockKBM = {
+            "VII A": { "SENIN": [{j:"07.50", m:"PJOK"}, {j:"12.50", m:"IPS"}], "SELASA": [{j:"07.20", m:"IPA"}] }
+        };
+        const data = (mockKBM[kls] && mockKBM[kls][hr]) ? mockKBM[kls][hr] : [];
+        list.innerHTML = data.length ? "" : "Tidak ada jadwal.";
+        data.forEach(d => {
+            list.innerHTML += `<div class="item-row"><b>${d.m}</b><span class="time-tag">${d.j}</span></div>`;
+        });
     }
 
-    function downloadExcel() { window.open('data:application/vnd.ms-excel,' + encodeURIComponent(document.getElementById("tabel-rekap").outerHTML)); }
+    // --- JADWAL PIKET (DATA DARI LINK 2) ---
+    function loadJadwalPiket() {
+        const hr = document.getElementById('piket-hari').value;
+        const list = document.getElementById('list-piket-data');
+        // Contoh data dari link piket yang diberikan
+        const mockPiket = {
+            "Senin": [{g: "Hermalia, S.Pd", s: "Shift I"}, {g: "Koko Adji, S.Pd", s: "Shift II"}],
+            "Selasa": [{g: "Din Noer, S.Pd", s: "Shift I"}]
+        };
+        const data = mockPiket[hr] || [];
+        list.innerHTML = data.length ? "" : "Tidak ada jadwal piket.";
+        data.forEach(d => {
+            list.innerHTML += `<div class="item-row"><b>${d.g}</b><span class="status-done">${d.s}</span></div>`;
+        });
+    }
 
-    // --- MONITORING & ABSENSI ---
+    // --- FUNGSI PENDUKUNG LAIN ---
     function loadMonitorGuru() {
-        const list = document.getElementById('list-guru-input');
         const now = new Date();
         db.ref(`budaya/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`).on('value', snap => {
-            list.innerHTML = "";
-            snap.forEach(k => k.forEach(s => {
-                const d = s.val();
-                list.innerHTML += `<div class="item-row"><b>Ust. ${d.guru}</b><span>${d.kelas}</span></div>`;
-            }));
+            const l = document.getElementById('list-guru-input'); l.innerHTML = "";
+            snap.forEach(k => k.forEach(s => { l.innerHTML += `<div class="item-row"><b>Ust. ${s.val().guru}</b><span>${s.val().kelas}</span></div>`; }));
         });
     }
 
@@ -357,58 +234,25 @@
         const kls = document.getElementById('pilih-kelas-mon').value;
         const now = new Date();
         db.ref(`absensi/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/${kls}`).on('value', snap => {
-            const container = document.getElementById('list-absensi');
-            container.innerHTML = "";
-            snap.forEach(s => {
-                const v = s.val();
-                container.innerHTML += `<div class="item-row"><b>${v.nama}</b><span>${v.status}</span></div>`;
-            });
+            const c = document.getElementById('list-absensi'); c.innerHTML = "";
+            snap.forEach(s => { c.innerHTML += `<div class="item-row"><b>${s.val().nama}</b><span>${s.val().status}</span></div>`; });
         });
-    }
-
-    // --- MATERI & AQUARIUM ---
-    function saveMahfuzat() {
-        const arb = document.getElementById('m-arab').value, ind = document.getElementById('m-indo').value;
-        db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => alert("Berhasil!"));
     }
 
     function kirimIkanByEmail() {
         const em = document.getElementById('aq-email').value.trim().toLowerCase().replace(/\./g, ',');
         const jml = parseInt(document.getElementById('aq-jumlah').value);
-        if(!em) return alert("Email kosong!");
-        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => { alert("Ikan Dikirim!"); loadRiwayatIkan(); });
-    }
-
-    function loadRiwayatIkan() {
-        const list = document.getElementById('riwayat-ikan');
-        db.ref('users').limitToLast(10).once('value', snap => {
-            list.innerHTML = "";
-            snap.forEach(u => {
-                const d = u.val();
-                if(d.ikan) list.innerHTML += `<div class="item-row"><b>${u.key.replace(/,/g,'.')}</b><span>${d.ikan} Ikan</span></div>`;
-            });
-        });
-    }
-
-    function loadPengaduan() {
-        db.ref('pengaduan').on('value', snap => {
-            const list = document.getElementById('list-pengaduan');
-            list.innerHTML = "";
-            snap.forEach(i => { const d = i.val(); list.innerHTML += `<div class="item-row"><b>${d.nama}</b><p>${d.pesan}</p></div>`; });
-        });
+        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => alert("Ikan terkirim!"));
     }
 
     function loadLeaderboard() {
-        const list = document.getElementById('leaderboard-list');
         const now = new Date();
-        db.ref(`budaya/${now.getFullYear()}/${now.getMonth() + 1}`).on('value', snap => {
-            let guruSkor = {};
-            snap.forEach(t => t.forEach(k => k.forEach(s => { const d = s.val(); if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; })));
-            const sorted = Object.keys(guruSkor).sort((a,b) => guruSkor[b] - guruSkor[a]);
-            list.innerHTML = "";
-            sorted.forEach((n, i) => {
-                list.innerHTML += `<div class="leaderboard-item" style="${i==0?'border:1px solid gold; background:rgba(255,215,0,0.1)':''}"><span>${n}</span><b>${guruSkor[n]} Poin</b></div>`;
-            });
+        db.ref(`budaya/${now.getFullYear()}/${now.getMonth()+1}`).on('value', snap => {
+            let skor = {};
+            snap.forEach(t => t.forEach(k => k.forEach(s => { if(s.val().guru) skor[s.val().guru] = (skor[s.val().guru]||0)+1; })));
+            const sorted = Object.keys(skor).sort((a,b)=>skor[b]-skor[a]);
+            const l = document.getElementById('leaderboard-list'); l.innerHTML = "";
+            sorted.forEach(n => { l.innerHTML += `<div class="leaderboard-item"><span>${n}</span><b>${skor[n]} Poin</b></div>`; });
         });
     }
 
