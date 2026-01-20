@@ -133,9 +133,17 @@
         <div id="tab-aquarium" class="tab-content hidden">
             <div class="card">
                 <h3>Kirim Hadiah Ikan</h3>
-                <input type="email" id="aq-email" placeholder="Email Santri">
+                <label>Email Santri</label>
+                <input type="email" id="aq-email" placeholder="contoh: santri@gmail.com">
+                <label>Jumlah Ikan</label>
                 <input type="number" id="aq-jumlah" value="1">
                 <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM HADIAH</button>
+            </div>
+
+            <div class="card">
+                <h3>Riwayat Pengiriman Terbaru</h3>
+                <div id="riwayat-ikan" style="max-height: 300px; overflow-y: auto;">
+                    </div>
             </div>
         </div>
 
