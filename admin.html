@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Master Admin | E-Santri Pro v17</title>
+    <title>Master Admin v18 | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Amiri&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
@@ -25,29 +25,21 @@
         input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
         
         .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-        
-        /* Control Aquarium Style */
-        .aq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .aq-card { background: #f9f9f9; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #eee; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-top: 10px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(26px); }
+        .btn-excel { display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d4d3f; color: white; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-top: 10px; font-size: 13px; }
 
-        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .arabic-text { font-family: 'Amiri', serif; font-size: 20px; text-align: right; direction: rtl; color: var(--primary); }
+        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
         .hidden { display: none !important; }
+        .arabic { font-family: 'Amiri', serif; font-size: 20px; text-align: right; color: var(--primary); }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absen & Guru</button>
+    <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi & Guru</button>
     <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
-    <button class="nav-btn" onclick="showTab('tab-doa', this)">Doa & Mahfuzat</button>
-    <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
+    <button class="nav-btn" onclick="showTab('tab-materi', this)">Doa & Mahfuzat</button>
+    <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Kontrol Aquarium</button>
     <button class="nav-btn" onclick="showTab('tab-jadwal', this)">Jadwal</button>
 </div>
 
@@ -56,32 +48,34 @@
     <div id="tab-monitoring" class="tab-content">
         <div class="card">
             <h3>Monitoring Guru Input Budaya</h3>
+            <p style="font-size: 10px; color: #888; margin-bottom: 10px;">Daftar ustadz yang aktif menginput nilai karakter hari ini:</p>
             <div id="list-guru-input"></div>
         </div>
         <div class="card">
-            <h3>Absensi Santri Hari Ini</h3>
-            <div id="list-absensi"></div>
+            <h3>Presensi Santri Hari Ini</h3>
+            <select id="pilih-kelas-mon" onchange="loadAbsensi()"><option value="7A">Kelas 7A</option><option value="7B">7B</option><option value="8A">8A</option></select>
+            <div id="list-absensi" style="margin-top:15px;"></div>
         </div>
     </div>
 
     <div id="tab-tahfidz" class="tab-content hidden">
         <div class="card">
-            <h3>Setoran Tahfidz Terbaru</h3>
+            <h3>Laporan Tahfidz Terbaru</h3>
             <div id="list-tahfidz"></div>
         </div>
     </div>
 
-    <div id="tab-doa" class="tab-content hidden">
+    <div id="tab-materi" class="tab-content hidden">
         <div class="card">
-            <h3>Update Mahfuzat</h3>
+            <h3>Update Mahfuzat Berjalan</h3>
             <input type="text" id="m-arab" placeholder="Teks Arab..." style="text-align:right">
             <textarea id="m-indo" rows="2" placeholder="Arti..."></textarea>
-            <button class="btn-action" onclick="saveMahfuzat()">UPDATE MAHFUZAT</button>
+            <button class="btn-action" onclick="saveMahfuzat()">PUBLIKASIKAN</button>
         </div>
         <div class="card">
-            <h3>Tambah Doa Harian</h3>
+            <h3>Tambah Koleksi Doa</h3>
             <input type="text" id="d-judul" placeholder="Judul Doa">
-            <input type="text" id="d-arab" placeholder="Teks Arab..." style="text-align:right">
+            <input type="text" id="d-arab" placeholder="Arab..." style="text-align:right">
             <textarea id="d-arti" rows="2" placeholder="Arti..."></textarea>
             <button class="btn-action" onclick="saveDoa()" style="background:#2ecc71">SIMPAN DOA</button>
         </div>
@@ -89,34 +83,19 @@
 
     <div id="tab-aquarium" class="tab-content hidden">
         <div class="card">
-            <h3>Smart Aquarium Control</h3>
-            <p style="font-size: 11px; color:#666">Kontrol perangkat IoT Aquarium dari panel ini.</p>
-            <div class="aq-grid">
-                <div class="aq-card">
-                    <i class="fas fa-lightbulb" style="color:#fbc02d"></i><br>
-                    <small>Lampu</small><br>
-                    <label class="switch">
-                        <input type="checkbox" id="sw-lampu" onchange="toggleAQ('lampu', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="aq-card">
-                    <i class="fas fa-water" style="color:#3498db"></i><br>
-                    <small>Pompa</small><br>
-                    <label class="switch">
-                        <input type="checkbox" id="sw-pompa" onchange="toggleAQ('pompa', this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
+            <h3>Hadiah Ikan (Membaca Al-Qur'an)</h3>
+            <label>NIPD / ID Santri</label>
+            <input type="text" id="aq-uid" placeholder="Masukkan ID Santri">
+            <label>Jumlah Ikan yang Diberikan</label>
+            <input type="number" id="aq-jumlah" value="1">
+            <button class="btn-action" onclick="kirimIkan()">KIRIM IKAN KE AQUARIUM</button>
         </div>
     </div>
 
     <div id="tab-jadwal" class="tab-content hidden">
         <div class="card">
-            <h3>Link Google Sheets</h3>
+            <h3>Google Sheets Control</h3>
             <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">Edit Jadwal Pelajaran</a>
-            <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">Edit Jadwal Guru</a>
         </div>
     </div>
 
@@ -126,7 +105,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
+    const firebaseConfig = {
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -137,84 +118,84 @@
         btn.classList.add('active');
         if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
         if(id === 'tab-tahfidz') loadTahfidz();
-        if(id === 'tab-aquarium') loadStatusAQ();
     }
 
-    // --- LOGIKA AQUARIUM ---
-    function toggleAQ(device, status) {
-        db.ref('aquarium/' + device).set(status ? 1 : 0);
-    }
-    function loadStatusAQ() {
-        db.ref('aquarium').on('value', snap => {
-            const d = snap.val() || {};
-            document.getElementById('sw-lampu').checked = d.lampu == 1;
-            document.getElementById('sw-pompa').checked = d.pompa == 1;
-        });
-    }
-
-    // --- LOGIKA DOA & MAHFUZAT ---
-    function saveMahfuzat() {
-        const arab = document.getElementById('m-arab').value;
-        const indo = document.getElementById('m-indo').value;
-        db.ref('fitur/mahfuzat').set({ arab, indo }).then(() => alert("Mahfuzat Update!"));
-    }
-    function saveDoa() {
-        const judul = document.getElementById('d-judul').value;
-        const arab = document.getElementById('d-arab').value;
-        const arti = document.getElementById('d-arti').value;
-        db.ref('doa_harian').push({ judul, arab, arti }).then(() => alert("Doa Tersimpan!"));
-    }
-
-    // --- LOGIKA MONITOR GURU ---
+    // --- MONITOR GURU (FIXED PATH) ---
     function loadMonitorGuru() {
         const list = document.getElementById('list-guru-input');
         const now = new Date();
         const path = `budaya/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
         db.ref(path).on('value', snap => {
             list.innerHTML = "";
-            let guruSet = new Set();
+            let guruAktif = {};
             snap.forEach(kelas => {
                 kelas.forEach(santri => {
                     const d = santri.val();
-                    if(d.guru) guruSet.add(`${d.guru} (${d.kelas})`);
+                    if(d.guru) guruAktif[d.guru] = d.kelas;
                 });
             });
-            if(guruSet.size === 0) list.innerHTML = "<small>Belum ada input.</small>";
-            guruSet.forEach(g => {
-                list.innerHTML += `<div class="item-row"><b>${g}</b> <span class="badge" style="background:#2ecc71">AKTIF</span></div>`;
-            });
+            for (let name in guruAktif) {
+                list.innerHTML += `<div class="item-row"><b>Ust. ${name}</b><span class="badge" style="background:var(--primary)">Input Kelas ${guruAktif[name]}</span></div>`;
+            }
+            if(list.innerHTML === "") list.innerHTML = "<small>Belum ada aktivitas guru.</small>";
         });
     }
 
-    // --- LOGIKA ABSENSI ---
+    // --- ABSENSI (FIXED PATH) ---
     function loadAbsensi() {
         const list = document.getElementById('list-absensi');
-        const tgl = new Date().toISOString().split('T')[0];
-        db.ref('laporan_budaya/' + tgl).on('value', snap => {
+        const kls = document.getElementById('pilih-kelas-mon').value;
+        const now = new Date();
+        const path = `absensi/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/${kls}`;
+        
+        db.ref(path).on('value', snap => {
             list.innerHTML = "";
-            if(!snap.exists()) return list.innerHTML = "<small>Data kosong.</small>";
+            if(!snap.exists()) return list.innerHTML = "<small>Kelas ini belum absen.</small>";
             snap.forEach(s => {
                 const v = s.val();
-                list.innerHTML += `<div class="item-row"><b>${v.nama || 'Santri'}</b><small>Hadir</small></div>`;
+                let bg = v.status === 'H' ? '#2ecc71' : '#e74c3c';
+                list.innerHTML += `<div class="item-row"><b>${v.nama}</b><span class="badge" style="background:${bg}">${v.status}</span></div>`;
             });
         });
     }
 
-    // --- LOGIKA TAHFIDZ ---
+    // --- REWARD AQUARIUM ---
+    function kirimIkan() {
+        const uid = document.getElementById('aq-uid').value.replace(/\./g, ',');
+        const jml = parseInt(document.getElementById('aq-jumlah').value);
+        if(!uid) return alert("ID Santri kosong!");
+
+        const ref = db.ref('users/' + uid + '/ikan');
+        ref.transaction(current => (current || 0) + jml)
+        .then(() => alert("Ikan berhasil dikirim!"));
+    }
+
+    // --- DOA & MAHFUZAT ---
+    function saveMahfuzat() {
+        const arab = document.getElementById('m-arab').value;
+        const indo = document.getElementById('m-indo').value;
+        db.ref('fitur/mahfuzat').set({ arab, indo }).then(() => alert("Mahfuzat Updated!"));
+    }
+    function saveDoa() {
+        const j = document.getElementById('d-judul').value;
+        const a = document.getElementById('d-arab').value;
+        const r = document.getElementById('d-arti').value;
+        db.ref('doa_harian').push({ judul:j, arab:a, arti:r }).then(() => alert("Doa Berhasil Ditambah!"));
+    }
+
+    // --- TAHFIDZ ---
     function loadTahfidz() {
         const list = document.getElementById('list-tahfidz');
         db.ref('tahfidz').limitToLast(10).on('value', snap => {
             list.innerHTML = "";
-            snap.forEach(user => {
-                user.forEach(s => {
-                    const v = s.val();
-                    list.innerHTML += `<div class="item-row"><b>${v.nama}</b><small>${v.surah}</small></div>`;
-                });
-            });
+            snap.forEach(y => y.forEach(m => m.forEach(s => {
+                const v = s.val();
+                list.innerHTML += `<div class="item-row"><b>${v.nama}</b><small>${v.materi}</small></div>`;
+            })));
         });
     }
 
-    // Load awal
+    // Inisialisasi
     loadMonitorGuru(); loadAbsensi();
 </script>
 </body>
