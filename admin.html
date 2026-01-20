@@ -117,12 +117,104 @@
             </div>
         </div>
 
-        <div id="tab-tahfidz" class="tab-content hidden">
-            <div class="card">
-                <h3>Laporan Tahfidz Terbaru</h3>
-                <div id="list-tahfidz"></div>
+        <div class="content">
+    <div id="tab-tahfidz" class="tab-content">
+        <div class="card">
+            <h3>Monitoring Checklist Tahfidz</h3>
+            <label style="font-size:11px; font-weight:bold; color:#888;">PILIH KELAS:</label>
+            <select id="kls-tahfidz" onchange="loadTahfidz()">
+                <option value="">-- Pilih Kelas --</option>
+                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+            </select>
+            
+            <div id="list-tahfidz-check" style="margin-top:20px;">
+                <p style="text-align:center; color:#bbb; font-size:12px;">Pilih kelas untuk melihat siapa yang sudah/belum setor.</p>
             </div>
         </div>
+    </div>
+
+    <div id="tab-kbm" class="tab-content hidden">
+        <div class="card">
+            <h3>Jadwal Pelajaran</h3>
+            <p style="font-size:12px; color:#888;">Data otomatis sinkron dengan Spreadsheet.</p>
+        </div>
+    </div>
+
+    <div id="tab-piket" class="tab-content hidden">
+        <div class="card">
+            <h3>Jadwal Piket Guru</h3>
+            <p style="font-size:12px; color:#888;">Data otomatis sinkron dengan Spreadsheet.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function showTab(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.remove('hidden');
+        btn.classList.add('active');
+    }
+
+    // FUNGSI UTAMA: MONITORING TAHFIDZ (NAMA KELUAR OTOMATIS)
+    function loadTahfidz() {
+        const kls = document.getElementById('kls-tahfidz').value;
+        const container = document.getElementById('list-tahfidz-check');
+        
+        if (!kls) return;
+        container.innerHTML = "<p style='text-align:center; font-size:12px;'>Mengecek daftar santri...</p>";
+
+        // 1. Ambil Nama Santri berdasarkan Kelas dari folder 'users'
+        db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapUsers => {
+            if (!snapUsers.exists()) {
+                container.innerHTML = "<p style='text-align:center; color:red; font-size:12px;'>Data santri kelas ini belum ada di folder 'users'.</p>";
+                return;
+            }
+
+            db.ref('tahfidz').once('value', snapSetoran => {
+                const dataSetoran = snapSetoran.val() || {};
+                container.innerHTML = ""; // Bersihkan loading
+
+                snapUsers.forEach(u => {
+                    const santri = u.val();
+                    const nama = santri.nama;
+                    
+                    let sudah = false;
+                    let info = "";
+
+                    // Cocokkan nama santri dengan data di folder tahfidz
+                    Object.values(dataSetoran).forEach(t => {
+                        if (t.nama === nama) {
+                            sudah = true;
+                            info = (t.surah || "") + " : " + (t.ayat || "");
+                        }
+                    });
+
+                    // 3. Tampilkan list
+                    container.innerHTML += `
+                        <div class="item-row" style="border-left: 5px solid ${sudah ? '#2ecc71' : '#ff7675'}">
+                            <div>
+                                <b style="display:block;">${nama}</b>
+                                <small style="color:#999;">${sudah ? info : 'Belum setor hari ini'}</small>
+                            </div>
+                            <div class="${sudah ? 'status-done' : 'status-pending'}">
+                                ${sudah ? '✅ Ceklis' : '❌ Silau'}
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        });
+    }
 
         <div id="tab-materi" class="tab-content hidden">
             <div class="card">
