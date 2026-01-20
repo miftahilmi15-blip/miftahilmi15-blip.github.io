@@ -19,7 +19,7 @@
 
         /* ADMIN SCREEN */
         #admin-screen { display: none; }
-        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
+        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
         .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
         
@@ -33,11 +33,11 @@
         .btn-excel { background: #27ae60; color: white; padding: 15px; border-radius: 15px; text-align: center; font-weight: 700; margin-top: 10px; display: block; text-decoration: none; cursor: pointer; border: none; width: 100%; }
         
         /* TABLE REKAP */
-        .rekap-container { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; position: relative; }
-        table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 1200px; }
+        .rekap-container { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; position: relative; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 1000px; }
         th { background: #1f6f51; color: white; padding: 12px 8px; border: 1px solid #ddd; text-align: center; }
         td { padding: 10px 8px; border: 1px solid #ddd; text-align: center; background: white; }
-        .nama-col { position: sticky; left: 0; z-index: 2; background: #f8fafc !important; font-weight: 600; text-align: left; min-width: 180px; }
+        .nama-col { position: sticky; left: 0; z-index: 10; background: #f8fafc !important; font-weight: 600; text-align: left; min-width: 150px; border-right: 2px solid #eee; }
         .rata-col { background: #fff9db !important; font-weight: 800; color: #d35400; }
         .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
         .hidden { display: none !important; }
@@ -191,15 +191,12 @@
         db.ref('tahfidz').limitToLast(20).on('value', snap => {
             list.innerHTML = "";
             if (!snap.exists()) { 
-                list.innerHTML = "<div class='item-row'>Folder 'tahfidz' ditemukan tapi kosong.</div>"; 
+                list.innerHTML = "<div class='item-row'>Data tahfidz kosong.</div>"; 
                 return; 
             }
             
             snap.forEach(c => {
                 const d = c.val();
-                
-                // OTOMATIS: Ambil semua isi data tanpa peduli nama labelnya
-                // Kita gabungkan semua isinya menjadi satu teks panjang agar terlihat
                 let semuaInfo = Object.keys(d).map(key => `<b>${key}:</b> ${d[key]}`).join(' | ');
 
                 list.innerHTML += `
@@ -211,41 +208,65 @@
                         ${semuaInfo}
                     </div>
                     <div style="margin-top:10px; width:100%; text-align:right;">
-                         <button onclick="db.ref('tahfidz/${c.key}').remove()" style="background:none; border:none; color:red; font-size:10px; cursor:pointer;"><i class="fas fa-trash"></i> Hapus</button>
+                         <button onclick="hapusData('tahfidz/${c.key}')" style="background:none; border:none; color:red; font-size:10px; cursor:pointer;"><i class="fas fa-trash"></i> Hapus</button>
                     </div>
                 </div>`;
             });
         });
-      }
+    }
+
+    function hapusData(path) {
+        if(confirm("Yakin ingin menghapus data ini secara permanen?")) {
+            db.ref(path).remove();
+        }
+    }
 
     // --- LOGIKA REKAP & UJIAN ---
     function generateRekap() {
         const kls = document.getElementById('rekap-kelas-pilih').value;
         const body = document.getElementById('body-rekap');
         const head = document.getElementById('head-rekap');
+        
         let headHtml = `<tr><th class="nama-col">Nama Santri</th>`;
         LIST_MAPEL.forEach(m => headHtml += `<th>${m}</th>`);
         headHtml += `<th class="rata-col">Rata2</th></tr>`;
         head.innerHTML = headHtml;
 
         db.ref(`hasil_ujian/${kls}`).once('value', snap => {
-            if(!snap.exists()) return alert("Data Kosong!");
+            if(!snap.exists()) { 
+                body.innerHTML = "<tr><td colspan='15'>Belum ada data nilai untuk kelas ini.</td></tr>";
+                return; 
+            }
+            
             let dataSantri = {};
             snap.forEach(c => {
                 const v = c.val();
                 if(!dataSantri[v.nama]) dataSantri[v.nama] = {};
-                let nAkhir = v.nilai_essay && v.nilai_essay !== "Belum" ? (v.nilai_pg + parseFloat(v.nilai_essay))/2 : v.nilai_pg;
+                
+                let pg = parseFloat(v.nilai_pg) || 0;
+                let ess = (v.nilai_essay && v.nilai_essay !== "Belum") ? parseFloat(v.nilai_essay) : null;
+                
+                // Jika ada essay, nilai adalah rata-rata PG & Essay. Jika tidak, hanya PG.
+                let nAkhir = (ess !== null) ? (pg + ess) / 2 : pg;
                 dataSantri[v.nama][v.mapel] = nAkhir;
             });
+
             body.innerHTML = "";
             for(let nama in dataSantri) {
-                let total = 0, count = 0, row = `<tr><td class="nama-col">${nama}</td>`;
+                let total = 0, count = 0;
+                let row = `<tr><td class="nama-col">${nama}</td>`;
                 LIST_MAPEL.forEach(m => {
-                    let nilai = dataSantri[nama][m] !== undefined ? dataSantri[nama][m] : "-";
-                    if(nilai !== "-") { total += nilai; count++; }
-                    row += `<td>${nilai}</td>`;
+                    let nilai = dataSantri[nama][m];
+                    if(nilai !== undefined) { 
+                        total += nilai; 
+                        count++; 
+                        row += `<td>${nilai.toFixed(1)}</td>`;
+                    } else {
+                        row += `<td>-</td>`;
+                    }
                 });
-                row += `<td class="rata-col">${count > 0 ? (total/count).toFixed(1) : 0}</td></tr>`;
+                let rata = count > 0 ? (total/count).toFixed(1) : 0;
+                row += `<td class="rata-col">${rata}</td></tr>`;
                 body.innerHTML += row;
             }
             document.getElementById('btn-download').classList.remove('hidden');
@@ -253,12 +274,22 @@
     }
 
     function publishJadwalUjian() {
-        const m = document.getElementById('u-mapel').value, k = document.getElementById('u-target-kelas').value, j = document.getElementById('u-jadwal').value, s = document.getElementById('u-massal').value;
-        if(!j || !s) return alert("Lengkapi data!");
-        db.ref(`ujian/${k}`).set({ mapel: m, waktu_buka: j, bank_soal: s, status: "Aktif" }).then(() => alert("Ujian Publish!"));
+        const m = document.getElementById('u-mapel').value, 
+              k = document.getElementById('u-target-kelas').value, 
+              j = document.getElementById('u-jadwal').value, 
+              s = document.getElementById('u-massal').value;
+        if(!j || !s) return alert("Silakan lengkapi Waktu Buka dan Bank Soal!");
+        db.ref(`ujian/${k}`).set({ mapel: m, waktu_buka: j, bank_soal: s, status: "Aktif" })
+          .then(() => alert("Ujian Berhasil di-Publish!"));
     }
 
-    function downloadExcel() { window.open('data:application/vnd.ms-excel,' + encodeURIComponent(document.getElementById("tabel-rekap").outerHTML)); }
+    function downloadExcel() { 
+        const kls = document.getElementById('rekap-kelas-pilih').value;
+        const table = document.getElementById("tabel-rekap").outerHTML;
+        const uri = 'data:application/vnd.ms-excel;base64,';
+        const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head></head><body>${table}</body></html>`;
+        window.location.href = uri + btoa(unescape(encodeURIComponent(template)));
+    }
 
     // --- MONITORING & ABSENSI ---
     function loadMonitorGuru() {
@@ -266,6 +297,7 @@
         const now = new Date();
         db.ref(`budaya/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`).on('value', snap => {
             list.innerHTML = "";
+            if(!snap.exists()) { list.innerHTML = "<p style='font-size:11px; color:#aaa;'>Belum ada guru mengisi hari ini.</p>"; return; }
             snap.forEach(k => k.forEach(s => {
                 const d = s.val();
                 list.innerHTML += `<div class="item-row"><b>Ust. ${d.guru}</b><span>${d.kelas}</span></div>`;
@@ -279,6 +311,7 @@
         db.ref(`absensi/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/${kls}`).on('value', snap => {
             const container = document.getElementById('list-absensi');
             container.innerHTML = "";
+            if(!snap.exists()) { container.innerHTML = "<p style='font-size:11px; color:#aaa;'>Data absensi tidak ditemukan.</p>"; return; }
             snap.forEach(s => {
                 const v = s.val();
                 container.innerHTML += `<div class="item-row"><b>${v.nama}</b><span>${v.status}</span></div>`;
@@ -289,23 +322,37 @@
     // --- MATERI & AQUARIUM ---
     function saveMahfuzat() {
         const arb = document.getElementById('m-arab').value, ind = document.getElementById('m-indo').value;
-        db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => alert("Berhasil!"));
+        if(!arb || !ind) return alert("Isi Arab dan Terjemahan!");
+        db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => {
+            alert("Mahfuzat Berhasil Diperbarui!");
+            document.getElementById('m-arab').value = "";
+            document.getElementById('m-indo').value = "";
+        });
     }
 
     function kirimIkanByEmail() {
-        const em = document.getElementById('aq-email').value.trim().toLowerCase().replace(/\./g, ',');
+        const emInput = document.getElementById('aq-email').value.trim().toLowerCase();
+        const em = emInput.replace(/\./g, ',');
         const jml = parseInt(document.getElementById('aq-jumlah').value);
-        if(!em) return alert("Email kosong!");
-        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => { alert("Ikan Dikirim!"); loadRiwayatIkan(); });
+        if(!emInput) return alert("Email santri tidak boleh kosong!");
+        if(isNaN(jml) || jml < 1) return alert("Jumlah ikan minimal 1!");
+        
+        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => { 
+            alert("Hadiah " + jml + " Ikan Berhasil dikirim ke " + emInput); 
+            loadRiwayatIkan(); 
+        });
     }
 
     function loadRiwayatIkan() {
         const list = document.getElementById('riwayat-ikan');
-        db.ref('users').limitToLast(10).once('value', snap => {
+        db.ref('users').orderByChild('ikan').limitToLast(10).once('value', snap => {
             list.innerHTML = "";
             snap.forEach(u => {
                 const d = u.val();
-                if(d.ikan) list.innerHTML += `<div class="item-row"><b>${u.key.replace(/,/g,'.')}</b><span>${d.ikan} Ikan</span></div>`;
+                if(d.ikan) {
+                    let email = u.key.replace(/,/g,'.');
+                    list.innerHTML += `<div class="item-row"><b>${email}</b><span>${d.ikan} Ikan</span></div>`;
+                }
             });
         });
     }
@@ -314,25 +361,55 @@
         db.ref('pengaduan').on('value', snap => {
             const list = document.getElementById('list-pengaduan');
             list.innerHTML = "";
-            snap.forEach(i => { const d = i.val(); list.innerHTML += `<div class="item-row"><b>${d.nama}</b><p>${d.pesan}</p></div>`; });
+            if(!snap.exists()) { list.innerHTML = "<div class='item-row'>Tidak ada pengaduan.</div>"; return; }
+            snap.forEach(i => { 
+                const d = i.val(); 
+                list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;">
+                    <b style="color:var(--primary)">${d.nama}</b>
+                    <p style="font-size:12px; margin-top:5px;">${d.pesan}</p>
+                    <button onclick="hapusData('pengaduan/${i.key}')" style="margin-top:8px; border:none; color:red; background:none; font-size:10px; cursor:pointer;"><i class="fas fa-trash"></i> Selesaikan / Hapus</button>
+                </div>`; 
+            });
         });
     }
 
     function loadLeaderboard() {
         const list = document.getElementById('leaderboard-list');
         const now = new Date();
+        // Mengambil data budaya berdasarkan tahun dan bulan saat ini
         db.ref(`budaya/${now.getFullYear()}/${now.getMonth() + 1}`).on('value', snap => {
             let guruSkor = {};
-            snap.forEach(t => t.forEach(k => k.forEach(s => { const d = s.val(); if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; })));
+            if(snap.exists()){
+                // Melakukan perulangan hingga ke level data guru (tanggal -> kelas -> data)
+                snap.forEach(tgl => tgl.forEach(kls => kls.forEach(s => { 
+                    const d = s.val(); 
+                    if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; 
+                })));
+            }
+            
+            // Mengurutkan guru berdasarkan skor tertinggi
             const sorted = Object.keys(guruSkor).sort((a,b) => guruSkor[b] - guruSkor[a]);
             list.innerHTML = "";
+            
+            if(sorted.length === 0) {
+                list.innerHTML = "<p style='text-align:center; font-size:12px; opacity:0.7;'>Belum ada data skor bulan ini.</p>";
+            }
+
             sorted.forEach((n, i) => {
-                list.innerHTML += `<div class="leaderboard-item" style="${i==0?'border:1px solid gold; background:rgba(255,215,0,0.1)':''}"><span>${n}</span><b>${guruSkor[n]} Poin</b></div>`;
+                list.innerHTML += `
+                <div class="leaderboard-item" style="${i==0 ? 'border:1px solid gold; background:rgba(255,215,0,0.1)' : ''}">
+                    <span>${i+1}. ${n}</span>
+                    <b>${guruSkor[n]} Poin</b>
+                </div>`;
             });
         });
     }
 
-    loadLeaderboard();
+    // Inisialisasi awal saat halaman dimuat
+    window.onload = function() {
+        loadLeaderboard();
+    };
 </script>
 </body>
 </html>
+            
