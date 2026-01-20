@@ -3,74 +3,152 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Jadwal Pelajaran | E-Santri</title>
+    <title>Jadwal Santri | E-Santri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --primary: #1f6f51; --bg: #f8faf9; }
-        body { background: var(--bg); font-family: 'Poppins', sans-serif; padding: 20px; }
+        body { background: var(--bg); font-family: 'Poppins', sans-serif; padding: 20px; margin: 0; }
         
-        /* Dropdown pilih kelas agar tidak ruwet */
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .back-btn { background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: var(--primary); text-decoration: none; }
+
+        /* Tab Switcher */
+        .tab-menu { display: flex; background: #e0e0e0; padding: 5px; border-radius: 15px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #666; font-size: 14px; }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        /* Form & Cards */
         .pilih-kelas {
             width: 100%; padding: 15px; border-radius: 15px;
             border: 2px solid var(--primary); margin-bottom: 20px;
-            font-weight: 700; color: var(--primary); outline: none;
+            font-weight: 700; color: var(--primary); outline: none; background: white;
         }
-
         .hari-box {
             background: white; border-radius: 20px; padding: 15px;
             margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
         .hari-nama { 
             background: var(--primary); color: white; display: inline-block;
-            padding: 5px 15px; border-radius: 10px; font-size: 14px; margin-bottom: 10px;
+            padding: 5px 15px; border-radius: 10px; font-size: 14px; margin-bottom: 10px; font-weight: 600;
         }
         .slot {
-            display: flex; justify-content: space-between; padding: 8px 0;
+            display: flex; justify-content: space-between; padding: 10px 0;
             border-bottom: 1px solid #f0f0f0; font-size: 13px;
         }
         .waktu { color: #888; font-weight: 600; }
         .mapel { color: #333; font-weight: 700; text-align: right; }
+        .ustadz { display: block; font-size: 10px; color: #1f6f51; font-weight: 400; }
+        
+        .hidden { display: none; }
+        .piket-text { white-space: pre-line; line-height: 1.6; color: #444; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <h2>Jadwal Pelajaran</h2>
-    
-    <select class="pilih-kelas" id="pilihKelas" onchange="muatJadwal()">
-        <option value="">-- Pilih Kelas Anda --</option>
-        <option value="VIIA">VII A</option>
-        <option value="VIIB">VII B</option>
-        <option value="VIIC">VII C</option>
-        <option value="VIID">VII D</option>
-        <option value="VIIIA">VIII A</option>
-        </select>
-
-    <div id="hasilJadwal">
-        <p style="text-align: center; color: #999;">Silakan pilih kelas untuk melihat jadwal.</p>
+    <div class="header">
+        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h2 style="margin:0; font-size: 20px;">Jadwal Santri</h2>
     </div>
 
+    <div class="tab-menu">
+        <button class="tab-btn active" id="btnPel" onclick="showTab('pelajaran')">Pelajaran</button>
+        <button class="tab-btn" id="btnPik" onclick="showTab('piket')">Piket</button>
+    </div>
+
+    <div id="tab-pelajaran">
+        <select class="pilih-kelas" id="pilihKelas" onchange="muatPelajaran()">
+            <option value="">-- Pilih Kelas Anda --</option>
+            <option value="VIIA">VII A</option><option value="VIIB">VII B</option>
+            <option value="VIIC">VII C</option><option value="VIID">VII D</option>
+            <option value="VIIIA">VIII A</option><option value="VIIIB">VIII B</option>
+            <option value="VIIIC">VIII C</option><option value="VIIID">VIII D</option>
+            <option value="IXA">IX A</option><option value="IXB">IX B</option>
+            <option value="IXC">IX C</option><option value="IXD">IX D</option>
+        </select>
+        <div id="hasilPelajaran">
+            <p style="text-align: center; color: #999;">Pilih kelas untuk melihat jadwal pelajaran.</p>
+        </div>
+    </div>
+
+    <div id="tab-piket" class="hidden">
+        <div id="hasilPiket">
+            <p style="text-align: center; color: #999;">Memuat jadwal piket...</p>
+        </div>
+    </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
-    function muatJadwal() {
+    const firebaseConfig = {
+        apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Fungsi Ganti Tab
+    function showTab(type) {
+        if(type === 'pelajaran') {
+            document.getElementById('tab-pelajaran').classList.remove('hidden');
+            document.getElementById('tab-piket').classList.add('hidden');
+            document.getElementById('btnPel').classList.add('active');
+            document.getElementById('btnPik').classList.remove('active');
+        } else {
+            document.getElementById('tab-pelajaran').classList.add('hidden');
+            document.getElementById('tab-piket').classList.remove('hidden');
+            document.getElementById('btnPik').classList.add('active');
+            document.getElementById('btnPel').classList.remove('active');
+            muatPiket();
+        }
+    }
+
+    // Ambil Data Pelajaran per Kelas
+    function muatPelajaran() {
         const kelas = document.getElementById('pilihKelas').value;
-        const container = document.getElementById('hasilJadwal');
-        
+        const container = document.getElementById('hasilPelajaran');
         if(!kelas) return;
 
-        // Nanti datanya diambil dari Firebase berdasarkan ID kelas
-        // Contoh tampilan per hari:
-        container.innerHTML = `
-            <div class="hari-box">
-                <span class="hari-nama">SENIN</span>
-                <div class="slot"><span class="waktu">07.20</span> <span class="mapel">PJOK</span></div>
-                <div class="slot"><span class="waktu">08.00</span> <span class="mapel">PJOK</span></div>
-                <div class="slot"><span class="waktu">08.40</span> <span class="mapel">BK</span></div>
-            </div>
-            
-            <div class="hari-box">
-                <span class="hari-nama">SELASA</span>
-                <div class="slot"><span class="waktu">07.20</span> <span class="mapel">IPA (LIA)</span></div>
-                <div class="slot"><span class="waktu">08.00</span> <span class="mapel">IPA (LIA)</span></div>
-            </div>
-        `;
+        db.ref('jadwal_pelajaran/' + kelas).on('value', snapshot => {
+            container.innerHTML = "";
+            const data = snapshot.val();
+            if(!data) return container.innerHTML = "<p style='text-align:center;'>Jadwal belum diisi admin.</p>";
+
+            const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            hariList.forEach(hari => {
+                if(data[hari]) {
+                    let html = `<div class="hari-box"><span class="hari-nama">${hari.toUpperCase()}</span>`;
+                    Object.keys(data[hari]).forEach(key => {
+                        const item = data[hari][key];
+                        html += `
+                            <div class="slot">
+                                <span class="waktu">${item.jam}</span>
+                                <div class="mapel">${item.mapel} <span class="ustadz">${item.pengajar}</span></div>
+                            </div>`;
+                    });
+                    html += `</div>`;
+                    container.innerHTML += html;
+                }
+            });
+        });
+    }
+
+    // Ambil Data Piket
+    function muatPiket() {
+        const container = document.getElementById('hasilPiket');
+        db.ref('jadwal_piket').on('value', snapshot => {
+            container.innerHTML = "";
+            const data = snapshot.val();
+            if(!data) return container.innerHTML = "<p style='text-align:center;'>Jadwal piket belum diisi.</p>";
+
+            Object.keys(data).forEach(hari => {
+                container.innerHTML += `
+                    <div class="hari-box">
+                        <span class="hari-nama">${hari.toUpperCase()}</span>
+                        <div class="piket-text">${data[hari]}</div>
+                    </div>`;
+            });
+        });
     }
 </script>
 </body>
