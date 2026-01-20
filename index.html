@@ -301,26 +301,37 @@
     try {
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            // Kita tambahkan headers ini supaya Google tahu ini permintaan resmi
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "Jawablah dengan singkat dan ramah sebagai asisten E-Santri: " + text }] }]
+                contents: [{ 
+                    parts: [{ text: "Jawablah sebagai ustadz yang bijak: " + text }] 
+                }]
             })
         });
 
         const data = await response.json();
 
+        // INI PENTING: Untuk tahu alasan Google menolak
         if (data.error) {
-            document.getElementById(loadId).innerText = "Info: " + data.error.message;
-        } else {
+            console.error("Detail Error Google:", data.error);
+            document.getElementById(loadId).innerText = "Google Berkata: " + data.error.message;
+            return;
+        }
+
+        if (data.candidates && data.candidates[0].content) {
             const jawaban = data.candidates[0].content.parts[0].text;
             document.getElementById(loadId).innerText = jawaban;
+        } else {
+            document.getElementById(loadId).innerText = "Maaf, jawaban tidak ditemukan.";
         }
 
     } catch (e) { 
-        document.getElementById(loadId).innerText = "Maaf, koneksi terputus. Coba lagi."; 
+        console.error("Detail Error Browser:", e);
+        document.getElementById(loadId).innerText = "Browser memblokir koneksi atau internet mati."; 
     }
-    box.scrollTop = box.scrollHeight;
-  }
 </script>
 </body>
 </html>
