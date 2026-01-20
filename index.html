@@ -273,19 +273,22 @@
             if(adminMenu) adminMenu.classList.remove("hidden");
         }
 
-        // --- UPDATE STREAK (BIAR GAK MEMUAT) ---
+        // --- UPDATE STREAK (JURUS PAKSA NYALA) ---
         db.ref('users/' + user.uid + '/streak').on('value', snap => {
-            const streak = snap.val() || 0;
+            let streak = snap.val();
+            
+            // Kalau di database masih kosong (null), kita paksa jadi 1 dulu buat tes
+            if (streak === null || streak === undefined) {
+                streak = 1; 
+                // Opsional: Baris di bawah ini akan otomatis buatin data di Firebase buat Kakak
+                db.ref('users/' + user.uid + '/streak').set(1);
+            }
+
             const streakText = document.getElementById('streak-text');
             const fire = document.getElementById('fire-api');
             
-            if(streak > 0) {
-                streakText.innerText = streak + " Hari Istiqomah";
-                fire.classList.remove('fire-off');
-            } else {
-                streakText.innerText = "Ayo Mulai Mengaji!";
-                fire.classList.add('fire-off');
-            }
+            streakText.innerText = streak + " Hari Istiqomah";
+            fire.classList.remove('fire-off'); // Paksa warna merah muncul
         });
 
         // --- UPDATE MAHFUZAT (BIAR MUNCUL) ---
