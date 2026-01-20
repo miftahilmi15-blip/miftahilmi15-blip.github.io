@@ -104,7 +104,9 @@
             <div class="card">
                 <h3>Rekap Nilai Kolektif</h3>
                 <select id="rekap-kelas-pilih">
-                    <option>7A</option><option>7B</option><option>8A</option><option>9A</option>
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
                 </select>
                 <button class="btn-action" onclick="generateRekap()" style="background:var(--accent)">LIHAT REKAP NILAI</button>
                 <button id="btn-download" class="btn-excel hidden" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
@@ -184,27 +186,37 @@
     // --- LOGIKA TAHFIDZ ---
     function loadTahfidz() {
         const list = document.getElementById('list-tahfidz');
-        list.innerHTML = "<p style='font-size:12px; color:#888;'>Memuat laporan...</p>";
+        list.innerHTML = "<p style='font-size:12px; color:#888;'>Sedang melacak data...</p>";
+        
         db.ref('tahfidz').limitToLast(20).on('value', snap => {
             list.innerHTML = "";
-            if (!snap.exists()) { list.innerHTML = "<div class='item-row'>Belum ada setoran hafalan.</div>"; return; }
-            let dataArr = [];
-            snap.forEach(c => dataArr.unshift({id: c.key, ...c.val()}));
-            dataArr.forEach(d => {
+            if (!snap.exists()) { 
+                list.innerHTML = "<div class='item-row'>Folder 'tahfidz' ditemukan tapi kosong.</div>"; 
+                return; 
+            }
+            
+            snap.forEach(c => {
+                const d = c.val();
+                
+                // OTOMATIS: Ambil semua isi data tanpa peduli nama labelnya
+                // Kita gabungkan semua isinya menjadi satu teks panjang agar terlihat
+                let semuaInfo = Object.keys(d).map(key => `<b>${key}:</b> ${d[key]}`).join(' | ');
+
                 list.innerHTML += `
                 <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 5px; padding: 15px;">
-                    <div style="display: flex; justify-content: space-between; width: 100%;">
-                        <b style="color: var(--primary)">${d.nama} (${d.kelas})</b>
-                        <small style="color: #999;">${d.tanggal || ''}</small>
+                    <div style="font-size: 13px; color: var(--primary); font-weight:700; border-bottom:1px solid #eee; width:100%; padding-bottom:5px; margin-bottom:5px;">
+                        <i class="fas fa-history"></i> Data Setoran Hafalan
                     </div>
-                    <div style="font-size: 12px; background: #f0fdf4; padding: 8px; border-radius: 8px; width: 100%; border-left: 3px solid #22c55e;">
-                        <b>Surah:</b> ${d.surah} | <b>Ayat:</b> ${d.ayat} <br>
-                        <b>Predikat:</b> <span style="color: #1f6f51; font-weight:700;">${d.nilai || 'A'}</span>
+                    <div style="font-size: 12px; line-height: 1.6; color: #444;">
+                        ${semuaInfo}
+                    </div>
+                    <div style="margin-top:10px; width:100%; text-align:right;">
+                         <button onclick="db.ref('tahfidz/${c.key}').remove()" style="background:none; border:none; color:red; font-size:10px; cursor:pointer;"><i class="fas fa-trash"></i> Hapus</button>
                     </div>
                 </div>`;
             });
         });
-    }
+      }
 
     // --- LOGIKA REKAP & UJIAN ---
     function generateRekap() {
