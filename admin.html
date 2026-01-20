@@ -3,178 +3,226 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Admin Dashboard | E-Santri Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Amiri&display=swap" rel="stylesheet">
+    <title>Dashboard Admin | E-SANTRI PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-        body { background: var(--bg); color: #2d3436; padding-bottom: 80px; }
+        :root { --primary: #1f6f51; --bg: #f4f7f6; --white: #ffffff; --accent: #eab308; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: #334155; padding-bottom: 50px; }
         
-        /* Sidebar/Header */
-        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
-        .sidebar::-webkit-scrollbar { display: none; }
-        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
+        /* Navigasi Atas */
+        header { background: var(--primary); color: white; padding: 20px 15px; text-align: center; border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        header h2 { font-size: 18px; letter-spacing: 1px; }
 
-        .content { padding: 20px; max-width: 600px; margin: 0 auto; }
-        .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        
-        h3 { font-size: 14px; margin-bottom: 15px; color: var(--primary); border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
-        label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; margin-top: 10px; }
-        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
-        
-        .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-        .btn-excel { display: flex; align-items: center; justify-content: center; gap: 10px; background: #1d4d3f; color: white; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: 700; margin-top: 10px; font-size: 13px; }
+        .nav-scroller { background: white; padding: 10px; display: flex; gap: 8px; overflow-x: auto; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #e2e8f0; }
+        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #f1f5f9; font-weight: 700; font-size: 11px; cursor: pointer; white-space: nowrap; color: #64748b; transition: 0.3s; }
+        .nav-btn.active { background: var(--primary); color: white; }
 
-        .item-row { background: #fcfcfc; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        
+        h3 { font-size: 14px; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px; border-left: 4px solid var(--accent); padding-left: 10px; }
+        
+        /* Item List Style */
+        .item { background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid #eff6ff; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .info b { font-size: 13px; display: block; color: #1e293b; text-transform: uppercase; }
+        .info small { font-size: 11px; color: #64748b; display: block; margin-top: 2px; }
+        
+        .badge { padding: 5px 12px; border-radius: 9px; font-size: 10px; font-weight: 800; color: white; text-transform: uppercase; }
+        .stars { color: var(--accent); font-size: 12px; letter-spacing: 2px; }
+
+        /* Form Style */
+        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 13px; outline: none; margin-top: 5px; }
+        label { font-size: 11px; font-weight: 700; color: #64748b; }
+
         .hidden { display: none !important; }
-        .loading-text { text-align: center; color: #999; font-size: 12px; padding: 20px; }
+        .empty { text-align: center; padding: 40px; color: #94a3b8; font-size: 12px; }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-<div class="sidebar">
-    <button class="nav-btn active" onclick="showTab('tab-jadwal', this)">Jadwal</button>
-    <button class="nav-btn" onclick="showTab('tab-budaya', this)">Input Budaya</button>
-    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Data Tahfidz</button>
-    <button class="nav-btn" onclick="showTab('tab-absensi', this)">Absensi</button>
-    <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
+<header>
+    <h2>E-SANTRI ADMIN PANEL</h2>
+</header>
+
+<div class="nav-scroller">
+    <button class="nav-btn active" onclick="showTab('tab-absen', this)"><i class="fas fa-user-check"></i> ABSENSI</button>
+    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)"><i class="fas fa-book-quran"></i> TAHFIDZ</button>
+    <button class="nav-btn" onclick="showTab('tab-budaya', this)"><i class="fas fa-star"></i> BUDAYA</button>
+    <button class="nav-btn" onclick="showTab('tab-aduan', this)"><i class="fas fa-bullhorn"></i> PENGADUAN</button>
 </div>
 
-<div class="content">
-    <div id="tab-jadwal" class="tab-content card">
-        <h3>Kelola Jadwal (Google Sheets)</h3>
-        <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">Jadwal Pelajaran</a>
-        <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">Jadwal Piket Guru</a>
+<div class="container">
+    
+    <div id="tab-absen" class="tab-content">
+        <div class="card">
+            <h3>Monitoring Absensi Santri</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div>
+                    <label>Pilih Tanggal</label>
+                    <input type="date" id="mon-tgl" onchange="loadAbsen()">
+                </div>
+                <div>
+                    <label>Pilih Kelas</label>
+                    <select id="mon-kls" onchange="loadAbsen()">
+                        <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                        <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                        <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div id="res-absen"></div>
     </div>
 
-    <div id="tab-budaya" class="tab-content card hidden">
-        <h3>Input Budaya Sekolah</h3>
-        <label>Nama Budaya / Kegiatan</label>
-        <input type="text" id="b-nama" placeholder="Contoh: Shalat Dhuha">
-        <label>Poin Reward</label>
-        <input type="number" id="b-poin" placeholder="Contoh: 10">
-        <button class="btn-action" onclick="saveBudaya()">SIMPAN KE APLIKASI</button>
+    <div id="tab-tahfidz" class="tab-content hidden">
+        <div class="card">
+            <h3>Setoran Tahfidz Terbaru</h3>
+            <div id="res-tahfidz"></div>
+        </div>
     </div>
 
-    <div id="tab-tahfidz" class="tab-content card hidden">
-        <h3>Laporan Tahfidz</h3>
-        <div id="list-tahfidz" class="loading-text">Memuat data setoran...</div>
+    <div id="tab-budaya" class="tab-content hidden">
+        <div class="card">
+            <h3>Karakter & Budaya (Bintang)</h3>
+            <div id="res-budaya"></div>
+        </div>
     </div>
 
-    <div id="tab-absensi" class="tab-content card hidden">
-        <h3>Absensi Santri Hari Ini</h3>
-        <div id="list-absensi" class="loading-text">Mengecek daftar hadir...</div>
+    <div id="tab-aduan" class="tab-content hidden">
+        <div class="card">
+            <h3>Laporan Masuk</h3>
+            <div id="res-aduan"></div>
+        </div>
     </div>
 
-    <div id="tab-pengaduan" class="tab-content card hidden">
-        <h3>Laporan Pengaduan</h3>
-        <div id="list-pengaduan" class="loading-text">Memuat pengaduan...</div>
-    </div>
 </div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
-        authDomain: "e-santri-b62be.firebaseapp.com",
-        projectId: "e-santri-b62be",
-        storageBucket: "e-santri-b62be.firebasestorage.app",
-        messagingSenderId: "6560427635",
-        appId: "1:6560427635:web:368b4fbf95163e8d214406",
-        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
-    };
-    
+    // Konfigurasi Database
+    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function showTab(tabId, btn) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    // Set Default Tanggal
+    document.getElementById('mon-tgl').valueAsDate = new Date();
+
+    function showTab(id, btn) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.remove('hidden');
+        document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
-
-        if(tabId === 'tab-tahfidz') loadTahfidz();
-        if(tabId === 'tab-absensi') loadAbsensi();
-        if(tabId === 'tab-pengaduan') loadPengaduan();
-    }
-
-    // --- FUNGSI SAVE BUDAYA ---
-    function saveBudaya() {
-        const nama = document.getElementById('b-nama').value;
-        const poin = document.getElementById('b-poin').value;
-        if(!nama || !poin) return alert("Isi lengkap!");
         
-        db.ref('pengaturan/budaya_sekolah').push({ nama, poin })
-        .then(() => {
-            alert("Budaya Berhasil Ditambahkan!");
-            document.getElementById('b-nama').value = "";
-            document.getElementById('b-poin').value = "";
-        });
+        if(id === 'tab-tahfidz') loadTahfidz();
+        if(id === 'tab-budaya') loadBudaya();
+        if(id === 'tab-aduan') loadAduan();
     }
 
-    // --- FUNGSI LOAD TAHFIDZ (ANTI UNDEFINED) ---
-    function loadTahfidz() {
-        const list = document.getElementById('list-tahfidz');
-        db.ref('tahfidz').on('value', snap => {
-            list.innerHTML = "";
-            if(!snap.exists()) return list.innerHTML = "Belum ada data.";
-            snap.forEach(userNode => {
-                userNode.forEach(setoran => {
-                    const d = setoran.val();
-                    list.innerHTML += `
-                    <div class="item-row">
-                        <div><b>${d.nama || 'Santri'}</b><br><small>${d.surah || '-'}</small></div>
-                        <span class="badge" style="background:#2ecc71">${d.tanggal || 'Baru'}</span>
-                    </div>`;
-                });
-            });
-        });
-    }
+    // 1. MONITOR ABSENSI (v12)
+    function loadAbsen() {
+        const t = document.getElementById('mon-tgl').value;
+        const k = document.getElementById('mon-kls').value;
+        const res = document.getElementById('res-absen');
+        if(!t || !k) return;
+        const [y, m, d] = t.split("-");
 
-    // --- FUNGSI LOAD ABSENSI ---
-    function loadAbsensi() {
-        const list = document.getElementById('list-absensi');
-        const tgl = new Date().toISOString().split('T')[0];
-        db.ref('users').once('value', uSnap => {
-            db.ref('laporan_budaya/' + tgl).on('value', lSnap => {
-                const hadir = lSnap.val() || {};
-                list.innerHTML = "";
-                uSnap.forEach(u => {
-                    const sudahAbsen = hadir[u.key];
-                    list.innerHTML += `
-                    <div class="item-row">
-                        <b>${u.val().name || 'No Name'}</b>
-                        <span class="badge" style="background:${sudahAbsen ? '#2ecc71' : '#e74c3c'}">
-                            ${sudahAbsen ? 'HADIR' : 'ABSEN'}
-                        </span>
-                    </div>`;
-                });
-            });
-        });
-    }
-
-    // --- FUNGSI LOAD PENGADUAN ---
-    function loadPengaduan() {
-        const list = document.getElementById('list-pengaduan');
-        db.ref('pengaduan').on('value', snap => {
-            list.innerHTML = "";
-            if(!snap.exists()) return list.innerHTML = "Tidak ada laporan.";
-            snap.forEach(c => {
-                const d = c.val();
-                list.innerHTML += `
-                <div class="item-row" style="flex-direction:column; align-items:flex-start;">
-                    <b style="color:var(--primary)">${d.nama || 'Anonim'}</b>
-                    <p style="font-size:12px; margin-top:5px;">${d.pesan || '-'}</p>
+        db.ref(`absensi/${y}/${parseInt(m)}/${parseInt(d)}/${k}`).on('value', snap => {
+            res.innerHTML = "";
+            if(!snap.exists()) return res.innerHTML = "<div class='card empty'>Belum ada data absen masuk.</div>";
+            
+            snap.forEach(s => {
+                const v = s.val();
+                let color = v.status === 'H' ? '#10b981' : '#ef4444';
+                res.innerHTML += `
+                <div class="item">
+                    <div class="info"><b>${v.nama}</b><small>NIPD: ${s.key}</small></div>
+                    <span class="badge" style="background:${color}">${v.status}</span>
                 </div>`;
             });
         });
     }
+
+    // 2. MONITOR TAHFIDZ (v12)
+    function loadTahfidz() {
+        const res = document.getElementById('res-tahfidz');
+        const now = new Date();
+        const path = `${now.getFullYear()}/${now.getMonth() + 1}`;
+
+        db.ref(`tahfidz/${path}`).on('value', snap => {
+            res.innerHTML = "";
+            if(!snap.exists()) return res.innerHTML = "<div class='empty'>Belum ada setoran bulan ini.</div>";
+            
+            snap.forEach(nipd => {
+                nipd.forEach(log => {
+                    const d = log.val();
+                    res.innerHTML += `
+                    <div class="item">
+                        <div class="info">
+                            <b>${d.nama} (${d.kelas})</b>
+                            <small>${d.materi} | Ayat: ${d.ayat}</small>
+                        </div>
+                        <span class="badge" style="background:var(--primary)">${d.status}</span>
+                    </div>`;
+                });
+            });
+        });
+    }
+
+    // 3. MONITOR BUDAYA (v8)
+    function loadBudaya() {
+        const res = document.getElementById('res-budaya');
+        const bln = new Date().getMonth() + 1;
+
+        db.ref(`budaya/2026/${bln}`).on('value', snap => {
+            res.innerHTML = "";
+            if(!snap.exists()) return res.innerHTML = "<div class='empty'>Belum ada penilaian karakter.</div>";
+            
+            snap.forEach(nipd => {
+                nipd.forEach(log => {
+                    const d = log.val();
+                    const rata = ((parseInt(d.T)+parseInt(d.D)+parseInt(d.TJ)+parseInt(d.J)+parseInt(d.R))/5).toFixed(1);
+                    res.innerHTML += `
+                    <div class="item">
+                        <div class="info"><b>${d.nama}</b><small>Guru: ${d.guru} | Kelas: ${d.kelas}</small></div>
+                        <div style="text-align:right">
+                            <div class="stars">${"★".repeat(Math.round(rata))}</div>
+                            <small>Skor: ${rata}</small>
+                        </div>
+                    </div>`;
+                });
+            });
+        });
+    }
+
+    // 4. MONITOR PENGADUAN
+    function loadAduan() {
+        const res = document.getElementById('res-aduan');
+        db.ref('pengaduan').on('value', snap => {
+            res.innerHTML = "";
+            if(!snap.exists()) return res.innerHTML = "<div class='empty'>Laporan pengaduan kosong.</div>";
+            
+            snap.forEach(p => {
+                const d = p.val();
+                res.innerHTML += `
+                <div class="item" style="flex-direction:column; align-items:flex-start;">
+                    <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:8px;">
+                        <b>${d.nama}</b>
+                        <small>${d.tanggal || ''}</small>
+                    </div>
+                    <p style="font-size:12px; color:#475569; line-height:1.5;">${d.pesan}</p>
+                </div>`;
+            });
+        });
+    }
+
+    // Jalankan Load Absen Pertama Kali
+    loadAbsen();
 </script>
 </body>
 </html>
