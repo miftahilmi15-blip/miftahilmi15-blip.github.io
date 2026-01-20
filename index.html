@@ -273,23 +273,38 @@
             if(adminMenu) adminMenu.classList.remove("hidden");
         }
 
-        // --- UPDATE STREAK (JURUS PAKSA NYALA) ---
-        db.ref('users/' + user.uid + '/streak').on('value', snap => {
-            let streak = snap.val();
-            
-            // Kalau di database masih kosong (null), kita paksa jadi 1 dulu buat tes
-            if (streak === null || streak === undefined) {
-                streak = 1; 
-                // Opsional: Baris di bawah ini akan otomatis buatin data di Firebase buat Kakak
-                db.ref('users/' + user.uid + '/streak').set(1);
-            }
+        // --- UPDATE STREAK & API QURAN (OTOMATIS REDUP SETIAP HARI) ---
+function monitoringStreak(userId) {
+    const hariIni = new Date().toISOString().split('T')[0]; // Format: 2026-01-21
 
-            const streakText = document.getElementById('streak-text');
-            const fire = document.getElementById('fire-api');
-            
-            streakText.innerText = streak + " Hari Istiqomah";
-            fire.classList.remove('fire-off'); // Paksa warna merah muncul
-        });
+    db.ref('users/' + userId).on('value', snap => {
+        const data = snap.val();
+        const streak = (data && data.streak) ? data.streak : 0;
+        const tglBaca = (data && data.tgl_terakhir_api) ? data.tgl_terakhir_api : "";
+
+        const streakText = document.getElementById('streak-text');
+        const fire = document.getElementById('fire-api');
+
+        if (streakText) streakText.innerText = streak + " Hari Istiqomah";
+
+        // LOGIKA PAKSA REDUP: Jika tanggal di database TIDAK SAMA dengan hari ini
+        if (tglBaca === hariIni) {
+            // SUDAH BACA HARI INI -> NYALA TERANG
+            if (fire) {
+                fire.classList.remove('fire-off');
+                fire.style.opacity = "1";
+                fire.style.filter = "grayscale(0%)";
+            }
+        } else {
+            // BELUM BACA / SUDAH GANTI HARI -> REDUP/PADAM
+            if (fire) {
+                fire.classList.add('fire-off');
+                fire.style.opacity = "0.3"; 
+                fire.style.filter = "grayscale(100%)";
+            }
+        }
+    });
+}
 
         // --- UPDATE MAHFUZAT (BIAR MUNCUL) ---
         db.ref('fitur/mahfuzat').on('value', snap => {
