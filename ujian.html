@@ -3,56 +3,63 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Sistem Ujian Digital | E-Santri Pro</title>
+    <title>Portal Ujian Pro | E-Santri</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --primary: #1f6f51; --danger: #e74c3c; --bg: #f4f7f6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
-        body { background: var(--bg); padding: 20px; }
-
+        body { background: var(--bg); padding: 15px; }
         .container { max-width: 600px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 15px; }
         
-        /* CARD LOGIN */
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .timer-box { position: sticky; top: 10px; z-index: 100; background: var(--danger); color: white; padding: 10px; border-radius: 12px; text-align: center; font-weight: 800; margin-bottom: 15px; display: none; }
-
-        /* SOAL STYLING */
-        .soal-item { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .soal-text { font-weight: 600; margin-bottom: 10px; display: block; }
-        .opsi-label { display: block; background: #f9f9f9; padding: 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; border: 1px solid #eee; font-size: 14px; transition: 0.3s; }
-        input[type="radio"] { margin-right: 10px; }
-        input[type="radio"]:checked + span { color: var(--primary); font-weight: 700; }
+        /* UI Elements */
+        .timer-box { position: sticky; top: 10px; z-index: 100; background: var(--danger); color: white; padding: 12px; border-radius: 15px; text-align: center; font-weight: 800; margin-bottom: 15px; display: none; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3); }
+        .mapel-tag { background: var(--primary); color: white; padding: 4px 12px; border-radius: 50px; font-size: 10px; margin-bottom: 10px; display: inline-block; }
         
-        .btn-start { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        /* Soal Styles */
+        .soal-card { margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 20px; }
+        .soal-text { font-weight: 600; font-size: 15px; margin-bottom: 15px; display: block; color: #333; }
+        .opsi { display: block; background: #fff; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #ddd; cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .opsi:active { background: #eee; }
+        input[type="radio"] { margin-right: 10px; transform: scale(1.2); }
+        textarea { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #ddd; background: #f9f9f9; resize: vertical; min-height: 100px; }
+        
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .btn-start { background: var(--primary); color: white; }
+        .btn-submit { background: #2ecc71; color: white; margin-top: 20px; }
+        
         .hidden { display: none; }
+        .info-ujian { text-align: center; padding: 20px; color: #666; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="login-area" class="card">
-        <div class="header">
-            <h2>Portal Ujian</h2>
-            <p style="font-size: 12px; opacity: 0.7;">Silakan pilih kelas dan masukkan nama</p>
+    <div id="login-screen">
+        <div class="card">
+            <h2 style="text-align:center; margin-bottom:20px;">Portal Ujian</h2>
+            <label style="font-size:11px; font-weight:700; color:#888;">NAMA LENGKAP</label>
+            <input type="text" id="user-nama" placeholder="Ketik nama sesuai absen..." style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px;">
+            
+            <label style="font-size:11px; font-weight:700; color:#888;">PILIH KELAS</label>
+            <select id="user-kelas" onchange="muatJadwal()" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px;">
+                <option value="">-- Pilih Kelas --</option>
+                <option value="7A">7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="9A">9A</option>
+            </select>
+
+            <div id="area-jadwal" class="hidden">
+                <label style="font-size:11px; font-weight:700; color:#888;">UJIAN TERSEDIA</label>
+                <div id="list-ujian-aktif"></div>
+            </div>
         </div>
-        <label style="font-size: 12px; font-weight: 700;">Pilih Kelas</label>
-        <select id="user-kelas" style="width:100%; padding:12px; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;">
-            <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-            <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-            <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-        </select>
-        <label style="font-size: 12px; font-weight: 700;">Nama Lengkap</label>
-        <input type="text" id="user-nama" placeholder="Ketik nama sesuai absen..." style="width:100%; padding:12px; border-radius:10px; margin-bottom:20px; border:1px solid #ddd;">
-        <button class="btn-start" onclick="cekUjian()">MASUK UJIAN</button>
     </div>
 
-    <div id="exam-area" class="hidden">
+    <div id="exam-screen" class="hidden">
         <div id="timer" class="timer-box">SISA WAKTU: <span id="time-left">00:00</span></div>
         <div class="card">
-            <div id="list-soal"></div>
-            <button class="btn-start" style="background:#2ecc71" onclick="submitUjian()">SELESAI & KIRIM</button>
+            <div id="mapel-title" class="mapel-tag"></div>
+            <div id="konten-soal"></div>
+            <button class="btn btn-submit" onclick="selesaiUjian()">KIRIM JAWABAN</button>
         </div>
     </div>
 </div>
@@ -65,75 +72,143 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let dataUjian = [];
-    let intervalTimer;
+    let kuisSekarang = null;
+    let timerInterval;
 
-    function cekUjian() {
+    // 1. CEK JADWAL UJIAN BERDASARKAN KELAS
+    function muatJadwal() {
         const kelas = document.getElementById('user-kelas').value;
-        const nama = document.getElementById('user-nama').value;
-        if(!nama) return alert("Masukkan Nama!");
+        const area = document.getElementById('area-jadwal');
+        const list = document.getElementById('list-ujian-aktif');
+        if(!kelas) return area.classList.add('hidden');
 
-        db.ref(`ujian/${kelas}`).once('value', snap => {
-            const val = snap.val();
-            if(!val || val.status !== 'aktif') return alert("Ujian untuk kelas ini belum dibuka oleh Admin!");
-            
-            dataUjian = val.soal;
-            mulaiUjian(val.durasi);
+        db.ref(`jadwal_ujian/${kelas}`).on('value', snap => {
+            area.classList.remove('hidden');
+            list.innerHTML = "";
+            if(!snap.exists()) return list.innerHTML = "<p class='info-ujian'>Tidak ada jadwal ujian untuk kelas ini.</p>";
+
+            snap.forEach(child => {
+                const u = child.val();
+                const waktuUjian = new Date(u.jadwal).getTime();
+                const sekarang = new Date().getTime();
+                
+                // Jika waktu sekarang sudah melewati atau sama dengan waktu jadwal
+                if(sekarang >= waktuUjian) {
+                    list.innerHTML += `
+                        <div class="card" style="border:2px solid var(--primary); cursor:pointer;" onclick="konfirmasiMulai('${child.key}', '${u.mapel}', ${u.durasi})">
+                            <b style="color:var(--primary)">${u.mapel}</b><br>
+                            <small>Durasi: ${u.durasi} Menit | Siap Dikerjakan</small>
+                        </div>`;
+                } else {
+                    list.innerHTML += `
+                        <div class="card" style="opacity:0.6; background:#eee;">
+                            <b>${u.mapel}</b><br>
+                            <small>Akan terbuka pada: ${u.jadwal}</small>
+                        </div>`;
+                }
+            });
         });
     }
 
-    function mulaiUjian(durasi) {
-        document.getElementById('login-area').classList.add('hidden');
-        document.getElementById('exam-area').classList.remove('hidden');
-        document.getElementById('timer').style.display = 'block';
+    // 2. MULAI PENGERJAAN
+    function konfirmasiMulai(id, mapel, durasi) {
+        const nama = document.getElementById('user-nama').value;
+        if(!nama) return alert("Isi nama dulu Bos!");
+        if(!confirm(`Mulai ujian ${mapel}?`)) return;
 
-        // Render Soal
-        const list = document.getElementById('list-soal');
-        list.innerHTML = "";
-        dataUjian.forEach((s, i) => {
-            list.innerHTML += `
-                <div class="soal-item">
-                    <span class="soal-text">${i+1}. ${s.t}</span>
-                    <label class="opsi-label"><input type="radio" name="q${i}" value="A"> <span>${s.a}</span></label>
-                    <label class="opsi-label"><input type="radio" name="q${i}" value="B"> <span>${s.b}</span></label>
-                    <label class="opsi-label"><input type="radio" name="q${i}" value="C"> <span>${s.c}</span></label>
-                    <label class="opsi-label"><input type="radio" name="q${i}" value="D"> <span>${s.d}</span></label>
-                </div>
-            `;
+        db.ref(`jadwal_ujian/${document.getElementById('user-kelas').value}/${id}/soal`).once('value', snap => {
+            kuisSekarang = snap.val();
+            renderSoal(mapel, durasi);
         });
+    }
 
-        // Timer Logic
-        let totalWaktu = durasi * 60;
-        intervalTimer = setInterval(() => {
-            let m = Math.floor(totalWaktu / 60);
-            let s = totalWaktu % 60;
+    function renderSoal(mapel, durasi) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('exam-screen').classList.remove('hidden');
+        document.getElementById('mapel-title').innerText = mapel;
+        
+        const area = document.getElementById('konten-soal');
+        area.innerHTML = "";
+
+        // Render PG
+        if(kuisSekarang.pg) {
+            kuisSekarang.pg.forEach((s, i) => {
+                area.innerHTML += `
+                <div class="soal-card">
+                    <span class="soal-text">${i+1}. ${s.t}</span>
+                    <label class="opsi"><input type="radio" name="pg${i}" value="A"> A. ${s.a}</label>
+                    <label class="opsi"><input type="radio" name="pg${i}" value="B"> B. ${s.b}</label>
+                    <label class="opsi"><input type="radio" name="pg${i}" value="C"> C. ${s.c}</label>
+                    <label class="opsi"><input type="radio" name="pg${i}" value="D"> D. ${s.d}</label>
+                </div>`;
+            });
+        }
+
+        // Render Essay
+        if(kuisSekarang.essay) {
+            area.innerHTML += `<h3 style="margin-bottom:15px; color:var(--primary)">SOAL ESSAY</h3>`;
+            kuisSekarang.essay.forEach((s, i) => {
+                area.innerHTML += `
+                <div class="soal-card">
+                    <span class="soal-text">${i+1}. ${s}</span>
+                    <textarea id="es${i}" placeholder="Ketik jawaban kamu di sini..."></textarea>
+                </div>`;
+            });
+        }
+
+        startTimer(durasi);
+    }
+
+    // 3. TIMER & SELESAI
+    function startTimer(menit) {
+        let waktu = menit * 60;
+        document.getElementById('timer').style.display = 'block';
+        timerInterval = setInterval(() => {
+            let m = Math.floor(waktu / 60);
+            let s = waktu % 60;
             document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-            if(totalWaktu <= 0) { clearInterval(intervalTimer); submitUjian(true); }
-            totalWaktu--;
+            if(waktu <= 0) { clearInterval(timerInterval); selesaiUjian(true); }
+            waktu--;
         }, 1000);
     }
 
-    function submitUjian(auto = false) {
-        if(!auto && !confirm("Yakin ingin mengirim jawaban?")) return;
-        clearInterval(intervalTimer);
+    function selesaiUjian(auto = false) {
+        if(!auto && !confirm("Kirim semua jawaban sekarang?")) return;
+        clearInterval(timerInterval);
 
         const kelas = document.getElementById('user-kelas').value;
         const nama = document.getElementById('user-nama').value;
-        let skor = 0;
+        const mapel = document.getElementById('mapel-title').innerText;
+        
+        let jawabanPG = [];
+        let skorPG = 0;
+        if(kuisSekarang.pg) {
+            kuisSekarang.pg.forEach((s, i) => {
+                const pil = document.querySelector(`input[name="pg${i}"]:checked`);
+                const ans = pil ? pil.value : "-";
+                if(ans === s.k) skorPG++;
+                jawabanPG.push(ans);
+            });
+        }
 
-        dataUjian.forEach((s, i) => {
-            const r = document.querySelector(`input[name="q${i}"]:checked`);
-            if(r && r.value === s.k) skor++;
-        });
+        let jawabanEs = [];
+        if(kuisSekarang.essay) {
+            kuisSekarang.essay.forEach((s, i) => {
+                jawabanEs.push(document.getElementById(`es${i}`).value);
+            });
+        }
 
-        const nilaiAkhir = Math.round((skor / dataUjian.length) * 100);
-
-        db.ref(`ujian/${kelas}/hasil`).push({
+        const hasil = {
             nama: nama,
-            nilai: nilaiAkhir,
-            waktu: new Date().toLocaleString()
-        }).then(() => {
-            alert(`Ujian Selesai! Nilai kamu: ${nilaiAkhir}`);
+            mapel: mapel,
+            nilai_pg: Math.round((skorPG / (kuisSekarang.pg ? kuisSekarang.pg.length : 1)) * 100),
+            jawaban_essay: jawabanEs,
+            status_essay: "Belum Diperiksa",
+            waktu_kirim: new Date().toLocaleString()
+        };
+
+        db.ref(`hasil_ujian/${kelas}/${mapel}`).push(hasil).then(() => {
+            alert("Jawaban berhasil terkirim! Nilai PG kamu: " + hasil.nilai_pg);
             location.reload();
         });
     }
