@@ -99,24 +99,35 @@
 
         <div id="tab-ujian" class="tab-content hidden">
             <div class="card">
-                <h3>Buat Ujian Per Kelas</h3>
+                <h3>Atur Jadwal Ujian (UTS/UAS)</h3>
+                
+                <label>Nama Mata Pelajaran</label>
+                <input type="text" id="u-mapel" placeholder="Contoh: Fiqih">
+
                 <label>Pilih Target Kelas</label>
                 <select id="u-target-kelas">
                     <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
                     <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
                     <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
                 </select>
+
+                <label>Jadwal Buka (Tanggal & Jam)</label>
+                <input type="datetime-local" id="u-jadwal">
+
                 <label>Durasi (Menit)</label>
-                <input type="number" id="u-durasi" value="30">
-                <label>Input Soal (Format: Soal|A|B|C|D|Kunci)</label>
-                <textarea id="u-massal" rows="5" placeholder="Contoh: Nama Nabi?|Adam|Nuh|Ibrahim|Luth|A"></textarea>
-                <button class="btn-action" onclick="publishUjian()">PUBLIKASIKAN UJIAN</button>
-                <button class="btn-action" onclick="tutupUjian()" style="background:#e74c3c; margin-top:5px">TUTUP UJIAN KELAS INI</button>
+                <input type="number" id="u-durasi" value="60">
+
+                <label>Input Soal Campuran (Format di bawah)</label>
+                <textarea id="u-massal" rows="8" placeholder="[PG]&#10;Soal 1|A|B|C|D|Kunci&#10;[ESSAY]&#10;Soal Essay 1"></textarea>
+                <small style="font-size:9px; color:#999">*Pisahkan kategori soal dengan [PG] dan [ESSAY]</small>
+
+                <button class="btn-action" onclick="publishJadwalUjian()">SIMPAN KE JADWAL UJIAN</button>
             </div>
+
             <div class="card">
-                <h3>Hasil Ujian</h3>
+                <h3>Pantau & Koreksi Hasil</h3>
                 <select id="lihat-hasil-kelas" onchange="loadHasilUjian()">
-                    <option value="7A">Hasil 7A</option><option value="7B">Hasil 7B</option><option value="8A">Hasil 8A</option><option value="9A">Hasil 9A</option>
+                    <option value="7A">Kelas 7A</option><option value="7B">7B</option><option value="8A">8A</option><option value="9A">9A</option>
                 </select>
                 <div id="list-hasil-ujian" style="margin-top:15px;"></div>
             </div>
@@ -178,38 +189,58 @@
         if(id === 'tab-pengaduan') loadPengaduan();
     }
 
-    // FUNGSI UJIAN (BARU)
-    function publishUjian() {
+    // FUNGSI JADWAL UJIAN PRO (UPDATE)
+    function publishJadwalUjian() {
+        const mapel = document.getElementById('u-mapel').value;
         const kls = document.getElementById('u-target-kelas').value;
         const dur = document.getElementById('u-durasi').value;
-        const lines = document.getElementById('u-massal').value.split('\n');
-        let soalArr = [];
-        lines.forEach(l => {
-            const p = l.split('|');
-            if(p.length >= 6) soalArr.push({ t:p[0], a:p[1], b:p[2], c:p[3], d:p[4], k:p[5].trim().toUpperCase() });
-        });
-        if(soalArr.length === 0) return alert("Format salah!");
-        db.ref(`ujian/${kls}`).set({ status:'aktif', durasi:parseInt(dur), soal:soalArr }).then(() => alert("Ujian " + kls + " Aktif!"));
-    }
+        const tgl = document.getElementById('u-jadwal').value;
+        const raw = document.getElementById('u-massal').value;
 
-    function tutupUjian() {
-        const kls = document.getElementById('u-target-kelas').value;
-        db.ref(`ujian/${kls}/status`).set('nonaktif').then(() => alert("Ujian ditutup."));
+        if(!mapel || !tgl) return alert("Isi Mapel dan Jadwal!");
+
+        let soalPG = [];
+        let soalEs = [];
+        
+        const bagian = raw.split('[ESSAY]');
+        const pgPart = bagian[0].replace('[PG]', '').trim().split('\n');
+        const esPart = bagian[1] ? bagian[1].trim().split('\n') : [];
+
+        pgPart.forEach(l => {
+            const p = l.split('|');
+            if(p.length >= 6) soalPG.push({ t:p[0], a:p[1], b:p[2], c:p[3], d:p[4], k:p[5].trim().toUpperCase() });
+        });
+        esPart.forEach(l => { if(l.trim()) soalEs.push(l.trim()); });
+
+        db.ref(`jadwal_ujian/${kls}`).push({
+            mapel: mapel,
+            durasi: parseInt(dur),
+            jadwal: tgl.replace('T', ' '),
+            soal: { pg: soalPG, essay: soalEs }
+        }).then(() => {
+            alert("Jadwal Ujian " + mapel + " Tersimpan!");
+            document.getElementById('u-massal').value = "";
+        });
     }
 
     function loadHasilUjian() {
         const kls = document.getElementById('lihat-hasil-kelas').value;
         const res = document.getElementById('list-hasil-ujian');
-        db.ref(`ujian/${kls}/hasil`).on('value', snap => {
+        db.ref(`hasil_ujian/${kls}`).on('value', snap => {
             res.innerHTML = "";
+            if(!snap.exists()) res.innerHTML = "<small>Belum ada data.</small>";
             snap.forEach(s => {
                 const v = s.val();
-                res.innerHTML += `<div class="item-row"><b>${v.nama}</b><b style="color:var(--primary)">${v.nilai}</b></div>`;
+                res.innerHTML += `
+                <div class="card" style="padding:15px; margin-bottom:10px;">
+                    <b>${v.nama}</b> <span class="badge" style="background:orange">Nilai PG: ${v.nilai_pg}</span>
+                    <p style="font-size:11px; margin-top:5px; color:#666">Jawaban Essay: ${v.essay ? v.essay.join(' | ') : '-'}</p>
+                </div>`;
             });
         });
     }
 
-    // FUNGSI STANDAR (BAWAAN)
+    // FUNGSI STANDAR (TIDAK DIUBAH)
     function loadLeaderboard() {
         const list = document.getElementById('leaderboard-list');
         const now = new Date();
@@ -233,7 +264,7 @@
             list.innerHTML = "";
             snap.forEach(k => k.forEach(s => {
                 const d = s.val();
-                if(d.guru) list.innerHTML = `<div class="item-row"><b>Ust. ${d.guru}</b><span>${d.kelas}</span></div>`;
+                if(d.guru) list.innerHTML += `<div class="item-row"><b>Ust. ${d.guru}</b><span>${d.kelas}</span></div>`;
             }));
         });
     }
