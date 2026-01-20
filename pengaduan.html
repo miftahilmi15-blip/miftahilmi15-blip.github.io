@@ -1,69 +1,159 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pengaduan Santri - E-Santri</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Pengaduan Santri - E-Santri Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1f6f51;
+            --bg: #f4f7f6;
+            --text: #333;
+            --white: #ffffff;
+        }
 
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+        
+        .container { width: 100%; max-width: 450px; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
 
-  :root {
-    --primary: #1f6f51;
-    --bg: #f4f7f6;
-    --text: #333;
-    --muted: #666;
-    --soft: #e0f2f1;
-  }
+        h1 { font-size: 22px; color: var(--primary); margin-bottom: 10px; text-align: center; font-weight: 700; }
+        p.sub { text-align: center; font-size: 13px; color: #666; margin-bottom: 25px; line-height: 1.5; }
 
-  * { margin:0; padding:0; box-sizing:border-box; font-family:"Poppins", sans-serif; }
-  body { background: var(--bg); color: var(--text); min-height:100vh; padding:20px; }
-  .container { max-width: 420px; margin:auto; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 700; color: #444; margin-bottom: 8px; text-transform: uppercase; }
+        
+        textarea { 
+            width: 100%; 
+            padding: 15px; 
+            border-radius: 12px; 
+            border: 1px solid #e0e0e0; 
+            background: #f9f9f9; 
+            font-size: 14px; 
+            outline: none; 
+            resize: none;
+            transition: 0.3s;
+        }
+        textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(31, 111, 81, 0.1); }
 
-  h1 { text-align:center; margin-bottom:20px; color: var(--primary); }
+        .btn-group { display: flex; gap: 12px; }
+        .btn { 
+            flex: 1; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 14px; 
+            transition: 0.2s; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+        }
+        
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-secondary { background: #f1f1f1; color: #666; }
 
-  textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; margin-bottom:15px; resize:none; }
-
-  .btn { padding:14px; border:none; border-radius:8px; cursor:pointer; font-weight:600; font-size:15px; transition:0.2s; }
-  .btn.primary { background:var(--primary); color:#fff; }
-  .btn.primary:hover { background:#16503a; }
-  .btn.secondary { background:#eee; color:#333; }
-</style>
+        #loading-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.8);
+            display: none; align-items: center; justify-content: center; z-index: 100;
+        }
+    </style>
 </head>
 <body>
 
+<div id="loading-overlay">Memproses...</div>
+
 <div class="container">
-  <h1>Pengaduan </h1>
-  <textarea id="wa-message" rows="8" placeholder="Tulis pengaduanmu di sini..."></textarea>
-  <div style="display:flex; gap:10px; justify-content:flex-end;">
-    <button class="btn secondary" onclick="goBack()">Batal</button>
-    <button class="btn primary" onclick="sendReport()">Kirim via WhatsApp</button>
-  </div>
+    <h1>Layanan Pengaduan</h1>
+    <p class="sub">Sampaikan kendala, saran, atau laporanmu secara langsung kepada admin sekolah.</p>
+
+    <div class="form-group">
+        <label>Isi Laporan / Pesan</label>
+        <textarea id="wa-message" rows="8" placeholder="Tuliskan laporanmu secara detail di sini..."></textarea>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-secondary" onclick="goBack()">Batal</button>
+        <button class="btn btn-primary" onclick="sendReport()">
+            <span>Kirim Pengaduan</span>
+        </button>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
 <script>
-  // Firebase init
-  firebase.initializeApp({
-    apiKey:"AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
-    authDomain:"e-santri-ed555.firebaseapp.com",
-    projectId:"e-santri-ed555"
-  });
-  const auth = firebase.auth();
+    // Konfigurasi Firebase (Sudah disesuaikan dengan DB Kakak)
+    const firebaseConfig = {
+        apiKey: "AIzaSyAQ1A9rtEoEYoriA5Y7oSB84Fd1Xnu6aes",
+        authDomain: "e-santri-b62be.firebaseapp.com",
+        projectId: "e-santri-b62be",
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
 
-  function sendReport(){
-    const pesan=document.getElementById("wa-message").value.trim();
-    if(!pesan) return alert("Isi pengaduannya dulu ya!");
-    const user=auth.currentUser;
-    const name=user ? (user.displayName||"Santri") : "Santri";
-    const email=user ? user.email : "-";
-    const adminNumber="6289661946783";
-    const text=`Pengaduan Santri:\nNama: ${name}\nEmail: ${email}\n\nPesan:\n${pesan}`;
-    window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(text)}`, "_blank");
-  }
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
 
-  function goBack(){ window.history.back(); }
+    async function sendReport() {
+        const pesan = document.getElementById("wa-message").value.trim();
+        const loading = document.getElementById("loading-overlay");
+
+        if (!pesan) return alert("Silakan isi pesan pengaduan terlebih dahulu!");
+
+        loading.style.display = "flex";
+
+        // Ambil Data User yang sedang Login
+        const user = auth.currentUser;
+        const name = user ? (user.displayName || "Santri") : "Santri Anonim";
+        const email = user ? user.email : "Tidak ada email";
+        const tgl = new Date().toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' });
+
+        try {
+            // 1. Simpan ke Firebase (Agar muncul di Dashboard Admin)
+            await db.ref('pengaduan').push({
+                nama: name,
+                email: email,
+                pesan: pesan,
+                tanggal: tgl,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                status: "Baru"
+            });
+
+            // 2. Kirim Notifikasi via WhatsApp
+            const adminNumber = "6289661946783";
+            const waText = `*PENGADUAN E-SANTRI*\n\n` +
+                           `*Dari:* ${name}\n` +
+                           `*Waktu:* ${tgl}\n\n` +
+                           `*Pesan:* \n${pesan}`;
+            
+            window.open(`https://wa.me/${adminNumber}?text=${encodeURIComponent(waText)}`, "_blank");
+
+            // Reset form
+            document.getElementById("wa-message").value = "";
+            alert("Terima kasih! Pengaduanmu sudah terkirim ke sistem dan WhatsApp admin.");
+
+        } catch (error) {
+            console.error(error);
+            alert("Terjadi kesalahan sistem, namun kamu bisa mencoba kirim langsung via WhatsApp.");
+        } finally {
+            loading.style.display = "none";
+        }
+    }
+
+    function goBack() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.close();
+        }
+    }
 </script>
 </body>
 </html>
