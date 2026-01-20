@@ -284,22 +284,42 @@
     const box = document.getElementById('chatContent');
     const text = input.value.trim();
     if(!text) return;
+
+    // 1. Tampilkan pesan santri
     box.innerHTML += `<div class="msg-user">${text}</div>`;
     input.value = "";
+    
+    // 2. Loading ustadz mikir
     const loadId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}">...</div>`;
+    box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
+
+    // 3. Panggil Google Gemini (Ganti API_KEY dengan milik Kakak)
+    const API_KEY = "MASUKKAN_API_KEY_GOOGLE_KAKAK_DISINI"; 
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
     try {
-        const res = await fetch('/proses', {
+        const response = await fetch(url, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ pesan: text })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ 
+                    parts: [{ text: "Kamu adalah asisten ustadz di aplikasi E-Santri. Jawablah pertanyaan santri ini dengan singkat, ramah, dan islami: " + text }] 
+                }]
+            })
         });
-        const d = await res.json();
-        document.getElementById(loadId).innerText = d.jawaban;
-    } catch (e) { document.getElementById(loadId).innerText = "Afwan, asisten sedang rehat."; }
+
+        const data = await response.json();
+        const jawaban = data.candidates[0].content.parts[0].text;
+
+        // 4. Tampilkan jawaban asli
+        document.getElementById(loadId).innerText = jawaban;
+
+    } catch (e) { 
+        document.getElementById(loadId).innerText = "Afwan, asisten sedang rehat. Pastikan API Key sudah benar."; 
+    }
     box.scrollTop = box.scrollHeight;
-  }
+            }
 </script>
 </body>
 </html>
