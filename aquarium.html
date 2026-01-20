@@ -35,7 +35,6 @@
         .stats-card {
             background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px);
             padding: 15px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
 
         .btn-exit {
@@ -49,54 +48,39 @@
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
             padding: 12px 25px; border-radius: 50px; border: 1px solid rgba(0, 180, 216, 0.3);
-            font-size: 13px; font-weight: 600; color: #94fbff;
-            text-align: center; white-space: nowrap; animation: glowPulse 3s infinite;
-            z-index: 100;
+            font-size: 11px; font-weight: 600; color: #94fbff;
+            text-align: center; white-space: nowrap; z-index: 100;
         }
 
-        @keyframes glowPulse {
-            0%, 100% { box-shadow: 0 0 5px rgba(0, 180, 216, 0.2); }
-            50% { box-shadow: 0 0 20px rgba(0, 180, 216, 0.5); }
-        }
-
-        /* FISH STYLING 5D */
+        /* FISH STYLING */
         .fish-entity {
-            position: absolute; width: 150px; height: 150px;
+            position: absolute; width: 120px; height: 120px;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; transition: all 8s ease-in-out;
-            z-index: 10; pointer-events: none;
+            justify-content: center; pointer-events: none; z-index: 10;
+            will-change: transform, left, top;
         }
 
         .fish-img {
-            width: 100px; filter: drop-shadow(0 0 15px var(--common));
-            transition: transform 1.5s ease-in-out;
+            width: 80px; transition: transform 1s ease-in-out;
         }
 
         .fish-label {
-            font-size: 10px; font-weight: 800; letter-spacing: 1px;
-            margin-top: 8px; text-transform: uppercase;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-size: 9px; font-weight: 800; margin-top: 5px;
+            text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
 
-        .tier-tag {
-            font-size: 7px; padding: 2px 6px; border-radius: 4px;
-            margin-top: 4px; font-weight: 900; color: white;
-        }
-
+        /* AMBIENCE */
         .caustics {
             position: absolute; inset: 0; opacity: 0.1;
             background: url('https://www.transparenttextures.com/patterns/p6.png');
-            pointer-events: none; animation: move 20s linear infinite;
+            pointer-events: none;
         }
-        @keyframes move { from {background-position: 0 0;} to {background-position: 500px 500px;} }
 
         .bubble {
             position: absolute; background: rgba(255,255,255,0.2);
-            border-radius: 50%; bottom: -50px; animation: floatUp 15s infinite;
+            border-radius: 50%; bottom: -50px; animation: floatUp 10s linear infinite;
         }
-        @keyframes floatUp {
-            to { transform: translateY(-110vh); opacity: 0; }
-        }
+        @keyframes floatUp { to { transform: translateY(-120vh); opacity: 0; } }
     </style>
 </head>
 <body>
@@ -106,18 +90,16 @@
     
     <div class="ui-header">
         <div class="stats-card">
-            <h4 style="font-size: 10px; opacity: 0.6; letter-spacing: 2px; margin-bottom: 5px;">AQUARIUM SANTRI</h4>
+            <h4 style="font-size: 9px; opacity: 0.6; letter-spacing: 2px; margin-bottom: 5px;">AQUARIUM PRO</h4>
             <div style="display: flex; align-items: baseline; gap: 8px;">
                 <span id="fish-count" style="font-size: 32px; font-weight: 800;">0</span>
-                <span style="font-size: 14px; opacity: 0.8;">Premium Fish</span>
+                <span style="font-size: 12px; opacity: 0.8;">Total Ikan</span>
             </div>
         </div>
         <a href="index.html" class="btn-exit"><i class="fa-solid fa-xmark"></i></a>
     </div>
 
-    <div class="reward-info">
-        ✨ Membaca Al-Qur'an 30 Menit = Dapat 1 Ikan Baru
-    </div>
+    <div class="reward-info">✨ Ikan bertambah otomatis saat kamu rajin mengaji</div>
 
     <audio id="waterSound" loop>
         <source src="https://www.soundjay.com/nature/sounds/ocean-wave-1.mp3" type="audio/mpeg">
@@ -129,6 +111,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
+    // 1. CONFIGURATION
     const firebaseConfig = {
         apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
         authDomain: "e-santri-b62be.firebaseapp.com",
@@ -138,100 +121,99 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const lib = {
-        low: ["Neon Tetra", "Guppy", "Molly", "Zebra Danio", "Cherry Barb", "Platy", "Swordtail"],
-        med: ["Angelfish", "Koi Kecil", "Glowfish", "Fancy Guppy", "Rainbowfish", "Tiger Barb"],
-        high: ["Arwana Super Red", "Golden Arowana", "Discus Premium", "King Koi", "Black Ghost"]
-    };
-
     const icons = [
         "https://api.iconify.design/noto:fish.svg",
         "https://api.iconify.design/noto:tropical-fish.svg",
         "https://api.iconify.design/noto:blowfish.svg"
     ];
 
+    let activeFishes = []; // Menyimpan data ikan untuk diupdate di Loop
+
+    // 2. LISTEN TO DATA (REALTIME)
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             const emailKey = user.email.toLowerCase().replace(/\./g, ',');
-            
             db.ref('users/' + emailKey + '/ikan').on('value', snap => {
                 const count = snap.val() || 0;
                 document.getElementById('fish-count').innerText = count;
-                renderAquarium(count);
-                
-                document.body.onclick = () => {
-                    const sound = document.getElementById('waterSound');
-                    if(sound.paused) sound.play();
-                };
+                spawnFishes(count);
             });
-        } else {
-            window.location.href = "login.html";
         }
     });
 
-    function renderAquarium(total) {
+    // 3. SPAWN SYSTEM (Membangun Ikan)
+    function spawnFishes(total) {
         const container = document.getElementById('ocean');
         document.querySelectorAll('.fish-entity').forEach(f => f.remove());
+        activeFishes = [];
 
-        if (total === 0) return;
+        // LIMIT VISUAL: Cukup tampilkan maksimal 20 ekor agar tidak lag
+        let visualLimit = total > 20 ? 20 : total;
+        let color = total > 40 ? "#e74c3c" : (total > 15 ? "#f1c40f" : "#00b4d8");
 
-        // OPTIMASI: Maksimal 25 ikan visual agar tidak lag
-        let visualCount = total > 25 ? 25 : total;
-
-        for (let i = 1; i <= visualCount; i++) {
-            let data = { name: "", tier: "", color: "" };
-
-            // Penentuan Tier berdasarkan total asli
-            if (total <= 15) {
-                data = { name: lib.low[Math.floor(Math.random()*lib.low.length)], tier: "COMMON", color: "#00b4d8" };
-            } else if (total <= 40) {
-                data = { name: lib.med[Math.floor(Math.random()*lib.med.length)], tier: "RARE", color: "#f1c40f" };
-            } else {
-                data = { name: lib.high[Math.floor(Math.random()*lib.high.length)], tier: "LEGENDARY", color: "#e74c3c" };
-            }
-
+        for (let i = 0; i < visualLimit; i++) {
             const el = document.createElement('div');
             el.className = 'fish-entity';
-            el.innerHTML = `
-                <img src="${icons[Math.floor(Math.random()*icons.length)]}" class="fish-img" style="filter: drop-shadow(0 0 15px ${data.color})">
-                <span class="fish-label" style="color:white">${data.name}</span>
-                <span class="tier-tag" style="background:${data.color}">${data.tier}</span>
-            `;
-
-            el.style.left = Math.random() * 80 + 10 + 'vw';
-            el.style.top = Math.random() * 80 + 10 + 'vh';
+            el.innerHTML = `<img src="${icons[Math.floor(Math.random()*icons.length)]}" class="fish-img" style="filter: drop-shadow(0 0 10px ${color})">`;
             
             container.appendChild(el);
-            animateFish(el);
+
+            // Set posisi awal acak
+            let startX = Math.random() * 80 + 10;
+            let startY = Math.random() * 80 + 10;
+
+            activeFishes.push({
+                el: el,
+                img: el.querySelector('.fish-img'),
+                x: startX,
+                y: startY,
+                targetX: Math.random() * 80 + 10,
+                targetY: Math.random() * 80 + 10,
+                speed: 0.003 + Math.random() * 0.005
+            });
         }
     }
 
-    function animateFish(el) {
-        const move = () => {
-            const x = Math.random() * 80 + 10;
-            const y = Math.random() * 80 + 10;
-            const img = el.querySelector('.fish-img');
-            const curX = parseFloat(el.style.left);
+    // 4. GAME LOOP (Animasi Anti-Lag)
+    function updateFrame() {
+        activeFishes.forEach(f => {
+            // Gerak menuju target (Smoothing)
+            f.x += (f.targetX - f.x) * f.speed;
+            f.y += (f.targetY - f.y) * f.speed;
 
-            img.style.transform = (x < curX) ? "scaleX(-1)" : "scaleX(1)";
-            el.style.left = x + 'vw';
-            el.style.top = y + 'vh';
-        };
+            // Update posisi DOM
+            f.el.style.left = f.x + "vw";
+            f.el.style.top = f.y + "vh";
 
-        setTimeout(move, 100);
-        setInterval(move, 8000 + Math.random() * 4000);
+            // Jika sampai di dekat target, pilih target baru
+            if (Math.abs(f.targetX - f.x) < 1) {
+                f.targetX = Math.random() * 80 + 10;
+                f.targetY = Math.random() * 80 + 10;
+                // Balik arah gambar
+                f.img.style.transform = (f.targetX < f.x) ? "scaleX(-1)" : "scaleX(1)";
+            }
+        });
+        requestAnimationFrame(updateFrame);
     }
 
-    // BUBBLE EFFECT
+    // Jalankan Animasi
+    requestAnimationFrame(updateFrame);
+
+    // 5. AMBIENCE (Bubbles & Sound)
     setInterval(() => {
         const b = document.createElement('div');
         b.className = 'bubble';
-        let s = Math.random() * 15 + 5 + 'px';
-        b.style.width = s; b.style.height = s;
         b.style.left = Math.random() * 100 + 'vw';
+        let size = Math.random() * 10 + 5 + 'px';
+        b.style.width = size; b.style.height = size;
         document.getElementById('ocean').appendChild(b);
-        setTimeout(() => b.remove(), 15000);
-    }, 1500);
+        setTimeout(() => b.remove(), 10000);
+    }, 2000);
+
+    document.body.onclick = () => {
+        const s = document.getElementById('waterSound');
+        if(s.paused) s.play();
+    };
 </script>
 </body>
 </html>
