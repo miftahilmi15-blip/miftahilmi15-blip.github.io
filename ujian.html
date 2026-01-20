@@ -156,23 +156,18 @@
                     </div>`;
                 });
             }
-            
-            // ESSAY
+            // PERBAIKAN UNTUK ESSAY
             if(currentKuis.essay) {
-                area.innerHTML += `<h3>Essay</h3><br>`;
+                area.innerHTML += `<h3 style="margin: 20px 0 10px 0; color: var(--accent);">Bagian Essay</h3>`;
                 currentKuis.essay.forEach((s, i) => {
-                    area.innerHTML += `<div class="soal-card"><span class="soal-text">${i+1}. ${s}</span><textarea id="es${i}" placeholder="Jawaban kamu..."></textarea></div>`;
+                    // Kita ambil s.t karena di database formatnya adalah {t: "soal", k: "kunci"}
+                    const teksSoal = s.t ? s.t : s; 
+                    area.innerHTML += `
+                    <div class="soal-card">
+                        <span class="soal-text">${i+1}. ${teksSoal}</span>
+                        <textarea id="es${i}" rows="3" placeholder="Tulis jawaban lengkap di sini..."></textarea>
+                    </div>`;
                 });
-            }
-
-            let sisa = durasi * 60;
-            timer = setInterval(() => {
-                let m = Math.floor(sisa/60); let s = sisa%60;
-                document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
-                if(sisa <= 0) { clearInterval(timer); selesaiUjian(true); }
-                sisa--;
-            }, 1000);
-        });
     }
 
     function selesaiUjian(auto=false) {
