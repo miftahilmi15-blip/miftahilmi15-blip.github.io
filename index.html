@@ -276,6 +276,7 @@
 
   // 4. FUNGSI AI GEMINI
   async function kirimKeAI() {
+  async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const text = input.value.trim();
@@ -287,21 +288,34 @@
     box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // Pakai Key yang sama dengan Firebase (Karena satu project)
-    const API_KEY = firebaseConfig.apiKey; 
+    // Pastikan API Key ini sudah aktif di Google AI Studio
+    const API_KEY = "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo"; 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: "Jawab sebagai ustadz ramah: " + text }] }] })
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: "Jawab dengan singkat sebagai ustadz ramah: " + text }] }]
+            })
         });
+
         const data = await response.json();
-        const jawaban = data.candidates[0].content.parts[0].text;
-        document.getElementById(loadId).innerText = jawaban;
+
+        if (data.error) {
+            // Ini akan memunculkan alasan kenapa Google menolak
+            document.getElementById(loadId).innerText = "Google Info: " + data.error.message;
+        } else if (data.candidates && data.candidates[0].content) {
+            const jawaban = data.candidates[0].content.parts[0].text;
+            document.getElementById(loadId).innerText = jawaban;
+        } else {
+            document.getElementById(loadId).innerText = "Maaf, sistem sedang sibuk.";
+        }
+
     } catch (e) { 
-        document.getElementById(loadId).innerText = "Maaf, koneksi AI terputus."; 
+        // Kalau masuk ke sini, berarti browser/jaringan yang blokir
+        document.getElementById(loadId).innerText = "Koneksi diblokir browser. Coba pakai VPN atau ganti koneksi HP."; 
     }
     box.scrollTop = box.scrollHeight;
   }
