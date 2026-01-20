@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Admin Dashboard | E-Santri Pro</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
   :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; }
@@ -18,11 +18,11 @@
   .content { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
   .card { background: white; padding: 20px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
   
-  h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; }
-  label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; }
-  input, textarea { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; }
+  h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; margin-top: 10px; }
+  input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 13px; }
   
-  .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; }
+  .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
   
   .item-row { background: #fff; padding: 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
   .badge { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; color: white; }
@@ -39,8 +39,9 @@
 
 <div class="sidebar">
     <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)">Mahfuzat</button>
+    <button class="nav-btn" onclick="showTab('tab-doa', this)">Input Doa</button>
     <button class="nav-btn" onclick="showTab('tab-data-tahfidz', this)">Data Tahfidz</button>
-    <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Monitoring Budaya</button>
+    <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Absensi</button>
     <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
 </div>
 
@@ -52,6 +53,17 @@
       <label>Terjemahan</label>
       <textarea id="m-indo" rows="2" placeholder="Ketik Arti..."></textarea>
       <button class="btn-action" onclick="saveMahfuzat()">UPDATE MAHFUZAT</button>
+    </div>
+
+    <div id="tab-doa" class="tab-content card hidden">
+      <h3>Tambah Doa Baru</h3>
+      <label>Judul Doa</label>
+      <input type="text" id="judulDoa" placeholder="Contoh: Doa Masuk Masjid">
+      <label>Teks Arab</label>
+      <input type="text" id="arabDoa" dir="rtl" placeholder="Ketik/Paste Arab di sini" style="text-align: right; font-size: 18px;">
+      <label>Arti</label>
+      <textarea id="artiDoa" rows="2" placeholder="Terjemahan doa"></textarea>
+      <button class="btn-action" onclick="simpanDoa()" style="background: #2ecc71;">SIMPAN KE DATABASE</button>
     </div>
 
     <div id="tab-data-tahfidz" class="tab-content hidden">
@@ -77,7 +89,6 @@
 </div>
 
 <script>
-  // Konfigurasi Firebase Kakak
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -109,65 +120,64 @@
     if(tabId === 'tab-pengaduan') loadPengaduan();
   }
 
-  // 1. UPDATE MAHFUZAT
   function saveMahfuzat() {
-    db.ref('fitur/mahfuzat').set({
-      arab: document.getElementById('m-arab').value,
-      indo: document.getElementById('m-indo').value
-    }).then(() => alert("Berhasil Update!"));
+    const arab = document.getElementById('m-arab').value;
+    const indo = document.getElementById('m-indo').value;
+    db.ref('fitur/mahfuzat').set({ arab, indo })
+    .then(() => alert("Mahfuzat Diupdate!"));
   }
 
-  // 2. TARIK DATA TAHFIDZ (Dari folder 'tahfidz')
+  function simpanDoa() {
+    const judul = document.getElementById('judulDoa').value;
+    const arab = document.getElementById('arabDoa').value;
+    const arti = document.getElementById('artiDoa').value;
+
+    if(!judul || !arab || !arti) return alert("Lengkapi data!");
+
+    db.ref('doa_harian').push({ judul, arab, arti })
+    .then(() => {
+        alert("Doa Berhasil Disimpan!");
+        document.getElementById('judulDoa').value = "";
+        document.getElementById('arabDoa').value = "";
+        document.getElementById('artiDoa').value = "";
+    });
+  }
+
   function loadDataTahfidz() {
     const list = document.getElementById('list-tahfidz');
     db.ref('tahfidz').on('value', snap => {
       list.innerHTML = "";
-      snap.forEach(userFolder => {
-        userFolder.forEach(setoran => {
-          const val = setoran.val();
-          list.innerHTML += `
-            <div class="item-row">
-              <div>
-                <b>${val.nama || userFolder.key}</b><br>
-                <span>${val.surah}</span>
-              </div>
-              <span class="badge" style="background:#2ecc71">${val.nilai || 'Terdata'}</span>
-            </div>`;
+      snap.forEach(user => {
+        user.forEach(s => {
+          const v = s.val();
+          list.innerHTML += `<div class="item-row"><div><b>${v.nama || 'Santri'}</b><br><small>${v.surah}</small></div><span class="badge" style="background:#2ecc71">${v.nilai || 'OK'}</span></div>`;
         });
       });
-      if(!snap.exists()) list.innerHTML = "Belum ada data setoran.";
     });
   }
 
-  // 3. MONITORING BUDAYA (Cek Siapa yang BELUM)
   function loadMonitoring() {
     const list = document.getElementById('list-monitoring');
-    const hariIni = new Date().toISOString().split('T')[0];
+    const tgl = new Date().toISOString().split('T')[0];
     db.ref('users').once('value', uSnap => {
-      db.ref('laporan_budaya/' + hariIni).once('value', lSnap => {
+      db.ref('laporan_budaya/' + tgl).once('value', lSnap => {
         const laporan = lSnap.val() || {};
         list.innerHTML = "";
         uSnap.forEach(u => {
-          const user = u.val();
           const sudah = laporan[u.key];
-          list.innerHTML += `
-            <div class="item-row ${sudah ? 'status-sudah' : 'status-belum'}">
-              <div><b>${user.name || 'Santri'}</b></div>
-              <span class="badge" style="background:${sudah ? '#2ecc71' : '#e74c3c'}">${sudah ? 'SUDAH' : 'BELUM'}</span>
-            </div>`;
+          list.innerHTML += `<div class="item-row ${sudah ? 'status-sudah' : 'status-belum'}"><div>${u.val().name}</div><span class="badge" style="background:${sudah ? '#2ecc71' : '#e74c3c'}">${sudah ? 'HADIR' : 'ABSEN'}</span></div>`;
         });
       });
     });
   }
 
-  // 4. PENGADUAN
   function loadPengaduan() {
     const list = document.getElementById('list-pengaduan');
     db.ref('pengaduan').on('value', snap => {
       list.innerHTML = "";
-      snap.forEach(child => {
-        const data = child.val();
-        list.innerHTML += `<div class="item-row"><div><b>${data.nama}</b><p>${data.pesan}</p></div></div>`;
+      snap.forEach(c => {
+        const d = c.val();
+        list.innerHTML += `<div class="item-row"><div><b>${d.nama}</b><p style="font-size:11px">${d.pesan}</p></div></div>`;
       });
     });
   }
