@@ -203,82 +203,99 @@
 </div>
 
 <script>
-  // 1. Pastikan Firebase Inisialisasi duluan
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.database();
+  // 1. INI WAJIB ADA (Ganti dengan data Firebase Kakak)
+  const firebaseConfig = {
+    apiKey: "AIzaSy...",
+    authDomain: "project-kakak.firebaseapp.com",
+    databaseURL: "https://project-kakak-default-rtdb.firebaseio.com",
+    projectId: "project-kakak",
+    storageBucket: "project-kakak.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef"
+  };
 
-// 2. Fungsi Login & Dashboard (WAJIB JALAN DULUAN)
-auth.onAuthStateChanged(user => {
-    const dash = document.getElementById("dashboard");
-    const loginCard = document.getElementById("login-card");
-    const menuBtn = document.getElementById("menu-btn");
-    const aiBtn = document.getElementById("ai-button");
+  // Inisialisasi Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
 
-    if(user){
-        // Tampilkan Dashboard
-        dash.classList.remove("hidden");
-        loginCard.classList.add("hidden");
-        menuBtn.style.display = "flex";
-        aiBtn.style.display = "flex";
-        
-        document.getElementById("uName").innerText = user.displayName || "Santri";
-        document.getElementById("uEmail").innerText = user.email;
-        if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
-        
-        // Cek Admin
-        if (user.email === "miftahilmi15@gmail.com") {
-            document.getElementById("admin-menu").classList.remove("hidden");
-        }
-        
-        // Panggil Mahfuzat
-        db.ref('fitur/mahfuzat').on('value', snap => {
-            const data = snap.val();
-            if(data) {
-                document.getElementById('runArab').innerText = data.arab;
-                document.getElementById('runIndo').innerText = " — " + data.indo;
-            }
-        });
-    } else {
-        // Tampilkan Login
-        loginCard.classList.remove("hidden");
-        dash.classList.add("hidden");
-        menuBtn.style.display = "none";
-        aiBtn.style.display = "none";
-    }
-});
+  // 2. Tambahkan Fungsi Toggle Chat (Ini yang tadi kurang di kode Kakak)
+  function toggleChat() {
+      const win = document.getElementById('ai-window');
+      win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
+  }
 
-// 3. Fungsi AI (Pakai jalur v1beta yang bener)
-async function kirimKeAI() {
-    const input = document.getElementById('aiInput');
-    const box = document.getElementById('chatContent');
-    const text = input.value.trim();
-    if(!text) return;
+  // 3. Tambahkan Fungsi Sidebar (Supaya tombol menu bisa diklik)
+  document.getElementById('menu-btn').onclick = () => document.getElementById('sidebar').classList.add('open');
+  document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-    box.innerHTML += `<div class="msg-user">${text}</div>`;
-    input.value = "";
-    const loadId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
-    box.scrollTop = box.scrollHeight;
+  // 4. Fungsi Login & Dashboard (Sesuai yang Kakak kirim tadi)
+  auth.onAuthStateChanged(user => {
+      const dash = document.getElementById("dashboard");
+      const loginCard = document.getElementById("login-card");
+      const menuBtn = document.getElementById("menu-btn");
+      const aiBtn = document.getElementById("ai-button");
 
-    const API_KEY = "MASUKKAN_API_KEY_BARU_KAKAK"; 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+      if(user){
+          dash.classList.remove("hidden");
+          loginCard.classList.add("hidden");
+          menuBtn.style.display = "flex";
+          aiBtn.style.display = "flex";
+          
+          document.getElementById("uName").innerText = user.displayName || "Santri";
+          document.getElementById("uEmail").innerText = user.email;
+          if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+          
+          if (user.email === "miftahilmi15@gmail.com") {
+              document.getElementById("admin-menu").classList.remove("hidden");
+          }
+          
+          db.ref('fitur/mahfuzat').on('value', snap => {
+              const data = snap.val();
+              if(data) {
+                  document.getElementById('runArab').innerText = data.arab;
+                  document.getElementById('runIndo').innerText = " — " + data.indo;
+              }
+          });
+      } else {
+          loginCard.classList.remove("hidden");
+          dash.classList.add("hidden");
+          menuBtn.style.display = "none";
+          aiBtn.style.display = "none";
+      }
+  });
 
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: "Jawab sebagai ustadz ramah: " + text }] }]
-            })
-        });
-        const data = await response.json();
-        const jawaban = data.candidates[0].content.parts[0].text;
-        document.getElementById(loadId).innerText = jawaban;
-    } catch (e) { 
-        document.getElementById(loadId).innerText = "Maaf, Ustadz sedang tidak di tempat."; 
-    }
-    box.scrollTop = box.scrollHeight;
+  // 5. Fungsi AI Gemini (Pastikan API_KEY sudah diisi)
+  async function kirimKeAI() {
+      const input = document.getElementById('aiInput');
+      const box = document.getElementById('chatContent');
+      const text = input.value.trim();
+      if(!text) return;
+
+      box.innerHTML += `<div class="msg-user">${text}</div>`;
+      input.value = "";
+      const loadId = "load-" + Date.now();
+      box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
+      box.scrollTop = box.scrollHeight;
+
+      const API_KEY = "MASUKKAN_API_KEY_GOOGLE_KAKAK"; 
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+      try {
+          const response = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  contents: [{ parts: [{ text: "Jawab sebagai ustadz ramah: " + text }] }]
+              })
+          });
+          const data = await response.json();
+          const jawaban = data.candidates[0].content.parts[0].text;
+          document.getElementById(loadId).innerText = jawaban;
+      } catch (e) { 
+          document.getElementById(loadId).innerText = "Afwan, ustadz sedang tidak di tempat."; 
+      }
+      box.scrollTop = box.scrollHeight;
   }
 </script>
 </body>
