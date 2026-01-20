@@ -8,29 +8,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --primary: #1f6f51; --bg: #f4f7f6; }
-        body { background: var(--bg); font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; color: #333; }
+        body { background: var(--bg); font-family: 'Poppins', sans-serif; margin: 0; padding: 15px; color: #333; }
         
+        /* Header */
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: var(--primary); text-decoration: none; }
 
-        /* Tab Switcher */
+        /* Tabs */
         .tab-menu { display: flex; background: #e0e0e0; padding: 5px; border-radius: 15px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #666; font-size: 13px; }
+        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; color: #666; font-size: 13px; transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        /* Style Konten */
-        select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; outline: none; background: white; }
-        .hari-box { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
-        .hari-nama { background: var(--primary); color: white; padding: 5px 15px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-block; text-transform: uppercase; }
-        
-        .slot { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid #f2f2f2; }
-        .slot:last-child { border-bottom: none; }
-        .waktu { font-size: 11px; color: #1f6f51; font-weight: 700; margin-bottom: 4px; }
-        .nama-petugas { font-size: 14px; font-weight: 700; color: #333; }
-        .shift-label { font-size: 10px; color: #888; margin-top: 2px; }
+        /* Form */
+        select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; }
 
-        .loading { text-align: center; padding: 40px; color: #999; font-size: 14px; }
-        .hidden { display: none; }
+        /* Card Style */
+        .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
+        .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display: inline-block; text-transform: uppercase; }
+        
+        .slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; }
+        .slot:last-child { border-bottom: none; }
+        .waktu { font-size: 11px; color: #1f6f51; font-weight: 700; min-width: 80px; }
+        .mapel { font-size: 13px; font-weight: 600; color: #333; text-align: right; flex: 1; }
+        
+        .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -47,7 +49,7 @@
 
     <div id="sec-pelajaran">
         <select id="pilihKelas" onchange="muatPelajaran()">
-            <option value="">-- Pilih Kelas Anda --</option>
+            <option value="">-- Pilih Kelas --</option>
             <option value="2">VII A</option>
             <option value="3">VII B</option>
             <option value="4">VII C</option>
@@ -69,9 +71,10 @@
     </div>
 
 <script>
-    // Link Otomatis dari Google Sheets Kakak
-const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/gviz/tq?tqx=out:csv&sheet=Sheet1"; 
-const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/gviz/tq?tqx=out:csv&sheet=Sheet1";
+    // LINK CSV KAKAK (SUDAH SAYA PASANG)
+    const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/gviz/tq?tqx=out:csv&sheet=Sheet1"; 
+    const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/gviz/tq?tqx=out:csv&sheet=Sheet1"; 
+
     function switchTab(type) {
         if(type === 'pelajaran') {
             document.getElementById('sec-pelajaran').classList.remove('hidden');
@@ -87,44 +90,48 @@ const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfna
         }
     }
 
-    // Fungsi Ambil Data Pelajaran (Berdasarkan Kelas)
     async function muatPelajaran() {
         const container = document.getElementById('list-pelajaran');
         const kolomIdx = document.getElementById('pilihKelas').value;
-        if (!kolomIdx) return;
+        if (!kolomIdx) { container.innerHTML = ""; return; }
         
-        container.innerHTML = "<div class='loading'><i class='fa-solid fa-spinner fa-spin'></i> Memuat Pelajaran...</div>";
+        container.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Memuat data...</div>";
+        
         try {
             const resp = await fetch(urlPelajaran);
-            const raw = await resp.text();
-            const rows = raw.split('\n').map(r => r.split(','));
+            const data = await resp.text();
+            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '')));
+            
             let html = "", currentDay = "";
-
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
                 if (!col[0] || col[0].trim() === "") continue;
+
                 if (col[0] !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
                     currentDay = col[0];
                     html += `<div class="hari-box"><span class="hari-nama">${currentDay}</span>`;
                 }
-                html += `<div class="slot"><span class="waktu">${col[1]}</span><span class="nama-petugas" style="text-align:right">${col[kolomIdx] || '-'}</span></div>`;
+                html += `
+                <div class="slot">
+                    <span class="waktu">${col[1]}</span>
+                    <span class="mapel">${col[kolomIdx] || '-'}</span>
+                </div>`;
             }
             container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "Gagal memuat data pelajaran."; }
+        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat jadwal pelajaran.</p>"; }
     }
 
-    // Fungsi Ambil Data Piket Guru (Langsung Tampil Berdasarkan Hari)
     async function muatPiketGuru() {
         const container = document.getElementById('list-piket');
-        container.innerHTML = "<div class='loading'><i class='fa-solid fa-spinner fa-spin'></i> Memuat Jadwal Piket...</div>";
+        container.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Memuat data piket...</div>";
         
         try {
             const resp = await fetch(urlPiket);
-            const raw = await resp.text();
-            const rows = raw.split('\n').map(r => r.split(','));
+            const data = await resp.text();
+            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '')));
+            
             let html = "", currentDay = "";
-
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
                 if (!col[0] || col[0].trim() === "") continue;
@@ -134,16 +141,14 @@ const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfna
                     currentDay = col[0];
                     html += `<div class="hari-box"><span class="hari-nama">${currentDay}</span>`;
                 }
-
                 html += `
-                    <div class="slot">
-                        <span class="waktu"><i class="fa-regular fa-clock"></i> ${col[1]}</span>
-                        <span class="nama-petugas">${col[2]}</span>
-                        <span class="shift-label">${col[3]}</span>
-                    </div>`;
+                <div class="slot" style="flex-direction:column; align-items:flex-start;">
+                    <span class="waktu" style="color:var(--primary)">${col[1]} - ${col[3]}</span>
+                    <span class="mapel" style="text-align:left; font-size:14px; margin-top:5px; font-weight:700;">${col[2]}</span>
+                </div>`;
             }
             container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "Gagal memuat data piket."; }
+        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat jadwal piket.</p>"; }
     }
 </script>
 </body>
