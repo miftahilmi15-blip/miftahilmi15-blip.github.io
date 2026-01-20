@@ -185,21 +185,35 @@
     function loadTahfidz() {
         const list = document.getElementById('list-tahfidz');
         list.innerHTML = "<p style='font-size:12px; color:#888;'>Memuat laporan...</p>";
+        
         db.ref('tahfidz').limitToLast(20).on('value', snap => {
             list.innerHTML = "";
             if (!snap.exists()) { list.innerHTML = "<div class='item-row'>Belum ada setoran hafalan.</div>"; return; }
+            
             let dataArr = [];
-            snap.forEach(c => dataArr.unshift({id: c.key, ...c.val()}));
+            snap.forEach(c => {
+                const d = c.val();
+                // DETEKTOR OTOMATIS: Mencari data meskipun nama labelnya beda-beda
+                dataArr.unshift({
+                    nama: d.nama || d.nama_santri || d.student_name || "Tanpa Nama",
+                    kelas: d.kelas || d.class || d.kls || "-",
+                    surah: d.surah || d.surat || d.materi || "-",
+                    ayat: d.ayat || d.range || "-",
+                    tanggal: d.tanggal || d.date || d.waktu || "",
+                    nilai: d.nilai || d.predikat || d.score || "A"
+                });
+            });
+
             dataArr.forEach(d => {
                 list.innerHTML += `
                 <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 5px; padding: 15px;">
                     <div style="display: flex; justify-content: space-between; width: 100%;">
                         <b style="color: var(--primary)">${d.nama} (${d.kelas})</b>
-                        <small style="color: #999;">${d.tanggal || ''}</small>
+                        <small style="color: #999;">${d.tanggal}</small>
                     </div>
                     <div style="font-size: 12px; background: #f0fdf4; padding: 8px; border-radius: 8px; width: 100%; border-left: 3px solid #22c55e;">
                         <b>Surah:</b> ${d.surah} | <b>Ayat:</b> ${d.ayat} <br>
-                        <b>Predikat:</b> <span style="color: #1f6f51; font-weight:700;">${d.nilai || 'A'}</span>
+                        <b>Predikat:</b> <span style="color: #1f6f51; font-weight:700;">${d.nilai}</span>
                     </div>
                 </div>`;
             });
