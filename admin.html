@@ -118,7 +118,10 @@
         </div>
 
         <div id="tab-tahfidz" class="tab-content hidden">
-            <div class="card"><h3>Laporan Tahfidz Terbaru</h3><div id="list-tahfidz"></div></div>
+            <div class="card">
+                <h3>Laporan Tahfidz Terbaru</h3>
+                <div id="list-tahfidz"></div>
+            </div>
         </div>
 
         <div id="tab-materi" class="tab-content hidden">
@@ -139,16 +142,17 @@
                 <input type="number" id="aq-jumlah" value="1">
                 <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM HADIAH</button>
             </div>
-
             <div class="card">
                 <h3>Riwayat Pengiriman Terbaru</h3>
-                <div id="riwayat-ikan" style="max-height: 300px; overflow-y: auto;">
-                    </div>
+                <div id="riwayat-ikan" style="max-height: 300px; overflow-y: auto;"></div>
             </div>
         </div>
 
         <div id="tab-pengaduan" class="tab-content hidden">
-            <div class="card"><h3>Daftar Pengaduan Santri</h3><div id="list-pengaduan"></div></div>
+            <div class="card">
+                <h3>Daftar Pengaduan Santri</h3>
+                <div id="list-pengaduan"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -164,28 +168,49 @@
 
     function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; }
     function tutupAdmin() { document.getElementById('reward-screen').style.display = 'flex'; document.getElementById('admin-screen').style.display = 'none'; }
+    
     function showTab(id, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
         
-        // --- TAMBAHAN PEMICU DATA ---
         if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
-        if(id === 'tab-tahfidz') loadTahfidz(); // Aktifkan data Tahfidz
+        if(id === 'tab-tahfidz') loadTahfidz(); 
         if(id === 'tab-pengaduan') loadPengaduan();
-        if(id === 'tab-aquarium') {
-            // Jika Bos ingin riwayat ikan otomatis muncul juga
-            if(typeof loadRiwayatIkan === "function") loadRiwayatIkan(); 
-        }
+        if(id === 'tab-aquarium') loadRiwayatIkan();
     }
 
-    // LOGIKA REKAP
+    // --- LOGIKA TAHFIDZ ---
+    function loadTahfidz() {
+        const list = document.getElementById('list-tahfidz');
+        list.innerHTML = "<p style='font-size:12px; color:#888;'>Memuat laporan...</p>";
+        db.ref('tahfidz').limitToLast(20).on('value', snap => {
+            list.innerHTML = "";
+            if (!snap.exists()) { list.innerHTML = "<div class='item-row'>Belum ada setoran hafalan.</div>"; return; }
+            let dataArr = [];
+            snap.forEach(c => dataArr.unshift({id: c.key, ...c.val()}));
+            dataArr.forEach(d => {
+                list.innerHTML += `
+                <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 5px; padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; width: 100%;">
+                        <b style="color: var(--primary)">${d.nama} (${d.kelas})</b>
+                        <small style="color: #999;">${d.tanggal || ''}</small>
+                    </div>
+                    <div style="font-size: 12px; background: #f0fdf4; padding: 8px; border-radius: 8px; width: 100%; border-left: 3px solid #22c55e;">
+                        <b>Surah:</b> ${d.surah} | <b>Ayat:</b> ${d.ayat} <br>
+                        <b>Predikat:</b> <span style="color: #1f6f51; font-weight:700;">${d.nilai || 'A'}</span>
+                    </div>
+                </div>`;
+            });
+        });
+    }
+
+    // --- LOGIKA REKAP & UJIAN ---
     function generateRekap() {
         const kls = document.getElementById('rekap-kelas-pilih').value;
         const body = document.getElementById('body-rekap');
         const head = document.getElementById('head-rekap');
-
         let headHtml = `<tr><th class="nama-col">Nama Santri</th>`;
         LIST_MAPEL.forEach(m => headHtml += `<th>${m}</th>`);
         headHtml += `<th class="rata-col">Rata2</th></tr>`;
@@ -200,7 +225,6 @@
                 let nAkhir = v.nilai_essay && v.nilai_essay !== "Belum" ? (v.nilai_pg + parseFloat(v.nilai_essay))/2 : v.nilai_pg;
                 dataSantri[v.nama][v.mapel] = nAkhir;
             });
-
             body.innerHTML = "";
             for(let nama in dataSantri) {
                 let total = 0, count = 0, row = `<tr><td class="nama-col">${nama}</td>`;
@@ -216,11 +240,15 @@
         });
     }
 
-    function downloadExcel() {
-        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(document.getElementById("tabel-rekap").outerHTML));
+    function publishJadwalUjian() {
+        const m = document.getElementById('u-mapel').value, k = document.getElementById('u-target-kelas').value, j = document.getElementById('u-jadwal').value, s = document.getElementById('u-massal').value;
+        if(!j || !s) return alert("Lengkapi data!");
+        db.ref(`ujian/${k}`).set({ mapel: m, waktu_buka: j, bank_soal: s, status: "Aktif" }).then(() => alert("Ujian Publish!"));
     }
 
-    // FUNGSI MENU LAINNYA
+    function downloadExcel() { window.open('data:application/vnd.ms-excel,' + encodeURIComponent(document.getElementById("tabel-rekap").outerHTML)); }
+
+    // --- MONITORING & ABSENSI ---
     function loadMonitorGuru() {
         const list = document.getElementById('list-guru-input');
         const now = new Date();
@@ -233,40 +261,6 @@
         });
     }
 
-    // Fungsi untuk memantau setoran hafalan secara Real-time
-  function loadTahfidz() {
-    const list = document.getElementById('list-tahfidz');
-    list.innerHTML = "<p style='font-size:12px; color:#888;'>Memuat laporan...</p>";
-
-    // Kita pantau path 'tahfidz' (Pastikan di aplikasi guru/santri simpan ke path ini)
-    db.ref('tahfidz').limitToLast(20).on('value', snap => {
-        list.innerHTML = "";
-        if (!snap.exists()) {
-            list.innerHTML = "<div class='item-row'>Belum ada setoran hari ini.</div>";
-            return;
-        }
-
-        let dataTahfidz = [];
-        snap.forEach(child => {
-            dataTahfidz.unshift({ id: child.key, ...child.val() }); // Terbaru di atas
-        });
-
-        dataTahfidz.forEach(d => {
-            list.innerHTML += `
-                <div class="item-row" style="flex-direction: column; align-items: flex-start; gap: 5px; padding: 15px;">
-                    <div style="display: flex; justify-content: space-between; width: 100%;">
-                        <b style="color: var(--primary)">${d.nama} (${d.kelas})</b>
-                        <small style="color: #999;">${d.tanggal || ''}</small>
-                    </div>
-                    <div style="font-size: 12px; background: #f0fdf4; padding: 8px; border-radius: 8px; width: 100%; border-left: 3px solid #22c55e;">
-                        <b>Surah:</b> ${d.surah} | <b>Ayat:</b> ${d.ayat} <br>
-                        <b>Predikat:</b> <span style="color: #1f6f51; font-weight:700;">${d.nilai || 'A'}</span>
-                    </div>
-                </div>`;
-        });
-    });
-}
-    
     function loadAbsensi() {
         const kls = document.getElementById('pilih-kelas-mon').value;
         const now = new Date();
@@ -280,38 +274,44 @@
         });
     }
 
+    // --- MATERI & AQUARIUM ---
     function saveMahfuzat() {
-        const arb = document.getElementById('m-arab').value;
-        const ind = document.getElementById('m-indo').value;
+        const arb = document.getElementById('m-arab').value, ind = document.getElementById('m-indo').value;
         db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => alert("Berhasil!"));
     }
 
     function kirimIkanByEmail() {
-        const em = document.getElementById('aq-email').value.replace(/\./g, ',');
+        const em = document.getElementById('aq-email').value.trim().toLowerCase().replace(/\./g, ',');
         const jml = parseInt(document.getElementById('aq-jumlah').value);
-        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => alert("Ikan Berhasil Dikirim!"));
+        if(!em) return alert("Email kosong!");
+        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => { alert("Ikan Dikirim!"); loadRiwayatIkan(); });
+    }
+
+    function loadRiwayatIkan() {
+        const list = document.getElementById('riwayat-ikan');
+        db.ref('users').limitToLast(10).once('value', snap => {
+            list.innerHTML = "";
+            snap.forEach(u => {
+                const d = u.val();
+                if(d.ikan) list.innerHTML += `<div class="item-row"><b>${u.key.replace(/,/g,'.')}</b><span>${d.ikan} Ikan</span></div>`;
+            });
+        });
     }
 
     function loadPengaduan() {
         db.ref('pengaduan').on('value', snap => {
             const list = document.getElementById('list-pengaduan');
             list.innerHTML = "";
-            snap.forEach(i => {
-                const d = i.val();
-                list.innerHTML += `<div class="item-row"><b>${d.nama}</b><p>${d.pesan}</p></div>`;
-            });
+            snap.forEach(i => { const d = i.val(); list.innerHTML += `<div class="item-row"><b>${d.nama}</b><p>${d.pesan}</p></div>`; });
         });
     }
 
-    // Rewards Guru
     function loadLeaderboard() {
         const list = document.getElementById('leaderboard-list');
         const now = new Date();
         db.ref(`budaya/${now.getFullYear()}/${now.getMonth() + 1}`).on('value', snap => {
             let guruSkor = {};
-            snap.forEach(t => t.forEach(k => k.forEach(s => {
-                const d = s.val(); if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1;
-            })));
+            snap.forEach(t => t.forEach(k => k.forEach(s => { const d = s.val(); if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; })));
             const sorted = Object.keys(guruSkor).sort((a,b) => guruSkor[b] - guruSkor[a]);
             list.innerHTML = "";
             sorted.forEach((n, i) => {
