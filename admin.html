@@ -23,8 +23,8 @@
   
   h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
   label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-bottom: 5px; margin-top: 10px; }
-  input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 13px; transition: 0.3s; }
-  input:focus, textarea:focus { border-color: var(--primary); background: #fff; }
+  input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #f9f9f9; font-size: 13px; transition: 0.3s; }
+  input:focus, textarea:focus, select:focus { border-color: var(--primary); background: #fff; }
   
   .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; }
   .btn-action:active { transform: scale(0.98); }
@@ -49,6 +49,8 @@
 <div class="sidebar">
     <button class="nav-btn active" onclick="showTab('tab-mahfuzat', this)">Mahfuzat</button>
     <button class="nav-btn" onclick="showTab('tab-doa', this)">Input Doa</button>
+    <button class="nav-btn" onclick="showTab('tab-piket', this)">Jadwal Piket</button>
+    <button class="nav-btn" onclick="showTab('tab-pelajaran', this)">Jadwal Pelajaran</button>
     <button class="nav-btn" onclick="showTab('tab-data-tahfidz', this)">Data Tahfidz</button>
     <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Absensi</button>
     <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
@@ -78,6 +80,46 @@
       <div id="daftarDoaAdmin" style="max-height: 400px; overflow-y: auto; margin-top: 10px;">
           <p style="text-align:center; font-size:11px; color:#999;">Memuat data...</p>
       </div>
+    </div>
+
+    <div id="tab-piket" class="tab-content card hidden">
+      <h3>Update Jadwal Piket</h3>
+      <label>Pilih Hari</label>
+      <select id="piketHari">
+          <option>Senin</option><option>Selasa</option><option>Rabu</option>
+          <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+      </select>
+      <label>Nama Petugas Piket</label>
+      <textarea id="piketNama" rows="3" placeholder="Masukkan nama petugas..."></textarea>
+      <button class="btn-action" onclick="savePiket()">SIMPAN JADWAL PIKET</button>
+    </div>
+
+    <div id="tab-pelajaran" class="tab-content card hidden">
+      <h3>Input Jadwal Pelajaran</h3>
+      <label>Pilih Kelas</label>
+      <select id="pelKelas">
+          <option value="VIIA">VII A</option><option value="VIIB">VII B</option>
+          <option value="VIIC">VII C</option><option value="VIID">VII D</option>
+          <option value="VIIIA">VIII A</option><option value="VIIIB">VIII B</option>
+          <option value="VIIIC">VIII C</option><option value="VIIID">VIII D</option>
+          <option value="IXA">IX A</option><option value="IXB">IX B</option>
+          <option value="IXC">IX C</option><option value="IXD">IX D</option>
+      </select>
+      <label>Pilih Hari</label>
+      <select id="pelHari">
+          <option>Senin</option><option>Selasa</option><option>Rabu</option>
+          <option>Kamis</option><option>Jumat</option><option>Sabtu</option>
+      </select>
+      <label>Jam Pelajaran</label>
+      <input type="text" id="pelJam" placeholder="Contoh: 07.20 - 08.00">
+      <label>Nama Mata Pelajaran</label>
+      <input type="text" id="pelMapel" placeholder="Contoh: PJOK">
+      <label>Nama Pengajar (Ustadz)</label>
+      <input type="text" id="pelGuru" placeholder="Contoh: Ust. Ari">
+      <button class="btn-action" onclick="savePelajaran()">TAMBAH KE JADWAL</button>
+      
+      <h3 style="margin-top: 30px; border-color: #3498db;">Info</h3>
+      <p style="font-size: 11px; color: #777;">Input data satu per satu sesuai urutan jam pelajaran.</p>
     </div>
 
     <div id="tab-data-tahfidz" class="tab-content hidden">
@@ -138,32 +180,25 @@
     if(tabId === 'tab-pengaduan') loadPengaduan();
   }
 
-  // 1. Fungsi Mahfuzat
+  // --- FUNGSI ASLI KAKAK (TANPA UBAH) ---
   function saveMahfuzat() {
     const arab = document.getElementById('m-arab').value;
     const indo = document.getElementById('m-indo').value;
     if(!arab || !indo) return alert("Isi lengkap!");
-    db.ref('fitur/mahfuzat').set({ arab, indo })
-    .then(() => alert("Berhasil Update Mahfuzat!"));
+    db.ref('fitur/mahfuzat').set({ arab, indo }).then(() => alert("Berhasil Update Mahfuzat!"));
   }
 
-  // 2. Fungsi Input Doa
   function simpanDoa() {
     const judul = document.getElementById('judulDoa').value;
     const arab = document.getElementById('arabDoa').value;
     const arti = document.getElementById('artiDoa').value;
     if(!judul || !arab || !arti) return alert("Lengkapi data!");
-
-    db.ref('doa_harian').push({ judul, arab, arti })
-    .then(() => {
+    db.ref('doa_harian').push({ judul, arab, arti }).then(() => {
         alert("Doa Berhasil Disimpan!");
-        document.getElementById('judulDoa').value = "";
-        document.getElementById('arabDoa').value = "";
-        document.getElementById('artiDoa').value = "";
+        document.getElementById('judulDoa').value = ""; document.getElementById('arabDoa').value = ""; document.getElementById('artiDoa').value = "";
     });
   }
 
-  // 3. Fungsi Kelola/Daftar Doa
   function loadDaftarDoa() {
     const list = document.getElementById('daftarDoaAdmin');
     db.ref('doa_harian').on('value', snap => {
@@ -171,8 +206,7 @@
         if(!snap.exists()) return list.innerHTML = "<p style='text-align:center;font-size:12px;color:#999;'>Kosong.</p>";
         snap.forEach(child => {
             const d = child.val();
-            list.innerHTML += `
-                <div class="item-row" style="flex-direction:column; align-items:flex-start;">
+            list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;">
                     <div style="display:flex; justify-content:space-between; width:100%;">
                         <b style="color:var(--primary)">${d.judul}</b>
                         <i class="fa-solid fa-trash-can delete-btn" onclick="hapusDoa('${child.key}')"></i>
@@ -188,7 +222,6 @@
     if(confirm("Hapus doa ini?")) db.ref('doa_harian/' + id).remove();
   }
 
-  // 4. Fungsi Laporan Tahfidz
   function loadDataTahfidz() {
     const list = document.getElementById('list-tahfidz');
     db.ref('tahfidz').on('value', snap => {
@@ -203,7 +236,6 @@
     });
   }
 
-  // 5. Fungsi Absensi Budaya
   function loadMonitoring() {
     const list = document.getElementById('list-monitoring');
     const tgl = new Date().toISOString().split('T')[0];
@@ -219,7 +251,6 @@
     });
   }
 
-  // 6. Fungsi Pengaduan
   function loadPengaduan() {
     const list = document.getElementById('list-pengaduan');
     db.ref('pengaduan').on('value', snap => {
@@ -229,6 +260,29 @@
         const d = c.val();
         list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;"><b>${d.nama}</b><p style="font-size:11px; margin-top:5px;">${d.pesan}</p></div>`;
       });
+    });
+  }
+
+  // --- FUNGSI BARU (JADWAL PIKET & PELAJARAN) ---
+  function savePiket() {
+    const hari = document.getElementById('piketHari').value;
+    const nama = document.getElementById('piketNama').value;
+    if(!nama) return alert("Isi nama petugas!");
+    db.ref('jadwal_piket/' + hari).set(nama).then(() => alert("Jadwal Piket " + hari + " Terupdate!"));
+  }
+
+  function savePelajaran() {
+    const kelas = document.getElementById('pelKelas').value;
+    const hari = document.getElementById('pelHari').value;
+    const jam = document.getElementById('pelJam').value;
+    const mapel = document.getElementById('pelMapel').value;
+    const guru = document.getElementById('pelGuru').value;
+    if(!jam || !mapel) return alert("Lengkapi data!");
+
+    db.ref('jadwal_pelajaran/' + kelas + '/' + hari).push({ jam, mapel, pengajar: guru })
+    .then(() => {
+        alert("Pelajaran Berhasil Ditambah!");
+        document.getElementById('pelJam').value = ""; document.getElementById('pelMapel').value = ""; document.getElementById('pelGuru').value = "";
     });
   }
 </script>
