@@ -2,153 +2,149 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Jadwal Santri | E-Santri</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Jadwal Real-time | E-Santri</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --primary: #1f6f51; --bg: #f8faf9; }
-        body { background: var(--bg); font-family: 'Poppins', sans-serif; padding: 20px; margin: 0; }
+        :root { --primary: #1f6f51; --bg: #f4f7f6; }
+        body { background: var(--bg); font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; color: #333; }
         
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: var(--primary); text-decoration: none; }
 
         /* Tab Switcher */
         .tab-menu { display: flex; background: #e0e0e0; padding: 5px; border-radius: 15px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #666; font-size: 14px; }
+        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; color: #666; font-size: 13px; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        /* Form & Cards */
-        .pilih-kelas {
-            width: 100%; padding: 15px; border-radius: 15px;
-            border: 2px solid var(--primary); margin-bottom: 20px;
-            font-weight: 700; color: var(--primary); outline: none; background: white;
-        }
-        .hari-box {
-            background: white; border-radius: 20px; padding: 15px;
-            margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        .hari-nama { 
-            background: var(--primary); color: white; display: inline-block;
-            padding: 5px 15px; border-radius: 10px; font-size: 14px; margin-bottom: 10px; font-weight: 600;
-        }
-        .slot {
-            display: flex; justify-content: space-between; padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0; font-size: 13px;
-        }
-        .waktu { color: #888; font-weight: 600; }
-        .mapel { color: #333; font-weight: 700; text-align: right; }
-        .ustadz { display: block; font-size: 10px; color: #1f6f51; font-weight: 400; }
+        /* Style Konten */
+        select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; outline: none; background: white; }
+        .hari-box { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
+        .hari-nama { background: var(--primary); color: white; padding: 5px 15px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-block; text-transform: uppercase; }
         
+        .slot { display: flex; flex-direction: column; padding: 10px 0; border-bottom: 1px solid #f2f2f2; }
+        .slot:last-child { border-bottom: none; }
+        .waktu { font-size: 11px; color: #1f6f51; font-weight: 700; margin-bottom: 4px; }
+        .nama-petugas { font-size: 14px; font-weight: 700; color: #333; }
+        .shift-label { font-size: 10px; color: #888; margin-top: 2px; }
+
+        .loading { text-align: center; padding: 40px; color: #999; font-size: 14px; }
         .hidden { display: none; }
-        .piket-text { white-space: pre-line; line-height: 1.6; color: #444; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-        <h2 style="margin:0; font-size: 20px;">Jadwal Santri</h2>
+        <h2 style="margin:0; font-size: 18px;">Informasi Jadwal</h2>
     </div>
 
     <div class="tab-menu">
-        <button class="tab-btn active" id="btnPel" onclick="showTab('pelajaran')">Pelajaran</button>
-        <button class="tab-btn" id="btnPik" onclick="showTab('piket')">Piket</button>
+        <button class="tab-btn active" id="btnPel" onclick="switchTab('pelajaran')">📚 Pelajaran</button>
+        <button class="tab-btn" id="btnPik" onclick="switchTab('piket')">🧹 Piket Guru</button>
     </div>
 
-    <div id="tab-pelajaran">
-        <select class="pilih-kelas" id="pilihKelas" onchange="muatPelajaran()">
+    <div id="sec-pelajaran">
+        <select id="pilihKelas" onchange="muatPelajaran()">
             <option value="">-- Pilih Kelas Anda --</option>
-            <option value="VIIA">VII A</option><option value="VIIB">VII B</option>
-            <option value="VIIC">VII C</option><option value="VIID">VII D</option>
-            <option value="VIIIA">VIII A</option><option value="VIIIB">VIII B</option>
-            <option value="VIIIC">VIII C</option><option value="VIIID">VIII D</option>
-            <option value="IXA">IX A</option><option value="IXB">IX B</option>
-            <option value="IXC">IX C</option><option value="IXD">IX D</option>
+            <option value="2">VII A</option>
+            <option value="3">VII B</option>
+            <option value="4">VII C</option>
+            <option value="5">VII D</option>
+            <option value="6">VIII A</option>
+            <option value="7">VIII B</option>
+            <option value="8">VIII C</option>
+            <option value="9">VIII D</option>
+            <option value="10">IX A</option>
+            <option value="11">IX B</option>
+            <option value="12">IX C</option>
+            <option value="13">IX D</option>
         </select>
-        <div id="hasilPelajaran">
-            <p style="text-align: center; color: #999;">Pilih kelas untuk melihat jadwal pelajaran.</p>
-        </div>
+        <div id="list-pelajaran"></div>
     </div>
 
-    <div id="tab-piket" class="hidden">
-        <div id="hasilPiket">
-            <p style="text-align: center; color: #999;">Memuat jadwal piket...</p>
-        </div>
+    <div id="sec-piket" class="hidden">
+        <div id="list-piket"></div>
     </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
-        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    // MASUKKAN LINK CSV HASIL PUBLISH TO WEB GOOGLE SHEETS KAKAK DI SINI
+    const urlPelajaran = "LINK_CSV_SHEET_PELAJARAN_KAKAK"; 
+    const urlPiket = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS6y_N7-Yv-U9-z1-R-r-y_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u_z_u/pub?output=csv"; 
 
-    // Fungsi Ganti Tab
-    function showTab(type) {
+    function switchTab(type) {
         if(type === 'pelajaran') {
-            document.getElementById('tab-pelajaran').classList.remove('hidden');
-            document.getElementById('tab-piket').classList.add('hidden');
+            document.getElementById('sec-pelajaran').classList.remove('hidden');
+            document.getElementById('sec-piket').classList.add('hidden');
             document.getElementById('btnPel').classList.add('active');
             document.getElementById('btnPik').classList.remove('active');
         } else {
-            document.getElementById('tab-pelajaran').classList.add('hidden');
-            document.getElementById('tab-piket').classList.remove('hidden');
+            document.getElementById('sec-piket').classList.remove('hidden');
+            document.getElementById('sec-pelajaran').classList.add('hidden');
             document.getElementById('btnPik').classList.add('active');
             document.getElementById('btnPel').classList.remove('active');
-            muatPiket();
+            muatPiketGuru();
         }
     }
 
-    // Ambil Data Pelajaran per Kelas
-    function muatPelajaran() {
-        const kelas = document.getElementById('pilihKelas').value;
-        const container = document.getElementById('hasilPelajaran');
-        if(!kelas) return;
+    // Fungsi Ambil Data Pelajaran (Berdasarkan Kelas)
+    async function muatPelajaran() {
+        const container = document.getElementById('list-pelajaran');
+        const kolomIdx = document.getElementById('pilihKelas').value;
+        if (!kolomIdx) return;
+        
+        container.innerHTML = "<div class='loading'><i class='fa-solid fa-spinner fa-spin'></i> Memuat Pelajaran...</div>";
+        try {
+            const resp = await fetch(urlPelajaran);
+            const raw = await resp.text();
+            const rows = raw.split('\n').map(r => r.split(','));
+            let html = "", currentDay = "";
 
-        db.ref('jadwal_pelajaran/' + kelas).on('value', snapshot => {
-            container.innerHTML = "";
-            const data = snapshot.val();
-            if(!data) return container.innerHTML = "<p style='text-align:center;'>Jadwal belum diisi admin.</p>";
-
-            const hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            hariList.forEach(hari => {
-                if(data[hari]) {
-                    let html = `<div class="hari-box"><span class="hari-nama">${hari.toUpperCase()}</span>`;
-                    Object.keys(data[hari]).forEach(key => {
-                        const item = data[hari][key];
-                        html += `
-                            <div class="slot">
-                                <span class="waktu">${item.jam}</span>
-                                <div class="mapel">${item.mapel} <span class="ustadz">${item.pengajar}</span></div>
-                            </div>`;
-                    });
-                    html += `</div>`;
-                    container.innerHTML += html;
+            for (let i = 1; i < rows.length; i++) {
+                const col = rows[i];
+                if (!col[0] || col[0].trim() === "") continue;
+                if (col[0] !== currentDay) {
+                    if (currentDay !== "") html += `</div>`;
+                    currentDay = col[0];
+                    html += `<div class="hari-box"><span class="hari-nama">${currentDay}</span>`;
                 }
-            });
-        });
+                html += `<div class="slot"><span class="waktu">${col[1]}</span><span class="nama-petugas" style="text-align:right">${col[kolomIdx] || '-'}</span></div>`;
+            }
+            container.innerHTML = html + "</div>";
+        } catch (e) { container.innerHTML = "Gagal memuat data pelajaran."; }
     }
 
-    // Ambil Data Piket
-    function muatPiket() {
-        const container = document.getElementById('hasilPiket');
-        db.ref('jadwal_piket').on('value', snapshot => {
-            container.innerHTML = "";
-            const data = snapshot.val();
-            if(!data) return container.innerHTML = "<p style='text-align:center;'>Jadwal piket belum diisi.</p>";
+    // Fungsi Ambil Data Piket Guru (Langsung Tampil Berdasarkan Hari)
+    async function muatPiketGuru() {
+        const container = document.getElementById('list-piket');
+        container.innerHTML = "<div class='loading'><i class='fa-solid fa-spinner fa-spin'></i> Memuat Jadwal Piket...</div>";
+        
+        try {
+            const resp = await fetch(urlPiket);
+            const raw = await resp.text();
+            const rows = raw.split('\n').map(r => r.split(','));
+            let html = "", currentDay = "";
 
-            Object.keys(data).forEach(hari => {
-                container.innerHTML += `
-                    <div class="hari-box">
-                        <span class="hari-nama">${hari.toUpperCase()}</span>
-                        <div class="piket-text">${data[hari]}</div>
+            for (let i = 1; i < rows.length; i++) {
+                const col = rows[i];
+                if (!col[0] || col[0].trim() === "") continue;
+
+                if (col[0] !== currentDay) {
+                    if (currentDay !== "") html += `</div>`;
+                    currentDay = col[0];
+                    html += `<div class="hari-box"><span class="hari-nama">${currentDay}</span>`;
+                }
+
+                html += `
+                    <div class="slot">
+                        <span class="waktu"><i class="fa-regular fa-clock"></i> ${col[1]}</span>
+                        <span class="nama-petugas">${col[2]}</span>
+                        <span class="shift-label">${col[3]}</span>
                     </div>`;
-            });
-        });
+            }
+            container.innerHTML = html + "</div>";
+        } catch (e) { container.innerHTML = "Gagal memuat data piket."; }
     }
 </script>
 </body>
