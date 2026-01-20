@@ -291,24 +291,37 @@
     box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // MASUKKAN API KEY GOOGLE KAKAK DI SINI
+    // --- PAKAI KUNCI YANG BARU DIBUAT TADI ---
     const API_KEY = "AIzaSyCLgxNb4sNFHMtscaTztvZIrZaGZIUoCTA"; 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    
+    // Kita pakai v1 (bukan v1beta) supaya lebih stabil
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            // Kita hapus beberapa header yang sering bikin blokir browser
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "Jawablah sebagai ustadz yang bijak: " + text }] }]
+                contents: [{ parts: [{ text: "Jawablah dengan singkat: " + text }] }]
             })
         });
 
         const data = await response.json();
-        const jawaban = data.candidates[0].content.parts[0].text;
-        document.getElementById(loadId).innerText = jawaban;
+
+        if (data.error) {
+            // Kalau Google nolak, kita tampilkan alasannya di sini
+            document.getElementById(loadId).innerText = "Info: " + data.error.message;
+        } else if (data.candidates && data.candidates[0].content) {
+            const jawaban = data.candidates[0].content.parts[0].text;
+            document.getElementById(loadId).innerText = jawaban;
+        } else {
+            document.getElementById(loadId).innerText = "Sistem sibuk, coba tanya lagi.";
+        }
+
     } catch (e) { 
-        document.getElementById(loadId).innerText = "Maaf, koneksi AI terputus."; 
+        // Kalau masuk ke sini, berarti browser Kakak yang memblokir
+        console.error(e);
+        document.getElementById(loadId).innerText = "Browser memblokir koneksi. Coba buka lewat Vercel/HP."; 
     }
     box.scrollTop = box.scrollHeight;
   }
