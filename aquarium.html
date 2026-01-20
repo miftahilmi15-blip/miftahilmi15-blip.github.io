@@ -44,7 +44,6 @@
             backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* REWARD BADGE (REQUESTED) */
         .reward-info {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);
@@ -82,7 +81,6 @@
             margin-top: 4px; font-weight: 900; color: white;
         }
 
-        /* CAUSTICS & BUBBLES */
         .caustics {
             position: absolute; inset: 0; opacity: 0.1;
             background: url('https://www.transparenttextures.com/patterns/p6.png');
@@ -138,7 +136,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // LIBRARY IKAN BERDASARKAN TIER
     const lib = {
         low: ["Neon Tetra", "Guppy", "Molly", "Zebra Danio", "Cherry Barb", "Platy", "Swordtail"],
         med: ["Angelfish", "Koi Kecil", "Glowfish", "Fancy Guppy", "Rainbowfish", "Tiger Barb"],
@@ -151,31 +148,42 @@
         "https://api.iconify.design/noto:blowfish.svg"
     ];
 
+    // FIX: Sinkronisasi dengan Admin (Menggunakan Email sebagai Key)
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            const uid = user.uid.replace(/\./g, ',');
-            db.ref('users/' + uid + '/ikan').on('value', snap => {
+            const emailKey = user.email.toLowerCase().replace(/\./g, ',');
+            
+            // Dengarkan perubahan data ikan secara real-time
+            db.ref('users/' + emailKey + '/ikan').on('value', snap => {
                 const count = snap.val() || 0;
                 document.getElementById('fish-count').innerText = count;
                 renderAquarium(count);
-                // Play sound on first interaction
-                document.body.onclick = () => document.getElementById('waterSound').play();
+                
+                // Aktifkan suara saat pertama kali layar diklik
+                document.body.onclick = () => {
+                    const sound = document.getElementById('waterSound');
+                    if(sound.paused) sound.play();
+                };
             });
+        } else {
+            // Jika tidak login, arahkan kembali
+            window.location.href = "login.html";
         }
     });
 
     function renderAquarium(total) {
         const container = document.getElementById('ocean');
+        // Bersihkan ikan lama sebelum render ulang agar tidak menumpuk parah
         document.querySelectorAll('.fish-entity').forEach(f => f.remove());
 
-        let loop = (total === 0) ? 1 : total;
+        if (total === 0) return;
 
-        for (let i = 1; i <= loop; i++) {
+        for (let i = 1; i <= total; i++) {
             let data = { name: "", tier: "", color: "" };
 
-            if (i <= 20) {
+            if (i <= 10) {
                 data = { name: lib.low[Math.floor(Math.random()*lib.low.length)], tier: "COMMON", color: "#00b4d8" };
-            } else if (i <= 40) {
+            } else if (i <= 25) {
                 data = { name: lib.med[Math.floor(Math.random()*lib.med.length)], tier: "RARE", color: "#f1c40f" };
             } else {
                 data = { name: lib.high[Math.floor(Math.random()*lib.high.length)], tier: "LEGENDARY", color: "#e74c3c" };
@@ -185,32 +193,41 @@
             el.className = 'fish-entity';
             el.innerHTML = `
                 <img src="${icons[Math.floor(Math.random()*icons.length)]}" class="fish-img" style="filter: drop-shadow(0 0 15px ${data.color})">
-                <span class="fish-label" style="color:white">${data.name}</span>
+                <span class="fish-label" style="color:white; text-shadow: 0 2px 4px rgba(0,0,0,0.5)">${data.name}</span>
                 <span class="tier-tag" style="background:${data.color}">${data.tier}</span>
             `;
 
+            // Posisi awal acak
             el.style.left = Math.random() * 80 + 10 + 'vw';
             el.style.top = Math.random() * 80 + 10 + 'vh';
             
             container.appendChild(el);
-            animate(el);
+            animateFish(el);
         }
     }
 
-    function animate(el) {
-        setInterval(() => {
+    function animateFish(el) {
+        // Fungsi gerak ikan secara halus
+        const move = () => {
             const x = Math.random() * 80 + 10;
             const y = Math.random() * 80 + 10;
             const img = el.querySelector('.fish-img');
             const curX = parseFloat(el.style.left);
 
+            // Balik badan ikan sesuai arah tujuan
             img.style.transform = (x < curX) ? "scaleX(-1)" : "scaleX(1)";
+            
             el.style.left = x + 'vw';
             el.style.top = y + 'vh';
-        }, 8000 + Math.random() * 2000);
+        };
+
+        // Gerakkan pertama kali
+        setTimeout(move, 100);
+        // Gerakkan rutin tiap 8-10 detik
+        setInterval(move, 8000 + Math.random() * 4000);
     }
 
-    // BUBBLE EFFECT
+    // EFEK GELEMBUNG (BUBBLES)
     setInterval(() => {
         const b = document.createElement('div');
         b.className = 'bubble';
@@ -219,7 +236,7 @@
         b.style.left = Math.random() * 100 + 'vw';
         document.getElementById('ocean').appendChild(b);
         setTimeout(() => b.remove(), 15000);
-    }, 2000);
+    }, 1500);
 </script>
 </body>
 </html>
