@@ -219,6 +219,21 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.database();
+  // Tambahan Fungsi Auth
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  }
+
+  function logout() {
+    auth.signOut().then(() => location.reload());
+  }
+
+  function login() {
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('password').value;
+    auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+  }
 
   // 2. FUNGSI SIDEBAR & CHAT
   function toggleChat() {
