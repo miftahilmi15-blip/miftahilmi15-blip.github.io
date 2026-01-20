@@ -3,98 +3,144 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Master Admin | E-Santri Pro</title>
+    <title>Master Admin & Rekap | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; --accent: #6c5ce7; }
+        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; --gold: #f1c40f; --accent: #6c5ce7; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: var(--bg); color: #2d3436; padding-bottom: 50px; }
 
-        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; }
+        /* REWARD SCREEN */
+        #reward-screen { background: linear-gradient(180deg, #1f6f51 0%, #133b2c 100%); min-height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 2000; padding: 30px 20px; color: white; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
+        .trophy { font-size: 50px; color: var(--gold); margin-bottom: 10px; }
+        .leaderboard-item { background: rgba(255,255,255,0.1); width: 100%; max-width: 450px; padding: 15px 20px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-to-admin { position: fixed; bottom: 30px; right: 20px; background: white; color: var(--primary); padding: 15px 25px; border-radius: 50px; font-weight: 800; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; font-size: 13px; z-index: 2100; }
+
+        /* ADMIN SCREEN */
+        #admin-screen { display: none; }
+        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
         .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
         .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
         
         .content { padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; }
         .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
         h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
-        
         label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-top: 10px; }
         input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; margin-top: 5px; }
         
         .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-        .btn-excel { background: #27ae60; color: white; padding: 12px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 12px; border:none; cursor:pointer; margin-bottom: 10px; }
+        .btn-excel { background: #27ae60; color: white; padding: 15px; border-radius: 15px; text-align: center; font-weight: 700; margin-top: 10px; display: block; text-decoration: none; cursor: pointer; border: none; width: 100%; }
         
-        /* TABLE REKAP STYLE */
-        .rekap-container { overflow-x: auto; margin-top: 15px; border-radius: 15px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 1100px; }
-        th { background: #1f6f51; color: white; padding: 10px; border: 1px solid #ddd; text-align: center; white-space: nowrap; }
-        td { padding: 8px; border: 1px solid #ddd; text-align: center; }
-        .nama-col { text-align: left; font-weight: 600; min-width: 160px; background: #fff; position: sticky; left: 0; z-index: 10; }
-        .rata-col { background: #fff9db; font-weight: 800; color: #d35400; }
+        /* TABLE REKAP */
+        .rekap-container { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; position: relative; }
+        table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 1200px; }
+        th { background: #1f6f51; color: white; padding: 12px 8px; border: 1px solid #ddd; text-align: center; }
+        td { padding: 10px 8px; border: 1px solid #ddd; text-align: center; background: white; }
+        .nama-col { position: sticky; left: 0; z-index: 2; background: #f8fafc !important; font-weight: 600; text-align: left; min-width: 180px; }
+        .rata-col { background: #fff9db !important; font-weight: 800; color: #d35400; }
+        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <button class="nav-btn active" onclick="showTab('tab-ujian', this)">Manajemen Ujian</button>
-    <button class="nav-btn" onclick="showTab('tab-rekap', this)">Rekap Nilai Kolektif</button>
-    <button class="nav-btn" onclick="showTab('tab-monitoring', this)">Absensi</button>
+<div id="reward-screen">
+    <div class="trophy"><i class="fas fa-crown"></i></div>
+    <h2 style="font-weight: 800;">TEACHER REWARDS</h2>
+    <div id="leaderboard-list" style="width: 100%; max-width:450px;"></div>
+    <button class="btn-to-admin" onclick="bukaAdmin()">KONTROL ADMIN <i class="fas fa-arrow-right"></i></button>
 </div>
 
-<div class="content">
-    <div id="tab-ujian" class="tab-content">
-        <div class="card">
-            <h3>Buat Jadwal Ujian Baru</h3>
-            <label>Pilih Mata Pelajaran</label>
-            <select id="u-mapel">
-                <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option>
-                <option>B.Indo</option><option>B.Ing</option><option>B.Arab</option><option>Fikih</option>
-                <option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
-            </select>
-            <label>Target Kelas</label>
-            <select id="u-target-kelas">
-                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-            </select>
-            <label>Jadwal Mulai</label>
-            <input type="datetime-local" id="u-jadwal">
-            <label>Durasi (Menit)</label>
-            <input type="number" id="u-durasi" value="60">
-            <label>Input Soal ([PG] & [ESSAY])</label>
-            <textarea id="u-massal" rows="6" placeholder="Contoh:&#10;[PG]&#10;Soal|A|B|C|D|Kunci"></textarea>
-            <button class="btn-action" onclick="publishUjian()">PUBLISH JADWAL UJIAN</button>
-        </div>
+<div id="admin-screen">
+    <div class="sidebar">
+        <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi & Guru</button>
+        <button class="nav-btn" onclick="showTab('tab-ujian', this)">Ujian & Rekap</button>
+        <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
+        <button class="nav-btn" onclick="showTab('tab-materi', this)">Materi</button>
+        <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
+        <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
+        <button class="nav-btn" onclick="tutupAdmin()" style="background:#f8d7da; color:#721c24">Keluar</button>
     </div>
 
-    <div id="tab-rekap" class="tab-content hidden">
-        <div class="card">
-            <h3>Rekap Nilai Kolektif Santri</h3>
-            <label>Pilih Kelas</label>
-            <select id="rekap-kelas-pilih" style="margin-bottom: 15px;">
-                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-            </select>
-            <button class="btn-action" onclick="generateRekap()" style="background:var(--accent); margin-bottom:20px;">
-                <i class="fas fa-sync"></i> GENERATE REKAP NILAI
-            </button>
-            
-            <button id="btn-download" class="btn-excel hidden" onclick="downloadExcel()">
-                <i class="fas fa-file-excel"></i> DOWNLOAD EXCEL (.XLS)
-            </button>
-
-            <div class="rekap-container">
-                <table id="tabel-rekap">
-                    <thead>
-                        <tr id="header-rekap">
-                            </tr>
-                    </thead>
-                    <tbody id="body-rekap"></tbody>
-                </table>
+    <div class="content">
+        <div id="tab-monitoring" class="tab-content">
+            <div class="card">
+                <h3>Monitoring Guru Hari Ini</h3>
+                <div id="list-guru-input"></div>
             </div>
+            <div class="card">
+                <h3>Presensi Santri</h3>
+                <select id="pilih-kelas-mon" onchange="loadAbsensi()">
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                </select>
+                <div id="list-absensi" style="margin-top:15px;"></div>
+            </div>
+        </div>
+
+        <div id="tab-ujian" class="tab-content hidden">
+            <div class="card">
+                <h3>Buat Jadwal Ujian</h3>
+                <label>Pilih Mata Pelajaran</label>
+                <select id="u-mapel">
+                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option>
+                    <option>B.Ing</option><option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option>
+                    <option>Infor</option><option>B.Daerah</option><option>Seni</option>
+                </select>
+                <label>Target Kelas</label>
+                <select id="u-target-kelas">
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                </select>
+                <label>Waktu Buka</label>
+                <input type="datetime-local" id="u-jadwal">
+                <textarea id="u-massal" rows="4" placeholder="Format: [PG]... [ESSAY]..."></textarea>
+                <button class="btn-action" onclick="publishJadwalUjian()">PUBLISH UJIAN</button>
+            </div>
+
+            <div class="card">
+                <h3>Rekap Nilai Kolektif</h3>
+                <select id="rekap-kelas-pilih">
+                    <option>7A</option><option>7B</option><option>8A</option><option>9A</option>
+                </select>
+                <button class="btn-action" onclick="generateRekap()" style="background:var(--accent)">LIHAT REKAP NILAI</button>
+                <button id="btn-download" class="btn-excel hidden" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
+                <div class="rekap-container">
+                    <table id="tabel-rekap">
+                        <thead id="head-rekap"></thead>
+                        <tbody id="body-rekap"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-tahfidz" class="tab-content hidden">
+            <div class="card"><h3>Laporan Tahfidz Terbaru</h3><div id="list-tahfidz"></div></div>
+        </div>
+
+        <div id="tab-materi" class="tab-content hidden">
+            <div class="card">
+                <h3>Update Mahfuzat</h3>
+                <input type="text" id="m-arab" placeholder="Teks Arab..." style="text-align:right">
+                <textarea id="m-indo" rows="2" placeholder="Terjemahan..."></textarea>
+                <button class="btn-action" onclick="saveMahfuzat()">UPDATE SEKARANG</button>
+            </div>
+        </div>
+
+        <div id="tab-aquarium" class="tab-content hidden">
+            <div class="card">
+                <h3>Kirim Hadiah Ikan</h3>
+                <input type="email" id="aq-email" placeholder="Email Santri">
+                <input type="number" id="aq-jumlah" value="1">
+                <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM HADIAH</button>
+            </div>
+        </div>
+
+        <div id="tab-pengaduan" class="tab-content hidden">
+            <div class="card"><h3>Daftar Pengaduan Santri</h3><div id="list-pengaduan"></div></div>
         </div>
     </div>
 </div>
@@ -106,73 +152,50 @@
     const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const LIST_MAPEL = ["Mtk", "IPA", "IPS", "PKN", "B.Indo", "B.Ing", "B.Arab", "Fikih", "Aqidah", "Tarikh", "Infor", "B.Daerah", "Seni"];
 
-    // Urutan Mapel Tetap sesuai permintaan Bos
-    const daftarMapelTetap = [
-        "Mtk", "IPA", "IPS", "PKN", "B.Indo", "B.Ing", 
-        "B.Arab", "Fikih", "Aqidah", "Tarikh", "Infor", "B.Daerah", "Seni"
-    ];
-
+    function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; }
+    function tutupAdmin() { document.getElementById('reward-screen').style.display = 'flex'; document.getElementById('admin-screen').style.display = 'none'; }
+    
     function showTab(id, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
+        if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
+        if(id === 'tab-pengaduan') loadPengaduan();
     }
 
-    function publishUjian() {
-        const mapel = document.getElementById('u-mapel').value;
-        const kls = document.getElementById('u-target-kelas').value;
-        const tgl = document.getElementById('u-jadwal').value;
-        if(!tgl) return alert("Pilih Jadwal!");
-
-        db.ref(`jadwal_ujian/${kls}`).push({
-            mapel: mapel,
-            durasi: document.getElementById('u-durasi').value,
-            jadwal: tgl.replace('T', ' '),
-            timestamp: Date.now()
-        }).then(() => alert("Berhasil Publish " + mapel));
-    }
-
+    // LOGIKA REKAP
     function generateRekap() {
         const kls = document.getElementById('rekap-kelas-pilih').value;
         const body = document.getElementById('body-rekap');
-        const header = document.getElementById('header-rekap');
+        const head = document.getElementById('head-rekap');
 
-        // 1. Set Headernya dulu
-        let headHtml = `<th>No</th><th class="nama-col">Nama Santri</th>`;
-        daftarMapelTetap.forEach(m => { headHtml += `<th>${m}</th>`; });
-        headHtml += `<th class="rata-col">Rata2</th>`;
-        header.innerHTML = headHtml;
+        let headHtml = `<tr><th class="nama-col">Nama Santri</th>`;
+        LIST_MAPEL.forEach(m => headHtml += `<th>${m}</th>`);
+        headHtml += `<th class="rata-col">Rata2</th></tr>`;
+        head.innerHTML = headHtml;
 
-        // 2. Ambil Data
         db.ref(`hasil_ujian/${kls}`).once('value', snap => {
-            if(!snap.exists()) return alert("Belum ada data nilai!");
-
+            if(!snap.exists()) return alert("Data Kosong!");
             let dataSantri = {};
             snap.forEach(c => {
                 const v = c.val();
                 if(!dataSantri[v.nama]) dataSantri[v.nama] = {};
-                // Gabungkan PG & Essay (jika ada)
                 let nAkhir = v.nilai_essay && v.nilai_essay !== "Belum" ? (v.nilai_pg + parseFloat(v.nilai_essay))/2 : v.nilai_pg;
                 dataSantri[v.nama][v.mapel] = nAkhir;
             });
 
-            // 3. Masukkan ke Tabel
             body.innerHTML = "";
-            let no = 1;
             for(let nama in dataSantri) {
-                let row = `<tr><td>${no++}</td><td class="nama-col">${nama}</td>`;
-                let total = 0, count = 0;
-
-                daftarMapelTetap.forEach(m => {
+                let total = 0, count = 0, row = `<tr><td class="nama-col">${nama}</td>`;
+                LIST_MAPEL.forEach(m => {
                     let nilai = dataSantri[nama][m] !== undefined ? dataSantri[nama][m] : "-";
                     if(nilai !== "-") { total += nilai; count++; }
                     row += `<td>${nilai}</td>`;
                 });
-
-                let rata = count > 0 ? (total/count).toFixed(1) : "0";
-                row += `<td class="rata-col">${rata}</td></tr>`;
+                row += `<td class="rata-col">${count > 0 ? (total/count).toFixed(1) : 0}</td></tr>`;
                 body.innerHTML += row;
             }
             document.getElementById('btn-download').classList.remove('hidden');
@@ -180,10 +203,76 @@
     }
 
     function downloadExcel() {
-        const kls = document.getElementById('rekap-kelas-pilih').value;
-        const table = document.getElementById("tabel-rekap");
-        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(table.outerHTML));
+        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(document.getElementById("tabel-rekap").outerHTML));
     }
+
+    // FUNGSI MENU LAINNYA
+    function loadMonitorGuru() {
+        const list = document.getElementById('list-guru-input');
+        const now = new Date();
+        db.ref(`budaya/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`).on('value', snap => {
+            list.innerHTML = "";
+            snap.forEach(k => k.forEach(s => {
+                const d = s.val();
+                list.innerHTML += `<div class="item-row"><b>Ust. ${d.guru}</b><span>${d.kelas}</span></div>`;
+            }));
+        });
+    }
+
+    function loadAbsensi() {
+        const kls = document.getElementById('pilih-kelas-mon').value;
+        const now = new Date();
+        db.ref(`absensi/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/${kls}`).on('value', snap => {
+            const container = document.getElementById('list-absensi');
+            container.innerHTML = "";
+            snap.forEach(s => {
+                const v = s.val();
+                container.innerHTML += `<div class="item-row"><b>${v.nama}</b><span>${v.status}</span></div>`;
+            });
+        });
+    }
+
+    function saveMahfuzat() {
+        const arb = document.getElementById('m-arab').value;
+        const ind = document.getElementById('m-indo').value;
+        db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => alert("Berhasil!"));
+    }
+
+    function kirimIkanByEmail() {
+        const em = document.getElementById('aq-email').value.replace(/\./g, ',');
+        const jml = parseInt(document.getElementById('aq-jumlah').value);
+        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => alert("Ikan Berhasil Dikirim!"));
+    }
+
+    function loadPengaduan() {
+        db.ref('pengaduan').on('value', snap => {
+            const list = document.getElementById('list-pengaduan');
+            list.innerHTML = "";
+            snap.forEach(i => {
+                const d = i.val();
+                list.innerHTML += `<div class="item-row"><b>${d.nama}</b><p>${d.pesan}</p></div>`;
+            });
+        });
+    }
+
+    // Rewards Guru
+    function loadLeaderboard() {
+        const list = document.getElementById('leaderboard-list');
+        const now = new Date();
+        db.ref(`budaya/${now.getFullYear()}/${now.getMonth() + 1}`).on('value', snap => {
+            let guruSkor = {};
+            snap.forEach(t => t.forEach(k => k.forEach(s => {
+                const d = s.val(); if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1;
+            })));
+            const sorted = Object.keys(guruSkor).sort((a,b) => guruSkor[b] - guruSkor[a]);
+            list.innerHTML = "";
+            sorted.forEach((n, i) => {
+                list.innerHTML += `<div class="leaderboard-item" style="${i==0?'border:1px solid gold; background:rgba(255,215,0,0.1)':''}"><span>${n}</span><b>${guruSkor[n]} Poin</b></div>`;
+            });
+        });
+    }
+
+    loadLeaderboard();
 </script>
 </body>
 </html>
