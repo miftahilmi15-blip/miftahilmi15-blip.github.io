@@ -324,18 +324,47 @@
     }
 
     function loadAbsensi() {
-        const kls = document.getElementById('pilih-kelas-mon').value;
-        const now = new Date();
-        db.ref(`absensi/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/${kls}`).on('value', snap => {
-            const container = document.getElementById('list-absensi');
-            container.innerHTML = "";
-            if(!snap.exists()) { container.innerHTML = "<p style='font-size:11px; color:#aaa;'>Data absensi tidak ditemukan.</p>"; return; }
-            snap.forEach(s => {
-                const v = s.val();
-                container.innerHTML += `<div class="item-row"><b>${v.nama}</b><span>${v.status}</span></div>`;
-            });
+    const kls = document.getElementById('pilih-kelas-mon').value;
+    const now = new Date();
+    const thn = now.getFullYear();
+    const bln = now.getMonth() + 1;
+    const tgl = now.getDate();
+
+    const container = document.getElementById('list-absensi');
+    container.innerHTML = "<p style='font-size:11px; color:#aaa;'>Melacak data...</p>";
+
+    // Path disesuaikan: absensi / tahun / bulan / tanggal / kelas
+    db.ref(`absensi/${thn}/${bln}/${tgl}/${kls}`).on('value', snap => {
+        container.innerHTML = "";
+        
+        if (!snap.exists()) { 
+            container.innerHTML = "<p style='font-size:11px; color:#aaa;'>Belum ada santri yang absen di kelas " + kls + " hari ini.</p>"; 
+            return; 
+        }
+
+        snap.forEach(s => {
+            const v = s.val();
+            // Pastikan field di Firebase namanya 'nama' dan 'status'
+            // Jika strukturnya berbeda, sesuaikan v.nama dan v.status di bawah ini
+            const namaAnak = v.nama || "Tanpa Nama";
+            const statusAbsen = v.status || "Tanpa Status";
+            
+            // Beri warna berbeda untuk tiap status
+            let warnaStatus = "#666";
+            if(statusAbsen === "Hadir") warnaStatus = "#2ecc71";
+            if(statusAbsen === "Izin" || statusAbsen === "Sakit") warnaStatus = "#f1c40f";
+            if(statusAbsen === "Alfa") warnaStatus = "#e74c3c";
+
+            container.innerHTML += `
+                <div class="item-row" style="display:flex; justify-content:space-between; align-items:center;">
+                    <b style="font-size:12px;">${namaAnak}</b>
+                    <span style="font-size:10px; font-weight:bold; color:white; background:${warnaStatus}; padding:2px 8px; border-radius:5px;">
+                        ${statusAbsen.toUpperCase()}
+                    </span>
+                </div>`;
         });
-    }
+    });
+ }
 
     // --- MATERI & AQUARIUM ---
     function saveMahfuzat() {
