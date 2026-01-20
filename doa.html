@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Doa Harian | E-Santri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Naskh+Arabic:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root { --primary: #1f6f51; --bg: #f8faf9; }
+        body { background: var(--bg); font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .back-btn { background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: var(--primary); text-decoration: none; }
+        
+        .search-box { width: 100%; padding: 12px 15px; border-radius: 15px; border: 1px solid #eee; margin-bottom: 20px; outline: none; }
+        
+        .doa-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
+        .doa-title { font-weight: 700; color: #444; margin-bottom: 10px; display: block; }
+        .doa-arab { font-family: 'Noto Naskh Arabic'; font-size: 22px; color: var(--primary); text-align: right; line-height: 1.8; margin: 15px 0; direction: rtl; }
+        .doa-arti { font-size: 13px; color: #777; font-style: italic; display: none; margin-top: 10px; border-top: 1px dashed #eee; padding-top: 10px; }
+        .show-btn { background: #f0fdf4; color: var(--primary); border: none; padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="/" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+    <h2 style="margin:0; font-size: 20px; color: #333;">Doa Harian</h2>
+</div>
+
+<input type="text" class="search-box" id="searchDoa" placeholder="Cari doa..." onkeyup="filterDoa()">
+
+<div id="doaList">
+    <div class="doa-card">
+        <span class="doa-title">Doa Sebelum Makan</span>
+        <div class="doa-arab">اللَّهُمَّ بَارِكْ لَنَا فِيمَا رَزَقْتَنَا وَقِنَا عَذَابَ النَّارِ</div>
+        <button class="show-btn" onclick="toggleArti(this)">Lihat Arti</button>
+        <div class="doa-arti">"Ya Allah, berkahilah kami atas rezeki yang telah Engkau berikan kepada kami dan jagalah kami dari siksa api neraka."</div>
+    </div>
+
+    <div class="doa-card">
+        <span class="doa-title">Doa Bangun Tidur</span>
+        <div class="doa-arab">الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَمَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ</div>
+        <button class="show-btn" onclick="toggleArti(this)">Lihat Arti</button>
+        <div class="doa-arti">"Segala puji bagi Allah yang menghidupkan kami setelah mematikan kami dan kepada-Nya kami kembali."</div>
+    </div>
+</div>
+
+<script>
+    function toggleArti(btn) {
+        const arti = btn.nextElementSibling;
+        if (arti.style.display === "block") {
+            arti.style.display = "none";
+            btn.innerText = "Lihat Arti";
+        } else {
+            arti.style.display = "block";
+            btn.innerText = "Sembunyikan";
+        }
+    }
+
+    function filterDoa() {
+        let input = document.getElementById('searchDoa').value.toLowerCase();
+        let cards = document.getElementsByClassName('doa-card');
+        for (let card of cards) {
+            let title = card.querySelector('.doa-title').innerText.toLowerCase();
+            card.style.display = title.includes(input) ? "block" : "none";
+        }
+    }
+</script>
+
+</body>
+</html>
