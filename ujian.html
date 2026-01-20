@@ -10,46 +10,31 @@
         :root { --primary: #00b894; --accent: #6c5ce7; --bg: #f8fafc; --text: #2d3436; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); line-height: 1.6; }
-
         .header-top { background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
         .logo { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -1px; }
-        
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-
-        /* Welcome Card */
         .welcome-card { background: linear-gradient(135deg, #00b894, #00cec9); padding: 30px 20px; border-radius: 24px; color: white; margin-bottom: 25px; box-shadow: 0 20px 40px rgba(0,184,148,0.2); }
         .welcome-card h1 { font-size: 24px; font-weight: 800; }
-
         .card { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; margin-bottom: 20px; }
-        
-        /* Form Styling */
         label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
         input[type="text"], select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; transition: 0.3s; margin-bottom: 20px; }
         input:focus { border-color: var(--primary); background: white; }
-
-        /* Ujian List */
         .exam-item { background: #fff; border: 2px solid #f1f5f9; padding: 18px; border-radius: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; transition: 0.3s; cursor: pointer; }
         .exam-item:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .exam-info b { display: block; font-size: 15px; color: #1e293b; }
         .exam-info small { color: #64748b; font-size: 11px; }
         .btn-play { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: none; }
-
-        /* Area Ujian */
         #timer { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; font-weight: 800; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .soal-card { margin-bottom: 30px; animation: fadeInUp 0.5s ease; }
         .soal-text { font-size: 16px; font-weight: 600; margin-bottom: 18px; color: #1e293b; display: block; line-height: 1.5; }
-        
         .option { display: block; position: relative; padding: 15px 15px 15px 50px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; font-size: 14px; }
         .option input { position: absolute; opacity: 0; }
         .option .checkmark { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); height: 20px; width: 20px; background-color: white; border: 2px solid #cbd5e1; border-radius: 50%; }
         .option:hover { border-color: var(--primary); }
         .option input:checked ~ .checkmark { background-color: var(--primary); border-color: var(--primary); }
-        .option input:checked ~ span { color: var(--primary); font-weight: 700; }
-
         .btn-submit { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,184,148,0.3); }
-
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .hidden { display: none !important; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -65,7 +50,6 @@
             <h1>Halo, Santri! 👋</h1>
             <p style="opacity: 0.9; font-size: 13px;">Sudah siap untuk ujian hari ini? Tetap jujur dan fokus ya!</p>
         </div>
-
         <div class="card">
             <label>Pilih Kelas</label>
             <select id="user-kelas" onchange="muatJadwal()">
@@ -73,11 +57,9 @@
                 <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option>
                 <option value="8A">Kelas 8A</option><option value="9A">Kelas 9A</option>
             </select>
-            
             <label>Nama Lengkap</label>
             <input type="text" id="user-nama" placeholder="Masukkan nama kamu...">
         </div>
-
         <div id="area-jadwal" class="hidden">
             <label style="margin-bottom: 15px;">Ujian Yang Tersedia</label>
             <div id="list-ujian"></div>
@@ -107,16 +89,13 @@
         const area = document.getElementById('area-jadwal');
         const list = document.getElementById('list-ujian');
         if(!kls) return area.classList.add('hidden');
-
         db.ref(`jadwal_ujian/${kls}`).on('value', snap => {
             area.classList.remove('hidden');
             list.innerHTML = "";
             if(!snap.exists()) return list.innerHTML = "<center><small>Belum ada jadwal.</small></center>";
-
             snap.forEach(child => {
                 const u = child.val();
                 const isReady = new Date().getTime() >= new Date(u.jadwal).getTime();
-                
                 list.innerHTML += `
                     <div class="exam-item" onclick="${isReady ? `mulai('${child.key}','${u.mapel}',${u.durasi})` : 'alert(\'Belum waktunya, Bos!\')'}">
                         <div class="exam-info">
@@ -139,11 +118,9 @@
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('exam-screen').classList.remove('hidden');
             document.getElementById('timer').classList.remove('hidden');
-            
             const area = document.getElementById('konten-soal');
             area.innerHTML = `<h2 style="margin-bottom:20px">${mapel}</h2>`;
             
-            // PG
             if(currentKuis.pg) {
                 currentKuis.pg.forEach((s, i) => {
                     area.innerHTML += `
@@ -156,26 +133,34 @@
                     </div>`;
                 });
             }
-            // PERBAIKAN UNTUK ESSAY
             if(currentKuis.essay) {
-                area.innerHTML += `<h3 style="margin: 20px 0 10px 0; color: var(--accent);">Bagian Essay</h3>`;
+                area.innerHTML += `<h3 style="margin:20px 0; color:var(--accent);">Bagian Essay</h3>`;
                 currentKuis.essay.forEach((s, i) => {
-                    // Kita ambil s.t karena di database formatnya adalah {t: "soal", k: "kunci"}
                     const teksSoal = s.t ? s.t : s; 
-                    area.innerHTML += `
-                    <div class="soal-card">
-                        <span class="soal-text">${i+1}. ${teksSoal}</span>
-                        <textarea id="es${i}" rows="3" placeholder="Tulis jawaban lengkap di sini..."></textarea>
-                    </div>`;
+                    area.innerHTML += `<div class="soal-card"><span class="soal-text">${i+1}. ${teksSoal}</span><textarea id="es${i}" rows="3" placeholder="Jawaban kamu..."></textarea></div>`;
                 });
-    }
+            }
+
+            let sisa = durasi * 60;
+            timer = setInterval(() => {
+                let m = Math.floor(sisa/60); let s = sisa%60;
+                document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
+                if(sisa <= 0) { clearInterval(timer); selesaiUjian(true); }
+                sisa--;
+            }, 1000);
+        });
+    } // Penutup fungsi mulai (Tadi Kakak kurang ini)
 
     function selesaiUjian(auto=false) {
-        if(!auto && !confirm("Kirim?")) return;
+        if(!auto && !confirm("Kirim jawaban sekarang?")) return;
         clearInterval(timer);
         const kelas = document.getElementById('user-kelas').value;
-        const nama = document.getElementById('user-nama').value;
-        const res = { nama, nilai_pg: 0, essay: [] };
+        const res = { 
+            nama: document.getElementById('user-nama').value, 
+            nilai_pg: 0, 
+            essay: [], 
+            mapel: document.querySelector('h2') ? document.querySelector('h2').innerText : ""
+        };
         
         let benar = 0;
         if(currentKuis.pg) {
@@ -185,13 +170,12 @@
             });
             res.nilai_pg = Math.round((benar/currentKuis.pg.length)*100);
         }
-        
         if(currentKuis.essay) {
             currentKuis.essay.forEach((s, i) => res.essay.push(document.getElementById('es'+i).value));
         }
 
         db.ref(`hasil_ujian/${kelas}`).push(res).then(() => {
-            alert("Selesai! Nilai PG: " + res.nilai_pg);
+            alert("Alhamdulillah! Jawaban berhasil terkirim.");
             location.reload();
         });
     }
