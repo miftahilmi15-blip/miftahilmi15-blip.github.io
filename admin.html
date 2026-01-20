@@ -223,22 +223,51 @@
         });
     }
 
+    // --- BAGIAN YANG DITAMBAHKAN UNTUK LINK GURU ---
     function loadHasilUjian() {
         const kls = document.getElementById('lihat-hasil-kelas').value;
         const res = document.getElementById('list-hasil-ujian');
+        
+        // Menambahkan tombol copy link di bagian atas daftar hasil
+        res.innerHTML = `
+            <div style="background:#e8f4f0; padding:15px; border-radius:18px; margin-bottom:15px; border:1px solid var(--primary)">
+                <button onclick="copyLinkKoreksi()" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:12px; font-size:11px; font-weight:700; cursor:pointer">
+                    <i class="fas fa-share-nodes"></i> COPY LINK KOREKSI (UNTUK GURU)
+                </button>
+            </div>
+            <div id="konten-list-hasil"></div>
+        `;
+
+        const listContainer = document.getElementById('konten-list-hasil');
+
         db.ref(`hasil_ujian/${kls}`).on('value', snap => {
-            res.innerHTML = "";
-            if(!snap.exists()) res.innerHTML = "<small>Belum ada data.</small>";
+            listContainer.innerHTML = "";
+            if(!snap.exists()) {
+                listContainer.innerHTML = "<small>Belum ada data pengerjaan.</small>";
+                return;
+            }
             snap.forEach(s => {
                 const v = s.val();
-                res.innerHTML += `
-                <div class="card" style="padding:15px; margin-bottom:10px;">
-                    <b>${v.nama}</b> <span class="badge" style="background:orange">Nilai PG: ${v.nilai_pg}</span>
-                    <p style="font-size:11px; margin-top:5px; color:#666">Jawaban Essay: ${v.essay ? v.essay.join(' | ') : '-'}</p>
+                const nilaiEs = v.nilai_essay !== undefined ? v.nilai_essay : "Belum";
+                listContainer.innerHTML += `
+                <div class="item-row" style="flex-direction:column; align-items:start; gap:5px;">
+                    <div style="width:100%; display:flex; justify-content:space-between;">
+                        <b>${v.nama}</b>
+                        <span class="badge" style="background:orange">PG: ${v.nilai_pg} | Es: ${nilaiEs}</span>
+                    </div>
+                    <small style="font-size:10px; color:#888;">Mapel: ${v.mapel || '-'}</small>
                 </div>`;
             });
         });
     }
+
+    function copyLinkKoreksi() {
+        const link = window.location.href.replace('admin.html', 'koreksi.html');
+        navigator.clipboard.writeText(link).then(() => {
+            alert("Link Koreksi Berhasil Disalin! Kirim ke Guru Mapel via WhatsApp.");
+        });
+    }
+    // --- AKHIR PENAMBAHAN ---
 
     // FUNGSI STANDAR (TIDAK DIUBAH)
     function loadLeaderboard() {
