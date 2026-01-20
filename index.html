@@ -203,99 +203,92 @@
 </div>
 
 <script>
-  // 1. INI WAJIB ADA (Ganti dengan data Firebase Kakak)
+  // 1. JANTUNG APLIKASI (Firebase)
   const firebaseConfig = {
-    apiKey: "AIzaSy...",
-    authDomain: "project-kakak.firebaseapp.com",
-    databaseURL: "https://project-kakak-default-rtdb.firebaseio.com",
-    projectId: "project-kakak",
-    storageBucket: "project-kakak.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "1:123456789:web:abcdef"
+    apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+    authDomain: "e-santri-b62be.firebaseapp.com",
+    databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "e-santri-b62be",
+    storageBucket: "e-santri-b62be.firebasestorage.app",
+    messagingSenderId: "6560427635",
+    appId: "1:6560427635:web:368b4fbf95163e8d214406",
+    measurementId: "G-X0NSEGDDC0"
   };
 
-  // Inisialisasi Firebase
+  // Inisialisasi Firebase (Gunakan versi Compat agar cocok dengan script di atas)
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.database();
 
-  // 2. Tambahkan Fungsi Toggle Chat (Ini yang tadi kurang di kode Kakak)
+  // 2. FUNGSI SIDEBAR & CHAT
   function toggleChat() {
-      const win = document.getElementById('ai-window');
-      win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
+    const win = document.getElementById('ai-window');
+    win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
   }
-
-  // 3. Tambahkan Fungsi Sidebar (Supaya tombol menu bisa diklik)
   document.getElementById('menu-btn').onclick = () => document.getElementById('sidebar').classList.add('open');
   document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-  // 4. Fungsi Login & Dashboard (Sesuai yang Kakak kirim tadi)
+  // 3. LOGIKA LOGIN & DASHBOARD
   auth.onAuthStateChanged(user => {
-      const dash = document.getElementById("dashboard");
-      const loginCard = document.getElementById("login-card");
-      const menuBtn = document.getElementById("menu-btn");
-      const aiBtn = document.getElementById("ai-button");
+    const dash = document.getElementById("dashboard");
+    const loginCard = document.getElementById("login-card");
+    const menuBtn = document.getElementById("menu-btn");
+    const aiBtn = document.getElementById("ai-button");
 
-      if(user){
-          dash.classList.remove("hidden");
-          loginCard.classList.add("hidden");
-          menuBtn.style.display = "flex";
-          aiBtn.style.display = "flex";
-          
-          document.getElementById("uName").innerText = user.displayName || "Santri";
-          document.getElementById("uEmail").innerText = user.email;
-          if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
-          
-          if (user.email === "miftahilmi15@gmail.com") {
-              document.getElementById("admin-menu").classList.remove("hidden");
-          }
-          
-          db.ref('fitur/mahfuzat').on('value', snap => {
-              const data = snap.val();
-              if(data) {
-                  document.getElementById('runArab').innerText = data.arab;
-                  document.getElementById('runIndo').innerText = " — " + data.indo;
-              }
-          });
-      } else {
-          loginCard.classList.remove("hidden");
-          dash.classList.add("hidden");
-          menuBtn.style.display = "none";
-          aiBtn.style.display = "none";
-      }
+    if(user){
+        dash.classList.remove("hidden");
+        loginCard.classList.add("hidden");
+        menuBtn.style.display = "flex";
+        aiBtn.style.display = "flex";
+        document.getElementById("uName").innerText = user.displayName || "Santri";
+        document.getElementById("uEmail").innerText = user.email;
+        if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+
+        db.ref('fitur/mahfuzat').on('value', snap => {
+            const data = snap.val();
+            if(data) {
+                document.getElementById('runArab').innerText = data.arab;
+                document.getElementById('runIndo').innerText = " — " + data.indo;
+            }
+        });
+    } else {
+        loginCard.classList.remove("hidden");
+        dash.classList.add("hidden");
+        menuBtn.style.display = "none";
+        aiBtn.style.display = "none";
+    }
   });
 
-  // 5. Fungsi AI Gemini (Pastikan API_KEY sudah diisi)
+  // 4. FUNGSI AI GEMINI
   async function kirimKeAI() {
-      const input = document.getElementById('aiInput');
-      const box = document.getElementById('chatContent');
-      const text = input.value.trim();
-      if(!text) return;
+    const input = document.getElementById('aiInput');
+    const box = document.getElementById('chatContent');
+    const text = input.value.trim();
+    if(!text) return;
 
-      box.innerHTML += `<div class="msg-user">${text}</div>`;
-      input.value = "";
-      const loadId = "load-" + Date.now();
-      box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
-      box.scrollTop = box.scrollHeight;
+    box.innerHTML += `<div class="msg-user">${text}</div>`;
+    input.value = "";
+    const loadId = "load-" + Date.now();
+    box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
+    box.scrollTop = box.scrollHeight;
 
-      const API_KEY = "MASUKKAN_API_KEY_GOOGLE_KAKAK"; 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    // Pakai Key yang sama dengan Firebase (Karena satu project)
+    const API_KEY = firebaseConfig.apiKey; 
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-      try {
-          const response = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                  contents: [{ parts: [{ text: "Jawab sebagai ustadz ramah: " + text }] }]
-              })
-          });
-          const data = await response.json();
-          const jawaban = data.candidates[0].content.parts[0].text;
-          document.getElementById(loadId).innerText = jawaban;
-      } catch (e) { 
-          document.getElementById(loadId).innerText = "Afwan, ustadz sedang tidak di tempat."; 
-      }
-      box.scrollTop = box.scrollHeight;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: "Jawab sebagai ustadz ramah: " + text }] }] })
+        });
+        const data = await response.json();
+        const jawaban = data.candidates[0].content.parts[0].text;
+        document.getElementById(loadId).innerText = jawaban;
+    } catch (e) { 
+        document.getElementById(loadId).innerText = "Maaf, koneksi AI terputus."; 
+    }
+    box.scrollTop = box.scrollHeight;
   }
 </script>
 </body>
