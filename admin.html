@@ -3,226 +3,219 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Dashboard Admin | E-SANTRI PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Master Admin | E-Santri Pro v17</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Amiri&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --primary: #1f6f51; --bg: #f4f7f6; --white: #ffffff; --accent: #eab308; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: #334155; padding-bottom: 50px; }
+        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
+        body { background: var(--bg); color: #2d3436; padding-bottom: 50px; }
         
-        /* Navigasi Atas */
-        header { background: var(--primary); color: white; padding: 20px 15px; text-align: center; border-radius: 0 0 25px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        header h2 { font-size: 18px; letter-spacing: 1px; }
+        /* Navigation */
+        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
 
-        .nav-scroller { background: white; padding: 10px; display: flex; gap: 8px; overflow-x: auto; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #e2e8f0; }
-        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #f1f5f9; font-weight: 700; font-size: 11px; cursor: pointer; white-space: nowrap; color: #64748b; transition: 0.3s; }
-        .nav-btn.active { background: var(--primary); color: white; }
+        .content { padding: 20px; max-width: 600px; margin: 0 auto; width: 100%; }
+        .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        
+        h3 { font-size: 14px; margin-bottom: 15px; color: #444; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
+        label { font-size: 11px; font-weight: 700; color: #888; display: block; margin-top: 10px; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; }
+        
+        .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        
+        /* Control Aquarium Style */
+        .aq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .aq-card { background: #f9f9f9; padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #eee; }
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; margin-top: 10px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(26px); }
 
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
-        .card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        
-        h3 { font-size: 14px; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px; border-left: 4px solid var(--accent); padding-left: 10px; }
-        
-        /* Item List Style */
-        .item { background: #f8fafc; padding: 15px; border-radius: 16px; border: 1px solid #eff6ff; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .info b { font-size: 13px; display: block; color: #1e293b; text-transform: uppercase; }
-        .info small { font-size: 11px; color: #64748b; display: block; margin-top: 2px; }
-        
-        .badge { padding: 5px 12px; border-radius: 9px; font-size: 10px; font-weight: 800; color: white; text-transform: uppercase; }
-        .stars { color: var(--accent); font-size: 12px; letter-spacing: 2px; }
-
-        /* Form Style */
-        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 13px; outline: none; margin-top: 5px; }
-        label { font-size: 11px; font-weight: 700; color: #64748b; }
-
+        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .arabic-text { font-family: 'Amiri', serif; font-size: 20px; text-align: right; direction: rtl; color: var(--primary); }
         .hidden { display: none !important; }
-        .empty { text-align: center; padding: 40px; color: #94a3b8; font-size: 12px; }
     </style>
-
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-<header>
-    <h2>E-SANTRI ADMIN PANEL</h2>
-</header>
-
-<div class="nav-scroller">
-    <button class="nav-btn active" onclick="showTab('tab-absen', this)"><i class="fas fa-user-check"></i> ABSENSI</button>
-    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)"><i class="fas fa-book-quran"></i> TAHFIDZ</button>
-    <button class="nav-btn" onclick="showTab('tab-budaya', this)"><i class="fas fa-star"></i> BUDAYA</button>
-    <button class="nav-btn" onclick="showTab('tab-aduan', this)"><i class="fas fa-bullhorn"></i> PENGADUAN</button>
+<div class="sidebar">
+    <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absen & Guru</button>
+    <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
+    <button class="nav-btn" onclick="showTab('tab-doa', this)">Doa & Mahfuzat</button>
+    <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
+    <button class="nav-btn" onclick="showTab('tab-jadwal', this)">Jadwal</button>
 </div>
 
-<div class="container">
-    
-    <div id="tab-absen" class="tab-content">
+<div class="content">
+
+    <div id="tab-monitoring" class="tab-content">
         <div class="card">
-            <h3>Monitoring Absensi Santri</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <div>
-                    <label>Pilih Tanggal</label>
-                    <input type="date" id="mon-tgl" onchange="loadAbsen()">
-                </div>
-                <div>
-                    <label>Pilih Kelas</label>
-                    <select id="mon-kls" onchange="loadAbsen()">
-                        <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
-                        <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
-                        <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
-                    </select>
-                </div>
-            </div>
+            <h3>Monitoring Guru Input Budaya</h3>
+            <div id="list-guru-input"></div>
         </div>
-        <div id="res-absen"></div>
+        <div class="card">
+            <h3>Absensi Santri Hari Ini</h3>
+            <div id="list-absensi"></div>
+        </div>
     </div>
 
     <div id="tab-tahfidz" class="tab-content hidden">
         <div class="card">
             <h3>Setoran Tahfidz Terbaru</h3>
-            <div id="res-tahfidz"></div>
+            <div id="list-tahfidz"></div>
         </div>
     </div>
 
-    <div id="tab-budaya" class="tab-content hidden">
+    <div id="tab-doa" class="tab-content hidden">
         <div class="card">
-            <h3>Karakter & Budaya (Bintang)</h3>
-            <div id="res-budaya"></div>
+            <h3>Update Mahfuzat</h3>
+            <input type="text" id="m-arab" placeholder="Teks Arab..." style="text-align:right">
+            <textarea id="m-indo" rows="2" placeholder="Arti..."></textarea>
+            <button class="btn-action" onclick="saveMahfuzat()">UPDATE MAHFUZAT</button>
+        </div>
+        <div class="card">
+            <h3>Tambah Doa Harian</h3>
+            <input type="text" id="d-judul" placeholder="Judul Doa">
+            <input type="text" id="d-arab" placeholder="Teks Arab..." style="text-align:right">
+            <textarea id="d-arti" rows="2" placeholder="Arti..."></textarea>
+            <button class="btn-action" onclick="saveDoa()" style="background:#2ecc71">SIMPAN DOA</button>
         </div>
     </div>
 
-    <div id="tab-aduan" class="tab-content hidden">
+    <div id="tab-aquarium" class="tab-content hidden">
         <div class="card">
-            <h3>Laporan Masuk</h3>
-            <div id="res-aduan"></div>
+            <h3>Smart Aquarium Control</h3>
+            <p style="font-size: 11px; color:#666">Kontrol perangkat IoT Aquarium dari panel ini.</p>
+            <div class="aq-grid">
+                <div class="aq-card">
+                    <i class="fas fa-lightbulb" style="color:#fbc02d"></i><br>
+                    <small>Lampu</small><br>
+                    <label class="switch">
+                        <input type="checkbox" id="sw-lampu" onchange="toggleAQ('lampu', this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="aq-card">
+                    <i class="fas fa-water" style="color:#3498db"></i><br>
+                    <small>Pompa</small><br>
+                    <label class="switch">
+                        <input type="checkbox" id="sw-pompa" onchange="toggleAQ('pompa', this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-jadwal" class="tab-content hidden">
+        <div class="card">
+            <h3>Link Google Sheets</h3>
+            <a href="https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/edit" target="_blank" class="btn-excel">Edit Jadwal Pelajaran</a>
+            <a href="https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/edit" target="_blank" class="btn-excel" style="background:#133b2c;">Edit Jadwal Guru</a>
         </div>
     </div>
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
 <script>
-    // Konfigurasi Database
     const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Set Default Tanggal
-    document.getElementById('mon-tgl').valueAsDate = new Date();
-
     function showTab(id, btn) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
-        
+        if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
         if(id === 'tab-tahfidz') loadTahfidz();
-        if(id === 'tab-budaya') loadBudaya();
-        if(id === 'tab-aduan') loadAduan();
+        if(id === 'tab-aquarium') loadStatusAQ();
     }
 
-    // 1. MONITOR ABSENSI (v12)
-    function loadAbsen() {
-        const t = document.getElementById('mon-tgl').value;
-        const k = document.getElementById('mon-kls').value;
-        const res = document.getElementById('res-absen');
-        if(!t || !k) return;
-        const [y, m, d] = t.split("-");
+    // --- LOGIKA AQUARIUM ---
+    function toggleAQ(device, status) {
+        db.ref('aquarium/' + device).set(status ? 1 : 0);
+    }
+    function loadStatusAQ() {
+        db.ref('aquarium').on('value', snap => {
+            const d = snap.val() || {};
+            document.getElementById('sw-lampu').checked = d.lampu == 1;
+            document.getElementById('sw-pompa').checked = d.pompa == 1;
+        });
+    }
 
-        db.ref(`absensi/${y}/${parseInt(m)}/${parseInt(d)}/${k}`).on('value', snap => {
-            res.innerHTML = "";
-            if(!snap.exists()) return res.innerHTML = "<div class='card empty'>Belum ada data absen masuk.</div>";
-            
+    // --- LOGIKA DOA & MAHFUZAT ---
+    function saveMahfuzat() {
+        const arab = document.getElementById('m-arab').value;
+        const indo = document.getElementById('m-indo').value;
+        db.ref('fitur/mahfuzat').set({ arab, indo }).then(() => alert("Mahfuzat Update!"));
+    }
+    function saveDoa() {
+        const judul = document.getElementById('d-judul').value;
+        const arab = document.getElementById('d-arab').value;
+        const arti = document.getElementById('d-arti').value;
+        db.ref('doa_harian').push({ judul, arab, arti }).then(() => alert("Doa Tersimpan!"));
+    }
+
+    // --- LOGIKA MONITOR GURU ---
+    function loadMonitorGuru() {
+        const list = document.getElementById('list-guru-input');
+        const now = new Date();
+        const path = `budaya/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}`;
+        db.ref(path).on('value', snap => {
+            list.innerHTML = "";
+            let guruSet = new Set();
+            snap.forEach(kelas => {
+                kelas.forEach(santri => {
+                    const d = santri.val();
+                    if(d.guru) guruSet.add(`${d.guru} (${d.kelas})`);
+                });
+            });
+            if(guruSet.size === 0) list.innerHTML = "<small>Belum ada input.</small>";
+            guruSet.forEach(g => {
+                list.innerHTML += `<div class="item-row"><b>${g}</b> <span class="badge" style="background:#2ecc71">AKTIF</span></div>`;
+            });
+        });
+    }
+
+    // --- LOGIKA ABSENSI ---
+    function loadAbsensi() {
+        const list = document.getElementById('list-absensi');
+        const tgl = new Date().toISOString().split('T')[0];
+        db.ref('laporan_budaya/' + tgl).on('value', snap => {
+            list.innerHTML = "";
+            if(!snap.exists()) return list.innerHTML = "<small>Data kosong.</small>";
             snap.forEach(s => {
                 const v = s.val();
-                let color = v.status === 'H' ? '#10b981' : '#ef4444';
-                res.innerHTML += `
-                <div class="item">
-                    <div class="info"><b>${v.nama}</b><small>NIPD: ${s.key}</small></div>
-                    <span class="badge" style="background:${color}">${v.status}</span>
-                </div>`;
+                list.innerHTML += `<div class="item-row"><b>${v.nama || 'Santri'}</b><small>Hadir</small></div>`;
             });
         });
     }
 
-    // 2. MONITOR TAHFIDZ (v12)
+    // --- LOGIKA TAHFIDZ ---
     function loadTahfidz() {
-        const res = document.getElementById('res-tahfidz');
-        const now = new Date();
-        const path = `${now.getFullYear()}/${now.getMonth() + 1}`;
-
-        db.ref(`tahfidz/${path}`).on('value', snap => {
-            res.innerHTML = "";
-            if(!snap.exists()) return res.innerHTML = "<div class='empty'>Belum ada setoran bulan ini.</div>";
-            
-            snap.forEach(nipd => {
-                nipd.forEach(log => {
-                    const d = log.val();
-                    res.innerHTML += `
-                    <div class="item">
-                        <div class="info">
-                            <b>${d.nama} (${d.kelas})</b>
-                            <small>${d.materi} | Ayat: ${d.ayat}</small>
-                        </div>
-                        <span class="badge" style="background:var(--primary)">${d.status}</span>
-                    </div>`;
+        const list = document.getElementById('list-tahfidz');
+        db.ref('tahfidz').limitToLast(10).on('value', snap => {
+            list.innerHTML = "";
+            snap.forEach(user => {
+                user.forEach(s => {
+                    const v = s.val();
+                    list.innerHTML += `<div class="item-row"><b>${v.nama}</b><small>${v.surah}</small></div>`;
                 });
             });
         });
     }
 
-    // 3. MONITOR BUDAYA (v8)
-    function loadBudaya() {
-        const res = document.getElementById('res-budaya');
-        const bln = new Date().getMonth() + 1;
-
-        db.ref(`budaya/2026/${bln}`).on('value', snap => {
-            res.innerHTML = "";
-            if(!snap.exists()) return res.innerHTML = "<div class='empty'>Belum ada penilaian karakter.</div>";
-            
-            snap.forEach(nipd => {
-                nipd.forEach(log => {
-                    const d = log.val();
-                    const rata = ((parseInt(d.T)+parseInt(d.D)+parseInt(d.TJ)+parseInt(d.J)+parseInt(d.R))/5).toFixed(1);
-                    res.innerHTML += `
-                    <div class="item">
-                        <div class="info"><b>${d.nama}</b><small>Guru: ${d.guru} | Kelas: ${d.kelas}</small></div>
-                        <div style="text-align:right">
-                            <div class="stars">${"★".repeat(Math.round(rata))}</div>
-                            <small>Skor: ${rata}</small>
-                        </div>
-                    </div>`;
-                });
-            });
-        });
-    }
-
-    // 4. MONITOR PENGADUAN
-    function loadAduan() {
-        const res = document.getElementById('res-aduan');
-        db.ref('pengaduan').on('value', snap => {
-            res.innerHTML = "";
-            if(!snap.exists()) return res.innerHTML = "<div class='empty'>Laporan pengaduan kosong.</div>";
-            
-            snap.forEach(p => {
-                const d = p.val();
-                res.innerHTML += `
-                <div class="item" style="flex-direction:column; align-items:flex-start;">
-                    <div style="width:100%; display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <b>${d.nama}</b>
-                        <small>${d.tanggal || ''}</small>
-                    </div>
-                    <p style="font-size:12px; color:#475569; line-height:1.5;">${d.pesan}</p>
-                </div>`;
-            });
-        });
-    }
-
-    // Jalankan Load Absen Pertama Kali
-    loadAbsen();
+    // Load awal
+    loadMonitorGuru(); loadAbsensi();
 </script>
 </body>
 </html>
