@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Koreksi Guru | E-Santri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6c5ce7; --bg: #f8fafc; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); padding: 15px; color: #2d3436; }
+        .header { background: var(--primary); color: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2); }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 15px; border: 1px solid #f1f5f9; }
+        label { font-size: 11px; font-weight: 800; color: #94a3b8; display: block; margin-bottom: 5px; }
+        select, input { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #eee; margin-bottom: 15px; outline: none; }
+        .ans-box { background: #f1f5f9; padding: 12px; border-radius: 12px; font-size: 13px; margin: 10px 0; border-left: 4px solid var(--primary); line-height: 1.6; }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 10px; color: white; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2 style="font-size: 18px;">Halaman Koreksi Guru</h2>
+    <p style="font-size: 11px; opacity: 0.8;">Khusus penilaian soal Essay santri</p>
+</div>
+
+<div class="card">
+    <label>Pilih Kelas</label>
+    <select id="pilih-kelas" onchange="loadHasil()">
+        <option value="">-- Pilih Kelas --</option>
+        <option value="7A">7A</option><option value="7B">7B</option>
+        <option value="8A">8A</option><option value="9A">9A</option>
+    </select>
+
+    <label>Mata Pelajaran</label>
+    <input type="text" id="pilih-mapel" placeholder="Ketik Mapel (Contoh: Fiqih)" onkeyup="loadHasil()">
+</div>
+
+<div id="list-koreksi"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function loadHasil() {
+        const kls = document.getElementById('pilih-kelas').value;
+        const mpl = document.getElementById('pilih-mapel').value;
+        const res = document.getElementById('list-koreksi');
+        
+        if(!kls || !mpl) return res.innerHTML = "";
+
+        db.ref(`hasil_ujian/${kls}`).on('value', snap => {
+            res.innerHTML = "";
+            let adaData = false;
+            
+            snap.forEach(s => {
+                const v = s.val();
+                if(v.mapel && v.mapel.toLowerCase() === mpl.toLowerCase()) {
+                    adaData = true;
+                    const key = s.key;
+                    const sudahDinilai = v.nilai_essay !== undefined;
+                    
+                    res.innerHTML += `
+                    <div class="card" style="border-left: 5px solid ${sudahDinilai ? '#2ecc71' : '#ff7675'}">
+                        <span class="badge" style="background:${sudahDinilai ? '#2ecc71' : '#ff7675'}">
+                            ${sudahDinilai ? 'SUDAH DINILAI' : 'BELUM DINILAI'}
+                        </span>
+                        <div style="font-weight:800; margin-bottom:10px;">${v.nama}</div>
+                        
+                        <label>JAWABAN ESSAY:</label>
+                        <div class="ans-box">${v.essay ? v.essay.join('<br><br>') : 'Tidak ada jawaban.'}</div>
+                        
+                        <label>BERI NILAI (0-100)</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="number" id="n-${key}" value="${v.nilai_essay || ''}" placeholder="0" style="margin:0; width:80px">
+                            <button class="btn-save" onclick="simpan('${kls}', '${key}')">Simpan Nilai</button>
+                        </div>
+                    </div>`;
+                }
+            });
+            if(!adaData) res.innerHTML = "<center><small style='color:#999'>Menunggu input Mapel yang sesuai...</small></center>";
+        });
+    }
+
+    function simpan(kls, id) {
+        const n = document.getElementById('n-'+id).value;
+        if(n === "") return alert("Masukkan nilai dulu!");
+        db.ref(`hasil_ujian/${kls}/${id}/nilai_essay`).set(parseInt(n))
+          .then(() => alert("Nilai " + n + " tersimpan!"));
+    }
+</script>
+</body>
+</html>
