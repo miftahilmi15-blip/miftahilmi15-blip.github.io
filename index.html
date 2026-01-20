@@ -59,8 +59,17 @@
     margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
     box-shadow: 0 15px 35px rgba(31,111,81,0.2);
   }
-  .fire-icon { font-size: 40px; filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); }
-  .fire-off { filter: grayscale(1) opacity(0.3) !important; transform: scale(0.8); }
+  /* ANIMASI API */
+  .fire-icon { 
+    font-size: 40px; 
+    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8));
+    animation: flicker 1.5s infinite alternate;
+  }
+  @keyframes flicker {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px orange); }
+    100% { transform: scale(1.1); filter: drop-shadow(0 0 15px red); }
+  }
+  .fire-off { filter: grayscale(1) opacity(0.3) !important; transform: scale(0.8); animation: none; }
 
   .mahfuzat-box { 
     background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
@@ -259,17 +268,32 @@
         document.getElementById("uEmail").innerText = user.email;
         if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
 
-        // CEK ADMIN (Memunculkan fitur admin kembali)
+        // CEK ADMIN
         if (user.email === "miftahilmi15@gmail.com") {
             if(adminMenu) adminMenu.classList.remove("hidden");
         }
 
-        // AMBIL MAHFUZAT DARI DATABASE
+        // --- UPDATE STREAK (BIAR GAK MEMUAT) ---
+        db.ref('users/' + user.uid + '/streak').on('value', snap => {
+            const streak = snap.val() || 0;
+            const streakText = document.getElementById('streak-text');
+            const fire = document.getElementById('fire-api');
+            
+            if(streak > 0) {
+                streakText.innerText = streak + " Hari Istiqomah";
+                fire.classList.remove('fire-off');
+            } else {
+                streakText.innerText = "Ayo Mulai Mengaji!";
+                fire.classList.add('fire-off');
+            }
+        });
+
+        // --- UPDATE MAHFUZAT (BIAR MUNCUL) ---
         db.ref('fitur/mahfuzat').on('value', snap => {
             const data = snap.val();
             if(data) {
-                document.getElementById('runArab').innerText = data.arab;
-                document.getElementById('runIndo').innerText = " — " + data.indo;
+                document.getElementById('runArab').innerText = data.arab || "مَنْ جَدَّ وَجَدَ";
+                document.getElementById('runIndo').innerText = " — " + (data.indo || "Barangsiapa bersungguh-sungguh dapatlah ia");
             }
         });
     } else {
@@ -280,8 +304,7 @@
     }
   });
 
-  // 5. FUNGSI AI USTADZ (Mode Offline/Smart Response)
-  // Saya buatkan ini supaya PASTI JALAN tanpa kena blokir Google lagi.
+  // 5. FUNGSI AI USTADZ
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
@@ -295,7 +318,6 @@
     box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // Jawaban otomatis Ustadz
     const ustadzDB = {
         "salam": "Wa'alaikumussalam warahmatullah. Ahlan wa Sahlan, ada yang bisa ustadz bantu?",
         "ujian": "Ujian adalah cara untuk naik tingkat. Jangan lupa baca Bismillah dan teliti ya!",
@@ -304,7 +326,6 @@
         "default": "Masya Allah, pertanyaan yang menarik. Fokuslah belajar dan beribadah, semoga Allah mudahkan segala urusanmu."
     };
 
-    // Simulasi Berpikir
     setTimeout(() => {
         let respon = ustadzDB["default"];
         if (text.includes("assalamu")) respon = ustadzDB["salam"];
