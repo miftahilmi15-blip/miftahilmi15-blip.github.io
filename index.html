@@ -351,51 +351,52 @@
     }
   });
 
-  // 6. AI USTADZ (REAL AI - GEMINI 1.5 FLASH)
-  // Gunakan import ESM agar lebih aman dan modern
+// 6. SETUP REAL AI (GABUNG DENGAN FIREBASE KEY)
+  // Kita pakai import agar tidak bentrok
   import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-  // MASUKKAN API KEY BOS DI SINI (Dapatkan di aistudio.google.com)
-  const API_KEY_GEMINI = "AIzaSyCejl9Dr_4mqzjnTUU4lG0afMdAyXJe8tY"; 
-  const genAI = new GoogleGenerativeAI(API_KEY_GEMINI);
+  // Kita pakai API Key yang sama dengan Firebase Bos
+  const genAI = new GoogleGenerativeAI(firebaseConfig.apiKey);
 
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
-    const promptUser = input.value.trim();
-    if(!promptUser) return;
+    const msg = input.value.trim();
+    
+    if(!msg) return;
 
-    // Tampilkan pesan santri
-    box.innerHTML += `<div class="msg-user">${promptUser}</div>`;
+    // Munculkan pesan User
+    box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
     
-    // Tampilkan loading
-    const loadId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Sedang berpikir...</div>`;
+    // Loading State
+    const loadId = "ai-" + Date.now();
+    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
     try {
+        // Panggil Model Gemini
         const model = genAI.getGenerativeModel({ 
             model: "gemini-1.5-flash",
-            // INI PENGATURAN SUPAYA AI TIDAK BICARA ANEH-ANEH
-            systemInstruction: "Kamu adalah 'Ustadz Digital' di aplikasi E-Santri. Jawablah pertanyaan santri dengan bijak, Islami, singkat, dan memotivasi. Gunakan panggilan 'Nak' atau 'Santriku' agar terasa akrab."
+            systemInstruction: "Kamu adalah asisten cerdas E-Santri. Jawablah dengan singkat, ramah, dan islami. Gunakan panggilan Nak."
         });
 
-        const result = await model.generateContent(promptUser);
+        const result = await model.generateContent(msg);
         const response = await result.response;
         const text = response.text();
 
-        // Masukkan jawaban AI
+        // Tampilkan Jawaban
         document.getElementById(loadId).innerText = text;
-    } catch (error) {
-        console.error(error);
-        document.getElementById(loadId).innerText = "Maaf Nak, Ustadz sedang sibuk. Coba tanya lagi nanti ya.";
+    } catch (err) {
+        console.error(err);
+        document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang istirahat. Tanya lagi nanti ya.";
+        // Jika error "API_KEY_INVALID", artinya Bos belum klik ENABLE di Google Cloud tadi
     } finally {
         box.scrollTop = box.scrollHeight;
     }
   }
 
-  // Supaya fungsi bisa dipanggil dari HTML (karena kita pakai type="module")
+  // 7. EXPOSE KE WINDOW (Agar tombol onclick jalan)
   window.kirimKeAI = kirimKeAI;
   window.toggleChat = toggleChat;
 </script>
