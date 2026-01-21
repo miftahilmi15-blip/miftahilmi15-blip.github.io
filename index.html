@@ -295,7 +295,9 @@
 
 <script type="module">
   import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-  const genAI = new GoogleGenerativeAI(firebaseConfig.apiKey);
+  
+  // Ambil API Key langsung dari config
+  const genAI = new GoogleGenerativeAI("AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo");
 
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
@@ -306,19 +308,27 @@
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
     const loadId = "ai-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Mengetik...</div>`;
+    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang berpikir...</div>`;
     box.scrollTop = box.scrollHeight;
 
     try {
+        // Gunakan model flash terbaru
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash",
-            systemInstruction: "Kamu adalah asisten santri yang bijak. Jawab singkat dan Islami. Panggil 'Nak'."
+            model: "gemini-1.5-flash"
         });
-        const result = await model.generateContent(msg);
+
+        // Tambahkan instruksi langsung di sini agar lebih paten
+        const prompt = "Kamu adalah Ustadz bijak untuk aplikasi E-Santri. Jawablah dengan singkat, ramah, dan islami. Gunakan panggilan Nak. Pertanyaan: " + msg;
+
+        const result = await model.generateContent(prompt);
         const response = await result.response;
-        document.getElementById(loadId).innerText = response.text();
+        const text = response.text();
+        
+        document.getElementById(loadId).innerText = text;
     } catch (err) {
-        document.getElementById(loadId).innerText = "Ustadz sedang istirahat, Nak.";
+        console.error("Error Detail:", err);
+        // Tampilkan error aslinya agar kita tahu kenapa dia istirahat
+        document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang ada kendala: " + err.message;
     } finally {
         box.scrollTop = box.scrollHeight;
     }
