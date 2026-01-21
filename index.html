@@ -351,29 +351,53 @@
     }
   });
 
-  // 6. AI USTADZ
+  // 6. AI USTADZ (REAL AI - GEMINI 1.5 FLASH)
+  // Gunakan import ESM agar lebih aman dan modern
+  import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+  // MASUKKAN API KEY BOS DI SINI (Dapatkan di aistudio.google.com)
+  const API_KEY_GEMINI = "AIzaSyCejl9Dr_4mqzjnTUU4lG0afMdAyXJe8tY"; 
+  const genAI = new GoogleGenerativeAI(API_KEY_GEMINI);
+
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
-    const rawText = input.value.trim();
-    if(!rawText) return;
+    const promptUser = input.value.trim();
+    if(!promptUser) return;
 
-    box.innerHTML += `<div class="msg-user">${rawText}</div>`;
+    // Tampilkan pesan santri
+    box.innerHTML += `<div class="msg-user">${promptUser}</div>`;
     input.value = "";
+    
+    // Tampilkan loading
     const loadId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}">...</div>`;
+    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Sedang berpikir...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    setTimeout(() => {
-        const text = rawText.toLowerCase();
-        let respon = "Masya Allah, pertanyaan yang bagus. Teruslah belajar ya nak.";
-        if (text.includes("assalamu")) respon = "Wa'alaikumussalam warahmatullah.";
-        else if (text.includes("sholat")) respon = "Sholat adalah tiang agama, jangan sampai ditinggalkan ya.";
-        
-        document.getElementById(loadId).innerText = respon;
+    try {
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-1.5-flash",
+            // INI PENGATURAN SUPAYA AI TIDAK BICARA ANEH-ANEH
+            systemInstruction: "Kamu adalah 'Ustadz Digital' di aplikasi E-Santri. Jawablah pertanyaan santri dengan bijak, Islami, singkat, dan memotivasi. Gunakan panggilan 'Nak' atau 'Santriku' agar terasa akrab."
+        });
+
+        const result = await model.generateContent(promptUser);
+        const response = await result.response;
+        const text = response.text();
+
+        // Masukkan jawaban AI
+        document.getElementById(loadId).innerText = text;
+    } catch (error) {
+        console.error(error);
+        document.getElementById(loadId).innerText = "Maaf Nak, Ustadz sedang sibuk. Coba tanya lagi nanti ya.";
+    } finally {
         box.scrollTop = box.scrollHeight;
-    }, 600);
+    }
   }
+
+  // Supaya fungsi bisa dipanggil dari HTML (karena kita pakai type="module")
+  window.kirimKeAI = kirimKeAI;
+  window.toggleChat = toggleChat;
 </script>
 </body>
 </html>
