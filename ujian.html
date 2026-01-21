@@ -14,62 +14,55 @@
         .logo { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -1px; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         .welcome-card { background: linear-gradient(135deg, #00b894, #00cec9); padding: 30px 20px; border-radius: 24px; color: white; margin-bottom: 25px; box-shadow: 0 20px 40px rgba(0,184,148,0.2); }
-        .welcome-card h1 { font-size: 24px; font-weight: 800; }
         .card { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; margin-bottom: 20px; }
         label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
-        input[type="text"], select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; transition: 0.3s; margin-bottom: 20px; }
-        input:focus { border-color: var(--primary); background: white; }
-        .exam-item { background: #fff; border: 2px solid #f1f5f9; padding: 18px; border-radius: 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; transition: 0.3s; cursor: pointer; }
-        .exam-item:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .exam-info b { display: block; font-size: 15px; color: #1e293b; }
-        .exam-info small { color: #64748b; font-size: 11px; }
-        .btn-play { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: none; }
-        #timer { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 25px; border-radius: 50px; font-weight: 800; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .soal-card { margin-bottom: 30px; animation: fadeInUp 0.5s ease; }
-        .soal-text { font-size: 16px; font-weight: 600; margin-bottom: 18px; color: #1e293b; display: block; line-height: 1.5; }
-        .option { display: block; position: relative; padding: 15px 15px 15px 50px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; font-size: 14px; }
-        .option input { position: absolute; opacity: 0; }
-        .option .checkmark { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); height: 20px; width: 20px; background-color: white; border: 2px solid #cbd5e1; border-radius: 50%; }
-        .option:hover { border-color: var(--primary); }
-        .option input:checked ~ .checkmark { background-color: var(--primary); border-color: var(--primary); }
-        .btn-submit { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,184,148,0.3); }
+        input[type="text"], select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; margin-bottom: 20px; }
+        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; }
+        #timer { position: fixed; top: 80px; right: 20px; background: #1e293b; color: white; padding: 10px 20px; border-radius: 15px; font-weight: 800; z-index: 1000; font-size: 18px; }
+        .soal-card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #eee; }
+        .option { display: block; padding: 12px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
+        .option input { margin-right: 10px; }
         .hidden { display: none !important; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .status-off { text-align: center; padding: 20px; color: #e74c3c; font-weight: 700; }
     </style>
 </head>
 <body>
 
 <div class="header-top">
     <div class="logo">E-SANTRI <span style="color:#636e72">PRO</span></div>
-    <div id="user-display" style="font-size: 12px; font-weight: 600; color: #64748b;">Exam Center</div>
+    <div id="status-koneksi" style="font-size: 10px; color: green;">● Online</div>
 </div>
 
 <div class="container">
     <div id="login-screen">
         <div class="welcome-card">
-            <h1>Halo, Santri! 👋</h1>
-            <p style="opacity: 0.9; font-size: 13px;">Sudah siap untuk ujian hari ini? Tetap jujur dan fokus ya!</p>
+            <h1>Ujian Digital 👋</h1>
+            <p id="info-ujian-aktif">Mengecek ujian tersedia...</p>
         </div>
-        <div class="card">
+        
+        <div class="card" id="form-masuk">
             <label>Pilih Kelas</label>
-            <select id="user-kelas" onchange="muatJadwal()">
-                <option value="">-- Klik untuk Pilih --</option>
-                <option value="7A">Kelas 7A</option><option value="7B">Kelas 7B</option>
-                <option value="8A">Kelas 8A</option><option value="9A">Kelas 9A</option>
+            <select id="user-kelas">
+                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
             </select>
             <label>Nama Lengkap</label>
-            <input type="text" id="user-nama" placeholder="Masukkan nama kamu...">
+            <input type="text" id="user-nama" placeholder="Nama sesuai absen">
+            <label>Token Ujian (Dapatkan dari Admin)</label>
+            <input type="text" id="user-token" placeholder="Masukkan 6 digit token">
+            <button class="btn-start" onclick="cekToken()">MULAI UJIAN SEKARANG</button>
         </div>
-        <div id="area-jadwal" class="hidden">
-            <label style="margin-bottom: 15px;">Ujian Yang Tersedia</label>
-            <div id="list-ujian"></div>
+        <div id="pesan-off" class="card hidden status-off">
+            Mohon maaf, saat ini tidak ada ujian yang sedang diaktifkan oleh Admin.
         </div>
     </div>
 
     <div id="exam-screen" class="hidden">
-        <div id="timer" class="hidden"><i class="far fa-clock"></i> <span id="time-left">00:00</span></div>
-        <div class="card" id="konten-soal"></div>
-        <button class="btn-submit" onclick="selesaiUjian()">SUBMIT JAWABAN <i class="fas fa-paper-plane" style="margin-left:8px"></i></button>
+        <div id="timer"><i class="far fa-clock"></i> <span id="time-left">00:00</span></div>
+        <div id="judul-ujian" style="font-weight: 800; margin-bottom: 15px;"></div>
+        <div id="konten-soal"></div>
+        <button class="btn-start" onclick="selesaiUjian()" style="background: var(--accent); margin-top: 20px;">KIRIM SEMUA JAWABAN</button>
     </div>
 </div>
 
@@ -81,101 +74,131 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let currentKuis = null;
+    let dataUjian = null;
+    let bankSoal = [];
     let timer;
 
-    function muatJadwal() {
-        const kls = document.getElementById('user-kelas').value;
-        const area = document.getElementById('area-jadwal');
-        const list = document.getElementById('list-ujian');
-        if(!kls) return area.classList.add('hidden');
-        db.ref(`jadwal_ujian/${kls}`).on('value', snap => {
-            area.classList.remove('hidden');
-            list.innerHTML = "";
-            if(!snap.exists()) return list.innerHTML = "<center><small>Belum ada jadwal.</small></center>";
-            snap.forEach(child => {
-                const u = child.val();
-                const isReady = new Date().getTime() >= new Date(u.jadwal).getTime();
-                list.innerHTML += `
-                    <div class="exam-item" onclick="${isReady ? `mulai('${child.key}','${u.mapel}',${u.durasi})` : 'alert(\'Belum waktunya, Bos!\')'}">
-                        <div class="exam-info">
-                            <b>${u.mapel}</b>
-                            <small>${isReady ? 'SUDAH TERBUKA' : 'Terbuka: '+u.jadwal}</small>
-                        </div>
-                        <div class="btn-play" style="opacity:${isReady?1:0.3}"><i class="fas fa-play"></i></div>
-                    </div>`;
-            });
+    // 1. CEK STATUS UJIAN DARI ADMIN
+    db.ref('pengaturan_ujian').on('value', snap => {
+        dataUjian = snap.val();
+        if (dataUjian && dataUjian.is_active) {
+            document.getElementById('info-ujian-aktif').innerText = `Ujian Aktif: ${dataUjian.mapel}`;
+            document.getElementById('form-masuk').classList.remove('hidden');
+            document.getElementById('pesan-off').classList.add('hidden');
+        } else {
+            document.getElementById('info-ujian-aktif').innerText = `Ujian Belum Tersedia`;
+            document.getElementById('form-masuk').classList.add('hidden');
+            document.getElementById('pesan-off').classList.remove('hidden');
+        }
+    });
+
+    // 2. VERIFIKASI TOKEN & KELAS
+    function cekToken() {
+        const nama = document.getElementById('user-nama').value;
+        const token = document.getElementById('user-token').value;
+        const kelas = document.getElementById('user-kelas').value;
+
+        if (!nama || !token) return alert("Nama dan Token wajib diisi!");
+        
+        if (token !== dataUjian.token) {
+            return alert("Token Salah! Silakan tanya ke pengawas.");
+        }
+
+        // Ambil soal dari Bank Soal berdasarkan Kelas & Mapel
+        const klsInduk = kelas.substring(0,1); // Ambil angka depannya saja (7, 8, atau 9)
+        db.ref(`bank_soal/${klsInduk}/${dataUjian.mapel}`).once('value', snap => {
+            if (!snap.exists()) return alert("Soal belum diupload Admin untuk kelas ini!");
+            
+            bankSoal = [];
+            snap.forEach(s => { bankSoal.push({ id: s.key, ...s.val() }); });
+            startExam();
         });
     }
 
-    function mulai(id, mapel, durasi) {
-        const nama = document.getElementById('user-nama').value;
-        if(!nama) return alert("Isi nama dulu!");
-        if(!confirm("Mulai " + mapel + "? Waktu akan berjalan!")) return;
+    // 3. MULAI UJIAN
+    function startExam() {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('exam-screen').classList.remove('hidden');
+        document.getElementById('judul-ujian').innerText = `UJIAN: ${dataUjian.mapel}`;
 
-        db.ref(`jadwal_ujian/${document.getElementById('user-kelas').value}/${id}/soal`).once('value', snap => {
-            currentKuis = snap.val();
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('exam-screen').classList.remove('hidden');
-            document.getElementById('timer').classList.remove('hidden');
-            const area = document.getElementById('konten-soal');
-            area.innerHTML = `<h2 style="margin-bottom:20px">${mapel}</h2>`;
-            
-            if(currentKuis.pg) {
-                currentKuis.pg.forEach((s, i) => {
-                    area.innerHTML += `
-                    <div class="soal-card">
-                        <span class="soal-text">${i+1}. ${s.t}</span>
-                        <label class="option"><input type="radio" name="pg${i}" value="A"><span class="checkmark"></span><span>${s.a}</span></label>
-                        <label class="option"><input type="radio" name="pg${i}" value="B"><span class="checkmark"></span><span>${s.b}</span></label>
-                        <label class="option"><input type="radio" name="pg${i}" value="C"><span class="checkmark"></span><span>${s.c}</span></label>
-                        <label class="option"><input type="radio" name="pg${i}" value="D"><span class="checkmark"></span><span>${s.d}</span></label>
-                    </div>`;
+        const area = document.getElementById('konten-soal');
+        area.innerHTML = "";
+
+        bankSoal.forEach((s, i) => {
+            let opsiHtml = "";
+            if (s.opsi) {
+                const arrOpsi = s.opsi.split(',');
+                const huruf = ['A', 'B', 'C', 'D'];
+                arrOpsi.forEach((opt, idx) => {
+                    opsiHtml += `
+                        <label class="option">
+                            <input type="radio" name="soal${i}" value="${huruf[idx]}"> 
+                            <b>${huruf[idx]}.</b> ${opt.trim()}
+                        </label>`;
                 });
-            }
-            if(currentKuis.essay) {
-                area.innerHTML += `<h3 style="margin:20px 0; color:var(--accent);">Bagian Essay</h3>`;
-                currentKuis.essay.forEach((s, i) => {
-                    const teksSoal = s.t ? s.t : s; 
-                    area.innerHTML += `<div class="soal-card"><span class="soal-text">${i+1}. ${teksSoal}</span><textarea id="es${i}" rows="3" placeholder="Jawaban kamu..."></textarea></div>`;
-                });
+            } else {
+                opsiHtml = `<textarea id="essay${i}" rows="3" placeholder="Tulis jawaban essay..."></textarea>`;
             }
 
-            let sisa = durasi * 60;
-            timer = setInterval(() => {
-                let m = Math.floor(sisa/60); let s = sisa%60;
-                document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
-                if(sisa <= 0) { clearInterval(timer); selesaiUjian(true); }
-                sisa--;
-            }, 1000);
+            area.innerHTML += `
+                <div class="soal-card">
+                    <p style="font-weight:800; margin-bottom:10px;">Soal ${i+1}</p>
+                    <p style="margin-bottom:15px;">${s.soal}</p>
+                    ${opsiHtml}
+                </div>`;
         });
-    } // Penutup fungsi mulai (Tadi Kakak kurang ini)
 
-    function selesaiUjian(auto=false) {
-        if(!auto && !confirm("Kirim jawaban sekarang?")) return;
+        startTimer(dataUjian.durasi);
+    }
+
+    // 4. LOGIKA TIMER
+    function startTimer(menit) {
+        let sisa = menit * 60;
+        timer = setInterval(() => {
+            let m = Math.floor(sisa / 60);
+            let s = sisa % 60;
+            document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' + s : s}`;
+            if (sisa <= 0) {
+                clearInterval(timer);
+                alert("Waktu Habis! Jawaban akan dikirim otomatis.");
+                selesaiUjian(true);
+            }
+            sisa--;
+        }, 1000);
+    }
+
+    // 5. SELESAI & KIRIM
+    function selesaiUjian(isAuto = false) {
+        if (!isAuto && !confirm("Yakin ingin mengumpulkan?")) return;
         clearInterval(timer);
-        const kelas = document.getElementById('user-kelas').value;
-        const res = { 
-            nama: document.getElementById('user-nama').value, 
-            nilai_pg: 0, 
-            essay: [], 
-            mapel: document.querySelector('h2') ? document.querySelector('h2').innerText : ""
-        };
-        
-        let benar = 0;
-        if(currentKuis.pg) {
-            currentKuis.pg.forEach((s, i) => {
-                const r = document.querySelector(`input[name="pg${i}"]:checked`);
-                if(r && r.value === s.k) benar++;
-            });
-            res.nilai_pg = Math.round((benar/currentKuis.pg.length)*100);
-        }
-        if(currentKuis.essay) {
-            currentKuis.essay.forEach((s, i) => res.essay.push(document.getElementById('es'+i).value));
-        }
 
-        db.ref(`hasil_ujian/${kelas}`).push(res).then(() => {
-            alert("Alhamdulillah! Jawaban berhasil terkirim.");
+        let benar = 0;
+        let totalPG = 0;
+        const kelas = document.getElementById('user-kelas').value;
+        const nama = document.getElementById('user-nama').value;
+
+        bankSoal.forEach((s, i) => {
+            if (s.opsi) { // Jika PG
+                totalPG++;
+                const jaw = document.querySelector(`input[name="soal${i}"]:checked`);
+                if (jaw && jaw.value.trim().toUpperCase() === s.kunci.trim().toUpperCase()) {
+                    benar++;
+                }
+            }
+        });
+
+        const nilaiFinal = totalPG > 0 ? Math.round((benar / totalPG) * 100) : 0;
+
+        const laporan = {
+            nama: nama,
+            mapel: dataUjian.mapel,
+            nilai_pg: nilaiFinal,
+            waktu_selesai: new Date().toLocaleString(),
+            status: "Selesai"
+        };
+
+        db.ref(`hasil_ujian/${kelas}`).push(laporan).then(() => {
+            alert(`Alhamdulillah, Ujian Selesai!\nNilai PG Kamu: ${nilaiFinal}`);
             location.reload();
         });
     }
