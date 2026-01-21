@@ -151,8 +151,12 @@
             <input type="text" id="mh-ar" placeholder="Arab Mahfuzat"><textarea id="mh-it" placeholder="Arti Mahfuzat"></textarea>
             <button class="btn btn-primary" onclick="upMateri('mahfuzat')">UPDATE MAHFUZAT</button>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-            <input type="text" id="doa-ar" placeholder="Arab Doa Harian"><textarea id="doa-it" placeholder="Arti Doa"></textarea>
-            <button class="btn btn-blue" onclick="upMateri('doa')">UPDATE DOA</button>
+            
+            <span class="label-kecil">JUDUL DOA (CONTOH: DOA MAKAN)</span>
+            <input type="text" id="doa-judul" placeholder="Judul Doa">
+            <input type="text" id="doa-ar" placeholder="Arab Doa Harian">
+            <textarea id="doa-it" placeholder="Arti Doa"></textarea>
+            <button class="btn btn-blue" onclick="upMateri('doa')">TAMBAH DOA KE DAFTAR</button>
         </div>
     </div>
 
@@ -208,7 +212,6 @@
 
         if(!tgl || !mulai || !selesai) return alert("Mohon lengkapi Tanggal dan Jam!");
 
-        // Simpan per mapel agar tidak menimpa mapel lain
         await db.ref(`jadwal_ujian/${kls}/${mapel}`).set({
             tanggal: tgl,
             jam_mulai: mulai,
@@ -241,7 +244,6 @@
         document.getElementById('uj-bulk').value = "";
     }
 
-    // --- MONITORING & REKAP (TETAP SAMA) ---
     function loadRekapNilai() {
         const kls = document.getElementById('rek-kls').value;
         if(!kls) return;
@@ -277,13 +279,32 @@
         XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap-13")), `Rekap_Nilai_${kls}.xlsx`);
     }
 
+    // --- FUNGSI UPDATE MATERI (SINKRON KE DOA.HTML) ---
     function upMateri(type) {
         if(type === 'mahfuzat') {
-            db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value });
+            db.ref('konten/mahfuzat').set({ 
+                arab: document.getElementById('mh-ar').value, 
+                indo: document.getElementById('mh-it').value 
+            });
+            alert("Mahfuzat Terupdate!");
         } else {
-            db.ref('konten/doa').set({ arab: document.getElementById('doa-ar').value, indo: document.getElementById('doa-it').value });
+            // Push ke doa_harian supaya jadi daftar list
+            const judul = document.getElementById('doa-judul').value;
+            const arab = document.getElementById('doa-ar').value;
+            const indo = document.getElementById('doa-it').value;
+
+            if(!judul || !arab || !indo) return alert("Lengkapi judul, arab, dan arti!");
+
+            db.ref('konten/doa_harian').push({ 
+                judul: judul,
+                arab: arab, 
+                indo: indo 
+            });
+            alert("Doa Berhasil Ditambah ke Daftar!");
+            document.getElementById('doa-judul').value = "";
+            document.getElementById('doa-ar').value = "";
+            document.getElementById('doa-it').value = "";
         }
-        alert("Materi Terupdate!");
     }
 
     function kirimReward() {
