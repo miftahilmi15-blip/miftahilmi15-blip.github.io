@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Ujian Digital | E-Santri Pro</title>
+    <title>Exam Center | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
@@ -11,39 +11,34 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); line-height: 1.6; user-select: none; }
 
-        /* Header */
         .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header h1 { font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
+        .header h1 { font-size: 1.2rem; font-weight: 800; }
         
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
 
-        /* Card Login */
         .card { background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid #f1f5f9; }
         .status-badge { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
         .status-on { background: #dcfce7; color: #166534; }
         .status-off { background: #fee2e2; color: #991b1b; }
 
-        /* Input Style */
         label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 15px; }
-        input, select { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); background: white; }
+        input, select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; }
+        textarea { min-height: 120px; resize: none; border: 2px solid #e2e8f0; }
 
-        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; box-shadow: 0 10px 20px rgba(31, 111, 81, 0.2); }
+        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; }
 
-        /* Soal Section */
-        #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; font-size: 16px; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
-        .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; font-size: 14px; }
-        .teks-soal { font-weight: 600; font-size: 15px; margin-bottom: 20px; color: #334155; }
+        #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        
+        .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
+        .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; }
+        .teks-soal { font-weight: 700; font-size: 15px; margin-bottom: 20px; color: #334155; }
 
-        /* Opsi Jawaban */
         .option-label { display: flex; align-items: center; padding: 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
-        .option-label:hover { border-color: var(--primary); background: #f0fdf4; }
-        .option-label input { width: 20px; height: 20px; margin-right: 15px; accent-color: var(--primary); }
+        .option-label:hover { border-color: var(--primary); }
+        .option-label input { width: 18px; height: 18px; margin-right: 12px; accent-color: var(--primary); }
         .option-text { font-size: 14px; font-weight: 600; color: #475569; }
 
         .hidden { display: none !important; }
-        textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; min-height: 100px; resize: none; }
     </style>
 </head>
 <body>
@@ -57,28 +52,27 @@
     <div id="login-screen">
         <div class="card">
             <div id="badge-status" class="status-badge status-off">Mengecek...</div>
-            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Silakan Pilih Kelas</h2>
-            <p style="font-size: 13px; color: #64748b; margin-top: 5px;">Pilih kelasmu untuk melihat ujian aktif.</p>
+            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Memuat Jadwal...</h2>
 
             <label>Pilih Kelas</label>
             <select id="user-kelas">
-                <option value="">-- Pilih --</option>
+                <option value="">-- Pilih Kelas --</option>
                 <option>7A</option><option>7B</option><option>8A</option><option>8B</option>
                 <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
             </select>
 
             <div id="form-isi" class="hidden">
                 <label>Nama Lengkap</label>
-                <input type="text" id="user-nama" placeholder="Masukkan Nama Sesuai Absen">
-                <button class="btn-start" onclick="cekMasuk()">MULAI UJIAN SEKARANG</button>
+                <input type="text" id="user-nama" placeholder="Nama Sesuai Absen">
+                <button class="btn-start" onclick="cekMasuk()">MULAI UJIAN</button>
             </div>
         </div>
     </div>
 
     <div id="exam-screen" class="hidden">
-        <div id="timer"><i class="far fa-clock"></i> <span id="time-left">00:00</span></div>
+        <div id="timer">⏳ <span id="time-left">00:00</span></div>
         <div id="konten-soal"></div>
-        <button class="btn-start" onclick="kirimJawaban()" style="background: #6c5ce7; margin-bottom: 80px;">KIRIM SEMUA JAWABAN</button>
+        <button class="btn-start" onclick="kirimJawaban()" style="background: #6c5ce7; margin-bottom: 80px;">SELESAI & KIRIM JAWABAN</button>
     </div>
 </div>
 
@@ -116,16 +110,14 @@
         });
     };
 
-    // 2. CEK MASUK
+    // 2. CEK MASUK & AMBIL SOAL
     function cekMasuk() {
         const nama = document.getElementById('user-nama').value.trim();
         const kls = document.getElementById('user-kelas').value;
+        if(!nama) return alert("Nama jangan kosong!");
 
-        if(!nama) return alert("Nama jangan kosong, Bos!");
-
-        // Path disesuaikan dengan Admin Bos: bank_soal/[kelasLengkap]/[mapel]
         db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum diupload untuk kelas ini!");
+            if(!snap.exists()) return alert("Soal belum diupload oleh Admin!");
             
             listSoal = [];
             snap.forEach(s => { listSoal.push(s.val()); });
@@ -133,7 +125,7 @@
         });
     }
 
-    // 3. GENERATE SOAL RAPI
+    // 3. RENDER SOAL (PG & ESSAY GABUNG)
     function mulaiUjian(nama, kls) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
@@ -145,25 +137,29 @@
 
         listSoal.forEach((s, i) => {
             let htmlOpsi = "";
-            if(s.opsi) {
-                const opsi = s.opsi.split(',');
+            // Cek apakah Pilihan Ganda (punya opsi yang dipisah koma)
+            if(s.opsi && s.opsi.includes(',')) {
+                const opsiArray = s.opsi.split(',').map(item => item.trim());
                 const huruf = ['A','B','C','D'];
-                opsi.forEach((teks, idx) => {
-                    htmlOpsi += `
-                        <label class="option-label">
-                            <input type="radio" name="q${i}" value="${huruf[idx]}">
-                            <span class="option-text"><b>${huruf[idx]}.</b> ${teks.trim()}</span>
-                        </label>`;
+                opsiArray.forEach((teks, idx) => {
+                    if(idx < 4) {
+                        htmlOpsi += `
+                            <label class="option-label">
+                                <input type="radio" name="q${i}" value="${huruf[idx]}">
+                                <span class="option-text"><b>${huruf[idx]}.</b> ${teks}</span>
+                            </label>`;
+                    }
                 });
             } else {
-                htmlOpsi = `<textarea id="essay${i}" placeholder="Ketik jawaban kamu di sini..."></textarea>`;
+                // Jika tidak ada opsi koma, anggap ESSAY
+                htmlOpsi = `<textarea id="essay${i}" placeholder="Ketik jawaban essay di sini..."></textarea>`;
             }
 
             container.innerHTML += `
                 <div class="soal-card">
                     <div class="nomor-soal">${i+1}</div>
                     <div class="teks-soal">${s.soal}</div>
-                    ${htmlOpsi}
+                    <div>${htmlOpsi}</div>
                 </div>`;
         });
 
@@ -181,15 +177,20 @@
     }
 
     function kirimJawaban(auto = false) {
-        if(!auto && !confirm("Yakin ingin mengirim semua jawaban?")) return;
+        if(!auto && !confirm("Kirim semua jawaban sekarang?")) return;
         clearInterval(intervalTimer);
 
         let benar = 0; let totalPG = 0;
+        let jawEssay = [];
+
         listSoal.forEach((s, i) => {
-            if(s.opsi) {
+            if(s.opsi && s.opsi.includes(',')) {
                 totalPG++;
                 const pil = document.querySelector(`input[name="q${i}"]:checked`);
                 if(pil && pil.value === s.kunci) benar++;
+            } else {
+                const isi = document.getElementById(`essay${i}`).value;
+                jawEssay.push({ soal: s.soal, jawaban: isi });
             }
         });
 
@@ -198,9 +199,12 @@
         const nama = document.getElementById('user-nama').value;
 
         db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({
-            nama: nama, skor: skor, waktu: new Date().toLocaleString('id-ID')
+            nama: nama, 
+            skor: skor, 
+            essay: jawEssay,
+            waktu: new Date().toLocaleString('id-ID')
         }).then(() => {
-            alert("Alhamdulillah! Jawaban terkirim. Nilai: " + skor);
+            alert("Alhamdulillah! Jawaban terkirim.\nSkor PG: " + skor);
             location.reload();
         });
     }
