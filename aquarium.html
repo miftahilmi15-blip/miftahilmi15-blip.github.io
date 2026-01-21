@@ -10,75 +10,59 @@
         :root { --dark-navy: #001219; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--dark-navy); overflow: hidden; height: 100vh; color: white; }
+        #ocean { position: relative; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 40%, #005f73 0%, #001219 100%); overflow: hidden; }
         
-        #ocean { 
-            position: relative; width: 100vw; height: 100vh; 
-            background: radial-gradient(circle at 50% 40%, #005f73 0%, #001219 100%); 
-            overflow: hidden; 
-        }
-
-        /* CAUSTIC LIGHT (EFEK RIAK AIR) */
-        #ocean::before { 
-            content:""; position:absolute; inset:0; 
-            background:url("https://www.transparenttextures.com/patterns/water-reflection.png"); 
-            opacity:.15; animation: caustic 12s linear infinite; pointer-events:none; z-index: 1; 
-        }
-        @keyframes caustic{ from{transform:scale(1.2);} to{transform:scale(1.6);} }
-
-        /* TERUMBU KARANG (DEKORASI BAWAH) */
-        #reef { 
-            position: fixed; bottom: -5px; left: 0; width: 100%; height: 130px; 
-            display: flex; align-items: flex-end; justify-content: space-around; 
-            z-index: 5; pointer-events: none; opacity: 0.8;
-        }
-        .coral { 
-            width: 45px; background: linear-gradient(#ff8a65, #d84315); 
-            border-radius: 50% 50% 20% 20%; animation: sway 5s ease-in-out infinite; 
-            transform-origin: bottom; box-shadow: 0 0 15px rgba(216, 67, 21, 0.3);
-        }
-        .coral.blue { background: linear-gradient(#4fc3f7, #0288d1); height: 70px; animation-delay: 1s; }
-        .coral.purple { background: linear-gradient(#ce93d8, #6a1b9a); height: 100px; animation-delay: 2s; }
-        @keyframes sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+        /* EFEK CAHAYA & TERUMBU */
+        #ocean::before { content:""; position:absolute; inset:0; background:url("https://www.transparenttextures.com/patterns/water-reflection.png"); opacity:.15; animation: caustic 12s linear infinite; pointer-events:none; z-index: 1; }
+        @keyframes caustic{ from{transform:scale(1);} to{transform:scale(1.4);} }
+        #reef { position: fixed; bottom: -5px; width: 100%; height: 100px; display: flex; justify-content: space-around; z-index: 5; pointer-events: none; }
+        .coral { width: 45px; background: linear-gradient(#ff8a65, #d84315); border-radius: 50% 50% 20% 20%; animation: sway 5s infinite; transform-origin: bottom; }
+        @keyframes sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
 
         /* UI HEADER */
-        .ui-header { position: fixed; top: 0; left: 0; right: 0; padding: 25px; display: flex; justify-content: space-between; z-index: 100; }
-        .stats-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 15px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .ui-header { position: fixed; top: 0; left: 0; right: 0; padding: 20px; display: flex; justify-content: space-between; z-index: 100; }
+        .stats-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 12px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; gap: 20px; }
         .btn-exit { width: 45px; height: 45px; background: rgba(255,255,255,0.1); color: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
         
-        /* IKAN ENTITY */
+        /* DATA STYLE */
+        .data-group { display: flex; flex-direction: column; }
+        .label { font-size: 8px; opacity: 0.6; letter-spacing: 1px; text-transform: uppercase; }
+        .val { font-size: 22px; font-weight: 800; }
+
+        /* FISH & PELLET */
         .fish-entity { position: absolute; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; z-index: 20; will-change: transform, left, top; }
-        .fish-img { width: 70px; transition: transform 1s ease-in-out; }
+        .fish-img { width: 70px; transition: transform 0.8s, filter 1s; }
+        .pellet { position: absolute; width: 8px; height: 8px; background: #ffeb3b; border-radius: 50%; z-index: 15; animation: fall 2s linear forwards; box-shadow: 0 0 10px #ffeb3b; }
+        @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
 
-        /* BACKGROUND DECOR (KAPAL SELAM / PENYELAM) */
-        .bg-decor { position: absolute; opacity: 0.3; z-index: 2; transition: all 25s linear; }
-
-        /* GELEMBUNG */
-        .bubble { position: absolute; background: rgba(255,255,255,0.2); border-radius: 50%; bottom: -50px; animation: floatUp 10s linear infinite; z-index: 2; }
-        @keyframes floatUp { to { transform: translateY(-120vh); opacity: 0; } }
+        /* WARNING INFO */
+        .reward-info { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); padding: 10px 25px; border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 11px; font-weight: 600; color: #94fbff; z-index: 100; text-align: center; }
     </style>
 </head>
-<body>
+<body onclick="feedFish(event)">
 
 <div id="ocean">
     <div id="reef">
-        <div class="coral" style="height:110px"></div>
-        <div class="coral blue"></div>
-        <div class="coral purple"></div>
-        <div class="coral blue" style="height:90px"></div>
-        <div class="coral" style="height:60px"></div>
-        <div class="coral purple" style="height:80px"></div>
+        <div class="coral" style="height:90px"></div>
+        <div class="coral" style="background:linear-gradient(#ce93d8,#6a1b9a); height:60px"></div>
+        <div class="coral" style="background:linear-gradient(#4fc3f7,#0288d1); height:110px"></div>
     </div>
     
     <div class="ui-header">
         <div class="stats-card">
-            <h4 style="font-size: 9px; opacity: 0.6; letter-spacing: 2px; margin-bottom: 5px;">AQUARIUM REWARD</h4>
-            <div style="display: flex; align-items: baseline; gap: 8px;">
-                <span id="fish-count" style="font-size: 32px; font-weight: 800;">0</span>
-                <span style="font-size: 12px; opacity: 0.8;">Ikan Mengaji</span>
+            <div class="data-group">
+                <span class="label">Ikan Hidup</span>
+                <span id="fish-count" class="val">0</span>
+            </div>
+            <div class="data-group" style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px;">
+                <span class="label">Stok Pakan</span>
+                <span id="pakan-count" class="val" style="color: #ffeb3b;">0</span>
             </div>
         </div>
         <a href="index.html" class="btn-exit"><i class="fa-solid fa-xmark"></i></a>
     </div>
+
+    <div id="status-msg" class="reward-info">✨ Klik layar untuk beri makan ikanmu!</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -95,38 +79,82 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // DAFTAR IKAN YANG CAKEP SAJA (TROPICAL)
-    const icons = [
-        "https://api.iconify.design/noto:fish.svg",
-        "https://api.iconify.design/noto:tropical-fish.svg",
-        "https://api.iconify.design/noto:blowfish.svg"
-    ];
-
-    let activeFishes = []; 
+    const icons = ["https://api.iconify.design/noto:fish.svg", "https://api.iconify.design/noto:tropical-fish.svg", "https://api.iconify.design/noto:blowfish.svg"];
+    let activeFishes = [];
+    let currentPakan = 0;
+    let userEmailKey = "";
 
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            const emailKey = user.email.toLowerCase().replace(/\./g, ',');
-            db.ref('users/' + emailKey + '/ikan').on('value', snap => {
-                const count = snap.val() || 0;
-                document.getElementById('fish-count').innerText = count;
-                spawnFishes(count);
+            userEmailKey = user.email.toLowerCase().replace(/\./g, ',');
+            
+            // LISTEN REALTIME
+            db.ref('users/' + userEmailKey).on('value', snap => {
+                const data = snap.val() || {};
+                const totalIkan = data.ikan || 0;
+                currentPakan = data.pakan || 0;
+                const lastFed = data.terakhir_makan || Date.now();
+
+                // LOGIKA MATI OTOMATIS (24 JAM)
+                const selisihJam = (Date.now() - lastFed) / (1000 * 60 * 60);
+                let ikanTampil = totalIkan;
+
+                if (selisihJam > 24 && currentPakan <= 0) {
+                    ikanTampil = 0; // Ikan "mati" atau sembunyi karena lapar
+                    document.getElementById('status-msg').innerHTML = "💀 Ikan-ikanmu hilang karena kelaparan! Ayo Mengaji!";
+                    document.getElementById('status-msg').style.color = "#ff4d4d";
+                } else {
+                    document.getElementById('status-msg').innerHTML = "✨ Klik layar untuk beri makan ikanmu!";
+                    document.getElementById('status-msg').style.color = "#94fbff";
+                }
+
+                document.getElementById('fish-count').innerText = ikanTampil;
+                document.getElementById('pakan-count').innerText = currentPakan;
+                spawnFishes(ikanTampil);
             });
         }
     });
+
+    function feedFish(e) {
+        if (!userEmailKey) return;
+        if (currentPakan <= 0) {
+            alert("Pakan habis! Ikanmu butuh kamu mengaji untuk dapat pakan.");
+            return;
+        }
+
+        // UPDATE DATABASE
+        db.ref('users/' + userEmailKey).update({
+            pakan: currentPakan - 1,
+            terakhir_makan: Date.now()
+        });
+
+        // ANIMASI PELET
+        const p = document.createElement('div');
+        p.className = 'pellet';
+        p.style.left = e.clientX + 'px';
+        p.style.top = e.clientY + 'px';
+        document.getElementById('ocean').appendChild(p);
+        setTimeout(() => p.remove(), 2000);
+
+        // IKAN MENYERBU
+        activeFishes.forEach(f => {
+            f.targetX = (e.clientX / window.innerWidth) * 100;
+            f.targetY = (e.clientY / window.innerHeight) * 100;
+            f.speed = 0.08;
+            setTimeout(() => f.speed = 0.003 + Math.random() * 0.005, 2000);
+        });
+    }
 
     function spawnFishes(total) {
         const container = document.getElementById('ocean');
         document.querySelectorAll('.fish-entity').forEach(f => f.remove());
         activeFishes = [];
-        
-        let visualLimit = Math.min(total, 25);
-        let color = total > 40 ? "#e74c3c" : (total > 15 ? "#f1c40f" : "#00b4d8");
+        let limit = Math.min(total, 25);
 
-        for (let i = 0; i < visualLimit; i++) {
+        for (let i = 0; i < limit; i++) {
             const el = document.createElement('div');
             el.className = 'fish-entity';
-            el.innerHTML = `<img src="${icons[Math.floor(Math.random()*icons.length)]}" class="fish-img" style="filter: drop-shadow(0 0 10px ${color})">`;
+            el.innerHTML = `<img src="${icons[Math.floor(Math.random()*icons.length)]}" class="fish-img">`;
             container.appendChild(el);
             activeFishes.push({
                 el: el, img: el.querySelector('.fish-img'),
@@ -150,33 +178,6 @@
         requestAnimationFrame(updateFrame);
     }
     requestAnimationFrame(updateFrame);
-
-    // DEKORASI BACKGROUND (Penyelam / Kapal Selam Lewat)
-    function spawnDecor() {
-        const decorIcons = ["noto:person-swimming", "noto:submarine"];
-        const img = document.createElement('img');
-        img.src = `https://api.iconify.design/${decorIcons[Math.floor(Math.random()*decorIcons.length)]}.svg`;
-        img.className = "bg-decor";
-        img.style.width = "60px";
-        img.style.top = Math.random()*60+20 + "vh";
-        img.style.left = "-100px";
-        document.getElementById('ocean').appendChild(img);
-        
-        setTimeout(() => { img.style.left = "110vw"; }, 100);
-        setTimeout(() => { img.remove(); }, 26000);
-    }
-    setInterval(spawnDecor, 35000); // Muncul tiap 35 detik
-
-    // GELEMBUNG
-    setInterval(() => {
-        const b = document.createElement('div');
-        b.className = 'bubble';
-        b.style.left = Math.random() * 100 + 'vw';
-        let size = Math.random()*10+5+'px';
-        b.style.width = size; b.style.height = size;
-        document.getElementById('ocean').appendChild(b);
-        setTimeout(() => b.remove(), 10000);
-    }, 2000);
 </script>
 </body>
 </html>
