@@ -55,20 +55,36 @@
     <div id="login-screen">
         <div class="card">
             <div id="badge-status" class="status-badge status-off">Mengecek...</div>
-            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Memuat Jadwal...</h2>
+            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Pilih Kelas & Mapel</h2>
 
             <label>Pilih Kelas</label>
-            <select id="user-kelas">
+            <select id="user-kelas" onchange="resetForm()">
                 <option value="">-- Pilih Kelas --</option>
                 <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
                 <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
                 <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
             </select>
 
+            <label>Pilih Mata Pelajaran</label>
+            <select id="user-mapel" onchange="cekJadwalAktif()">
+                <option value="">-- Pilih Mapel --</option>
+                <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
+                <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
+            </select>
+
             <div id="form-isi" class="hidden">
-                <label>Nama Lengkap</label>
-                <input type="text" id="user-nama" placeholder="Nama Sesuai Absen">
-                <button class="btn-start" onclick="cekMasuk()">MULAI UJIAN</button>
+                <label>Nomor Induk (NIPD)</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="number" id="user-nipd" placeholder="Ketik NIPD">
+                    <button onclick="verifikasiSiswa()" id="btn-cek-nipd" style="width: 70px; background: #eab308; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: white;">CEK</button>
+                </div>
+
+                <label>Nama Lengkap (Otomatis)</label>
+                <input type="text" id="user-nama" placeholder="Nama muncul otomatis..." readonly style="background: #f1f5f9;">
+                
+                <div id="btn-mulai-box" class="hidden">
+                    <button class="btn-start" onclick="cekMasuk()" style="margin-top: 20px;">MULAI UJIAN</button>
+                </div>
             </div>
         </div>
 
@@ -80,9 +96,8 @@
                 <label>Filter Mapel</label>
                 <select id="filter-rekap-mapel" onchange="loadRekapData()">
                     <option value="">Semua Mapel</option>
-                    <option>Al-Qur'an Hadits</option><option>Akidah Akhlak</option><option>Fikih</option><option>SKI</option>
-                    <option>PKn</option><option>B. Indo</option><option>B. Arab</option><option>Matematika</option>
-                    <option>IPA</option><option>IPS</option><option>B. Inggris</option><option>Seni Budaya</option><option>Informatika</option>
+                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
+                    <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
                 </select>
 
                 <table>
@@ -114,36 +129,102 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // URL Apps Script Bos untuk Tarik Data Nama
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+
     let sesiUjian = null;
     let listSoal = [];
     let intervalTimer;
 
-    document.getElementById('user-kelas').onchange = function() {
-        const kls = this.value;
-        if(!kls) return;
-        db.ref(`jadwal_ujian/${kls}`).on('value', snap => {
+    function resetForm() {
+        document.getElementById('user-mapel').value = "";
+        document.getElementById('form-isi').classList.add('hidden');
+        document.getElementById('badge-status').className = "status-badge status-off";
+        document.getElementById('badge-status').innerText = "Mengecek...";
+    }
+
+    // FUNGSI CEK JADWAL OTOMATIS BERDASARKAN JAM
+    function cekJadwalAktif() {
+        const kls = document.getElementById('user-kelas').value;
+        const mpl = document.getElementById('user-mapel').value;
+        if(!kls || !mpl) return;
+
+        db.ref(`jadwal_ujian/${kls}/${mpl}`).on('value', snap => {
             sesiUjian = snap.val();
+            sesiUjian.mapel = mpl; // Sinkronkan nama mapel
+            
             const badge = document.getElementById('badge-status');
-            if(sesiUjian && sesiUjian.status === "BUKA") {
+            const infoMapel = document.getElementById('info-mapel');
+            
+            if(!sesiUjian) {
+                badge.innerText = "Belum Ada Jadwal";
+                badge.className = "status-badge status-off";
+                return;
+            }
+
+            // Logika Jam Otomatis
+            const sekarang = new Date();
+            const tglSekarang = sekarang.toISOString().split('T')[0];
+            const jamSekarang = sekarang.getHours().toString().padStart(2, '0') + ":" + sekarang.getMinutes().toString().padStart(2, '0');
+
+            if(tglSekarang !== sesiUjian.tanggal) {
+                badge.innerText = "Bukan Hari Ini";
+                badge.className = "status-badge status-off";
+                infoMapel.innerText = "Jadwal: " + sesiUjian.tanggal;
+            } else if(jamSekarang < sesiUjian.jam_mulai) {
+                badge.innerText = "Belum Dimulai";
+                badge.className = "status-badge status-off";
+                infoMapel.innerText = "Mulai Jam: " + sesiUjian.jam_mulai;
+            } else if(jamSekarang > sesiUjian.jam_selesai) {
+                badge.innerText = "Waktu Habis";
+                badge.className = "status-badge status-off";
+                infoMapel.innerText = "Selesai Jam: " + sesiUjian.jam_selesai;
+            } else {
                 badge.innerText = "Ujian Aktif";
                 badge.className = "status-badge status-on";
-                document.getElementById('info-mapel').innerText = sesiUjian.mapel;
+                infoMapel.innerText = mpl;
                 document.getElementById('form-isi').classList.remove('hidden');
-            } else {
-                badge.innerText = "Tidak Ada Ujian";
-                badge.className = "status-badge status-off";
-                document.getElementById('info-mapel').innerText = "Belum Ada Jadwal";
-                document.getElementById('form-isi').classList.add('hidden');
             }
         });
-    };
+    }
+
+    // FUNGSI TARIK NAMA DARI SPREADSHEET (APPS SCRIPT)
+    async function verifikasiSiswa() {
+        const kls = document.getElementById('user-kelas').value;
+        const nipd = document.getElementById('user-nipd').value;
+        const btn = document.getElementById('btn-cek-nipd');
+
+        if(!nipd) return alert("Masukkan NIPD!");
+        btn.innerText = "...";
+        
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+            const dataSiswa = await res.json();
+            const siswa = dataSiswa.find(s => s.nipd == nipd);
+
+            if(siswa) {
+                document.getElementById('user-nama').value = siswa.nama;
+                document.getElementById('btn-mulai-box').classList.remove('hidden');
+                alert("Halo " + siswa.nama + ", silakan klik mulai!");
+            } else {
+                alert("NIPD tidak ditemukan di kelas ini!");
+                document.getElementById('user-nama').value = "";
+                document.getElementById('btn-mulai-box').classList.add('hidden');
+            }
+        } catch (e) {
+            alert("Gagal ambil data absen!");
+        } finally {
+            btn.innerText = "CEK";
+        }
+    }
 
     function cekMasuk() {
         const nama = document.getElementById('user-nama').value.trim();
         const kls = document.getElementById('user-kelas').value;
-        if(!nama) return alert("Nama jangan kosong!");
-        db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum tersedia!");
+        const mpl = sesiUjian.mapel;
+
+        db.ref(`bank_soal/${kls}/${mpl}`).once('value', snap => {
+            if(!snap.exists()) return alert("Soal belum tersedia di Bank Soal!");
             listSoal = [];
             snap.forEach(s => { listSoal.push(s.val()); });
             mulaiUjian(nama, kls);
@@ -155,8 +236,10 @@
         document.getElementById('exam-screen').classList.remove('hidden');
         document.getElementById('top-title').innerText = sesiUjian.mapel;
         document.getElementById('user-display').innerText = `${nama} | ${kls}`;
+        
         const container = document.getElementById('konten-soal');
         container.innerHTML = "";
+        
         listSoal.forEach((s, i) => {
             let htmlOpsi = "";
             if(s.opsi && s.opsi.includes(',')) {
@@ -170,7 +253,16 @@
             }
             container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><div class="teks-soal">${s.soal}</div><div>${htmlOpsi}</div></div>`;
         });
-        let detik = (sesiUjian.durasi || 60) * 60;
+
+        // Hitung durasi otomatis dari selisih jam
+        const sekarang = new Date();
+        const [jamS, minS] = sesiUjian.jam_selesai.split(':');
+        const waktuSelesai = new Date();
+        waktuSelesai.setHours(jamS, minS, 0);
+        
+        let detik = Math.floor((waktuSelesai - sekarang) / 1000);
+        if(detik <= 0) detik = 3600; // Default 1 jam jika error
+
         intervalTimer = setInterval(() => {
             let m = Math.floor(detik/60); let s = detik%60;
             document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
@@ -180,23 +272,32 @@
     }
 
     function kirimJawaban(auto = false) {
-        if(!auto && !confirm("Kirim jawaban?")) return;
+        if(!auto && !confirm("Kirim jawaban sekarang?")) return;
         clearInterval(intervalTimer);
         let benar = 0; let totalPG = 0; let jawEssay = [];
+        
         listSoal.forEach((s, i) => {
             if(s.opsi && s.opsi.includes(',')) {
                 totalPG++;
                 const pil = document.querySelector(`input[name="q${i}"]:checked`);
                 if(pil && pil.value === s.kunci) benar++;
             } else {
-                jawEssay.push({ soal: s.soal, jawaban: document.getElementById(`essay${i}`).value });
+                const essayField = document.getElementById(`essay${i}`);
+                jawEssay.push({ soal: s.soal, jawaban: essayField ? essayField.value : "" });
             }
         });
+
         const skor = totalPG > 0 ? Math.round((benar/totalPG)*100) : 0;
         const kls = document.getElementById('user-kelas').value;
         const nama = document.getElementById('user-nama').value;
-        db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({ nama, skor, essay: jawEssay, waktu: new Date().toLocaleString('id-ID') }).then(() => {
-            alert("Jawaban Terkirim!");
+        
+        db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({ 
+            nama, 
+            skor, 
+            essay: jawEssay, 
+            waktu: new Date().toLocaleString('id-ID') 
+        }).then(() => {
+            alert("Alhamdulillah! Jawaban berhasil terkirim.");
             location.reload();
         });
     }
