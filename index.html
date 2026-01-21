@@ -16,7 +16,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 <script>
-  // DAFTARKAN SERVICE WORKER OTOMATIS (SYARAT DOWNLOAD APLIKASI)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       const swCode = "self.addEventListener('fetch', (e) => { e.respondWith(fetch(e.request)); });";
@@ -41,7 +40,6 @@
   .header-box { text-align: center; padding: 25px 0; }
   .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
 
-  /* SIDEBAR */
   .menu-trigger { 
     position: fixed; top: 25px; right: 25px; z-index: 1400; 
     background: white; color: var(--primary); width: 48px; height: 48px; 
@@ -69,7 +67,6 @@
   .nav a i { font-size: 16px; color: var(--primary); width: 20px; text-align: center; }
   .nav a:hover { background: #f0f7f4; color: var(--primary); }
 
-  /* DASHBOARD STREAK */
   .streak-card { 
     background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; 
     margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
@@ -81,7 +78,6 @@
     display: inline-block;
     filter: drop-shadow(0 0 10px rgba(255,165,0,0.8));
     animation: flicker 1.5s infinite alternate;
-    transition: all 0.5s ease;
   }
 
   @keyframes flicker {
@@ -89,41 +85,31 @@
     100% { transform: scale(1.1); filter: drop-shadow(0 0 15px red); }
   }
 
-  .fire-off { 
-    filter: grayscale(100%) opacity(0.2) !important;
-    animation: none !important; 
-    transform: scale(0.9) !important;
-  }
+  .fire-off { filter: grayscale(100%) opacity(0.3) !important; animation: none !important; }
 
-  /* MAHFUZAT */
   .mahfuzat-box { 
     background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
     display: flex; align-items: center; box-shadow: var(--shadow); border: 1px solid #f0f0f0; cursor: pointer;
-    overflow: hidden;
   }
-  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; z-index: 2; position: relative; }
+  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; }
 
-  /* MENU GRID */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .menu-item { 
     background: white; padding: 22px 10px; border-radius: 24px; text-align: center; 
     box-shadow: var(--shadow); transition: 0.3s; cursor: pointer; text-decoration: none; color: inherit;
-    display: flex; flex-direction: column; align-items: center;
   }
   .menu-item:active { transform: scale(0.9); }
   .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
   .menu-item span:not(.menu-symbol) { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* LOGIN CARD ELEGAN */
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
   .card-login input { 
-    width: 100%; padding: 15px; margin-bottom: 15px; /* Jarak antar input */
-    border-radius: 12px; border: 1px solid #eee; outline: none; background: #fafafa;
+    width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #fafafa;
   }
   .btn-google { 
     width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #eee; 
     background: white; display: flex; align-items: center; justify-content: center; 
-    gap: 12px; font-weight: 700; color: #444; cursor: pointer; margin-top: 15px; transition: 0.3s;
+    gap: 12px; font-weight: 700; color: #444; cursor: pointer; margin-top: 15px;
   }
   .btn-google img { width: 20px; height: 20px; }
 
@@ -137,7 +123,7 @@
     z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid #eee;
   }
   .ai-header { background: #15803d; color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 14px; position: relative; }
-  .ai-header .close-ai { position: absolute; right: 15px; top: 15px; cursor: pointer; opacity: 0.8; }
+  .ai-header .close-ai { position: absolute; right: 15px; top: 15px; cursor: pointer; }
   
   #chatContent { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; background: #fdfdfd; }
   .msg-user { background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; }
@@ -145,7 +131,7 @@
 
   .ai-input-area { padding: 10px 15px 15px 15px; border-top: 1px solid #eee; display: flex; background: white; align-items: center; }
   .ai-input-area input { flex: 1; border: none; outline: none; padding: 8px 12px; background: #f5f5f5; border-radius: 10px; font-size: 13px; }
-  .btn-send-ai { color: #15803d; font-weight: bold; background: none; border: none; cursor: pointer; padding: 5px 0 5px 12px; font-size: 14px; }
+  .btn-send-ai { color: #15803d; font-weight: bold; background: none; border: none; cursor: pointer; padding-left: 10px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -224,13 +210,13 @@
     <div class="ai-header">Asisten E-Santri <span class="close-ai" onclick="toggleChat()">✕</span></div>
     <div id="chatContent"><div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu?</div></div>
     <div class="ai-input-area">
-        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') kirimKeAI()">
-        <button onclick="kirimKeAI()" class="btn-send-ai">Kirim</button>
+        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') window.kirimKeAI()">
+        <button onclick="window.kirimKeAI()" class="btn-send-ai">Kirim</button>
     </div>
 </div>
 
 <script>
-  // 1. FIREBASE CONFIG
+  // --- KONFIGURASI FIREBASE ---
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -246,101 +232,56 @@
   const auth = firebase.auth();
   const db = firebase.database();
 
-  // 2. AUTH FUNCTIONS
-  function loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  }
+  // --- FUNGSI LOGIN & SIDEBAR ---
+  function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut().then(() => location.reload()); }
   function login() {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('password').value;
-    auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
+    const e = document.getElementById('email').value;
+    const p = document.getElementById('password').value;
+    auth.signInWithEmailAndPassword(e, p).catch(err => alert(err.message));
   }
-
-  // 3. UI FUNCTIONS
   function toggleChat() {
-    const win = document.getElementById('ai-window');
-    win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
+    const w = document.getElementById('ai-window');
+    w.style.display = (w.style.display === 'none' || w.style.display === '') ? 'flex' : 'none';
   }
   document.getElementById('menu-btn').onclick = () => document.getElementById('sidebar').classList.add('open');
   document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-  // 4. STREAK MONITORING (FINAL VERSION)
+  // --- LOGIKA STREAK ---
   function monitoringStreak(emailUser) {
     if(!emailUser) return;
-
-    const emailKey = emailUser.replace(/\./g, ',');
+    const key = emailUser.replace(/\./g, ',');
     const hariIni = new Date().toISOString().split('T')[0];
-    const kemarinDate = new Date();
-    kemarinDate.setDate(kemarinDate.getDate() - 1);
-    const tglKemarin = kemarinDate.toISOString().split('T')[0];
-
-    db.ref('users/' + emailKey).on('value', snap => {
-        const data = snap.val();
-        const streakText = document.getElementById('streak-text');
-        const fire = document.getElementById('fire-api');
-
-        if(!data) {
-            // Coba buat data awal, jika gagal akan muncul alert
-            db.ref('users/' + emailKey).set({ 
-                streak: 0, 
-                tgl_terakhir_api: "" 
-            }).catch(err => alert("Gagal koneksi DB: " + err.message));
-            return;
-        }
-
-        let streak = data.streak || 0;
-        const tglBaca = data.tgl_terakhir_api || "";
-
-        // LOGIKA RESET
-        if (tglBaca !== hariIni && tglBaca !== tglKemarin && streak > 0) {
-            streak = 0;
-            db.ref('users/' + emailKey).update({ streak: 0 });
-        }
-
-        // UPDATE UI
-        if(streakText) streakText.innerText = streak + " Hari Istiqomah";
-        if (fire) {
-            if (tglBaca === hariIni) {
-                fire.classList.remove('fire-off');
-                fire.style.opacity = "1";
-                fire.style.filter = "grayscale(0%) brightness(1.2)";
-            } else {
-                fire.classList.add('fire-off');
-                fire.style.opacity = "0.3";
-                fire.style.filter = "grayscale(100%)";
-            }
-        }
-    }, error => {
-        alert("Error Database: " + error.message);
+    db.ref('users/' + key).on('value', snap => {
+      const data = snap.val();
+      if(!data) return;
+      document.getElementById('streak-text').innerText = (data.streak || 0) + " Hari Istiqomah";
+      const fire = document.getElementById('fire-api');
+      if(data.tgl_terakhir_api === hariIni) {
+        fire.classList.remove('fire-off');
+      } else {
+        fire.classList.add('fire-off');
+      }
     });
   }
-  // 5. MAIN LOGIC
+
+  // --- LOGIKA UTAMA AUTH ---
   auth.onAuthStateChanged(user => {
     if(user){
         document.getElementById("dashboard").classList.remove("hidden");
         document.getElementById("login-card").classList.add("hidden");
         document.getElementById("menu-btn").style.display = "flex";
         document.getElementById("ai-button").style.display = "flex";
-        
         document.getElementById("uName").innerText = user.displayName || "Santri";
         document.getElementById("uEmail").innerText = user.email;
         if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
-
-        if (user.email === "miftahilmi15@gmail.com") {
-            document.getElementById("admin-menu").classList.remove("hidden");
-        }
-
-        // Panggil monitoring pakai email
+        if (user.email === "miftahilmi15@gmail.com") document.getElementById("admin-menu").classList.remove("hidden");
         monitoringStreak(user.email);
-
-        // LOAD MAHFUZAT
         db.ref('konten/mahfuzat').on('value', snap => {
-            const data = snap.val();
-            if(data) {
-                document.getElementById('runArab').innerText = data.arab || "";
-                document.getElementById('runIndo').innerText = " — " + (data.indo || "");
+            const d = snap.val();
+            if(d) {
+                document.getElementById('runArab').innerText = d.arab || "";
+                document.getElementById('runIndo').innerText = " — " + (d.indo || "");
             }
         });
     } else {
@@ -350,55 +291,40 @@
         document.getElementById("ai-button").style.display = "none";
     }
   });
+</script>
 
-// 6. SETUP REAL AI (GABUNG DENGAN FIREBASE KEY)
-  // Kita pakai import agar tidak bentrok
+<script type="module">
   import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
-  // Kita pakai API Key yang sama dengan Firebase Bos
   const genAI = new GoogleGenerativeAI(firebaseConfig.apiKey);
 
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const msg = input.value.trim();
-    
     if(!msg) return;
 
-    // Munculkan pesan User
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
-    
-    // Loading State
     const loadId = "ai-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang mengetik...</div>`;
+    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Mengetik...</div>`;
     box.scrollTop = box.scrollHeight;
 
     try {
-        // Panggil Model Gemini
         const model = genAI.getGenerativeModel({ 
             model: "gemini-1.5-flash",
-            systemInstruction: "Kamu adalah asisten cerdas E-Santri. Jawablah dengan singkat, ramah, dan islami. Gunakan panggilan Nak."
+            systemInstruction: "Kamu adalah asisten santri yang bijak. Jawab singkat dan Islami. Panggil 'Nak'."
         });
-
         const result = await model.generateContent(msg);
         const response = await result.response;
-        const text = response.text();
-
-        // Tampilkan Jawaban
-        document.getElementById(loadId).innerText = text;
+        document.getElementById(loadId).innerText = response.text();
     } catch (err) {
-        console.error(err);
-        document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang istirahat. Tanya lagi nanti ya.";
-        // Jika error "API_KEY_INVALID", artinya Bos belum klik ENABLE di Google Cloud tadi
+        document.getElementById(loadId).innerText = "Ustadz sedang istirahat, Nak.";
     } finally {
         box.scrollTop = box.scrollHeight;
     }
   }
-
-  // 7. EXPOSE KE WINDOW (Agar tombol onclick jalan)
   window.kirimKeAI = kirimKeAI;
-  window.toggleChat = toggleChat;
 </script>
+
 </body>
 </html>
