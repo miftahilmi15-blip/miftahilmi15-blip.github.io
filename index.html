@@ -3,10 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>E-Santri | Pro v16</title>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#1f6f51">
-<link rel="apple-touch-icon" href="/logo-assunnah.png">
+<title>E-Santri | Pro v16.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Noto+Naskh+Arabic:wght@700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <style>
@@ -53,14 +50,33 @@
   .nav a i { font-size: 16px; color: var(--primary); width: 20px; text-align: center; }
   .nav a:hover { background: #f0f7f4; color: var(--primary); }
 
-  /* DASHBOARD */
+  /* DASHBOARD STREAK */
   .streak-card { 
     background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; 
     margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
     box-shadow: 0 15px 35px rgba(31,111,81,0.2);
   }
-  /* ANIMASI API */
 
+  .fire-icon { 
+    font-size: 40px; 
+    display: inline-block;
+    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8));
+    animation: flicker 1.5s infinite alternate;
+    transition: all 0.5s ease;
+  }
+
+  @keyframes flicker {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px orange); }
+    100% { transform: scale(1.1); filter: drop-shadow(0 0 15px red); }
+  }
+
+  .fire-off { 
+    filter: grayscale(100%) opacity(0.2) !important;
+    animation: none !important; 
+    transform: scale(0.9) !important;
+  }
+
+  /* MAHFUZAT */
   .mahfuzat-box { 
     background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
     display: flex; align-items: center; box-shadow: var(--shadow); border: 1px solid #f0f0f0; cursor: pointer;
@@ -68,22 +84,16 @@
   }
   .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; z-index: 2; position: relative; }
 
+  /* MENU GRID */
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   .menu-item { 
     background: white; padding: 22px 10px; border-radius: 24px; text-align: center; 
     box-shadow: var(--shadow); transition: 0.3s; cursor: pointer; text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; align-items: center;
   }
   .menu-item:active { transform: scale(0.9); }
-  .menu-symbol { font-size: 32px/* Icon Api Saat Nyala */
-  .fire-icon { 
-    font-size: 40px; 
-    display: inline-block; /* Agar animasi scale jalan lancar */
-    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8));
-    animation: flicker 1.5s infinite alternate;
-    transition: all 0.5s ease;
-  }
-
-  
+  .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
+  .menu-item span:not(.menu-symbol) { font-size: 11px; font-weight: 700; color: #555; }
 
   /* LOGIN CARD */
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
@@ -106,55 +116,13 @@
   .ai-header { background: #15803d; color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 14px; position: relative; }
   .ai-header .close-ai { position: absolute; right: 15px; top: 15px; cursor: pointer; opacity: 0.8; }
   
-  #chatContent { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display:/* Efek Api Kedap-Kedip */
-  @keyframes flicker {
-    0% { transform: scale(1); filter: drop-shadow(0 0 5px orange); }
-    100% { transform: scale(1.1); filter: drop-shadow(0 0 15px red); }
-  }
-
-  /* Efek Saat Api PADAM (Redup & Abu-abu) */
-  .fire-off { 
-    filter: grayscale(100%) opacity(0.2) !important;
-    animation: none !important; 
-    transform: scale(0.9) !important;
-    transition: all 0.5s ease;
-  }
-
-  /* CSS Menu Item (Lanjutan punya Bos) */
-  .menu-item { 
-    display: block; 
-    margin-bottom: 8px; 
-    text-align: center;
-    text-decoration: none;
-  }
-
-  .menu-item i { 
-    display: block; 
-    margin-bottom: 5px; 
-    font-size: 24px;
-    /* Sesuaikan ukuran icon menu */
-  }
-
-  .menu-item span { 
-    font-size: 11px; 
-    font-weight: 700; 
-    color: #555; 
-  } flex; flex-direction: column; background: #fdfdfd; }
+  #chatContent { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; background: #fdfdfd; }
   .msg-user { background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; }
   .msg-ai { background: #f1f1f1; color: #333; padding: 10px 15px; border-radius: 15px 15px 15px 0; margin-bottom: 10px; align-self: flex-start; max-width: 85%; line-height: 1.5; }
 
-  .ai-input-area { 
-    padding: 10px 15px 15px 15px; 
-    border-top: 1px solid #eee; display: flex; background: white; align-items: center;
-  }
-  .ai-input-area input { 
-    flex: 1; border: none; outline: none; padding: 8px 12px; 
-    background: #f5f5f5; border-radius: 10px; font-size: 13px;
-  }
-  .btn-send-ai { 
-    color: #15803d; font-weight: bold; background: none; border: none; 
-    cursor: pointer; padding: 5px 0 5px 12px; font-size: 14px;
-  }
+  .ai-input-area { padding: 10px 15px 15px 15px; border-top: 1px solid #eee; display: flex; background: white; align-items: center; }
+  .ai-input-area input { flex: 1; border: none; outline: none; padding: 8px 12px; background: #f5f5f5; border-radius: 10px; font-size: 13px; }
+  .btn-send-ai { color: #15803d; font-weight: bold; background: none; border: none; cursor: pointer; padding: 5px 0 5px 12px; font-size: 14px; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -178,8 +146,7 @@
     <a href="waktu-sholat.html"><i class="fa-solid fa-mosque"></i> Waktu Sholat</a>
     <a href="kalender.html"><i class="fa-solid fa-calendar-alt"></i> Kalender</a>
     <a href="pengaduan.html"><i class="fa-solid fa-bullhorn"></i> Pengaduan</a>
-    <a href="aquarium.html" style="background: #eefcf6; border: 1px solid #d1f2e6;"><i class="fa-solid fa-fish-icons" style="color: #1f6f51;"></i> Aquarium Mengaji</a>
-    
+    <a href="aquarium.html"><i class="fa-solid fa-fish"></i> Aquarium Mengaji</a>
     <a href="#" onclick="logout()" style="color:#e74c3c; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 15px;">
       <i class="fa-solid fa-power-off"></i> Keluar
     </a>
@@ -191,17 +158,16 @@
 
   <div id="login-card" class="card-login hidden">
     <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
-    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:15px; margin-bottom:12px; border-radius:12px; border:1px solid #eee; outline:none;">
-    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:20px; border-radius:12px; border:1px solid #eee; outline:none;">
-    <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer;">MASUK</button>
-    <p style="margin-top: 15px; font-size: 13px; color: #777;">Belum punya akun? <a href="#" onclick="register()" style="color: var(--primary); font-weight: 700; text-decoration: none;">Daftar</a></p>
+    <input type="email" id="email" placeholder="Email Santri">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()" class="btn-action" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer; margin-top:10px;">MASUK</button>
     <div style="margin: 20px 0; color:#ccc; font-size: 11px;">— ATAU —</div>
     <button class="btn-google" onclick="loginGoogle()"><img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"> Masuk dengan Google</button>
   </div>
 
   <section id="dashboard" class="hidden">
     <div class="streak-card">
-      <div><p style="font-size:11px; opacity:0.8;">Status</p><h2 id="streak-text">Memuat...</h2></div>
+      <div><p style="font-size:11px; opacity:0.8;">Status</p><h2 id="streak-text">0 Hari Istiqomah</h2></div>
       <div id="fire-api" class="fire-icon">🔥</div>
     </div>
 
@@ -214,18 +180,16 @@
     </div>
 
     <div class="menu-grid">
-  <a href="tahfidz.html" class="menu-item"><span class="menu-symbol">🏆</span><span>Tahfidz</span></a>
-  <a href="absensi.html" class="menu-item"><span class="menu-symbol">📝</span><span>Absensi</span></a>
-  <a href="budayasekolah.html" class="menu-item"><span class="menu-symbol">🕌</span><span>Budaya</span></a>
-
-  <a href="pelajaran.html" class="menu-item"><span class="menu-symbol">📅</span><span>Jadwal</span></a>
-  <a href="alquran.html" class="menu-item"><span class="menu-symbol">📖</span><span>Al-Quran</span></a>
-  <a href="doa.html" class="menu-item"><span class="menu-symbol">🤲</span><span>Doa-doa</span></a>
-
-  <a href="perpustakaan.html" class="menu-item"><span class="menu-symbol">📚</span><span>Perpus</span></a>
-  <a href="kamus.html" class="menu-item"><span class="menu-symbol">📑</span><span>Kamus</span></a>
-  <a href="ujian.html" class="menu-item"><span class="menu-symbol">💡</span><span>Ujian</span></a>
-</div>
+      <a href="tahfidz.html" class="menu-item"><span class="menu-symbol">🏆</span><span>Tahfidz</span></a>
+      <a href="absensi.html" class="menu-item"><span class="menu-symbol">📝</span><span>Absensi</span></a>
+      <a href="budayasekolah.html" class="menu-item"><span class="menu-symbol">🕌</span><span>Budaya</span></a>
+      <a href="pelajaran.html" class="menu-item"><span class="menu-symbol">📅</span><span>Jadwal</span></a>
+      <a href="alquran.html" class="menu-item"><span class="menu-symbol">📖</span><span>Al-Quran</span></a>
+      <a href="doa.html" class="menu-item"><span class="menu-symbol">🤲</span><span>Doa-doa</span></a>
+      <a href="perpustakaan.html" class="menu-item"><span class="menu-symbol">📚</span><span>Perpus</span></a>
+      <a href="kamus.html" class="menu-item"><span class="menu-symbol">📑</span><span>Kamus</span></a>
+      <a href="ujian.html" class="menu-item"><span class="menu-symbol">💡</span><span>Ujian</span></a>
+    </div>
   </section>
 </main>
 
@@ -243,7 +207,7 @@
 </div>
 
 <script>
-  // 1. JANTUNG APLIKASI (Firebase)
+  // 1. FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -259,21 +223,19 @@
   const auth = firebase.auth();
   const db = firebase.database();
 
-  // 2. FUNGSI AUTH & LOGIN
+  // 2. AUTH FUNCTIONS
   function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider);
   }
-  function logout() {
-    auth.signOut().then(() => location.reload());
-  }
+  function logout() { auth.signOut().then(() => location.reload()); }
   function login() {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('password').value;
     auth.signInWithEmailAndPassword(email, pass).catch(e => alert(e.message));
   }
 
-  // 3. FUNGSI SIDEBAR & CHAT TOGGLE
+  // 3. UI FUNCTIONS
   function toggleChat() {
     const win = document.getElementById('ai-window');
     win.style.display = (win.style.display === 'none' || win.style.display === '') ? 'flex' : 'none';
@@ -281,35 +243,9 @@
   document.getElementById('menu-btn').onclick = () => document.getElementById('sidebar').classList.add('open');
   document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-  // 4. LOGIKA DASHBOARD & ADMIN
-  auth.onAuthStateChanged(user => {
-    const dash = document.getElementById("dashboard");
-    const loginCard = document.getElementById("login-card");
-    const menuBtn = document.getElementById("menu-btn");
-    const aiBtn = document.getElementById("ai-button");
-    const adminMenu = document.getElementById("admin-menu");
-
-    if(user){
-        dash.classList.remove("hidden");
-        loginCard.classList.add("hidden");
-        menuBtn.style.display = "flex";
-        aiBtn.style.display = "flex";
-        
-        document.getElementById("uName").innerText = user.displayName || "Santri";
-        document.getElementById("uEmail").innerText = user.email;
-        if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
-
-        // CEK ADMIN
-        if (user.email === "miftahilmi15@gmail.com") {
-            if(adminMenu) adminMenu.classList.remove("hidden");
-        }
-
-        // --- UPDATE STREAK & API QURAN (OTOMATIS REDUP SETIAP HARI) ---
-function monitoringStreak(userId) {
-function monitoringStreak(userId) {
+  // 4. STREAK MONITORING (FUNGSI GLOBAL)
+  function monitoringStreak(userId) {
     const hariIni = new Date().toISOString().split('T')[0];
-    
-    // Ambil tanggal kemarin untuk cek apakah streak putus
     const kemarinDate = new Date();
     kemarinDate.setDate(kemarinDate.getDate() - 1);
     const tglKemarin = kemarinDate.toISOString().split('T')[0];
@@ -321,81 +257,81 @@ function monitoringStreak(userId) {
         let streak = data.streak || 0;
         const tglBaca = data.tgl_terakhir_api || "";
 
-        const streakText = document.getElementById('streak-text');
-        const fire = document.getElementById('fire-api');
-
-        // LOGIKA RESET: Jika terakhir baca bukan hari ini DAN bukan kemarin, streak hangus (0)
+        // Reset if missed a day
         if (tglBaca !== hariIni && tglBaca !== tglKemarin && streak > 0) {
             streak = 0;
             db.ref('users/' + userId).update({ streak: 0 });
         }
 
-        if (streakText) streakText.innerText = streak + " Hari Istiqomah";
-
-        // LOGIKA VISUAL API
-        if (fire) {
-            if (tglBaca === hariIni) {
-                // NYALA (Sudah baca hari ini)
-                fire.classList.remove('fire-off');
-                fire.style.opacity = "1";
-                fire.style.filter = "grayscale(0%) brightness(1.2)";
-            } else {
-                // REDUP (Belum baca hari ini)
-                fire.classList.add('fire-off');
-                fire.style.opacity = "0.2"; 
-                fire.style.filter = "grayscale(100%)";
-            }
+        document.getElementById('streak-text').innerText = streak + " Hari Istiqomah";
+        const fire = document.getElementById('fire-api');
+        
+        if (tglBaca === hariIni) {
+            fire.classList.remove('fire-off');
+            fire.style.opacity = "1";
+        } else {
+            fire.classList.add('fire-off');
         }
     });
-}
-        // --- UPDATE MAHFUZAT (BIAR MUNCUL) ---
-        db.ref('fitur/mahfuzat').on('value', snap => {
+  }
+
+  // 5. MAIN LOGIC
+  auth.onAuthStateChanged(user => {
+    if(user){
+        document.getElementById("dashboard").classList.remove("hidden");
+        document.getElementById("login-card").classList.add("hidden");
+        document.getElementById("menu-btn").style.display = "flex";
+        document.getElementById("ai-button").style.display = "flex";
+        
+        document.getElementById("uName").innerText = user.displayName || "Santri";
+        document.getElementById("uEmail").innerText = user.email;
+        if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+
+        if (user.email === "miftahilmi15@gmail.com") {
+            document.getElementById("admin-menu").classList.remove("hidden");
+        }
+
+        // JALANKAN STREAK DISINI BOS!
+        monitoringStreak(user.uid);
+
+        // LOAD MAHFUZAT
+        db.ref('konten/mahfuzat').on('value', snap => {
             const data = snap.val();
             if(data) {
-                document.getElementById('runArab').innerText = data.arab || "مَنْ جَدَّ وَجَدَ";
-                document.getElementById('runIndo').innerText = " — " + (data.indo || "Barangsiapa bersungguh-sungguh dapatlah ia");
+                document.getElementById('runArab').innerText = data.arab || "";
+                document.getElementById('runIndo').innerText = " — " + (data.indo || "");
             }
         });
     } else {
-        loginCard.classList.remove("hidden");
-        dash.classList.add("hidden");
-        menuBtn.style.display = "none";
-        aiBtn.style.display = "none";
+        document.getElementById("login-card").classList.remove("hidden");
+        document.getElementById("dashboard").classList.add("hidden");
+        document.getElementById("menu-btn").style.display = "none";
+        document.getElementById("ai-button").style.display = "none";
     }
   });
 
-  // 5. FUNGSI AI USTADZ
+  // 6. AI USTADZ
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const rawText = input.value.trim();
-    const text = rawText.toLowerCase();
-    if(!text) return;
+    if(!rawText) return;
 
     box.innerHTML += `<div class="msg-user">${rawText}</div>`;
     input.value = "";
     const loadId = "load-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}">Sedang mengetik...</div>`;
+    box.innerHTML += `<div class="msg-ai" id="${loadId}">...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    const ustadzDB = {
-        "salam": "Wa'alaikumussalam warahmatullah. Ahlan wa Sahlan, ada yang bisa ustadz bantu?",
-        "ujian": "Ujian adalah cara untuk naik tingkat. Jangan lupa baca Bismillah dan teliti ya!",
-        "ngaji": "Alhamdulillah, teruskan semangat mengajinya. Al-Quran akan menjadi syafaat bagimu.",
-        "sholat": "Jaga sholatmu, maka Allah akan menjaga hidupmu. Sudah masuk waktu sholat?",
-        "default": "Masya Allah, pertanyaan yang menarik. Fokuslah belajar dan beribadah, semoga Allah mudahkan segala urusanmu."
-    };
-
     setTimeout(() => {
-        let respon = ustadzDB["default"];
-        if (text.includes("assalamu")) respon = ustadzDB["salam"];
-        else if (text.includes("ujian") || text.includes("tes")) respon = ustadzDB["ujian"];
-        else if (text.includes("ngaji") || text.includes("quran")) respon = ustadzDB["ngaji"];
-        else if (text.includes("sholat")) respon = ustadzDB["sholat"];
+        const text = rawText.toLowerCase();
+        let respon = "Masya Allah, pertanyaan yang bagus. Teruslah belajar ya nak.";
+        if (text.includes("assalamu")) respon = "Wa'alaikumussalam warahmatullah.";
+        else if (text.includes("sholat")) respon = "Sholat adalah tiang agama, jangan sampai ditinggalkan ya.";
         
         document.getElementById(loadId).innerText = respon;
         box.scrollTop = box.scrollHeight;
-    }, 800);
+    }, 600);
   }
 </script>
 </body>
