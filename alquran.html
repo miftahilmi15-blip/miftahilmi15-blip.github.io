@@ -144,108 +144,7 @@
     <p id="transBody" style="line-height:1.7; font-size:15px; padding: 0 5px;"></p>
 </div>
 
-<script>
-    const surahSelect = document.getElementById("surahSelect");
-    const quranText = document.getElementById("quranText");
-    const mainAudio = document.getElementById("mainAudio");
 
-    async function init() {
-        try {
-            const res = await fetch("https://equran.id/api/v2/surat");
-            const data = await res.json();
-            data.data.forEach(s => {
-                let opt = new Option(`${s.nomor}. ${s.namaLatin}`, s.nomor);
-                surahSelect.add(opt);
-            });
-            loadSurah(1);
-        } catch (e) { quranText.innerText = "Error API."; }
-    }
-
-    async function loadSurah(no) {
-        quranText.innerHTML = "<p style='text-align:center;'>Memuat Mushaf...</p>";
-        mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
-        const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
-        const json = await res.json();
-        const data = json.data;
-        document.getElementById("surahTitle").innerText = data.namaLatin;
-        let html = "";
-        if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:25px; font-size:35px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
-        data.ayat.forEach(v => {
-            const cleanTrans = v.teksIndonesia.replace(/'/g, "&apos;");
-            html += `<span class="ayah-item" onclick="openTrans(${v.nomorAyat}, '${cleanTrans}')">${v.teksArab} <span class="ayah-num">${v.nomorAyat}</span></span> `;
-        });
-        quranText.innerHTML = html;
-    }
-
-    function openTrans(num, text) {
-        document.getElementById("transTitle").innerText = `Ayat ${num}`;
-        document.getElementById("transBody").innerText = text;
-        document.getElementById("overlay").style.display = "block";
-        document.getElementById("transDrawer").style.display = "block";
-    }
-
-    function openDrawer(id) {
-        document.getElementById("overlay").style.display = "block";
-        document.getElementById(id).style.display = "block";
-    }
-
-    function switchTab(evt, tabId) {
-        document.querySelectorAll('.materi-section').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        evt.currentTarget.classList.add('active');
-    }
-
-    function closeAll() {
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("materiDrawer").style.display = "none";
-        document.getElementById("transDrawer").style.display = "none";
-    }
-
-    surahSelect.onchange = () => loadSurah(surahSelect.value);
-    init();
-    // --- FITUR AQUARIUM (TAMBAHAN) ---
-    let startTime = Date.now();
-    const DURASI_MINIMAL = 30 * 60 * 1000; // 30 Menit dalam milidetik
-    let sudahDapatIkan = false;
-
-    // Fungsi untuk mengecek waktu secara berkala (setiap 1 menit)
-    setInterval(() => {
-        if (sudahDapatIkan) return;
-
-        let currentTime = Date.now();
-        let selisih = currentTime - startTime;
-
-        if (selisih >= DURASI_MINIMAL) {
-            const user = firebase.auth().currentUser;
-            if (user) {
-                const uid = user.uid.replace(/\./g, ',');
-                const userRef = firebase.database().ref('users/' + uid + '/ikan');
-                
-                userRef.transaction((currentIkan) => {
-                    return (currentIkan || 0) + 1;
-                });
-
-                sudahDapatIkan = true; // Agar tidak terus bertambah di sesi yang sama
-                alert("Maa Syaa Allah! Kamu sudah mengaji selama 30 menit. 1 Ikan baru ditambahkan ke Aquarium kamu! 🐟");
-            }
-        }
-    }, 60000); // Cek setiap 60 detik
-
-    // Tambahan: Reset timer jika ganti surah agar benar-benar dihitung dari awal mengaji
-    const originalLoadSurah = loadSurah;
-    loadSurah = async function(no) {
-        startTime = Date.now(); // Reset waktu setiap ganti surah
-        sudahDapatIkan = false;
-        return originalLoadSurah(no);
-    };
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="id">
-<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aquarium Mengaji | Koi Jepang</title>
@@ -286,47 +185,8 @@
         .bubble {
             position: absolute; background: rgba(255,255,255,0.3);
             border-radius: 50%; bottom: -50px; animation: floatUp 10s infinite;
-<script>
-    const surahSelect = document.getElementById("surahSelect");
-    const quranText = document.getElementById("quranText");
-<script>
-    const surahSelect = document.getElementById("surahSelect");
-    const quranText = document.getElementById("quranText");
-    const mainAudio = document.getElementById("mainAudio");
 
-    // CONFIG FIREBASE (Pastikan konsisten)
-    const firebaseConfig = {
-        apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
-        authDomain: "e-santri-b62be.firebaseapp.com",
-        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "e-santri-b62be",
-        storageBucket: "e-santri-b62be.firebasestorage.app",
-        messagingSenderId: "6560427635",
-        appId: "1:6560427635:web:368b4fbf95163e8d214406",
-        measurementId: "G-X0NSEGDDC0"
-    };
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
-
-    async function init() {
-        try {
-            const res = await fetch("https://equran.id/api/v2/surat");
-            const data = await res.json();
-            data.data.forEach(s => {
-                let opt = new Option(`${s.nomor}. ${s.namaLatin}`, s.nomor);
-                surahSelect.add(opt);
-            });
-            loadSurah(1);
-        } catch (e) { quranText.innerText = "Error API."; }
-    }
-
-    async function loadSurah(no) {
-        quranText.innerHTML = "<p style='text-align:center;'>Memuat Mushaf...</p>";
-        mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
-        const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
 <script>
     const surahSelect = document.getElementById("surahSelect");
     const quranText = document.getElementById("quranText");
