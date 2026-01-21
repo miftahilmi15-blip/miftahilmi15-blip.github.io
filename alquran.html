@@ -286,113 +286,130 @@
         .bubble {
             position: absolute; background: rgba(255,255,255,0.3);
             border-radius: 50%; bottom: -50px; animation: floatUp 10s infinite;
-        }
-        @keyframes floatUp {
-            from { transform: translateY(0); opacity: 1; }
-            to { transform: translateY(-110vh); opacity: 0; }
-        }
-    </style>
-</head>
-<body>
-
-<div id="sea">
-    <a href="index.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> KEMBALI</a>
-    
-    <div class="info-panel">
-        <h2 style="margin-bottom: 5px;">Aquarium Santri</h2>
-        <p style="font-size: 14px; opacity: 0.9;">Ikan Koi Jepang Kamu: <b id="fish-count">0</b></p>
-        <div style="margin-top: 10px; font-size: 11px; background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 8px;">
-            <i class="fa-solid fa-circle-info"></i> Baca Al-Qur'an 30 menit untuk dapat 1 Koi
-        </div>
-    </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
 <script>
+    const surahSelect = document.getElementById("surahSelect");
+    const quranText = document.getElementById("quranText");
+    const mainAudio = document.getElementById("mainAudio");
+
+    // CONFIG FIREBASE (Pastikan konsisten)
     const firebaseConfig = {
         apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
         authDomain: "e-santri-b62be.firebaseapp.com",
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "e-santri-b62be",
         storageBucket: "e-santri-b62be.firebasestorage.app",
         messagingSenderId: "6560427635",
         appId: "1:6560427635:web:368b4fbf95163e8d214406",
-        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
+        measurementId: "G-X0NSEGDDC0"
     };
-    
-    firebase.initializeApp(firebaseConfig);
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
     const db = firebase.database();
 
-    // 1. Cek User dan Ambil Data Ikan
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-            const uid = user.uid.replace(/\./g, ',');
-            db.ref('users/' + uid + '/ikan').on('value', snap => {
-                const count = snap.val() || 0;
-                document.getElementById('fish-count').innerText = count;
-                updateAquarium(count);
+    async function init() {
+        try {
+            const res = await fetch("https://equran.id/api/v2/surat");
+            const data = await res.json();
+            data.data.forEach(s => {
+                let opt = new Option(`${s.nomor}. ${s.namaLatin}`, s.nomor);
+                surahSelect.add(opt);
             });
-        } else {
-            window.location.href = "index.html";
-        }
-    });
-
-    // 2. Fungsi Gambar Ikan Koi
-    function updateAquarium(count) {
-        const sea = document.getElementById('sea');
-        // Bersihkan ikan lama agar tidak numpuk
-        document.querySelectorAll('.fish-koi').forEach(f => f.remove());
-
-        for (let i = 0; i < count; i++) {
-            const img = document.createElement('img');
-            // Menggunakan gambar Koi Jepang (Kohaku)
-            img.src = "https://cdn-icons-png.flaticon.com/512/2316/2316335.png"; 
-            img.className = 'fish-koi';
-            
-            // Posisi acak awal
-            let x = Math.random() * 80 + 'vw';
-            let y = Math.random() * 80 + 'vh';
-            img.style.left = x;
-            img.style.top = y;
-            
-            sea.appendChild(img);
-
-            // Jalankan animasi renang
-            animateFish(img);
-        }
+            loadSurah(1);
+        } catch (e) { quranText.innerText = "Error API."; }
     }
 
-    function animateFish(fish) {
-        setInterval(() => {
-            let nextX = Math.random() * 80;
-            let nextY = Math.random() * 80;
-            
-            // Logika agar ikan menghadap ke arah dia berenang
-            let currentX = parseFloat(fish.style.left);
-            if (nextX < currentX) {
-                fish.style.transform = "scaleX(-1)"; // Balik arah ke kiri
-            } else {
-                fish.style.transform = "scaleX(1)"; // Hadap kanan
-            }
-
-            fish.style.left = nextX + 'vw';
-            fish.style.top = nextY + 'vh';
-        }, 5000);
+    async function loadSurah(no) {
+        quranText.innerHTML = "<p style='text-align:center;'>Memuat Mushaf...</p>";
+        mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
+        const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
+        const json = await res.json();
+        const data = json.data;
+        document.getElementById("surahTitle").innerText = data.namaLatin;
+        let html = "";
+        if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:25px; font-size:35px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
+        data.ayat.forEach(v => {
+            const cleanTrans = v.teksIndonesia.replace(/'/g, "&apos;");
+            html += `<span class="ayah-item" onclick="openTrans(${v.nomorAyat}, '${cleanTrans}')">${v.teksArab} <span class="ayah-num">${v.nomorAyat}</span></span> `;
+        });
+        quranText.innerHTML = html;
+        
+        // Reset timer mengaji setiap ganti surah
+        startTime = Date.now();
+        sudahDapatIkan = false;
     }
 
-    // 3. Efek Gelembung (Hiasan)
+    function openTrans(num, text) {
+        document.getElementById("transTitle").innerText = `Ayat ${num}`;
+        document.getElementById("transBody").innerText = text;
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById("transDrawer").style.display = "block";
+    }
+
+    function openDrawer(id) {
+        document.getElementById("overlay").style.display = "block";
+        document.getElementById(id).style.display = "block";
+    }
+
+    function switchTab(evt, tabId) {
+        document.querySelectorAll('.materi-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        evt.currentTarget.classList.add('active');
+    }
+
+    function closeAll() {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("materiDrawer").style.display = "none";
+        document.getElementById("transDrawer").style.display = "none";
+    }
+
+    surahSelect.onchange = () => loadSurah(surahSelect.value);
+    init();
+
+    // --- FITUR STREAK & AQUARIUM (SINKRON DASHBOARD) ---
+    let startTime = Date.now();
+    const DURASI_MINIMAL = 30 * 60 * 1000; // 30 Menit
+    let sudahDapatIkan = false;
+
     setInterval(() => {
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        let size = Math.random() * 20 + 10 + 'px';
-        bubble.style.width = size;
-        bubble.style.height = size;
-        bubble.style.left = Math.random() * 100 + 'vw';
-        document.getElementById('sea').appendChild(bubble);
-        setTimeout(() => bubble.remove(), 10000);
-    }, 1000);
+        if (sudahDapatIkan) return;
+
+        let currentTime = Date.now();
+        let selisih = currentTime - startTime;
+
+        if (selisih >= DURASI_MINIMAL) {
+            const user = firebase.auth().currentUser;
+            if (user) {
+                // FORMAT EMAIL (Agar sama dengan Dashboard)
+                const emailKey = user.email.replace(/\./g, ',');
+                const hariIni = new Date().toISOString().split('T')[0];
+                const userRef = db.ref('users/' + emailKey);
+                
+                userRef.once('value').then(snap => {
+                    const data = snap.val() || {};
+                    let currentStreak = data.streak || 0;
+                    let tglTerakhir = data.tgl_terakhir_api || "";
+
+                    // Update Ikan, Tanggal, dan Streak
+                    let updates = {};
+                    updates['ikan'] = (data.ikan || 0) + 1;
+                    updates['tgl_terakhir_api'] = hariIni;
+                    
+                    // Tambah streak jika hari ini belum tercatat
+                    if (tglTerakhir !== hariIni) {
+                        updates['streak'] = currentStreak + 1;
+                    }
+
+                    userRef.update(updates);
+                    
+                    sudahDapatIkan = true;
+                    alert("Maa Syaa Allah! 30 menit mengaji tercapai.\n- 1 Ikan Koi bertambah 🐟\n- Streak Istiqomah bertambah! 🔥");
+                });
+            }
+        }
+    }, 60000); // Cek tiap menit
 </script>
 </body>
 </html>
