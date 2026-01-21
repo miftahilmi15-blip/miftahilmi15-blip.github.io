@@ -6,6 +6,7 @@
     <title>Master Admin & Rekap | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; --gold: #f1c40f; --accent: #6c5ce7; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
@@ -31,49 +32,17 @@
         
         .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
         .btn-excel { background: #27ae60; color: white; padding: 15px; border-radius: 15px; text-align: center; font-weight: 700; margin-top: 10px; display: block; text-decoration: none; cursor: pointer; border: none; width: 100%; }
-        
-        /* TABLE REKAP */
-    .<style>
-    .rekap-container { 
-        overflow-x: auto; 
-        margin-top: 20px; 
-        border-radius: 15px; 
-        border: 1px solid #eee; 
-        position: relative; 
-        -webkit-overflow-scrolling: touch; 
-    }
-    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 10px; min-width: 1000px; }
-    
-    /* Header Tetap Sticky di Atas */
-    th { 
-        background: #1f6f51; 
-        color: white; 
-        padding: 12px 8px; 
-        border: 1px solid #ddd; 
-        text-align: center; 
-        position: sticky;
-        top: 0;
-        z-index: 15;
-    }
+        .hidden { display: none !important; }
 
-    /* KOLOM NAMA - TETAP DI KIRI SAAT DIGESER */
-    .nama-col { 
-        position: sticky; 
-        left: 0; 
-        z-index: 20; 
-        background: #f8fafc !important; 
-        font-weight: 600; 
-        text-align: left; 
-        min-width: 150px; 
-        border-right: 2px solid #ddd !important;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.05); /* Bayangan pemisah */
-    }
-
-    /* Header Kolom Nama harus lebih tinggi z-indexnya */
-    th.nama-col { z-index: 25; }
-
-    td { padding: 10px 8px; border: 1px solid #ddd; text-align: center; background: white; }
-    .rata-col { background: #fff9db !important; font-weight: 800; color: #d35400; position: sticky; right: 0; z-index: 10; border-left: 2px solid #ddd !important; }
+        /* TABLE REKAP STICKY */
+        .rekap-container { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; position: relative; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 10px; min-width: 1000px; }
+        th { background: #1f6f51; color: white; padding: 12px 8px; border: 1px solid #ddd; text-align: center; position: sticky; top: 0; z-index: 15; }
+        td { padding: 10px 8px; border: 1px solid #ddd; text-align: center; background: white; }
+        .nama-col { position: sticky; left: 0; z-index: 20; background: #f8fafc !important; font-weight: 600; text-align: left; min-width: 150px; border-right: 2px solid #ddd !important; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
+        th.nama-col { z-index: 25; }
+        .rata-col { background: #fff9db !important; font-weight: 800; color: #d35400; position: sticky; right: 0; z-index: 10; border-left: 2px solid #ddd !important; }
+        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -107,39 +76,44 @@
                 <select id="pilih-kelas-mon" onchange="loadAbsensi()">
                     <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
                     <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                 <div class="card">
-    <h3>Rekap Nilai Siswa</h3>
-    <select id="rekap-kelas-pilih">
-        <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-        <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-        <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-    </select>
-    
-    <button class="btn-action" onclick="generateRekap()" style="background:var(--accent); margin-top:10px;">LIHAT REKAP NILAI</button>
-    <button id="btn-download" class="btn-excel hidden" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
-
-    <div id="container-grafik" style="margin-top:20px; height: 250px;">
-        <canvas id="chartNilai12Kelas"></canvas>
-    </div>
-
-    <div class="rekap-container">
-        <table id="tabel-rekap">
-            <thead id="head-rekap"></thead>
-            <tbody id="body-rekap"></tbody>
-        </table>
-    </div>
-                 </div>   <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
                 </select>
                 <div id="list-absensi" style="margin-top:15px;"></div>
             </div>
         </div>
 
         <div id="tab-ujian" class="tab-content hidden">
-            
+            <div class="card">
+                <h3>Rekap Nilai Siswa</h3>
+                <select id="rekap-kelas-pilih">
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                </select>
+                <button class="btn-action" onclick="generateRekap()" style="background:var(--accent); margin-top:10px;">LIHAT REKAP NILAI</button>
+                <button id="btn-download" class="btn-excel hidden" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
+                <div id="container-grafik" style="margin-top:20px; height: 250px;">
+                    <canvas id="chartNilai12Kelas"></canvas>
+                </div>
+                <div class="rekap-container">
+                    <table id="tabel-rekap">
+                        <thead id="head-rekap"></thead>
+                        <tbody id="body-rekap"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div id="tab-tahfidz" class="tab-content hidden">
             <div class="card">
-                <h3>Laporan Tahfidz Terbaru</h3>
-                <div id="list-tahfidz"></div>
+                <h3>Checklist Monitoring Tahfidz</h3>
+                <select id="kls-tahfidz" onchange="loadTahfidz()">
+                    <option value="">-- Pilih Kelas --</option>
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                </select>
+                <div id="list-tahfidz-check" style="margin-top:15px;"></div>
             </div>
         </div>
 
@@ -156,14 +130,14 @@
             <div class="card">
                 <h3>Kirim Hadiah Ikan</h3>
                 <label>Email Santri</label>
-                <input type="email" id="aq-email" placeholder="contoh: santri@gmail.com">
+                <input type="email" id="aq-email" placeholder="santri@gmail.com">
                 <label>Jumlah Ikan</label>
                 <input type="number" id="aq-jumlah" value="1">
                 <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM HADIAH</button>
             </div>
             <div class="card">
-                <h3>Riwayat Pengiriman Terbaru</h3>
-                <div id="riwayat-ikan" style="max-height: 300px; overflow-y: auto;"></div>
+                <h3>Riwayat Pengiriman</h3>
+                <div id="riwayat-ikan"></div>
             </div>
         </div>
 
@@ -184,6 +158,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const LIST_MAPEL = ["Mtk", "IPA", "IPS", "PKN", "B.Indo", "B.Ing", "B.Arab", "Fikih", "Aqidah", "Tarikh", "Infor", "B.Daerah", "Seni"];
+    let myChart;
 
     function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; }
     function tutupAdmin() { document.getElementById('reward-screen').style.display = 'flex'; document.getElementById('admin-screen').style.display = 'none'; }
@@ -200,189 +175,81 @@
         if(id === 'tab-aquarium') loadRiwayatIkan();
     }
 
-    // --- LOGIKA TAHFIDZ ---
-    function loadTahfidz() {
-    const kls = document.getElementById('kls-tahfidz').value;
-    const container = document.getElementById('list-tahfidz-check');
-    
-    if (!kls) return;
-    container.innerHTML = "<p style='text-align:center; font-size:12px;'>Mengecek laporan hari ini...</p>";
-
-    // 1. Ambil tanggal hari ini (Format: YYYY-MM-DD)
-    const tglSekarang = new Date().toISOString().split('T')[0];
-
-    // 2. Ambil semua santri di kelas tersebut
-    db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapUsers => {
-        if (!snapUsers.exists()) {
-            container.innerHTML = "<p style='text-align:center; font-size:12px; color:red;'>Santri belum terdaftar di database.</p>";
-            return;
-        }
-
-        // 3. Ambil data setoran di folder tahfidz
-        db.ref('tahfidz').once('value', snapSetoran => {
-            const dataSetoran = snapSetoran.val() || {};
-            container.innerHTML = ""; 
-
-            snapUsers.forEach(u => {
-                const santri = u.val();
-                const nama = santri.nama;
-                
-                let sudahSetorHariIni = false;
-                let detailHafalan = "";
-
-                // 4. LOGIKA KUNCI: Cek apakah namanya ada DAN tanggalnya adalah HARI INI
-                Object.values(dataSetoran).forEach(t => {
-                    // Pastikan di database santri saat input, ada kolom 'tanggal' (YYYY-MM-DD)
-                    if (t.nama === nama && t.tanggal === tglSekarang) {
-                        sudahSetorHariIni = true;
-                        detailHafalan = `📖 ${t.surah || ''} ayat ${t.ayat || ''}`;
-                    }
-                });
-
-                // 5. Render Tampilan (Redup jika belum setor hari ini)
-                container.innerHTML += `
-                    <div class="item-row" style="border-left: 5px solid ${sudahSetorHariIni ? '#2ecc71' : '#ff7675'}; opacity: ${sudahSetorHariIni ? '1' : '0.6'}">
-                        <div style="flex:1;">
-                            <b style="display:block; color: ${sudahSetorHariIni ? '#1f6f51' : '#444'}">${nama}</b>
-                            <small style="color:#999;">${sudahSetorHariIni ? detailHafalan : 'Belum input hari ini'}</small>
-                        </div>
-                        <div class="${sudahSetorHariIni ? 'status-done' : 'status-pending'}" style="font-size:10px;">
-                            ${sudahSetorHariIni ? '✅ CEKLIS' : '❌ SILAU'}
-                        </div>
-                    </div>
-                `;
-            });
-        });
-    });
-}
-
-    // --- LOGIKA REKAP & UJIAN ---
-    let myChart; // Variabel global agar grafik bisa di-reset
-
-function generateRekap() {
-    const kls = document.getElementById('rekap-kelas-pilih').value;
-    const body = document.getElementById('body-rekap');
-    const head = document.getElementById('head-rekap');
-    
-    // Header Tabel
-    let headHtml = `<tr><th class="nama-col">Nama Santri</th>`;
-    LIST_MAPEL.forEach(m => headHtml += `<th>${m}</th>`);
-    headHtml += `<th class="rata-col">Rata2</th></tr>`;
-    head.innerHTML = headHtml;
-
-    db.ref(`hasil_ujian/${kls}`).once('value', snap => {
-        if(!snap.exists()) { 
-            body.innerHTML = "<tr><td colspan='20' style='padding:20px;'>Belum ada data nilai untuk kelas ini.</td></tr>";
-            // Tetap update grafik meskipun data kelas ini kosong
-            updateGrafik12Kelas();
-            return; 
-        }
+    // --- REKAP & GRAFIK ---
+    function generateRekap() {
+        const kls = document.getElementById('rekap-kelas-pilih').value;
+        const body = document.getElementById('body-rekap');
+        const head = document.getElementById('head-rekap');
         
-        let dataSantri = {};
-        snap.forEach(c => {
-            const v = c.val();
-            if(!dataSantri[v.nama]) dataSantri[v.nama] = {};
-            
-            let pg = parseFloat(v.nilai_pg) || 0;
-            let ess = (v.nilai_essay && v.nilai_essay !== "Belum") ? parseFloat(v.nilai_essay) : null;
-            let nAkhir = (ess !== null) ? (pg + ess) / 2 : pg;
-            dataSantri[v.nama][v.mapel] = nAkhir;
-        });
+        let headHtml = `<tr><th class="nama-col">Nama Santri</th>`;
+        LIST_MAPEL.forEach(m => headHtml += `<th>${m}</th>`);
+        headHtml += `<th class="rata-col">Rata2</th></tr>`;
+        head.innerHTML = headHtml;
 
-        body.innerHTML = "";
-        for(let nama in dataSantri) {
-            let total = 0, count = 0;
-            let row = `<tr><td class="nama-col">${nama}</td>`; // Nama dikunci di CSS nanti
-            LIST_MAPEL.forEach(m => {
-                let nilai = dataSantri[nama][m];
-                if(nilai !== undefined) { 
-                    total += nilai; 
-                    count++; 
-                    row += `<td>${nilai.toFixed(1)}</td>`;
-                } else {
-                    row += `<td>-</td>`;
-                }
-            });
-            let rata = count > 0 ? (total/count).toFixed(1) : 0;
-            row += `<td class="rata-col">${rata}</td></tr>`;
-            body.innerHTML += row;
-        }
-        document.getElementById('btn-download').classList.remove('hidden');
-        
-        // JURUS GRAFIK 12 KELAS
-        updateGrafik12Kelas();
-    });
-}
-
-// FUNGSI UNTUK MELACAK NILAI SELURUH KELAS (7A - 9D)
-async function updateGrafik12Kelas() {
-    const daftarKelas = ["7A","7B","7C","7D","8A","8B","8C","8D","9A","9B","9C","9D"];
-    let rataRataPerKelas = [];
-
-    // Looping ambil data per kelas dari Firebase
-    for (let k of daftarKelas) {
-        const snap = await db.ref(`hasil_ujian/${k}`).once('value');
-        if (snap.exists()) {
-            let totalNilai = 0, jumlahData = 0;
+        db.ref(`hasil_ujian/${kls}`).once('value', snap => {
+            if(!snap.exists()) { body.innerHTML = "<tr><td colspan='20'>Belum ada data nilai.</td></tr>"; updateGrafik12Kelas(); return; }
+            let dataSantri = {};
             snap.forEach(c => {
                 const v = c.val();
+                if(!dataSantri[v.nama]) dataSantri[v.nama] = {};
                 let pg = parseFloat(v.nilai_pg) || 0;
-                totalNilai += pg; // Mengambil rata-rata dari PG sebagai patokan grafik
-                jumlahData++;
+                let ess = (v.nilai_essay && v.nilai_essay !== "Belum") ? parseFloat(v.nilai_essay) : null;
+                dataSantri[v.nama][v.mapel] = (ess !== null) ? (pg + ess) / 2 : pg;
             });
-            rataRataPerKelas.push((totalNilai / jumlahData).toFixed(1));
-        } else {
-            rataRataPerKelas.push(0); // Kelas belum ada data
-        }
-    }
 
-    const ctx = document.getElementById('chartNilai12Kelas').getContext('2d');
-    
-    // Reset grafik kalau sudah ada sebelumnya
-    if (myChart) myChart.destroy();
-
-    myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: daftarKelas,
-            datasets: [{
-                label: 'Rata-Rata Nilai',
-                data: rataRataPerKelas,
-                backgroundColor: 'rgba(31, 111, 81, 0.7)', // Hijau E-Santri
-                borderColor: '#1f6f51',
-                borderWidth: 1,
-                borderRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true, max: 100 }
+            body.innerHTML = "";
+            for(let nama in dataSantri) {
+                let total = 0, count = 0, row = `<tr><td class="nama-col">${nama}</td>`;
+                LIST_MAPEL.forEach(m => {
+                    let nilai = dataSantri[nama][m];
+                    if(nilai !== undefined) { total += nilai; count++; row += `<td>${nilai.toFixed(1)}</td>`; }
+                    else { row += `<td>-</td>`; }
+                });
+                row += `<td class="rata-col">${count > 0 ? (total/count).toFixed(1) : 0}</td></tr>`;
+                body.innerHTML += row;
             }
+            document.getElementById('btn-download').classList.remove('hidden');
+            updateGrafik12Kelas();
+        });
+    }
+
+    async function updateGrafik12Kelas() {
+        const daftarKelas = ["7A","7B","7C","7D","8A","8B","8C","8D","9A","9B","9C","9D"];
+        let rataRataPerKelas = [];
+        for (let k of daftarKelas) {
+            const snap = await db.ref(`hasil_ujian/${k}`).once('value');
+            let totalNilai = 0, jumlahData = 0;
+            if (snap.exists()) {
+                snap.forEach(c => { totalNilai += parseFloat(c.val().nilai_pg || 0); jumlahData++; });
+                rataRataPerKelas.push((totalNilai / jumlahData).toFixed(1));
+            } else { rataRataPerKelas.push(0); }
         }
-    });
-}
-
-    function publishJadwalUjian() {
-        const m = document.getElementById('u-mapel').value, 
-              k = document.getElementById('u-target-kelas').value, 
-              j = document.getElementById('u-jadwal').value, 
-              s = document.getElementById('u-massal').value;
-        if(!j || !s) return alert("Silakan lengkapi Waktu Buka dan Bank Soal!");
-        db.ref(`ujian/${k}`).set({ mapel: m, waktu_buka: j, bank_soal: s, status: "Aktif" })
-          .then(() => alert("Ujian Berhasil di-Publish!"));
+        const ctx = document.getElementById('chartNilai12Kelas').getContext('2d');
+        if (myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: daftarKelas, datasets: [{ label: 'Rata-Rata Nilai', data: rataRataPerKelas, backgroundColor: '#1f6f51', borderRadius: 5 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+        });
     }
 
-    function downloadExcel() { 
-        const kls = document.getElementById('rekap-kelas-pilih').value;
-        const table = document.getElementById("tabel-rekap").outerHTML;
-        const uri = 'data:application/vnd.ms-excel;base64,';
-        const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head></head><body>${table}</body></html>`;
-        window.location.href = uri + btoa(unescape(encodeURIComponent(template)));
+    // --- ABSENSI & MONITORING ---
+    function loadAbsensi() {
+        const kls = document.getElementById('pilih-kelas-mon').value;
+        const now = new Date();
+        const path = `absensi/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/${kls}`;
+        const container = document.getElementById('list-absensi');
+        db.ref(path).on('value', snap => {
+            container.innerHTML = "";
+            if (!snap.exists()) { container.innerHTML = "<p style='font-size:11px; color:#aaa;'>Belum ada data absen.</p>"; return; }
+            snap.forEach(s => {
+                const v = s.val();
+                let warna = v.status === "Hadir" ? "#2ecc71" : "#e74c3c";
+                container.innerHTML += `<div class="item-row"><b>${v.nama}</b><span style="color:${warna}; font-weight:bold">${v.status}</span></div>`;
+            });
+        });
     }
 
-    // --- MONITORING & ABSENSI ---
     function loadMonitorGuru() {
         const list = document.getElementById('list-guru-input');
         const now = new Date();
@@ -396,57 +263,22 @@ async function updateGrafik12Kelas() {
         });
     }
 
-    function loadAbsensi() {
-    const kls = document.getElementById('pilih-kelas-mon').value;
-    const now = new Date();
-    const thn = now.getFullYear();
-    const bln = now.getMonth() + 1;
-    const tgl = now.getDate();
-
-    const container = document.getElementById('list-absensi');
-    container.innerHTML = "<p style='font-size:11px; color:#aaa;'>Melacak data...</p>";
-
-    // Path disesuaikan: absensi / tahun / bulan / tanggal / kelas
-    db.ref(`absensi/${thn}/${bln}/${tgl}/${kls}`).on('value', snap => {
-        container.innerHTML = "";
-        
-        if (!snap.exists()) { 
-            container.innerHTML = "<p style='font-size:11px; color:#aaa;'>Belum ada santri yang absen di kelas " + kls + " hari ini.</p>"; 
-            return; 
-        }
-
-        snap.forEach(s => {
-            const v = s.val();
-            // Pastikan field di Firebase namanya 'nama' dan 'status'
-            // Jika strukturnya berbeda, sesuaikan v.nama dan v.status di bawah ini
-            const namaAnak = v.nama || "Tanpa Nama";
-            const statusAbsen = v.status || "Tanpa Status";
-            
-            // Beri warna berbeda untuk tiap status
-            let warnaStatus = "#666";
-            if(statusAbsen === "Hadir") warnaStatus = "#2ecc71";
-            if(statusAbsen === "Izin" || statusAbsen === "Sakit") warnaStatus = "#f1c40f";
-            if(statusAbsen === "Alfa") warnaStatus = "#e74c3c";
-
-            container.innerHTML += `
-                <div class="item-row" style="display:flex; justify-content:space-between; align-items:center;">
-                    <b style="font-size:12px;">${namaAnak}</b>
-                    <span style="font-size:10px; font-weight:bold; color:white; background:${warnaStatus}; padding:2px 8px; border-radius:5px;">
-                        ${statusAbsen.toUpperCase()}
-                    </span>
-                </div>`;
-        });
-    });
- }
-
-    // --- MATERI & AQUARIUM ---
-    function saveMahfuzat() {
-        const arb = document.getElementById('m-arab').value, ind = document.getElementById('m-indo').value;
-        if(!arb || !ind) return alert("Isi Arab dan Terjemahan!");
-        db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => {
-            alert("Mahfuzat Berhasil Diperbarui!");
-            document.getElementById('m-arab').value = "";
-            document.getElementById('m-indo').value = "";
+    function loadTahfidz() {
+        const kls = document.getElementById('kls-tahfidz').value;
+        const container = document.getElementById('list-tahfidz-check');
+        const tgl = new Date().toISOString().split('T')[0];
+        if (!kls) return;
+        db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapU => {
+            db.ref('tahfidz').once('value', snapT => {
+                const dataT = snapT.val() || {};
+                container.innerHTML = ""; 
+                snapU.forEach(u => {
+                    const nama = u.val().nama;
+                    let sudah = false;
+                    Object.values(dataT).forEach(t => { if (t.nama === nama && t.tanggal === tgl) sudah = true; });
+                    container.innerHTML += `<div class="item-row" style="opacity:${sudah?1:0.6}"><b>${nama}</b><span>${sudah?'✅':'❌'}</span></div>`;
+                });
+            });
         });
     }
 
@@ -454,40 +286,32 @@ async function updateGrafik12Kelas() {
         const emInput = document.getElementById('aq-email').value.trim().toLowerCase();
         const em = emInput.replace(/\./g, ',');
         const jml = parseInt(document.getElementById('aq-jumlah').value);
-        if(!emInput) return alert("Email santri tidak boleh kosong!");
-        if(isNaN(jml) || jml < 1) return alert("Jumlah ikan minimal 1!");
-        
-        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => { 
-            alert("Hadiah " + jml + " Ikan Berhasil dikirim ke " + emInput); 
-            loadRiwayatIkan(); 
-        });
+        if(!emInput || isNaN(jml)) return alert("Data tidak lengkap!");
+        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => { alert("Ikan terkirim!"); loadRiwayatIkan(); });
     }
 
     function loadRiwayatIkan() {
         const list = document.getElementById('riwayat-ikan');
         db.ref('users').orderByChild('ikan').limitToLast(10).once('value', snap => {
             list.innerHTML = "";
-            snap.forEach(u => {
-                const d = u.val();
-                if(d.ikan) {
-                    let email = u.key.replace(/,/g,'.');
-                    list.innerHTML += `<div class="item-row"><b>${email}</b><span>${d.ikan} Ikan</span></div>`;
-                }
-            });
+            snap.forEach(u => { if(u.val().ikan) list.innerHTML += `<div class="item-row"><b>${u.key.replace(/,/g,'.')}</b><span>${u.val().ikan} 🐟</span></div>`; });
         });
+    }
+
+    function saveMahfuzat() {
+        const arb = document.getElementById('m-arab').value, ind = document.getElementById('m-indo').value;
+        if(!arb || !ind) return alert("Lengkapi data!");
+        db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => alert("Berhasil!"));
     }
 
     function loadPengaduan() {
         db.ref('pengaduan').on('value', snap => {
             const list = document.getElementById('list-pengaduan');
             list.innerHTML = "";
-            if(!snap.exists()) { list.innerHTML = "<div class='item-row'>Tidak ada pengaduan.</div>"; return; }
             snap.forEach(i => { 
-                const d = i.val(); 
                 list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:flex-start;">
-                    <b style="color:var(--primary)">${d.nama}</b>
-                    <p style="font-size:12px; margin-top:5px;">${d.pesan}</p>
-                    <button onclick="hapusData('pengaduan/${i.key}')" style="margin-top:8px; border:none; color:red; background:none; font-size:10px; cursor:pointer;"><i class="fas fa-trash"></i> Selesaikan / Hapus</button>
+                    <b>${i.val().nama}</b><p>${i.val().pesan}</p>
+                    <button onclick="db.ref('pengaduan/${i.key}').remove()" style="color:red; border:none; background:none; cursor:pointer;">Hapus</button>
                 </div>`; 
             });
         });
@@ -496,40 +320,28 @@ async function updateGrafik12Kelas() {
     function loadLeaderboard() {
         const list = document.getElementById('leaderboard-list');
         const now = new Date();
-        // Mengambil data budaya berdasarkan tahun dan bulan saat ini
         db.ref(`budaya/${now.getFullYear()}/${now.getMonth() + 1}`).on('value', snap => {
             let guruSkor = {};
             if(snap.exists()){
-                // Melakukan perulangan hingga ke level data guru (tanggal -> kelas -> data)
                 snap.forEach(tgl => tgl.forEach(kls => kls.forEach(s => { 
-                    const d = s.val(); 
-                    if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; 
+                    const d = s.val(); if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; 
                 })));
             }
-            
-            // Mengurutkan guru berdasarkan skor tertinggi
             const sorted = Object.keys(guruSkor).sort((a,b) => guruSkor[b] - guruSkor[a]);
-            list.innerHTML = "";
-            
-            if(sorted.length === 0) {
-                list.innerHTML = "<p style='text-align:center; font-size:12px; opacity:0.7;'>Belum ada data skor bulan ini.</p>";
-            }
-
+            list.innerHTML = sorted.length ? "" : "<p>Belum ada data.</p>";
             sorted.forEach((n, i) => {
-                list.innerHTML += `
-                <div class="leaderboard-item" style="${i==0 ? 'border:1px solid gold; background:rgba(255,215,0,0.1)' : ''}">
-                    <span>${i+1}. ${n}</span>
-                    <b>${guruSkor[n]} Poin</b>
-                </div>`;
+                list.innerHTML += `<div class="leaderboard-item" style="${i==0?'border:1px solid gold':''}"><span>${i+1}. ${n}</span><b>${guruSkor[n]} Poin</b></div>`;
             });
         });
     }
 
-    // Inisialisasi awal saat halaman dimuat
-    window.onload = function() {
-        loadLeaderboard();
-    };
+    function downloadExcel() {
+        const table = document.getElementById("tabel-rekap").outerHTML;
+        const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body>${table}</body></html>`;
+        window.location.href = 'data:application/vnd.ms-excel;base64,' + btoa(unescape(encodeURIComponent(template)));
+    }
+
+    window.onload = loadLeaderboard;
 </script>
 </body>
 </html>
-            
