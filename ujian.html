@@ -2,72 +2,108 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Panel Koreksi Guru | E-Santri Pro</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Exam Center | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --primary: #1f6f51; --bg: #f1f5f9; }
+        :root { --primary: #1f6f51; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: #334155; padding: 20px; }
-        .container { max-width: 900px; margin: auto; }
+        body { background: var(--bg); color: var(--text); line-height: 1.6; user-select: none; }
+
+        .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .header h1 { font-size: 1.2rem; font-weight: 800; }
         
-        .header { background: var(--primary); color: white; padding: 25px; border-radius: 20px; margin-bottom: 20px; text-align: center; }
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        .card { background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid #f1f5f9; }
         
-        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px; }
-        label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #e2e8f0; font-weight: 600; outline: none; }
+        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
+        .status-on { background: #dcfce7; color: #166534; }
+        .status-off { background: #fee2e2; color: #991b1b; }
+
+        label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 15px; }
+        input, select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; }
         
-        .btn-cari { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; }
         
-        .siswa-card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 6px solid var(--primary); }
-        .info-utama { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
+        .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; }
+        .teks-soal { font-weight: 700; font-size: 15px; margin-bottom: 15px; }
         
-        .essay-item { background: #f8fafc; padding: 12px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; }
-        .soal-text { font-size: 11px; font-weight: 800; color: var(--primary); }
-        .jawaban-text { font-size: 14px; margin-top: 5px; color: #1e293b; font-style: italic; }
-        
-        .input-nilai-essay { width: 100px; padding: 8px; border-radius: 8px; border: 2px solid var(--primary); text-align: center; font-weight: 800; }
-        .btn-simpan { background: #1e293b; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        
-        .skor-badge { background: #dcfce7; color: #166534; padding: 5px 12px; border-radius: 8px; font-weight: 800; font-size: 13px; }
-        .hidden { display: none; }
+        .option-label { display: flex; align-items: center; padding: 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; }
+        .option-label input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--primary); }
+
+        #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; z-index: 1000; }
+        .hidden { display: none !important; }
+
+        #rekap-area { margin-top: 50px; border-top: 2px dashed #ccc; padding-top: 20px; }
+        .btn-koreksi { background: none; border: none; color: #ccc; font-size: 10px; cursor: pointer; width: 100%; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
+        th, td { border: 1px solid #eee; padding: 8px; text-align: left; }
+        th { background: #f8fafc; color: var(--primary); }
+        .essay-view { background: #fffde7; padding: 5px; font-size: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ffe082; }
     </style>
 </head>
 <body>
 
+<div class="header">
+    <h1 id="top-title">UJIAN DIGITAL</h1>
+    <p id="user-display" style="font-size: 11px; opacity: 0.8; margin-top: 5px;"></p>
+</div>
+
 <div class="container">
-    <div class="header">
-        <h1>KOREKSI ESSAY GURU</h1>
-        <p>Input nilai essay manual untuk rekap akhir</p>
-    </div>
+    <div id="login-screen">
+        <div class="card">
+            <div id="badge-status" class="status-badge status-off">Mengecek...</div>
+            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Memuat Jadwal...</h2>
 
-    <div class="card">
-        <div class="filter-grid">
-            <div>
-                <label>Pilih Kelas</label>
-                <select id="sel-kelas">
-                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-                </select>
-            </div>
-            <div>
-                <label>Mata Pelajaran (13)</label>
-                <select id="sel-mapel">
-                    <option>Al-Qur'an Hadits</option><option>Akidah Akhlak</option><option>Fikih</option>
-                    <option>SKI</option><option>PKn</option><option>B. Indo</option>
-                    <option>B. Arab</option><option>Matematika</option><option>IPA</option>
-                    <option>IPS</option><option>B. Inggris</option><option>Seni Budaya</option><option>Informatika</option>
-                </select>
+            <label>Pilih Kelas</label>
+            <select id="user-kelas">
+                <option value="">-- Pilih Kelas --</option>
+                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+            </select>
+
+            <div id="form-isi" class="hidden">
+                <label>Nama Lengkap</label>
+                <input type="text" id="user-nama" placeholder="Nama Sesuai Absen">
+                <button class="btn-start" onclick="cekMasuk()">MULAI UJIAN</button>
             </div>
         </div>
-        <button class="btn-cari" onclick="ambilDataSiswa()"><i class="fas fa-search"></i> TAMPILKAN DATA</button>
+
+        <div id="rekap-area">
+            <button class="btn-koreksi" onclick="bukaKoreksi()">🔒 Guru: Lihat Rekap Nilai</button>
+            <div id="koreksi-content" class="card hidden" style="margin-top:10px;">
+                <h3 style="font-size:14px; margin-bottom:10px;">Rekap & Koreksi Guru</h3>
+                
+                <label>Filter Mapel</label>
+                <select id="filter-rekap-mapel" onchange="loadRekapData()">
+                    <option value="">Semua Mapel</option>
+                    <option>Al-Qur'an Hadits</option><option>Akidah Akhlak</option><option>Fikih</option><option>SKI</option>
+                    <option>PKn</option><option>B. Indo</option><option>B. Arab</option><option>Matematika</option>
+                    <option>IPA</option><option>IPS</option><option>B. Inggris</option><option>Seni Budaya</option><option>Informatika</option>
+                </select>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Skor PG</th>
+                            <th>Koreksi Essay</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-rekap-body"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <div id="daftar-siswa">
-        </div>
+    <div id="exam-screen" class="hidden">
+        <div id="timer">⏳ <span id="time-left">00:00</span></div>
+        <div id="konten-soal"></div>
+        <button class="btn-start" onclick="kirimJawaban()" style="background: #6c5ce7; margin-bottom: 80px;">SELESAI & KIRIM</button>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -78,82 +114,141 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    function ambilDataSiswa() {
-        const kls = document.getElementById('sel-kelas').value;
-        const mpl = document.getElementById('sel-mapel').value;
-        const container = document.getElementById('daftar-siswa');
-        
-        container.innerHTML = "<p style='text-align:center'>Memuat data santri...</p>";
+    let sesiUjian = null;
+    let listSoal = [];
+    let intervalTimer;
 
-        db.ref(`nilai_ujian/${kls}/${mpl}`).on('value', snap => {
-            container.innerHTML = "";
-            if(!snap.exists()) {
-                container.innerHTML = "<div class='card'>Belum ada santri yang mengerjakan ujian ini.</div>";
-                return;
+    document.getElementById('user-kelas').onchange = function() {
+        const kls = this.value;
+        if(!kls) return;
+        db.ref(`jadwal_ujian/${kls}`).on('value', snap => {
+            sesiUjian = snap.val();
+            const badge = document.getElementById('badge-status');
+            if(sesiUjian && sesiUjian.status === "BUKA") {
+                badge.innerText = "Ujian Aktif";
+                badge.className = "status-badge status-on";
+                document.getElementById('info-mapel').innerText = sesiUjian.mapel;
+                document.getElementById('form-isi').classList.remove('hidden');
+            } else {
+                badge.innerText = "Tidak Ada Ujian";
+                badge.className = "status-badge status-off";
+                document.getElementById('info-mapel').innerText = "Belum Ada Jadwal";
+                document.getElementById('form-isi').classList.add('hidden');
             }
+        });
+    };
 
-            snap.forEach(child => {
-                const key = child.key;
-                const d = child.val();
+    function cekMasuk() {
+        const nama = document.getElementById('user-nama').value.trim();
+        const kls = document.getElementById('user-kelas').value;
+        if(!nama) return alert("Nama jangan kosong!");
+        db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
+            if(!snap.exists()) return alert("Soal belum tersedia!");
+            listSoal = [];
+            snap.forEach(s => { listSoal.push(s.val()); });
+            mulaiUjian(nama, kls);
+        });
+    }
+
+    function mulaiUjian(nama, kls) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('exam-screen').classList.remove('hidden');
+        document.getElementById('top-title').innerText = sesiUjian.mapel;
+        document.getElementById('user-display').innerText = `${nama} | ${kls}`;
+        const container = document.getElementById('konten-soal');
+        container.innerHTML = "";
+        listSoal.forEach((s, i) => {
+            let htmlOpsi = "";
+            if(s.opsi && s.opsi.includes(',')) {
+                const opsiArray = s.opsi.split(',').map(item => item.trim());
+                const huruf = ['A','B','C','D'];
+                opsiArray.forEach((teks, idx) => {
+                    htmlOpsi += `<label class="option-label"><input type="radio" name="q${i}" value="${huruf[idx]}"> <span class="option-text"><b>${huruf[idx]}.</b> ${teks}</span></label>`;
+                });
+            } else {
+                htmlOpsi = `<textarea id="essay${i}" placeholder="Tulis jawaban essay..."></textarea>`;
+            }
+            container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><div class="teks-soal">${s.soal}</div><div>${htmlOpsi}</div></div>`;
+        });
+        let detik = (sesiUjian.durasi || 60) * 60;
+        intervalTimer = setInterval(() => {
+            let m = Math.floor(detik/60); let s = detik%60;
+            document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
+            if(detik <= 0) { clearInterval(intervalTimer); kirimJawaban(true); }
+            detik--;
+        }, 1000);
+    }
+
+    function kirimJawaban(auto = false) {
+        if(!auto && !confirm("Kirim jawaban?")) return;
+        clearInterval(intervalTimer);
+        let benar = 0; let totalPG = 0; let jawEssay = [];
+        listSoal.forEach((s, i) => {
+            if(s.opsi && s.opsi.includes(',')) {
+                totalPG++;
+                const pil = document.querySelector(`input[name="q${i}"]:checked`);
+                if(pil && pil.value === s.kunci) benar++;
+            } else {
+                jawEssay.push({ soal: s.soal, jawaban: document.getElementById(`essay${i}`).value });
+            }
+        });
+        const skor = totalPG > 0 ? Math.round((benar/totalPG)*100) : 0;
+        const kls = document.getElementById('user-kelas').value;
+        const nama = document.getElementById('user-nama').value;
+        db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({ nama, skor, essay: jawEssay, waktu: new Date().toLocaleString('id-ID') }).then(() => {
+            alert("Jawaban Terkirim!");
+            location.reload();
+        });
+    }
+
+    function bukaKoreksi() {
+        const pin = prompt("Masukkan PIN Guru:");
+        if (pin === "152003") {
+            document.getElementById('koreksi-content').classList.remove('hidden');
+            loadRekapData();
+        } else { alert("PIN Salah!"); }
+    }
+
+    function loadRekapData() {
+        const kls = document.getElementById('user-kelas').value;
+        const filterMpl = document.getElementById('filter-rekap-mapel').value;
+        if(!kls) return alert("Pilih kelas dulu!");
+        
+        db.ref(`nilai_ujian/${kls}`).on('value', snap => {
+            const body = document.getElementById('tabel-rekap-body');
+            body.innerHTML = "";
+            snap.forEach(mapelSnap => {
+                const mapelName = mapelSnap.key;
+                if(filterMpl && mapelName !== filterMpl) return;
                 
-                let htmlEssay = "";
-                if(d.essay) {
-                    d.essay.forEach((es, i) => {
-                        htmlEssay += `
-                            <div class="essay-item">
-                                <div class="soal-text">SOAL ESSAY ${i+1}: ${es.soal}</div>
-                                <div class="jawaban-text">Jawaban: ${es.jawaban || '- Kosong -'}</div>
-                            </div>`;
-                    });
-                } else {
-                    htmlEssay = "<p style='font-size:12px; color:red'>Santri ini tidak mengerjakan soal essay.</p>";
-                }
-
-                container.innerHTML += `
-                    <div class="siswa-card">
-                        <div class="info-utama">
-                            <div>
-                                <h3 style="text-transform:uppercase">${d.nama}</h3>
-                                <small>${d.waktu}</small>
-                            </div>
-                            <div class="skor-badge">SKOR PG: ${d.skor}</div>
-                        </div>
-                        
-                        ${htmlEssay}
-
-                        <div style="margin-top:15px; background:#f1f5f9; padding:15px; border-radius:12px; display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <label>Nilai Essay Manual (0-100)</label>
-                                <input type="number" id="input-${key}" class="input-nilai-essay" value="${d.nilai_essay || 0}" placeholder="0">
-                            </div>
-                            <button class="btn-simpan" onclick="simpanNilai('${kls}', '${mpl}', '${key}')">SIMPAN NILAI</button>
-                        </div>
-                        
-                        <div id="total-${key}" style="margin-top:10px; font-weight:800; color:var(--primary)">
-                            NILAI AKHIR: ${d.nilai_akhir || d.skor}
-                        </div>
-                    </div>`;
+                mapelSnap.forEach(siswaSnap => {
+                    const d = siswaSnap.val();
+                    const keySiswa = siswaSnap.key;
+                    let essayHtml = "";
+                    if(d.essay){
+                        d.essay.forEach(e => {
+                            essayHtml += `<div class="essay-view"><b>Q:</b> ${e.soal}<br><b>A:</b> ${e.jawaban}</div>`;
+                        });
+                    }
+                    
+                    body.innerHTML += `
+                        <tr>
+                            <td><b>${d.nama}</b><br><small>${mapelName}</small>${essayHtml}</td>
+                            <td>${d.skor}</td>
+                            <td>
+                                <input type="number" id="manual-${keySiswa}" style="width:50px; padding:5px;" value="${d.nilai_essay || 0}">
+                                <button onclick="simpanKoreksi('${kls}','${mapelName}','${keySiswa}')" style="font-size:9px; background:var(--primary); color:white; border:none; padding:5px; border-radius:5px; margin-top:5px;">Simpan</button>
+                            </td>
+                        </tr>`;
+                });
             });
         });
     }
 
-    function simpanNilai(kls, mpl, key) {
-        const nEssay = parseInt(document.getElementById(`input-${key}`).value) || 0;
-        
-        db.ref(`nilai_ujian/${kls}/${mpl}/${key}`).once('value', snap => {
-            const d = snap.val();
-            const nPG = d.skor || 0;
-            
-            // Rumus: Rata-rata PG dan Essay
-            const nAkhir = Math.round((nPG + nEssay) / 2);
-
-            db.ref(`nilai_ujian/${kls}/${mpl}/${key}`).update({
-                nilai_essay: nEssay,
-                nilai_akhir: nAkhir
-            }).then(() => {
-                alert("Nilai Berhasil Disimpan!");
-            });
-        });
+    function simpanKoreksi(kls, mpl, key) {
+        const n = document.getElementById(`manual-${key}`).value;
+        db.ref(`nilai_ujian/${kls}/${mpl}/${key}`).update({ nilai_essay: n })
+        .then(() => alert("Nilai Essay Disimpan!"));
     }
 </script>
 </body>
