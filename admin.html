@@ -36,12 +36,13 @@
         
         #lock-screen { position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; }
         
-        /* Tabel Spesifik Rekap */
         .table-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 10px; border: 1px solid #ddd; }
         table { width: 100%; border-collapse: collapse; font-size: 10px; min-width: 1000px; }
         table th, table td { border: 1px solid #ddd; padding: 6px; text-align: center; }
         table th { background: #f4f4f4; color: var(--primary); font-size: 9px; }
         table td:first-child { text-align: left; font-weight: bold; background: #fafafa; position: sticky; left: 0; z-index: 10; }
+        
+        .label-kecil { font-size: 10px; font-weight: bold; color: #666; margin-bottom: 4px; display: block; }
     </style>
 </head>
 <body>
@@ -81,20 +82,42 @@
 
     <div id="tab-ujian" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-cog"></i> Jadwal Ujian Hari Ini</h3>
+            <h3><i class="fas fa-calendar-alt"></i> Jadwal Ujian Otomatis</h3>
             <div class="grid-2">
-                <select id="uj-kls"><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
-                <select id="uj-mapel">
-                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
-                    <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
-                </select>
+                <div>
+                    <span class="label-kecil">KELAS</span>
+                    <select id="uj-kls"><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
+                </div>
+                <div>
+                    <span class="label-kecil">MATA PELAJARAN</span>
+                    <select id="uj-mapel">
+                        <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
+                        <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
+                    </select>
+                </div>
             </div>
-            <div class="grid-2"><input type="date" id="uj-tgl"><input type="number" id="uj-durasi" placeholder="Menit"></div>
-            <button class="btn btn-blue" onclick="saveUjian()">AKTIFKAN SESI UJIAN</button>
+            
+            <span class="label-kecil">TANGGAL UJIAN</span>
+            <input type="date" id="uj-tgl">
+
+            <div class="grid-2">
+                <div>
+                    <span class="label-kecil">JAM MULAI</span>
+                    <input type="time" id="uj-jam-mulai">
+                </div>
+                <div>
+                    <span class="label-kecil">JAM SELESAI</span>
+                    <input type="time" id="uj-jam-selesai">
+                </div>
+            </div>
+            
+            <button class="btn btn-blue" onclick="saveUjian()">SET JADWAL OTOMATIS</button>
         </div>
+
         <div class="card">
             <h3><i class="fas fa-database"></i> Input Bank Soal</h3>
-            <textarea id="uj-bulk" placeholder="Soal|Opsi A,B,C,D|JawabanBenar" rows="4"></textarea>
+            <span class="label-kecil">FORMAT: Soal|Opsi A,B,C,D|Kunci (Huruf Kapital)</span>
+            <textarea id="uj-bulk" placeholder="Contoh: Apa ibukota RI?|Jakarta,Bandung,Medan,Bali|A" rows="4"></textarea>
             <button class="btn btn-primary" onclick="simpanSoal()">SIMPAN KE DATABASE</button>
         </div>
     </div>
@@ -155,10 +178,10 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 13 MAPEL TETAP
     const daftarMapel = ["Mtk","IPA","IPS","PKN","B.Indo","B.Ing","B.Arab","Fikih","Aqidah","Tarikh","Infor","B.Daerah","Seni"];
 
     window.onload = () => { if(localStorage.getItem('admin_login') === 'true') document.getElementById('lock-screen').style.display='none'; };
+    
     function login() { 
         if(document.getElementById('pin').value === "152003") {
             localStorage.setItem('admin_login', 'true');
@@ -175,17 +198,57 @@
         if(id === 'reward') loadRewardMonitor();
     }
 
-    // FUNGSI REKAP UTAMA
+    // --- FUNGSI JADWAL UJIAN OTOMATIS ---
+    async function saveUjian() {
+        const kls = document.getElementById('uj-kls').value;
+        const mapel = document.getElementById('uj-mapel').value;
+        const tgl = document.getElementById('uj-tgl').value;
+        const mulai = document.getElementById('uj-jam-mulai').value;
+        const selesai = document.getElementById('uj-jam-selesai').value;
+
+        if(!tgl || !mulai || !selesai) return alert("Mohon lengkapi Tanggal dan Jam!");
+
+        // Simpan per mapel agar tidak menimpa mapel lain
+        await db.ref(`jadwal_ujian/${kls}/${mapel}`).set({
+            tanggal: tgl,
+            jam_mulai: mulai,
+            jam_selesai: selesai,
+            status: "AKTIF"
+        });
+
+        alert(`SUKSES: Jadwal ${mapel} Kelas ${kls} sudah aktif!`);
+    }
+
+    // --- SIMPAN SOAL ---
+    async function simpanSoal() {
+        const kls = document.getElementById('uj-kls').value;
+        const mapel = document.getElementById('uj-mapel').value;
+        const text = document.getElementById('uj-bulk').value.trim();
+        if(!text) return alert("Isi soal dulu!");
+
+        const lines = text.split('\n');
+        for(let l of lines) {
+            const s = l.split('|');
+            if(s.length >= 3) {
+                await db.ref(`bank_soal/${kls}/${mapel}`).push({ 
+                    soal: s[0], 
+                    opsi: s[1], 
+                    kunci: s[2] 
+                });
+            }
+        }
+        alert("Bank Soal " + mapel + " Berhasil Disimpan!");
+        document.getElementById('uj-bulk').value = "";
+    }
+
+    // --- MONITORING & REKAP (TETAP SAMA) ---
     function loadRekapNilai() {
         const kls = document.getElementById('rek-kls').value;
         if(!kls) return;
-        
         db.ref(`nilai_ujian/${kls}`).on('value', snap => {
             const tbody = document.getElementById('body-rekap');
             tbody.innerHTML = "";
             let dataSiswa = {};
-
-            // Ambil data dari Firebase
             snap.forEach(mapelSnap => {
                 const mapelName = mapelSnap.key;
                 mapelSnap.forEach(siswaSnap => {
@@ -194,22 +257,14 @@
                     dataSiswa[d.nama][mapelName] = d.skor;
                 });
             });
-
-            // Masukkan ke Tabel
             for (let nama in dataSiswa) {
                 let row = `<tr><td>${nama}</td>`;
-                let total = 0;
-                let adaNilai = 0;
-
+                let total = 0, adaNilai = 0;
                 daftarMapel.forEach(m => {
                     let skor = dataSiswa[nama][m] || "-";
                     row += `<td>${skor}</td>`;
-                    if(skor !== "-") {
-                        total += parseInt(skor);
-                        adaNilai++;
-                    }
+                    if(skor !== "-") { total += parseInt(skor); adaNilai++; }
                 });
-
                 let rata = adaNilai > 0 ? (total / adaNilai).toFixed(1) : "0";
                 row += `<td style="font-weight:bold; background:#fff9c4;">${rata}</td></tr>`;
                 tbody.innerHTML += row;
@@ -219,27 +274,7 @@
 
     function downloadExcel() {
         const kls = document.getElementById('rek-kls').value;
-        const table = document.getElementById("tabel-rekap-13");
-        XLSX.writeFile(XLSX.utils.table_to_book(table), `Rekap_Nilai_13Mapel_${kls}.xlsx`);
-    }
-
-    // FUNGSI LAIN (TETAP SAMA)
-    async function saveUjian() {
-        const kls = document.getElementById('uj-kls').value;
-        await db.ref(`jadwal_ujian/${kls}`).set({ mapel: document.getElementById('uj-mapel').value, tanggal: document.getElementById('uj-tgl').value, durasi: document.getElementById('uj-durasi').value, status: "BUKA" });
-        alert("Sesi Ujian Aktif!");
-    }
-
-    async function simpanSoal() {
-        const kls = document.getElementById('uj-kls').value;
-        const mapel = document.getElementById('uj-mapel').value;
-        const lines = document.getElementById('uj-bulk').value.trim().split('\n');
-        for(let l of lines) {
-            const s = l.split('|');
-            if(s.length >= 3) await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] });
-        }
-        alert("Bank Soal Diupdate!");
-        document.getElementById('uj-bulk').value = "";
+        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap-13")), `Rekap_Nilai_${kls}.xlsx`);
     }
 
     function upMateri(type) {
@@ -255,7 +290,7 @@
         const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
         if(!mail) return;
         db.ref(`users/${mail}/ikan`).transaction(v => (v || 0) + 1);
-        alert("Ikan Terkirim!");
+        alert("1 Ikan Berhasil Dikirim!");
     }
 
     function loadRewardMonitor() {
