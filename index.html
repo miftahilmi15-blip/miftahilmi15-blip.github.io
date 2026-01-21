@@ -95,8 +95,12 @@
   .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
   .menu-item span:not(.menu-symbol) { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* LOGIN CARD */
+  /* LOGIN CARD ELEGAN */
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
+  .card-login input { 
+    width: 100%; padding: 15px; margin-bottom: 15px; /* Jarak antar input */
+    border-radius: 12px; border: 1px solid #eee; outline: none; background: #fafafa;
+  }
   .btn-google { 
     width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #eee; 
     background: white; display: flex; align-items: center; justify-content: center; 
@@ -160,7 +164,7 @@
     <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
     <input type="email" id="email" placeholder="Email Santri">
     <input type="password" id="password" placeholder="Password">
-    <button onclick="login()" class="btn-action" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer; margin-top:10px;">MASUK</button>
+    <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer;">MASUK</button>
     <div style="margin: 20px 0; color:#ccc; font-size: 11px;">— ATAU —</div>
     <button class="btn-google" onclick="loginGoogle()"><img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"> Masuk dengan Google</button>
   </div>
@@ -243,16 +247,24 @@
   document.getElementById('menu-btn').onclick = () => document.getElementById('sidebar').classList.add('open');
   document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
-  // 4. STREAK MONITORING (FUNGSI GLOBAL)
-  function monitoringStreak(userId) {
+  // 4. STREAK MONITORING (BERDASARKAN EMAIL)
+  function monitoringStreak(emailUser) {
+    const emailKey = emailUser.replace(/\./g, ','); // Ubah titik jadi koma
     const hariIni = new Date().toISOString().split('T')[0];
     const kemarinDate = new Date();
     kemarinDate.setDate(kemarinDate.getDate() - 1);
     const tglKemarin = kemarinDate.toISOString().split('T')[0];
 
-    db.ref('users/' + userId).on('value', snap => {
+    db.ref('users/' + emailKey).on('value', snap => {
         const data = snap.val();
-        if(!data) return;
+        const streakText = document.getElementById('streak-text');
+        const fire = document.getElementById('fire-api');
+
+        if(!data) {
+            streakText.innerText = "0 Hari Istiqomah";
+            fire.classList.add('fire-off');
+            return;
+        }
 
         let streak = data.streak || 0;
         const tglBaca = data.tgl_terakhir_api || "";
@@ -260,17 +272,18 @@
         // Reset if missed a day
         if (tglBaca !== hariIni && tglBaca !== tglKemarin && streak > 0) {
             streak = 0;
-            db.ref('users/' + userId).update({ streak: 0 });
+            db.ref('users/' + emailKey).update({ streak: 0 });
         }
 
-        document.getElementById('streak-text').innerText = streak + " Hari Istiqomah";
-        const fire = document.getElementById('fire-api');
+        streakText.innerText = streak + " Hari Istiqomah";
         
         if (tglBaca === hariIni) {
             fire.classList.remove('fire-off');
             fire.style.opacity = "1";
+            fire.style.filter = "grayscale(0%) brightness(1.2)";
         } else {
             fire.classList.add('fire-off');
+            fire.style.opacity = "0.2";
         }
     });
   }
@@ -291,8 +304,8 @@
             document.getElementById("admin-menu").classList.remove("hidden");
         }
 
-        // JALANKAN STREAK DISINI BOS!
-        monitoringStreak(user.uid);
+        // Panggil monitoring pakai email
+        monitoringStreak(user.email);
 
         // LOAD MAHFUZAT
         db.ref('konten/mahfuzat').on('value', snap => {
