@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doa Harian | E-Santri Pro</title>
+    <title>Doa & Mahfuzat | E-Santri Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -14,98 +14,76 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
         .arabic { font-family: 'Amiri', serif; line-height: 2.5; }
-        .glass-header { background: rgba(16, 185, 129, 0.95); backdrop-filter: blur(10px); }
-        .doa-card { transition: all 0.3s ease; }
+        .glass-header { background: rgba(31, 111, 81, 0.95); backdrop-filter: blur(10px); }
+        .materi-card { transition: all 0.3s ease; border-radius: 24px; }
     </style>
 </head>
 <body class="pb-10">
 
     <div class="glass-header text-white p-6 sticky top-0 z-50 shadow-lg rounded-b-[30px]">
-        <div class="max-w-2xl mx-auto">
-            <div class="flex items-center justify-between mb-4">
-                <a href="/" class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </a>
-                <h1 class="text-xl font-extrabold">DOA HARIAN</h1>
-                <div class="w-10"></div>
-            </div>
-            <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-emerald-100"></i>
-                <input type="text" id="searchInput" onkeyup="searchDoa()" placeholder="Cari doa..." 
-                    class="w-full p-4 pl-12 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-emerald-100 outline-none focus:bg-white focus:text-emerald-900 transition-all">
-            </div>
+        <div class="max-w-2xl mx-auto text-center">
+            <h1 class="text-xl font-extrabold uppercase tracking-wider">Materi Harian</h1>
+            <p class="text-[10px] opacity-80 mt-1">Update otomatis dari Pusat Admin</p>
         </div>
     </div>
 
-    <div id="doaContainer" class="p-5 max-w-2xl mx-auto space-y-5 mt-4">
-        <div class="text-center py-10 text-slate-400">Memuat doa dari database...</div>
-    </div>
+    <div id="materiContainer" class="p-5 max-w-2xl mx-auto space-y-6">
+        <div id="card-mahfuzat" class="materi-card bg-white p-6 shadow-sm border border-slate-100 hidden">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="bg-amber-100 text-amber-700 text-[10px] font-extrabold px-3 py-1 rounded-full">MAHFUZAT HARI INI</span>
+            </div>
+            <p id="mh-arab" class="arabic text-right text-3xl text-slate-800 mb-6" dir="rtl"></p>
+            <div class="pt-4 border-t border-slate-50">
+                <p id="mh-indo" class="text-[14px] text-slate-600 italic"></p>
+            </div>
+        </div>
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full text-sm opacity-0 transition-opacity pointer-events-none z-[60]">
-        ✅ Doa berhasil disalin
+        <div id="card-doa" class="materi-card bg-white p-6 shadow-sm border border-slate-100 hidden">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-3 py-1 rounded-full">DOA HARIAN</span>
+            </div>
+            <p id="doa-arab" class="arabic text-right text-3xl text-slate-800 mb-6" dir="rtl"></p>
+            <div class="pt-4 border-t border-slate-50 text-[14px] text-slate-600">
+                <strong class="text-slate-800">Artinya:</strong> <span id="doa-indo"></span>
+            </div>
+        </div>
+
+        <div id="loading" class="text-center py-20 text-slate-400 text-sm">
+            <i class="fas fa-spinner fa-spin mr-2"></i> Menyelaraskan materi...
+        </div>
     </div>
 
     <script>
-        // CONFIG FIREBASE (Sama dengan admin)
         const firebaseConfig = {
-            apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
-            authDomain: "e-santri-b62be.firebaseapp.com",
-            projectId: "e-santri-b62be",
             databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let listDoa = [];
+        // AMBIL DATA MATERI (Sinkron dengan Admin)
+        db.ref('konten').on('value', (snapshot) => {
+            const data = snapshot.val();
+            document.getElementById('loading').classList.add('hidden');
 
-        // AMBIL DATA DARI FIREBASE
-        db.ref('doa_harian').on('value', (snapshot) => {
-            const container = document.getElementById('doaContainer');
-            container.innerHTML = "";
-            listDoa = [];
+            if (data) {
+                // Tampilkan Mahfuzat jika ada
+                if (data.mahfuzat) {
+                    document.getElementById('card-mahfuzat').classList.remove('hidden');
+                    document.getElementById('mh-arab').innerText = data.mahfuzat.arab;
+                    document.getElementById('mh-indo').innerText = `"${data.mahfuzat.indo}"`;
+                }
 
-            if (snapshot.exists()) {
-                snapshot.forEach((childSnapshot) => {
-                    const data = childSnapshot.val();
-                    listDoa.push(data);
-                    renderCard(data);
-                });
+                // Tampilkan Doa jika ada
+                if (data.doa) {
+                    document.getElementById('card-doa').classList.remove('hidden');
+                    document.getElementById('doa-arab').innerText = data.doa.arab;
+                    document.getElementById('doa-indo').innerText = data.doa.indo;
+                }
             } else {
-                container.innerHTML = `<div class="text-center py-10 text-slate-400">Belum ada doa di database.</div>`;
+                document.getElementById('materiContainer').innerHTML += `
+                    <div class="text-center py-10 text-slate-400">Belum ada materi hari ini.</div>`;
             }
         });
-
-        function renderCard(d) {
-            const container = document.getElementById('doaContainer');
-            container.innerHTML += `
-                <div class="doa-card bg-white p-6 rounded-[24px] shadow-sm border border-slate-100 relative">
-                    <div class="flex justify-between items-start mb-4">
-                        <h2 class="text-emerald-700 font-bold text-lg">${d.judul}</h2>
-                        <button onclick="copyDoa('${d.arab}', '${d.arti}')" class="text-slate-300 hover:text-emerald-600 p-2">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                    </div>
-                    <p class="arabic text-right text-3xl text-slate-800 mb-6" dir="rtl">${d.arab}</p>
-                    <div class="pt-4 border-t border-slate-50 text-[14px] text-slate-600">
-                        <strong class="text-slate-800">Artinya:</strong> ${d.arti}
-                    </div>
-                </div>`;
-        }
-
-        function searchDoa() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
-            const container = document.getElementById('doaContainer');
-            container.innerHTML = "";
-            const filtered = listDoa.filter(d => d.judul.toLowerCase().includes(keyword));
-            filtered.forEach(d => renderCard(d));
-        }
-
-        function copyDoa(arab, arti) {
-            navigator.clipboard.writeText(`${arab}\n\nArtinya: ${arti}`);
-            const toast = document.getElementById('toast');
-            toast.style.opacity = "1";
-            setTimeout(() => toast.style.opacity = "0", 2000);
-        }
     </script>
 </body>
 </html>
