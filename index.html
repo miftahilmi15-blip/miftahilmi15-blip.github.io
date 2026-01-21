@@ -253,29 +253,26 @@
 
     const emailKey = emailUser.replace(/\./g, ',');
     const hariIni = new Date().toISOString().split('T')[0];
-    
     const kemarinDate = new Date();
     kemarinDate.setDate(kemarinDate.getDate() - 1);
     const tglKemarin = kemarinDate.toISOString().split('T')[0];
-
-    console.log("Memantau email: " + emailKey);
 
     db.ref('users/' + emailKey).on('value', snap => {
         const data = snap.val();
         const streakText = document.getElementById('streak-text');
         const fire = document.getElementById('fire-api');
 
-        // Jika user belum punya data sama sekali, kita buatkan record dasar
         if(!data) {
-            console.log("Data tidak ditemukan, membuat data baru...");
-            db.ref('users/' + emailKey).update({ streak: 0, tgl_terakhir_api: "" });
+            // Coba buat data awal, jika gagal akan muncul alert
+            db.ref('users/' + emailKey).set({ 
+                streak: 0, 
+                tgl_terakhir_api: "" 
+            }).catch(err => alert("Gagal koneksi DB: " + err.message));
             return;
         }
 
         let streak = data.streak || 0;
         const tglBaca = data.tgl_terakhir_api || "";
-
-        console.log("Data Firebase -> Streak:", streak, "| Terakhir Baca:", tglBaca);
 
         // LOGIKA RESET
         if (tglBaca !== hariIni && tglBaca !== tglKemarin && streak > 0) {
@@ -283,22 +280,21 @@
             db.ref('users/' + emailKey).update({ streak: 0 });
         }
 
-        // TAMPILAN
+        // UPDATE UI
         if(streakText) streakText.innerText = streak + " Hari Istiqomah";
-
         if (fire) {
             if (tglBaca === hariIni) {
-                console.log("Kondisi terpenuhi: API NYALA!");
                 fire.classList.remove('fire-off');
                 fire.style.opacity = "1";
                 fire.style.filter = "grayscale(0%) brightness(1.2)";
             } else {
-                console.log("Kondisi tidak terpenuhi: API REDUP");
                 fire.classList.add('fire-off');
                 fire.style.opacity = "0.3";
                 fire.style.filter = "grayscale(100%)";
             }
         }
+    }, error => {
+        alert("Error Database: " + error.message);
     });
   }
   // 5. MAIN LOGIC
