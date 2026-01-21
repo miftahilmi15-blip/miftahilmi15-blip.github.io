@@ -36,10 +36,9 @@
         .hidden { display: none; }
         
         #lock-screen { position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; }
-        canvas { max-width: 100%; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
         table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        table th { background: #f4f4f4; }
+        table th { background: #f4f4f4; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -54,32 +53,24 @@
     <button class="nav-item active" onclick="showTab('absen', this)"><i class="fas fa-user-check"></i> Absen</button>
     <button class="nav-item" onclick="showTab('tahfidz', this)"><i class="fas fa-quran"></i> Tahfidz</button>
     <button class="nav-item" onclick="showTab('ujian', this)"><i class="fas fa-file-alt"></i> Ujian</button>
-    <button class="nav-item" onclick="showTab('rekap', this)"><i class="fas fa-chart-line"></i> Rekap</button>
+    <button class="nav-item" onclick="showTab('rekap', this)"><i class="fas fa-chart-line"></i> Rekap Nilai</button>
     <button class="nav-item" onclick="showTab('materi', this)"><i class="fas fa-book"></i> Materi</button>
     <button class="nav-item" onclick="showTab('reward', this)"><i class="fas fa-fish"></i> Reward</button>
 </div>
 
 <div class="container">
     
-    <div id="tab-absen" class="tab-content">
-        <div class="card">
-            <h3><i class="fas fa-eye"></i> Monitoring Absen</h3>
-            <select id="abs-kls" onchange="monAbsen()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option></select>
-            <div id="list-absen"></div>
-        </div>
-    </div>
-
     <div id="tab-tahfidz" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-eye"></i> Progress Tahfidz Santri</h3>
-            <select id="mon-thf-kls" onchange="loadMonTahfidz()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option></select>
+            <h3><i class="fas fa-eye"></i> Monitoring Tahfidz</h3>
+            <select id="mon-thf-kls" onchange="loadMonTahfidz()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
             <div id="list-tahfidz-mon"></div>
         </div>
     </div>
 
     <div id="tab-ujian" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-cog"></i> Atur Jadwal & Mapel</h3>
+            <h3><i class="fas fa-cog"></i> Jadwal Ujian</h3>
             <div class="grid-2">
                 <select id="uj-kls">
                     <option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option>
@@ -93,51 +84,53 @@
             <button class="btn btn-blue" onclick="saveUjian()">AKTIFKAN UJIAN</button>
         </div>
         <div class="card">
-            <h3><i class="fas fa-plus"></i> Input Bank Soal</h3>
-            <textarea id="uj-bulk" placeholder="Format: Soal|A,B,C,D|Kunci" rows="4"></textarea>
-            <button class="btn btn-primary" onclick="simpanSoal()">UPLOAD KE BANK SOAL</button>
+            <h3><i class="fas fa-database"></i> Bank Soal</h3>
+            <textarea id="uj-bulk" placeholder="Contoh: 1+1?|1,2,3,4|2" rows="4"></textarea>
+            <button class="btn btn-primary" onclick="simpanSoal()">SIMPAN SOAL</button>
         </div>
     </div>
 
     <div id="tab-rekap" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-download"></i> Rekap Nilai Ujian</h3>
+            <h3><i class="fas fa-list-ol"></i> Rekap Nilai & Rata-Rata</h3>
             <div class="grid-2">
-                <select id="rek-kls" onchange="loadRekapNilai()"><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
-                <button class="btn btn-accent" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
+                <select id="rek-kls" onchange="loadRekapNilai()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
+                <button class="btn btn-accent" onclick="downloadExcel()">EXPORT EXCEL</button>
             </div>
-            <table id="tabel-nilai">
-                <thead><tr><th>Nama</th><th>Mapel</th><th>Nilai</th><th>Waktu</th></tr></thead>
-                <tbody id="body-nilai"></tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table id="tabel-nilai">
+                    <thead><tr><th>Nama Santri</th><th>Detail Nilai Mapel</th><th>Rata-Rata</th></tr></thead>
+                    <tbody id="body-nilai"></tbody>
+                </table>
+            </div>
         </div>
         <div class="card">
-            <h3><i class="fas fa-chart-bar"></i> Grafik Rata-Rata</h3>
+            <h3><i class="fas fa-chart-bar"></i> Performa Kelas</h3>
             <canvas id="chartNilai"></canvas>
+        </div>
+    </div>
+
+    <div id="tab-absen" class="tab-content">
+        <div class="card">
+            <h3><i class="fas fa-eye"></i> Monitoring Absen</h3>
+            <select id="abs-kls" onchange="monAbsen()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option></select>
+            <div id="list-absen"></div>
         </div>
     </div>
 
     <div id="tab-materi" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-quote-left"></i> Mahfuzat Hari Ini</h3>
-            <input type="text" id="mh-ar" placeholder="Teks Arab" style="text-align: right; font-size: 18px;">
-            <textarea id="mh-it" placeholder="Arti / Terjemahan"></textarea>
+            <h3><i class="fas fa-quote-left"></i> Update Materi</h3>
+            <input type="text" id="mh-ar" placeholder="Teks Arab"><textarea id="mh-it" placeholder="Arti"></textarea>
             <button class="btn btn-primary" onclick="upMahf()">UPDATE MAHFUZAT</button>
-        </div>
-        <div class="card">
-            <h3><i class="fas fa-pray"></i> Bank Doa Harian</h3>
-            <input type="text" id="doa-judul" placeholder="Judul Doa"><input type="text" id="doa-ar" placeholder="Teks Arab" style="text-align: right;"><textarea id="doa-it" placeholder="Terjemahan"></textarea>
-            <button class="btn btn-blue" onclick="tambahDoa()">TAMBAH DOA</button>
-            <div id="list-doa-admin" style="margin-top:15px;"></div>
         </div>
     </div>
 
     <div id="tab-reward" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-fish"></i> Kirim Reward Ikan</h3>
+            <h3><i class="fas fa-fish"></i> Kirim Hadiah Ikan</h3>
             <input type="email" id="rew-email" placeholder="Email Santri">
-            <select id="rew-ikan"><option value="1">🐟 Ikan Kecil</option><option value="5">🐠 Ikan Hias</option><option value="10">🐡 Ikan Langka</option><option value="50">🦈 Hiu</option></select>
-            <button class="btn btn-blue" onclick="kirimReward()">KIRIM KE AQUARIUM</button>
+            <button class="btn btn-blue" onclick="kirimReward()">KIRIM IKAN</button>
         </div>
     </div>
 
@@ -156,7 +149,7 @@
         if(document.getElementById('pin').value === "152003") {
             localStorage.setItem('admin_login', 'true');
             document.getElementById('lock-screen').style.display='none';
-        } else { alert("PIN SALAH!"); }
+        } else { alert("PIN Salah!"); }
     }
 
     function showTab(id, btn) {
@@ -164,14 +157,65 @@
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById('tab-'+id).classList.remove('hidden');
         btn.classList.add('active');
-        if(id === 'rekap') { loadRekapNilai(); loadGrafik(); }
-        if(id === 'materi') loadDoaAdmin();
+        if(id === 'rekap') { loadRekapNilai(); updateGrafik(); }
+    }
+
+    async function saveUjian() {
+        const kls = document.getElementById('uj-kls').value;
+        await db.ref(`jadwal_ujian/${kls}`).set({ mapel: document.getElementById('uj-mapel').value, tanggal: document.getElementById('uj-tgl').value, durasi: document.getElementById('uj-durasi').value, status: "BUKA" });
+        alert("Sesi Ujian Aktif!");
+    }
+
+    async function simpanSoal() {
+        const kls = document.getElementById('uj-kls').value;
+        const mapel = document.getElementById('uj-mapel').value;
+        const lines = document.getElementById('uj-bulk').value.trim().split('\n');
+        for(let l of lines) {
+            const s = l.split('|');
+            if(s.length >= 3) await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] });
+        }
+        alert("Soal Disimpan!");
+        document.getElementById('uj-bulk').value = "";
+    }
+
+    function loadRekapNilai() {
+        const kls = document.getElementById('rek-kls').value;
+        if(!kls) return;
+        db.ref(`nilai_ujian/${kls}`).on('value', snap => {
+            const tbody = document.getElementById('body-nilai'); tbody.innerHTML = "";
+            let dataSantri = {};
+            snap.forEach(mapelSnap => {
+                mapelSnap.forEach(siswaSnap => {
+                    const d = siswaSnap.val();
+                    if (!dataSantri[d.nama]) dataSantri[d.nama] = { total: 0, count: 0, list: [] };
+                    dataSantri[d.nama].total += parseInt(d.skor);
+                    dataSantri[d.nama].count += 1;
+                    dataSantri[d.nama].list.push(`${mapelSnap.key}: ${d.skor}`);
+                });
+            });
+            for (let nama in dataSantri) {
+                const info = dataSantri[nama];
+                const rata = (info.total / info.count).toFixed(1);
+                tbody.innerHTML += `<tr><td><b>${nama}</b></td><td style="font-size:10px">${info.list.join(', ')}</td><td style="text-align:center;font-weight:bold;color:var(--primary)">${rata}</td></tr>`;
+            }
+        });
+    }
+
+    function downloadExcel() {
+        const kls = document.getElementById('rek-kls').value;
+        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-nilai")), `Rekap_Nilai_Kelas_${kls}.xlsx`);
+    }
+
+    let myChart;
+    function updateGrafik() {
+        const ctx = document.getElementById('chartNilai').getContext('2d');
+        if(myChart) myChart.destroy();
+        myChart = new Chart(ctx, { type: 'bar', data: { labels: ['7A','7B','8A','8B','9A','9B','9C','9D'], datasets: [{ label: 'Rata-rata', data: [75, 80, 85, 70, 95, 88, 82, 79], backgroundColor: '#1f6f51' }] } });
     }
 
     function monAbsen() {
         const kls = document.getElementById('abs-kls').value;
-        const d = new Date();
-        db.ref(`absensi/2026/${d.getMonth()+1}/${d.getDate()}/${kls}`).on('value', snap => {
+        db.ref(`absensi/2026/1/21/${kls}`).on('value', snap => {
             const box = document.getElementById('list-absen'); box.innerHTML = "";
             snap.forEach(s => box.innerHTML += `<div class="item-row"><b>${s.val().nama}</b><span>${s.val().status}</span></div>`);
         });
@@ -179,82 +223,19 @@
 
     function loadMonTahfidz() {
         const kls = document.getElementById('mon-thf-kls').value;
-        const d = new Date();
-        db.ref(`tahfidz/${d.getFullYear()}/${d.getMonth()+1}`).on('value', snap => {
+        db.ref(`tahfidz/2026`).on('value', snap => {
             const box = document.getElementById('list-tahfidz-mon'); box.innerHTML = "";
-            snap.forEach(nipdSnap => {
-                nipdSnap.forEach(entry => {
-                    let data = entry.val();
-                    if(data.kelas === kls) box.innerHTML += `<div class="item-row"><b>${data.nama}</b><small>${data.materi} (${data.ayat})</small></div>`;
-                });
-            });
+            snap.forEach(m => m.forEach(s => s.forEach(entry => {
+                if(entry.val().kelas === kls) box.innerHTML += `<div class="item-row"><b>${entry.val().nama}</b><span>${entry.val().materi}</span></div>`;
+            })));
         });
     }
 
-    async function saveUjian() {
-        const kls = document.getElementById('uj-kls').value;
-        await db.ref(`jadwal_ujian/${kls}`).set({ mapel: document.getElementById('uj-mapel').value, tanggal: document.getElementById('uj-tgl').value, durasi: document.getElementById('uj-durasi').value, status: "BUKA" });
-        alert("Jadwal Aktif!");
-    }
-
-    async function simpanSoal() {
-        const kls = document.getElementById('uj-kls').value;
-        const mapel = document.getElementById('uj-mapel').value;
-        const baris = document.getElementById('uj-bulk').value.trim().split('\n');
-        for(let line of baris) {
-            const s = line.split('|');
-            if(s.length < 3) continue;
-            await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] });
-        }
-        alert("Soal Tersimpan!");
-        document.getElementById('uj-bulk').value = "";
-    }
-
-    function loadRekapNilai() {
-        const kls = document.getElementById('rek-kls').value;
-        db.ref(`nilai_ujian/${kls}`).on('value', snap => {
-            const tbody = document.getElementById('body-nilai'); tbody.innerHTML = "";
-            snap.forEach(m => { m.forEach(n => { let d = n.val(); tbody.innerHTML += `<tr><td>${d.nama}</td><td>${m.key}</td><td>${d.skor}</td><td>${d.waktu}</td></tr>`; }); });
-        });
-    }
-
-    function downloadExcel() {
-        let table = document.getElementById("tabel-nilai");
-        let wb = XLSX.utils.table_to_book(table, {sheet: "Nilai"});
-        XLSX.writeFile(wb, `Nilai_${document.getElementById('rek-kls').value}.xlsx`);
-    }
-
-    let myChart;
-    function loadGrafik() {
-        const ctx = document.getElementById('chartNilai').getContext('2d');
-        if(myChart) myChart.destroy();
-        myChart = new Chart(ctx, { type: 'bar', data: { labels: ['7A','7B','8A','8B','9A','9B','9C','9D'], datasets: [{ label: 'Rata-Rata', data: [70,75,80,85,90,85,80,75], backgroundColor: '#1f6f51' }] } });
-    }
-
-    function upMahf() {
-        db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value })
-        .then(() => alert("Mahfuzat Updated!"));
-    }
-
-    function tambahDoa() {
-        db.ref('doa_harian').push({ judul: document.getElementById('doa-judul').value, arab: document.getElementById('doa-ar').value, arti: document.getElementById('doa-it').value })
-        .then(() => { alert("Doa Ditambah!"); loadDoaAdmin(); });
-    }
-
-    function loadDoaAdmin() {
-        db.ref('doa_harian').on('value', snap => {
-            const list = document.getElementById('list-doa-admin'); list.innerHTML = "";
-            snap.forEach(d => list.innerHTML += `<div class="item-row"><span>${d.val().judul}</span><button class="btn-danger" style="width:60px" onclick="hapusDoa('${d.key}')">Hapus</button></div>`);
-        });
-    }
-
-    function hapusDoa(key) { if(confirm("Hapus?")) db.ref('doa_harian/'+key).remove(); }
-
+    function upMahf() { db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value }); alert("OK!"); }
     function kirimReward() {
-        const email = document.getElementById('rew-email').value.replace(/\./g, ',');
-        const jml = parseInt(document.getElementById('rew-ikan').value);
-        db.ref(`users/${email}/ikan`).transaction(v => (v || 0) + jml);
-        alert("Reward Dikirim!");
+        const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
+        db.ref(`users/${mail}/ikan`).transaction(v => (v || 0) + 1);
+        alert("Ikan Terkirim!");
     }
 </script>
 </body>
