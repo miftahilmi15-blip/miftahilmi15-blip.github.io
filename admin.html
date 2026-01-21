@@ -36,7 +36,7 @@
         .hidden { display: none; }
         
         #lock-screen { position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
         table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         table th { background: #f4f4f4; color: var(--primary); }
     </style>
@@ -70,7 +70,7 @@
 
     <div id="tab-ujian" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-cog"></i> Jadwal Ujian</h3>
+            <h3><i class="fas fa-cog"></i> Jadwal Ujian Hari Ini</h3>
             <div class="grid-2">
                 <select id="uj-kls">
                     <option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option>
@@ -80,13 +80,13 @@
                     <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
                 </select>
             </div>
-            <div class="grid-2"><input type="date" id="uj-tgl"><input type="number" id="uj-durasi" placeholder="Menit"></div>
-            <button class="btn btn-blue" onclick="saveUjian()">AKTIFKAN UJIAN</button>
+            <div class="grid-2"><input type="date" id="uj-tgl"><input type="number" id="uj-durasi" placeholder="Menit (Contoh: 60)"></div>
+            <button class="btn btn-blue" onclick="saveUjian()">AKTIFKAN SESI UJIAN</button>
         </div>
         <div class="card">
-            <h3><i class="fas fa-database"></i> Bank Soal</h3>
+            <h3><i class="fas fa-database"></i> Input Bank Soal</h3>
             <textarea id="uj-bulk" placeholder="Contoh: 1+1?|1,2,3,4|2" rows="4"></textarea>
-            <button class="btn btn-primary" onclick="simpanSoal()">SIMPAN SOAL</button>
+            <button class="btn btn-primary" onclick="simpanSoal()">SIMPAN KE DATABASE</button>
         </div>
     </div>
 
@@ -99,13 +99,13 @@
             </div>
             <div style="overflow-x: auto;">
                 <table id="tabel-nilai">
-                    <thead><tr><th>Nama Santri</th><th>Detail Nilai Mapel</th><th>Rata-Rata</th></tr></thead>
+                    <thead><tr><th>Nama</th><th>Detail 13 Mapel</th><th>Rata-Rata</th></tr></thead>
                     <tbody id="body-nilai"></tbody>
                 </table>
             </div>
         </div>
         <div class="card">
-            <h3><i class="fas fa-chart-bar"></i> Performa Kelas</h3>
+            <h3><i class="fas fa-chart-bar"></i> Performa Rata-rata Kelas</h3>
             <canvas id="chartNilai"></canvas>
         </div>
     </div>
@@ -120,15 +120,15 @@
 
     <div id="tab-materi" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-quote-left"></i> Update Materi</h3>
-            <input type="text" id="mh-ar" placeholder="Teks Arab"><textarea id="mh-it" placeholder="Arti"></textarea>
-            <button class="btn btn-primary" onclick="upMahf()">UPDATE MAHFUZAT</button>
+            <h3><i class="fas fa-quote-left"></i> Mahfuzat</h3>
+            <input type="text" id="mh-ar" placeholder="Arab"><textarea id="mh-it" placeholder="Arti"></textarea>
+            <button class="btn btn-primary" onclick="upMahf()">UPDATE</button>
         </div>
     </div>
 
     <div id="tab-reward" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-fish"></i> Kirim Hadiah Ikan</h3>
+            <h3><i class="fas fa-fish"></i> Aquarium Reward</h3>
             <input type="email" id="rew-email" placeholder="Email Santri">
             <button class="btn btn-blue" onclick="kirimReward()">KIRIM IKAN</button>
         </div>
@@ -144,6 +144,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // AUTO LOGIN SYSTEM (Refresh tidak minta password)
     window.onload = () => { if(localStorage.getItem('admin_login') === 'true') document.getElementById('lock-screen').style.display='none'; };
     function login() { 
         if(document.getElementById('pin').value === "152003") {
@@ -162,8 +163,9 @@
 
     async function saveUjian() {
         const kls = document.getElementById('uj-kls').value;
-        await db.ref(`jadwal_ujian/${kls}`).set({ mapel: document.getElementById('uj-mapel').value, tanggal: document.getElementById('uj-tgl').value, durasi: document.getElementById('uj-durasi').value, status: "BUKA" });
-        alert("Sesi Ujian Aktif!");
+        const data = { mapel: document.getElementById('uj-mapel').value, tanggal: document.getElementById('uj-tgl').value, durasi: document.getElementById('uj-durasi').value, status: "BUKA" };
+        await db.ref(`jadwal_ujian/${kls}`).set(data);
+        alert("Jadwal Berhasil Diaktifkan!");
     }
 
     async function simpanSoal() {
@@ -174,48 +176,62 @@
             const s = l.split('|');
             if(s.length >= 3) await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] });
         }
-        alert("Soal Disimpan!");
+        alert("Soal Masuk ke Bank Soal!");
         document.getElementById('uj-bulk').value = "";
     }
 
+    // FUNGSI REKAP GABUNGAN (Menampilkan Adibah + 13 Mapel + Rata-rata)
     function loadRekapNilai() {
         const kls = document.getElementById('rek-kls').value;
         if(!kls) return;
         db.ref(`nilai_ujian/${kls}`).on('value', snap => {
-            const tbody = document.getElementById('body-nilai'); tbody.innerHTML = "";
-            let dataSantri = {};
+            const tbody = document.getElementById('body-nilai'); 
+            tbody.innerHTML = "";
+            let dataSiswa = {};
+
             snap.forEach(mapelSnap => {
+                const mapel = mapelSnap.key;
                 mapelSnap.forEach(siswaSnap => {
                     const d = siswaSnap.val();
-                    if (!dataSantri[d.nama]) dataSantri[d.nama] = { total: 0, count: 0, list: [] };
-                    dataSantri[d.nama].total += parseInt(d.skor);
-                    dataSantri[d.nama].count += 1;
-                    dataSantri[d.nama].list.push(`${mapelSnap.key}: ${d.skor}`);
+                    if(!dataSiswa[d.nama]) dataSiswa[d.nama] = { scores: [], total: 0 };
+                    dataSiswa[d.nama].scores.push(`${mapel}: ${d.skor}`);
+                    dataSiswa[d.nama].total += parseInt(d.skor);
                 });
             });
-            for (let nama in dataSantri) {
-                const info = dataSantri[nama];
-                const rata = (info.total / info.count).toFixed(1);
-                tbody.innerHTML += `<tr><td><b>${nama}</b></td><td style="font-size:10px">${info.list.join(', ')}</td><td style="text-align:center;font-weight:bold;color:var(--primary)">${rata}</td></tr>`;
+
+            for (let nama in dataSiswa) {
+                const avg = (dataSiswa[nama].total / dataSiswa[nama].scores.length).toFixed(1);
+                tbody.innerHTML += `<tr>
+                    <td><b>${nama}</b></td>
+                    <td style="font-size:10px; color:#555;">${dataSiswa[nama].scores.join(', ')}</td>
+                    <td style="font-weight:bold; color:var(--primary); text-align:center;">${avg}</td>
+                </tr>`;
             }
         });
     }
 
     function downloadExcel() {
         const kls = document.getElementById('rek-kls').value;
-        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-nilai")), `Rekap_Nilai_Kelas_${kls}.xlsx`);
+        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-nilai")), `Rekap_Nilai_${kls}.xlsx`);
     }
 
     let myChart;
     function updateGrafik() {
         const ctx = document.getElementById('chartNilai').getContext('2d');
         if(myChart) myChart.destroy();
-        myChart = new Chart(ctx, { type: 'bar', data: { labels: ['7A','7B','8A','8B','9A','9B','9C','9D'], datasets: [{ label: 'Rata-rata', data: [75, 80, 85, 70, 95, 88, 82, 79], backgroundColor: '#1f6f51' }] } });
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['7A','7B','8A','8B','9A','9B','9C','9D'],
+                datasets: [{ label: 'Rata-rata Nilai', data: [75, 80, 85, 70, 95, 88, 82, 79], backgroundColor: '#1f6f51' }]
+            }
+        });
     }
 
     function monAbsen() {
         const kls = document.getElementById('abs-kls').value;
-        db.ref(`absensi/2026/1/21/${kls}`).on('value', snap => {
+        const d = new Date();
+        db.ref(`absensi/2026/${d.getMonth()+1}/${d.getDate()}/${kls}`).on('value', snap => {
             const box = document.getElementById('list-absen'); box.innerHTML = "";
             snap.forEach(s => box.innerHTML += `<div class="item-row"><b>${s.val().nama}</b><span>${s.val().status}</span></div>`);
         });
@@ -225,13 +241,15 @@
         const kls = document.getElementById('mon-thf-kls').value;
         db.ref(`tahfidz/2026`).on('value', snap => {
             const box = document.getElementById('list-tahfidz-mon'); box.innerHTML = "";
-            snap.forEach(m => m.forEach(s => s.forEach(entry => {
-                if(entry.val().kelas === kls) box.innerHTML += `<div class="item-row"><b>${entry.val().nama}</b><span>${entry.val().materi}</span></div>`;
-            })));
+            snap.forEach(m => m.forEach(s => {
+                s.forEach(entry => {
+                    if(entry.val().kelas === kls) box.innerHTML += `<div class="item-row"><b>${entry.val().nama}</b><span>${entry.val().materi}</span></div>`;
+                })
+            }));
         });
     }
 
-    function upMahf() { db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value }); alert("OK!"); }
+    function upMahf() { db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value }); alert("Updated!"); }
     function kirimReward() {
         const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
         db.ref(`users/${mail}/ikan`).transaction(v => (v || 0) + 1);
