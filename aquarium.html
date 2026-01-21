@@ -12,62 +12,47 @@
         body { background: var(--dark-navy); overflow: hidden; height: 100vh; color: white; }
         
         #ocean { 
-            position: relative; 
-            width: 100vw; 
-            height: 100vh; 
+            position: relative; width: 100vw; height: 100vh; 
             background: radial-gradient(circle at 50% 40%, #005f73 0%, #001219 100%); 
             overflow: hidden; 
         }
 
-        /* EFEK CAHAYA AIR */
+        /* CAUSTIC LIGHT (EFEK RIAK AIR) */
         #ocean::before { 
             content:""; position:absolute; inset:0; 
             background:url("https://www.transparenttextures.com/patterns/water-reflection.png"); 
             opacity:.15; animation: caustic 12s linear infinite; pointer-events:none; z-index: 1; 
         }
-        @keyframes caustic{ from{transform:scale(1);} to{transform:scale(1.4);} }
+        @keyframes caustic{ from{transform:scale(1.2);} to{transform:scale(1.6);} }
 
-        /* === TERUMBU KARANG (INI YANG BARU) === */
+        /* TERUMBU KARANG (DEKORASI BAWAH) */
         #reef { 
-            position: fixed; 
-            bottom: -10px; 
-            left: 0;
-            width: 100%; 
-            height: 120px; 
-            display: flex; 
-            align-items: flex-end;
-            justify-content: space-around;
-            padding: 0 10px; 
-            z-index: 5; /* Di atas background, di bawah ikan */
-            pointer-events: none;
+            position: fixed; bottom: -5px; left: 0; width: 100%; height: 130px; 
+            display: flex; align-items: flex-end; justify-content: space-around; 
+            z-index: 5; pointer-events: none; opacity: 0.8;
         }
         .coral { 
-            width: 50px; 
-            background: linear-gradient(#ff8a65, #d84315); 
-            border-radius: 50% 50% 20% 20%; 
-            animation: sway 5s ease-in-out infinite; 
-            transform-origin: bottom;
+            width: 45px; background: linear-gradient(#ff8a65, #d84315); 
+            border-radius: 50% 50% 20% 20%; animation: sway 5s ease-in-out infinite; 
+            transform-origin: bottom; box-shadow: 0 0 15px rgba(216, 67, 21, 0.3);
         }
-        .coral.blue { background: linear-gradient(#4fc3f7, #0288d1); width: 40px; height: 70px; animation-delay: 1s; }
-        .coral.purple { background: linear-gradient(#ce93d8, #6a1b9a); width: 60px; height: 90px; animation-delay: 2.5s; }
-        .coral.tall { height: 110px; width: 45px; }
-        .coral.short { height: 50px; width: 35px; }
+        .coral.blue { background: linear-gradient(#4fc3f7, #0288d1); height: 70px; animation-delay: 1s; }
+        .coral.purple { background: linear-gradient(#ce93d8, #6a1b9a); height: 100px; animation-delay: 2s; }
+        @keyframes sway { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
 
-        @keyframes sway { 
-            0%, 100% { transform: rotate(-3deg) scaleY(1); } 
-            50% { transform: rotate(3deg) scaleY(1.05); } 
-        }
-
-        /* UI */
+        /* UI HEADER */
         .ui-header { position: fixed; top: 0; left: 0; right: 0; padding: 25px; display: flex; justify-content: space-between; z-index: 100; }
         .stats-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 15px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
         .btn-exit { width: 45px; height: 45px; background: rgba(255,255,255,0.1); color: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; text-decoration: none; }
         
-        /* FISH */
+        /* IKAN ENTITY */
         .fish-entity { position: absolute; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; z-index: 20; will-change: transform, left, top; }
         .fish-img { width: 70px; transition: transform 1s ease-in-out; }
 
-        /* BUBBLES */
+        /* BACKGROUND DECOR (KAPAL SELAM / PENYELAM) */
+        .bg-decor { position: absolute; opacity: 0.3; z-index: 2; transition: all 25s linear; }
+
+        /* GELEMBUNG */
         .bubble { position: absolute; background: rgba(255,255,255,0.2); border-radius: 50%; bottom: -50px; animation: floatUp 10s linear infinite; z-index: 2; }
         @keyframes floatUp { to { transform: translateY(-120vh); opacity: 0; } }
     </style>
@@ -76,13 +61,12 @@
 
 <div id="ocean">
     <div id="reef">
-        <div class="coral tall"></div>
-        <div class="coral blue short"></div>
-        <div class="coral purple tall"></div>
+        <div class="coral" style="height:110px"></div>
         <div class="coral blue"></div>
-        <div class="coral short"></div>
         <div class="coral purple"></div>
-        <div class="coral blue tall"></div>
+        <div class="coral blue" style="height:90px"></div>
+        <div class="coral" style="height:60px"></div>
+        <div class="coral purple" style="height:80px"></div>
     </div>
     
     <div class="ui-header">
@@ -111,6 +95,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // DAFTAR IKAN YANG CAKEP SAJA (TROPICAL)
     const icons = [
         "https://api.iconify.design/noto:fish.svg",
         "https://api.iconify.design/noto:tropical-fish.svg",
@@ -119,24 +104,23 @@
 
     let activeFishes = []; 
 
-    function loadReward(email) {
-        const emailKey = email.toLowerCase().replace(/\./g, ',');
-        db.ref('users/' + emailKey + '/ikan').on('value', snap => {
-            const count = snap.val() || 0;
-            document.getElementById('fish-count').innerText = count;
-            spawnFishes(count);
-        });
-    }
-
     firebase.auth().onAuthStateChanged(user => {
-        if (user) { loadReward(user.email); }
+        if (user) {
+            const emailKey = user.email.toLowerCase().replace(/\./g, ',');
+            db.ref('users/' + emailKey + '/ikan').on('value', snap => {
+                const count = snap.val() || 0;
+                document.getElementById('fish-count').innerText = count;
+                spawnFishes(count);
+            });
+        }
     });
 
     function spawnFishes(total) {
         const container = document.getElementById('ocean');
         document.querySelectorAll('.fish-entity').forEach(f => f.remove());
         activeFishes = [];
-        let visualLimit = total > 20 ? 20 : total;
+        
+        let visualLimit = Math.min(total, 25);
         let color = total > 40 ? "#e74c3c" : (total > 15 ? "#f1c40f" : "#00b4d8");
 
         for (let i = 0; i < visualLimit; i++) {
@@ -167,6 +151,23 @@
     }
     requestAnimationFrame(updateFrame);
 
+    // DEKORASI BACKGROUND (Penyelam / Kapal Selam Lewat)
+    function spawnDecor() {
+        const decorIcons = ["noto:person-swimming", "noto:submarine"];
+        const img = document.createElement('img');
+        img.src = `https://api.iconify.design/${decorIcons[Math.floor(Math.random()*decorIcons.length)]}.svg`;
+        img.className = "bg-decor";
+        img.style.width = "60px";
+        img.style.top = Math.random()*60+20 + "vh";
+        img.style.left = "-100px";
+        document.getElementById('ocean').appendChild(img);
+        
+        setTimeout(() => { img.style.left = "110vw"; }, 100);
+        setTimeout(() => { img.remove(); }, 26000);
+    }
+    setInterval(spawnDecor, 35000); // Muncul tiap 35 detik
+
+    // GELEMBUNG
     setInterval(() => {
         const b = document.createElement('div');
         b.className = 'bubble';
