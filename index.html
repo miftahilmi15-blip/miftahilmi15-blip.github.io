@@ -60,16 +60,6 @@
     box-shadow: 0 15px 35px rgba(31,111,81,0.2);
   }
   /* ANIMASI API */
-  .fire-icon { 
-    font-size: 40px; 
-    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8));
-    animation: flicker 1.5s infinite alternate;
-  }
-  @keyframes flicker {
-    0% { transform: scale(1); filter: drop-shadow(0 0 5px orange); }
-    100% { transform: scale(1.1); filter: drop-shadow(0 0 15px red); }
-  }
-  .fire-off { filter: grayscale(1) opacity(0.3) !important; transform: scale(0.8); animation: none; }
 
   .mahfuzat-box { 
     background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
@@ -84,8 +74,16 @@
     box-shadow: var(--shadow); transition: 0.3s; cursor: pointer; text-decoration: none; color: inherit;
   }
   .menu-item:active { transform: scale(0.9); }
-  .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
-  .menu-item span { font-size: 11px; font-weight: 700; color: #555; }
+  .menu-symbol { font-size: 32px/* Icon Api Saat Nyala */
+  .fire-icon { 
+    font-size: 40px; 
+    display: inline-block; /* Agar animasi scale jalan lancar */
+    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8));
+    animation: flicker 1.5s infinite alternate;
+    transition: all 0.5s ease;
+  }
+
+  
 
   /* LOGIN CARD */
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
@@ -108,7 +106,40 @@
   .ai-header { background: #15803d; color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 14px; position: relative; }
   .ai-header .close-ai { position: absolute; right: 15px; top: 15px; cursor: pointer; opacity: 0.8; }
   
-  #chatContent { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; background: #fdfdfd; }
+  #chatContent { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display:/* Efek Api Kedap-Kedip */
+  @keyframes flicker {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px orange); }
+    100% { transform: scale(1.1); filter: drop-shadow(0 0 15px red); }
+  }
+
+  /* Efek Saat Api PADAM (Redup & Abu-abu) */
+  .fire-off { 
+    filter: grayscale(100%) opacity(0.2) !important;
+    animation: none !important; 
+    transform: scale(0.9) !important;
+    transition: all 0.5s ease;
+  }
+
+  /* CSS Menu Item (Lanjutan punya Bos) */
+  .menu-item { 
+    display: block; 
+    margin-bottom: 8px; 
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .menu-item i { 
+    display: block; 
+    margin-bottom: 5px; 
+    font-size: 24px;
+    /* Sesuaikan ukuran icon menu */
+  }
+
+  .menu-item span { 
+    font-size: 11px; 
+    font-weight: 700; 
+    color: #555; 
+  } flex; flex-direction: column; background: #fdfdfd; }
   .msg-user { background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; }
   .msg-ai { background: #f1f1f1; color: #333; padding: 10px 15px; border-radius: 15px 15px 15px 0; margin-bottom: 10px; align-self: flex-start; max-width: 85%; line-height: 1.5; }
 
@@ -275,37 +306,48 @@
 
         // --- UPDATE STREAK & API QURAN (OTOMATIS REDUP SETIAP HARI) ---
 function monitoringStreak(userId) {
-    const hariIni = new Date().toISOString().split('T')[0]; // Format: 2026-01-21
+function monitoringStreak(userId) {
+    const hariIni = new Date().toISOString().split('T')[0];
+    
+    // Ambil tanggal kemarin untuk cek apakah streak putus
+    const kemarinDate = new Date();
+    kemarinDate.setDate(kemarinDate.getDate() - 1);
+    const tglKemarin = kemarinDate.toISOString().split('T')[0];
 
     db.ref('users/' + userId).on('value', snap => {
         const data = snap.val();
-        const streak = (data && data.streak) ? data.streak : 0;
-        const tglBaca = (data && data.tgl_terakhir_api) ? data.tgl_terakhir_api : "";
+        if(!data) return;
+
+        let streak = data.streak || 0;
+        const tglBaca = data.tgl_terakhir_api || "";
 
         const streakText = document.getElementById('streak-text');
         const fire = document.getElementById('fire-api');
 
+        // LOGIKA RESET: Jika terakhir baca bukan hari ini DAN bukan kemarin, streak hangus (0)
+        if (tglBaca !== hariIni && tglBaca !== tglKemarin && streak > 0) {
+            streak = 0;
+            db.ref('users/' + userId).update({ streak: 0 });
+        }
+
         if (streakText) streakText.innerText = streak + " Hari Istiqomah";
 
-        // LOGIKA PAKSA REDUP: Jika tanggal di database TIDAK SAMA dengan hari ini
-        if (tglBaca === hariIni) {
-            // SUDAH BACA HARI INI -> NYALA TERANG
-            if (fire) {
+        // LOGIKA VISUAL API
+        if (fire) {
+            if (tglBaca === hariIni) {
+                // NYALA (Sudah baca hari ini)
                 fire.classList.remove('fire-off');
                 fire.style.opacity = "1";
-                fire.style.filter = "grayscale(0%)";
-            }
-        } else {
-            // BELUM BACA / SUDAH GANTI HARI -> REDUP/PADAM
-            if (fire) {
+                fire.style.filter = "grayscale(0%) brightness(1.2)";
+            } else {
+                // REDUP (Belum baca hari ini)
                 fire.classList.add('fire-off');
-                fire.style.opacity = "0.3"; 
+                fire.style.opacity = "0.2"; 
                 fire.style.filter = "grayscale(100%)";
             }
         }
     });
 }
-
         // --- UPDATE MAHFUZAT (BIAR MUNCUL) ---
         db.ref('fitur/mahfuzat').on('value', snap => {
             const data = snap.val();
