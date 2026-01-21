@@ -193,47 +193,54 @@
     surahSelect.onchange = () => loadSurah(surahSelect.value);
     init();
 
-    // 4. LOGIKA API (LANGSUNG) & IKAN (30 MENIT)
-    let startTime = Date.now();
-    const DURASI_IKAN = 30 * 60 * 1000; 
-    let sudahDapatIkan = false;
+    // 4. LOGIKA HADIAH IKAN (SINKRON AQUARIUM)
+    let durasiMengajiDetik = 0;
+    const TARGET_DETIK = 30 * 60; // 30 Menit (1800 detik)
 
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-            const emailKey = user.email.replace(/\./g, ',');
-            const hariIni = new Date().toISOString().split('T')[0];
+            const emailKey = user.email.toLowerCase().replace(/\./g, ',');
             const userRef = db.ref('users/' + emailKey);
 
-            // --- BAGIAN A: LANGSUNG NYALAKAN API ---
+            // TIMER BERJALAN SETIAP 1 DETIK
+            setInterval(() => {
+                // Ikan bertambah jika Santri sedang membuka Mushaf
+                durasiMengajiDetik++;
+
+                // Log progress di console (untuk monitoring saja)
+                if (durasiMengajiDetik % 60 === 0) {
+                    console.log("Sudah mengaji: " + (durasiMengajiDetik / 60) + " menit");
+                }
+
+                // EKSEKUSI JIKA SUDAH 30 MENIT
+                if (durasiMengajiDetik >= TARGET_DETIK) {
+                    durasiMengajiDetik = 0; // Reset ke 0 supaya bisa dapat ikan lagi di 30 menit berikutnya
+                    
+                    userRef.child('ikan').transaction(current => {
+                        return (current || 0) + 1;
+                    }).then(() => {
+                        // Notifikasi keberhasilan
+                        alert("Maa Syaa Allah! Tabarakallah. Kamu baru saja mendapatkan 1 Ikan baru karena sudah mengaji 30 menit. Cek Aquarium yuk! 🐟✨");
+                    });
+                }
+            }, 1000);
+
+            // --- LOGIKA NYALAKAN API (STREAK Harian) ---
+            const hariIni = new Date().toISOString().split('T')[0];
             userRef.once('value').then(snap => {
                 const data = snap.val() || {};
-                let updates = {};
-                
-                // Jika hari ini belum lapor ngaji, nyalakan api
                 if (data.tgl_terakhir_api !== hariIni) {
-                    updates['tgl_terakhir_api'] = hariIni;
-                    updates['streak'] = (data.streak || 0) + 1;
-                    userRef.update(updates).then(() => {
-                        console.log("Status: Api Berhasil Dinyalakan!");
+                    userRef.update({
+                        tgl_terakhir_api: hariIni,
+                        streak: (data.streak || 0) + 1
+                    }).then(() => {
+                        console.log("Status: Api Semangat Mengaji Berhasil Dinyalakan!");
                     });
                 }
             });
-
-            // --- BAGIAN B: TUNGGU 30 MENIT UNTUK IKAN ---
-            setInterval(() => {
-                if (sudahDapatIkan) return;
-                let selisih = Date.now() - startTime;
-
-                if (selisih >= DURASI_IKAN) {
-                    userRef.child('ikan').transaction(currentIkan => {
-                        return (currentIkan || 0) + 1;
-                    });
-                    sudahDapatIkan = true;
-                    alert("Maa Syaa Allah! 30 menit mengaji tercapai. Ikan baru sudah dikirim ke Aquarium! 🐟");
-                }
-            }, 30000); // Cek tiap 30 detik
         }
     });
+</script>
 </script>
 </body>
 </html>
