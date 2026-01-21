@@ -293,41 +293,52 @@
   });
 </script>
 
-<script type="module">
-  import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-  
-  const genAI = new GoogleGenerativeAI("AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo");
-
+<script>
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const msg = input.value.trim();
     if(!msg) return;
 
+    // Tampilkan pesan user
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
     const loadId = "ai-" + Date.now();
-    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang berpikir...</div>`;
+    box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
+    const apiKey = "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
     try {
-        // PERBAIKAN DI SINI: Tambahkan "models/" di depan nama modelnya
-        const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash" 
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: "Kamu adalah Ustadz bijak aplikasi E-Santri. Jawab singkat, ramah, Islami, panggil Nak. Pertanyaan: " + msg }]
+                }]
+            })
         });
 
-        const prompt = "Kamu adalah Ustadz bijak untuk aplikasi E-Santri. Jawablah dengan singkat, ramah, dan islami. Gunakan panggilan Nak. Pertanyaan: " + msg;
-
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        document.getElementById(loadId).innerText = response.text();
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            const jawaban = data.candidates[0].content.parts[0].text;
+            document.getElementById(loadId).innerText = jawaban;
+        } else {
+            // Jika Google kirim error, kita tampilkan detailnya sedikit
+            console.error("Detail Error:", data);
+            document.getElementById(loadId).innerText = "Maaf Nak, ustadz belum paham. Bisa diulang?";
+        }
     } catch (err) {
-        console.error("Error Detail:", err);
-        document.getElementById(loadId).innerText = "Maaf Nak, ada kendala teknis. Coba tanya lagi ya.";
+        console.error("Koneksi Error:", err);
+        document.getElementById(loadId).innerText = "Koneksi ke ustadz terputus, Nak.";
     } finally {
         box.scrollTop = box.scrollHeight;
     }
   }
+  // Daftarkan fungsi ke window agar tombol bisa klik
   window.kirimKeAI = kirimKeAI;
 </script>
 
