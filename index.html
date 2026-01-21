@@ -301,15 +301,15 @@
     
     if(!msg) return;
 
-    // 1. Tampilkan pesan kita
+    // Tampilkan pesan User
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
     
+    // Siapkan wadah jawaban AI
     const loadId = "ai-" + Date.now();
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // 2. Settingan Google
     const apiKey = "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo";
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
@@ -319,41 +319,32 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{
-                    parts: [{ text: msg }] // Kirim pesan apa adanya dulu untuk tes
+                    parts: [{ text: "Jawablah sebagai seorang Ustadz yang bijak. Gunakan bahasa Indonesia yang ramah. Panggil saya 'Nak'. Pertanyaan: " + msg }]
                 }]
-            })
-                safetySettings: [
-                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ]
             })
         });
 
         const data = await response.json();
         
-        // 3. Ambil jawaban
-        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-            const jawaban = data.candidates[0].content.parts[0].text;
-            document.getElementById(loadId).innerText = jawaban;
+        // Ambil hasil teks dari Google
+        if (data.candidates && data.candidates[0].content) {
+            const teks = data.candidates[0].content.parts[0].text;
+            document.getElementById(loadId).innerText = teks;
         } else {
-            // Jika ada masalah dari Google (misal: sensor)
-            console.log("Response Google:", data);
-            document.getElementById(loadId).innerText = "Maaf Nak, ustadz belum bisa menjawab itu. Tanya yang lain ya.";
+            // Jika Google kirim pesan error (seperti masalah keamanan)
+            document.getElementById(loadId).innerText = "Maaf Nak, Ustadz belum bisa jawab itu. Coba tanya yang lain.";
+            console.log("Detail dari Google:", data);
         }
 
     } catch (err) {
-        console.error("Koneksi Error:", err);
-        document.getElementById(loadId).innerText = "Maaf Nak, koneksi ke ustadz terputus.";
+        document.getElementById(loadId).innerText = "Aduh, koneksi internet ke Ustadz terganggu, Nak.";
     } finally {
         box.scrollTop = box.scrollHeight;
     }
   }
-  
-  // Daftarkan fungsi ke tombol
+
+  // Penting: Pastikan tombol panggil fungsi ini
   window.kirimKeAI = kirimKeAI;
 </script>
-
 </body>
 </html>
