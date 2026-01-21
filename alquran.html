@@ -289,6 +289,47 @@
 <script>
     const surahSelect = document.getElementById("surahSelect");
     const quranText = document.getElementById("quranText");
+<script>
+    const surahSelect = document.getElementById("surahSelect");
+    const quranText = document.getElementById("quranText");
+    const mainAudio = document.getElementById("mainAudio");
+
+    // CONFIG FIREBASE (Pastikan konsisten)
+    const firebaseConfig = {
+        apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
+        authDomain: "e-santri-b62be.firebaseapp.com",
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "e-santri-b62be",
+        storageBucket: "e-santri-b62be.firebasestorage.app",
+        messagingSenderId: "6560427635",
+        appId: "1:6560427635:web:368b4fbf95163e8d214406",
+        measurementId: "G-X0NSEGDDC0"
+    };
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    async function init() {
+        try {
+            const res = await fetch("https://equran.id/api/v2/surat");
+            const data = await res.json();
+            data.data.forEach(s => {
+                let opt = new Option(`${s.nomor}. ${s.namaLatin}`, s.nomor);
+                surahSelect.add(opt);
+            });
+            loadSurah(1);
+        } catch (e) { quranText.innerText = "Error API."; }
+    }
+
+    async function loadSurah(no) {
+        quranText.innerHTML = "<p style='text-align:center;'>Memuat Mushaf...</p>";
+        mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
+        const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
+<script>
+    const surahSelect = document.getElementById("surahSelect");
+    const quranText = document.getElementById("quranText");
     const mainAudio = document.getElementById("mainAudio");
 
     // CONFIG FIREBASE (Pastikan konsisten)
