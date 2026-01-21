@@ -195,40 +195,60 @@
 
     // 4. STREAK & IKAN LOGIC (SINKRON KE DASHBOARD)
     let startTime = Date.now();
-    const DURASI_MINIMAL = 30 * 60 * 1000; // 30 Menit
+    const DURASI_MINIMAL = 30 * 60 * 1000; // 30 Menit (Ganti ke 5000 jika ingin tes 5 detik saja)
     let sudahDapatIkan = false;
 
-    setInterval(() => {
-        if (sudahDapatIkan) return;
-        let selisih = Date.now() - startTime;
-
-        if (selisih >= DURASI_MINIMAL) {
-            const user = firebase.auth().currentUser;
-            if (user) {
-                const emailKey = user.email.replace(/\./g, ',');
-                const hariIni = new Date().toISOString().split('T')[0];
-                const userRef = db.ref('users/' + emailKey);
-                
-                userRef.once('value').then(snap => {
-                    const data = snap.val() || {};
-                    let currentStreak = data.streak || 0;
-                    let tglTerakhir = data.tgl_terakhir_api || "";
-
-                    let updates = {};
-                    updates['ikan'] = (data.ikan || 0) + 1;
-                    updates['tgl_terakhir_api'] = hariIni;
-                    
-                    if (tglTerakhir !== hariIni) {
-                        updates['streak'] = currentStreak + 1;
-                    }
-
-                    userRef.update(updates);
-                    sudahDapatIkan = true;
-                    alert("Maa Syaa Allah! 30 menit mengaji tercapai. Ikan dan Streak kamu bertambah! 🔥");
-                });
-            }
+    // Pastikan user terdeteksi dulu
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            console.log("User terdeteksi: " + user.email);
+            startMonitoring();
+        } else {
+            console.log("Menunggu login...");
         }
-    }, 60000);
+    });
+
+    function startMonitoring() {
+        setInterval(() => {
+            if (sudahDapatIkan) return;
+            
+            let selisih = Date.now() - startTime;
+            let sisaMenit = Math.ceil((DURASI_MINIMAL - selisih) / 60000);
+            
+            console.log("Sisa waktu mengaji: " + sisaMenit + " menit");
+
+            if (selisih >= DURASI_MINIMAL) {
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    const emailKey = user.email.replace(/\./g, ',');
+                    const hariIni = new Date().toISOString().split('T')[0];
+                    const userRef = db.ref('users/' + emailKey);
+                    
+                    userRef.once('value').then(snap => {
+                        const data = snap.val() || {};
+                        let currentStreak = data.streak || 0;
+                        let tglTerakhir = data.tgl_terakhir_api || "";
+
+                        let updates = {};
+                        updates['ikan'] = (data.ikan || 0) + 1;
+                        updates['tgl_terakhir_api'] = hariIni;
+                        
+                        // Hanya tambah streak jika hari ini belum tercatat
+                        if (tglTerakhir !== hariIni) {
+                            updates['streak'] = currentStreak + 1;
+                        }
+
+                        userRef.update(updates).then(() => {
+                            sudahDapatIkan = true;
+                            alert("Maa Syaa Allah! Target mengaji tercapai.\n- Ikan Koi bertambah 🐟\n- Streak Dashboard menyala 🔥");
+                        }).catch(err => {
+                            console.error("Gagal update streak:", err);
+                        });
+                    });
+                }
+            }
+        }, 30000); // Cek setiap 30 detik
+    }
 </script>
 </body>
 </html>
