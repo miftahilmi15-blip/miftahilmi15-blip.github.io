@@ -15,7 +15,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: #eef1ee; color: #2d3436; padding-top: 185px; }
 
-        /* HEADER & AUDIO */
         header {
             position: fixed; top: 0; left: 0; right: 0;
             background: linear-gradient(135deg, var(--primary), #083b0a);
@@ -34,8 +33,7 @@
             border: none; font-weight: 700; color: var(--primary); font-size: 14px;
         }
 
-        /* MUSHAF STYLE */
-        .main-content { max-width: 600px; margin: 0 auto; padding: 0 10px; }
+        .main-content { max-width: 600px; margin: 0 auto; padding: 0 10px; padding-bottom: 50px; }
         .mushaf-card {
             background: var(--bg-paper); border-radius: 15px; padding: 35px 22px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.05); min-height: 85vh;
@@ -50,40 +48,25 @@
             background-size: contain; font-size: 11px; font-weight: 800; color: #7a5d24; vertical-align: middle; direction: ltr; font-family: sans-serif;
         }
 
-        /* DRAWER FULL SCREEN */
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 3000; backdrop-filter: blur(2px); }
         .drawer {
             display: none; position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-radius: 25px 25px 0 0;
-            z-index: 3100; padding: 15px; height: 100vh; /* FULL SCREEN */
+            z-index: 3100; padding: 15px; height: 80vh;
             box-shadow: 0 -10px 40px rgba(0,0,0,0.2); animation: slideUp 0.3s ease-out;
-            overflow: hidden;
+            overflow-y: auto;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        /* HEADER DI DALAM DRAWER */
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-top: 10px; }
-        .close-btn { font-size: 24px; font-weight: bold; color: #888; cursor: pointer; padding: 5px 15px; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .close-btn { font-size: 24px; color: #888; cursor: pointer; }
 
-        /* TABS MATERI */
-        .tab-menu { display: flex; gap: 10px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .tab-btn { 
-            padding: 8px 18px; border-radius: 20px; border: 1px solid var(--primary); 
-            background: none; color: var(--primary); font-size: 12px; font-weight: 700; 
-            white-space: nowrap; cursor: pointer;
-        }
+        .tab-menu { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; }
+        .tab-btn { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--primary); background: none; font-size: 12px; cursor: pointer; }
         .tab-btn.active { background: var(--primary); color: white; }
-
-        /* MATERI STYLE */
-        .materi-section { display: none; height: calc(100% - 110px); }
+        .materi-section { display: none; }
         .materi-section.active { display: block; }
-
-        /* PDF VIEWER */
-        .pdf-container { width: 100%; height: 100%; border: none; border-radius: 10px; background: #eee; }
-        
-        /* WAQAF CARD STYLE */
-        .materi-card { background: #f8f9fa; border-left: 4px solid var(--accent); padding: 15px; border-radius: 12px; margin-bottom: 10px; }
-        .materi-card h4 { font-size: 14px; color: var(--primary); margin-bottom: 5px; }
+        .pdf-container { width: 100%; height: 60vh; border-radius: 10px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -99,100 +82,46 @@
     <select id="surahSelect" class="surah-select"></select>
 </header>
 
-<div class="main-content">
+<main class="main-content">
     <div class="mushaf-card">
         <div id="quranText" class="page-content">Memuat Mushaf...</div>
     </div>
-</div>
+</main>
 
 <div id="overlay" class="overlay" onclick="closeAll()"></div>
 
 <div id="materiDrawer" class="drawer">
     <div class="drawer-header">
-        <h3 style="color:var(--primary); font-size: 16px;">Materi Belajar</h3>
+        <h3 style="color:var(--primary)">Materi Belajar</h3>
         <div class="close-btn" onclick="closeAll()">✕</div>
     </div>
-    
     <div class="tab-menu">
-        <button class="tab-btn active" onclick="switchTab(event, 'tabTajwid')">TAJWID (PDF)</button>
-        <button class="tab-btn" onclick="switchTab(event, 'tabGharib')">GHARIB (PDF)</button>
+        <button class="tab-btn active" onclick="switchTab(event, 'tabTajwid')">TAJWID</button>
         <button class="tab-btn" onclick="switchTab(event, 'tabWaqaf')">WAQAF</button>
     </div>
-
     <div id="tabTajwid" class="materi-section active">
         <iframe class="pdf-container" src="https://drive.google.com/file/d/11E0B72SMuwUJEd6-w_7poAaIGMhABpos/preview"></iframe>
     </div>
-
-    <div id="tabGharib" class="materi-section">
-        <iframe class="pdf-container" src="https://drive.google.com/file/d/11E0B72SMuwUJEd6-w_7poAaIGMhABpos/preview"></iframe>
-    </div>
-
-    <div id="tabWaqaf" class="materi-section" style="overflow-y: auto;">
-        <div class="materi-card"><h4>م : Waqaf Lazim</h4><p style="font-size:13px;">Harus berhenti (Mesti).</p></div>
-        <div class="materi-card"><h4>لا : La Washal</h4><p style="font-size:13px;">Dilarang berhenti.</p></div>
-        <div class="materi-card"><h4>قلى : Al-Waqfu Aula</h4><p style="font-size:13px;">Berhenti lebih utama.</p></div>
-        <div class="materi-card"><h4>صلى : Al-Washlu Aula</h4><p style="font-size:13px;">Lanjut lebih utama.</p></div>
-        <div class="materi-card"><h4>ج : Waqaf Jaiz</h4><p style="font-size:13px;">Boleh berhenti atau lanjut.</p></div>
+    <div id="tabWaqaf" class="materi-section">
+        <p><b>م</b> : Berhenti (Lazim)</p>
+        <p><b>لا</b> : Jangan Berhenti</p>
     </div>
 </div>
 
-<div id="transDrawer" class="drawer" style="height: auto; min-height: 30vh; max-height: 50vh;">
+<div id="transDrawer" class="drawer" style="height: auto; min-height: 30vh;">
     <div class="drawer-header">
-        <h3 id="transTitle" style="color:var(--primary); font-size: 16px;">Arti Ayat</h3>
+        <h3 id="transTitle" style="color:var(--primary)">Arti Ayat</h3>
         <div class="close-btn" onclick="closeAll()">✕</div>
     </div>
-    <p id="transBody" style="line-height:1.7; font-size:15px; padding: 0 5px;"></p>
+    <p id="transBody" style="line-height:1.7;"></p>
 </div>
 
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aquarium Mengaji | Koi Jepang</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <style>
-        body { margin: 0; background: #0077b6; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        /* Background Laut/Air */
-        #sea { 
-            position: relative; width: 100vw; height: 100vh; 
-            background: linear-gradient(180deg, #48cae4 0%, #0077b6 100%);
-            overflow: hidden;
-        }
-
-        /* Info Overlay */
-        .info-panel { 
-            position: fixed; top: 20px; left: 20px; color: white; 
-            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
-            padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
-            z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        .btn-back {
-            position: fixed; top: 20px; right: 20px; padding: 10px 20px;
-            background: white; color: #0077b6; border-radius: 12px;
-            text-decoration: none; font-weight: 800; font-size: 14px; z-index: 1000;
-        }
-
-        /* Ikan Koi Jepang */
-        .fish-koi {
-            position: absolute; width: 120px; height: auto;
-            transition: 5s ease-in-out;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
-            z-index: 5;
-        }
-
-        /* Animasi Gelembung Air */
-        .bubble {
-            position: absolute; background: rgba(255,255,255,0.3);
-            border-radius: 50%; bottom: -50px; animation: floatUp 10s infinite;
-
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
-    const surahSelect = document.getElementById("surahSelect");
-    const quranText = document.getElementById("quranText");
-    const mainAudio = document.getElementById("mainAudio");
-
-    // CONFIG FIREBASE (Pastikan konsisten)
+    // 1. CONFIG
     const firebaseConfig = {
         apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
         authDomain: "e-santri-b62be.firebaseapp.com",
@@ -200,15 +129,16 @@
         projectId: "e-santri-b62be",
         storageBucket: "e-santri-b62be.firebasestorage.app",
         messagingSenderId: "6560427635",
-        appId: "1:6560427635:web:368b4fbf95163e8d214406",
-        measurementId: "G-X0NSEGDDC0"
+        appId: "1:6560427635:web:368b4fbf95163e8d214406"
     };
-
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    const surahSelect = document.getElementById("surahSelect");
+    const quranText = document.getElementById("quranText");
+    const mainAudio = document.getElementById("mainAudio");
+
+    // 2. LOAD QURAN
     async function init() {
         try {
             const res = await fetch("https://equran.id/api/v2/surat");
@@ -218,72 +148,63 @@
                 surahSelect.add(opt);
             });
             loadSurah(1);
-        } catch (e) { quranText.innerText = "Error API."; }
+        } catch (e) { quranText.innerText = "Gagal memuat daftar surat."; }
     }
 
     async function loadSurah(no) {
-        quranText.innerHTML = "<p style='text-align:center;'>Memuat Mushaf...</p>";
+        quranText.innerHTML = "<p style='text-align:center;'>Memuat Ayat...</p>";
         mainAudio.src = `https://server8.mp3quran.net/afs/${no.toString().padStart(3, '0')}.mp3`;
-        const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
-        const json = await res.json();
-        const data = json.data;
-        document.getElementById("surahTitle").innerText = data.namaLatin;
-        let html = "";
-        if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:25px; font-size:35px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
-        data.ayat.forEach(v => {
-            const cleanTrans = v.teksIndonesia.replace(/'/g, "&apos;");
-            html += `<span class="ayah-item" onclick="openTrans(${v.nomorAyat}, '${cleanTrans}')">${v.teksArab} <span class="ayah-num">${v.nomorAyat}</span></span> `;
-        });
-        quranText.innerHTML = html;
-        
-        // Reset timer mengaji setiap ganti surah
-        startTime = Date.now();
-        sudahDapatIkan = false;
+        try {
+            const res = await fetch(`https://equran.id/api/v2/surat/${no}`);
+            const json = await res.json();
+            const data = json.data;
+            document.getElementById("surahTitle").innerText = data.namaLatin;
+            let html = "";
+            if(no != 1 && no != 9) html += `<div style="text-align:center; margin-bottom:25px; font-size:32px; font-family:'Amiri';">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;
+            data.ayat.forEach(v => {
+                const cleanTrans = v.teksIndonesia.replace(/'/g, "&apos;");
+                html += `<span class="ayah-item" onclick="openTrans(${v.nomorAyat}, '${cleanTrans}')">${v.teksArab} <span class="ayah-num">${v.nomorAyat}</span></span> `;
+            });
+            quranText.innerHTML = html;
+        } catch(e) { quranText.innerText = "Gagal memuat isi surat."; }
     }
 
+    // 3. UI FUNCTIONS
     function openTrans(num, text) {
         document.getElementById("transTitle").innerText = `Ayat ${num}`;
         document.getElementById("transBody").innerText = text;
         document.getElementById("overlay").style.display = "block";
         document.getElementById("transDrawer").style.display = "block";
     }
-
     function openDrawer(id) {
         document.getElementById("overlay").style.display = "block";
         document.getElementById(id).style.display = "block";
     }
-
+    function closeAll() {
+        document.getElementById("overlay").style.display = "none";
+        document.querySelectorAll('.drawer').forEach(d => d.style.display = "none");
+    }
     function switchTab(evt, tabId) {
         document.querySelectorAll('.materi-section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         evt.currentTarget.classList.add('active');
     }
-
-    function closeAll() {
-        document.getElementById("overlay").style.display = "none";
-        document.getElementById("materiDrawer").style.display = "none";
-        document.getElementById("transDrawer").style.display = "none";
-    }
-
     surahSelect.onchange = () => loadSurah(surahSelect.value);
     init();
 
-    // --- FITUR STREAK & AQUARIUM (SINKRON DASHBOARD) ---
+    // 4. STREAK & IKAN LOGIC (SINKRON KE DASHBOARD)
     let startTime = Date.now();
     const DURASI_MINIMAL = 30 * 60 * 1000; // 30 Menit
     let sudahDapatIkan = false;
 
     setInterval(() => {
         if (sudahDapatIkan) return;
-
-        let currentTime = Date.now();
-        let selisih = currentTime - startTime;
+        let selisih = Date.now() - startTime;
 
         if (selisih >= DURASI_MINIMAL) {
             const user = firebase.auth().currentUser;
             if (user) {
-                // FORMAT EMAIL (Agar sama dengan Dashboard)
                 const emailKey = user.email.replace(/\./g, ',');
                 const hariIni = new Date().toISOString().split('T')[0];
                 const userRef = db.ref('users/' + emailKey);
@@ -293,24 +214,21 @@
                     let currentStreak = data.streak || 0;
                     let tglTerakhir = data.tgl_terakhir_api || "";
 
-                    // Update Ikan, Tanggal, dan Streak
                     let updates = {};
                     updates['ikan'] = (data.ikan || 0) + 1;
                     updates['tgl_terakhir_api'] = hariIni;
                     
-                    // Tambah streak jika hari ini belum tercatat
                     if (tglTerakhir !== hariIni) {
                         updates['streak'] = currentStreak + 1;
                     }
 
                     userRef.update(updates);
-                    
                     sudahDapatIkan = true;
-                    alert("Maa Syaa Allah! 30 menit mengaji tercapai.\n- 1 Ikan Koi bertambah 🐟\n- Streak Istiqomah bertambah! 🔥");
+                    alert("Maa Syaa Allah! 30 menit mengaji tercapai. Ikan dan Streak kamu bertambah! 🔥");
                 });
             }
         }
-    }, 60000); // Cek tiap menit
+    }, 60000);
 </script>
 </body>
 </html>
