@@ -299,19 +299,19 @@
     const box = document.getElementById('chatContent');
     const msg = input.value.trim();
     
-    // Jika input kosong, jangan jalankan apa-apa
+    // Jangan kirim kalau kosong
     if(!msg) return;
 
-    // 1. Tampilkan pesan User ke layar
+    // 1. Tampilkan pesan user ke layar
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
-    input.value = ""; // Kosongkan kolom ketik
+    input.value = ""; // Bersihkan kolom input
     
-    // 2. Siapkan tempat jawaban Ustadz
+    // 2. Siapkan tempat jawaban (animasi loading)
     const loadId = "ai-" + Date.now();
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // 3. Konfigurasi Google Gemini
+    // 3. Konfigurasi API Google
     const apiKey = "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo";
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
@@ -322,30 +322,43 @@
             body: JSON.stringify({
                 contents: [{
                     parts: [{ text: "Berperanlah sebagai ustadz yang bijak. Jawab singkat, ramah, dan islami. Panggil saya Nak. Pertanyaan: " + msg }]
-                }]
+                }],
+                safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 500
+                }
             })
         });
 
         const data = await response.json();
         
-        // 4. Cek hasil dari Google
-        if (data.candidates && data.candidates[0].content) {
-            const teks = data.candidates[0].content.parts[0].text;
-            document.getElementById(loadId).innerText = teks;
+        // 4. Ambil teks jawaban
+        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+            const jawaban = data.candidates[0].content.parts[0].text;
+            document.getElementById(loadId).innerText = jawaban;
         } else {
-            document.getElementById(loadId).innerText = "Maaf Nak, Ustadz belum bisa jawab. Tanya yang lain ya.";
-            console.log("Error dari Google:", data);
+            // Jika kena sensor Google
+            document.getElementById(loadId).innerText = "Maaf Nak, ustadz belum bisa menjawab itu. Coba tanya hal lain ya.";
+            console.log("Detail dari Google:", data);
         }
 
     } catch (err) {
-        document.getElementById(loadId).innerText = "Aduh, koneksi internet ke Ustadz terganggu, Nak.";
+        // Jika koneksi internet bermasalah
+        document.getElementById(loadId).innerText = "Aduh, koneksi ke ustadz terganggu, Nak.";
         console.error("Koneksi Error:", err);
     } finally {
+        // Scroll otomatis ke bawah
         box.scrollTop = box.scrollHeight;
     }
   }
 
-  // Daftarkan fungsi ke sistem global agar tombol bisa panggil
+  // Pastikan fungsi ini terbaca secara global oleh tombol
   window.kirimKeAI = kirimKeAI;
 </script>
 </body>
