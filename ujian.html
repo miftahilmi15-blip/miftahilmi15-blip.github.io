@@ -94,22 +94,25 @@
 
     // 2. Verifikasi & Ambil Soal (Path disesuaikan dengan bank_soal/[kelasLengkap]/[mapel])
     function cekMasuk() {
-        const nama = document.getElementById('user-nama').value;
-        const token = document.getElementById('user-token').value;
-        const kls = document.getElementById('user-kelas').value;
+    const nama = document.getElementById('user-nama').value.trim();
+    const kls = document.getElementById('user-kelas').value;
 
-        if(!nama || !token) return alert("Isi Nama & Token!");
-        if(token !== "152003") return alert("Token Salah!"); // PIN Admin Bos
+    // Sekarang cuma butuh Nama, tidak perlu Token lagi
+    if(!nama) return alert("Masukkan Nama Lengkap dulu, Bos!");
 
-        db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum diupload oleh Admin untuk kelas ini!");
-            
-            listSoal = [];
-            snap.forEach(s => { listSoal.push(s.val()); });
-            
-            mulaiUjian(nama, kls);
-        });
-    }
+    // Langsung ambil soal dari database
+    db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
+        if(!snap.exists()) {
+            return alert("Soal belum tersedia untuk kelas " + kls + " mata pelajaran " + sesiUjian.mapel);
+        }
+        
+        listSoal = [];
+        snap.forEach(s => { listSoal.push(s.val()); });
+        
+        // Mulai deh ujiannya
+        mulaiUjian(nama, kls);
+    });
+}
 
     function mulaiUjian(nama, kls) {
         document.getElementById('login-screen').classList.add('hidden');
