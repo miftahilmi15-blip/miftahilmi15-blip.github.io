@@ -32,9 +32,8 @@
         .btn-primary { background: var(--primary); }
         .btn-accent { background: var(--accent); color: var(--primary); }
         .btn-blue { background: var(--blue); }
-        .btn-danger { background: var(--red); }
+        .btn-danger { background: var(--red); font-size: 11px; padding: 5px; }
 
-        /* Bintang Tahfidz */
         .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; margin-bottom: 10px; }
         .star { font-size: 28px; color: #ddd; cursor: pointer; }
 
@@ -56,8 +55,8 @@
     <button class="nav-item active" onclick="showTab('absen', this)"><i class="fas fa-user-check"></i> Absen</button>
     <button class="nav-item" onclick="showTab('tahfidz', this)"><i class="fas fa-quran"></i> Tahfidz</button>
     <button class="nav-item" onclick="showTab('ujian', this)"><i class="fas fa-file-alt"></i> Ujian</button>
-    <button class="nav-item" onclick="showTab('reward', this)"><i class="fas fa-gift"></i> Reward</button>
     <button class="nav-item" onclick="showTab('materi', this)"><i class="fas fa-book"></i> Materi</button>
+    <button class="nav-item" onclick="showTab('reward', this)"><i class="fas fa-gift"></i> Reward</button>
 </div>
 
 <div class="container">
@@ -77,13 +76,8 @@
             <select id="thf-nama"><option>Pilih kelas dulu...</option></select>
             <select id="thf-kat" onchange="updateMateriList()"><option value="">Pilih Kategori</option><option value="Jilid">Qiraati</option><option value="Tadarus">Tadarus</option><option value="Tahfidz">Tahfidz</option></select>
             <select id="thf-mat"><option>Pilih Kategori Dulu</option></select>
-            <div class="grid-2">
-                <input type="number" id="thf-awal" placeholder="Mulai">
-                <input type="number" id="thf-akhir" placeholder="Sampai">
-            </div>
-            <div class="rating">
-                <span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span><span class="star" onclick="setStar(4)">★</span><span class="star" onclick="setStar(5)">★</span>
-            </div>
+            <div class="grid-2"><input type="number" id="thf-awal" placeholder="Mulai"><input type="number" id="thf-akhir" placeholder="Sampai"></div>
+            <div class="rating"><span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span><span class="star" onclick="setStar(4)">★</span><span class="star" onclick="setStar(5)">★</span></div>
             <input type="hidden" id="thf-bintang" value="0">
             <button class="btn btn-primary" onclick="simpanTahfidz()">SIMPAN TAHFIDZ</button>
         </div>
@@ -91,37 +85,43 @@
 
     <div id="tab-ujian" class="tab-content hidden">
         <div class="card" style="border: 2px solid var(--blue)">
-            <h3><i class="fas fa-calendar-check"></i> Penjadwalan Ujian</h3>
-            <div class="grid-2">
-                <select id="uj-kls"><option value="7">Kelas 7</option><option value="8">Kelas 8</option><option value="9">Kelas 9</option></select>
-                <select id="uj-status"><option value="Buka">🔓 BUKA</option><option value="Tutup">🔒 TUTUP</option></select>
-            </div>
-            <div class="grid-2">
-                <input type="date" id="uj-tanggal">
-                <input type="number" id="uj-durasi" value="60" placeholder="Durasi (Menit)">
-            </div>
-            <input type="text" id="uj-mapel" placeholder="Mata Pelajaran">
+            <h3><i class="fas fa-calendar-check"></i> Jadwal Ujian</h3>
+            <div class="grid-2"><select id="uj-kls"><option value="7">Kelas 7</option><option value="8">Kelas 8</option><option value="9">Kelas 9</option></select><select id="uj-status"><option value="Buka">🔓 BUKA</option><option value="Tutup">🔒 TUTUP</option></select></div>
+            <div class="grid-2"><input type="date" id="uj-tanggal"><input type="number" id="uj-durasi" value="60"></div>
+            <input type="text" id="uj-mapel" placeholder="Mapel">
             <button class="btn btn-blue" onclick="saveUjianConfig()">SIMPAN JADWAL</button>
         </div>
-
         <div class="card">
             <h3><i class="fas fa-copy"></i> Bulk Upload Soal</h3>
-            <select id="uj-tipe"><option value="PG">Pilihan Ganda (Soal|A,B,C,D|Kunci)</option><option value="Essay">Essay (Soal Saja)</option></select>
-            <textarea id="uj-teks-bulk" placeholder="Contoh:&#10;Siapa Tuhanmu?|Allah,Nabi,Malaikat,Setan|Allah" rows="6"></textarea>
-            <button class="btn btn-primary" onclick="simpanSoalMassal()">UPLOAD SEMUA SOAL</button>
-            <button class="btn btn-danger" style="margin-top:10px; font-size:10px;" onclick="hapusSemuaSoal()">HAPUS SEMUA BANK SOAL</button>
+            <select id="uj-tipe"><option value="PG">Pilihan Ganda</option><option value="Essay">Essay</option></select>
+            <textarea id="uj-teks-bulk" placeholder="Soal|A,B,C,D|Kunci" rows="5"></textarea>
+            <button class="btn btn-primary" onclick="simpanSoalMassal()">UPLOAD SOAL</button>
+        </div>
+    </div>
+
+    <div id="tab-materi" class="tab-content hidden">
+        <div class="card">
+            <h3><i class="fas fa-quote-left"></i> Mahfuzat Hari Ini</h3>
+            <input type="text" id="mh-ar" placeholder="Teks Arab" style="text-align: right; font-size: 18px;">
+            <textarea id="mh-it" placeholder="Arti / Terjemahan"></textarea>
+            <button class="btn btn-primary" onclick="upMahf()">UPDATE MAHFUZAT</button>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-pray"></i> Bank Doa Harian</h3>
+            <input type="text" id="doa-judul" placeholder="Judul Doa">
+            <input type="text" id="doa-ar" placeholder="Teks Arab" style="text-align: right;">
+            <textarea id="doa-it" placeholder="Terjemahan"></textarea>
+            <button class="btn btn-blue" onclick="tambahDoa()">TAMBAH DOA</button>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+            <div id="list-doa-admin"></div>
         </div>
     </div>
 
     <div id="tab-reward" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-fish"></i> Kirim Ikan</h3>
+            <h3><i class="fas fa-fish"></i> Kirim Reward Ikan</h3>
             <input type="email" id="rew-email" placeholder="Email Santri">
-            <select id="rew-ikan">
-                <option value="1">🐟 Ikan Kecil (1)</option>
-                <option value="5">🐠 Ikan Hias (5)</option>
-                <option value="10">🐡 Ikan Langka (10)</option>
-            </select>
+            <select id="rew-ikan"><option value="1">🐟 Ikan Kecil</option><option value="5">🐠 Ikan Hias</option><option value="10">🐡 Ikan Langka</option></select>
             <button class="btn btn-blue" onclick="kirimReward()">KIRIM HADIAH</button>
         </div>
     </div>
@@ -144,7 +144,41 @@
         document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
         document.getElementById('tab-'+id).classList.remove('hidden');
         btn.classList.add('active');
+        if(id === 'materi') loadDoaAdmin();
     }
+
+    // --- LOGIKA MATERI (MAHFUZAT & DOA) ---
+    function upMahf() {
+        const ar = document.getElementById('mh-ar').value;
+        const it = document.getElementById('mh-it').value;
+        if(!ar || !it) return alert("Isi Arab dan Artinya!");
+        db.ref('konten/mahfuzat').set({ arab: ar, indo: it })
+        .then(() => alert("Mahfuzat Berhasil Diupdate!"));
+    }
+
+    function tambahDoa() {
+        const jdl = document.getElementById('doa-judul').value;
+        const ar = document.getElementById('doa-ar').value;
+        const it = document.getElementById('doa-it').value;
+        if(!jdl) return alert("Isi Judul Doa!");
+        db.ref('doa_harian').push({ judul: jdl, arab: ar, arti: it })
+        .then(() => {
+            alert("Doa Berhasil Ditambah!");
+            document.getElementById('doa-judul').value = "";
+            document.getElementById('doa-ar').value = "";
+            document.getElementById('doa-it').value = "";
+        });
+    }
+
+    function loadDoaAdmin() {
+        db.ref('doa_harian').on('value', snap => {
+            const list = document.getElementById('list-doa-admin'); list.innerHTML = "<b>Daftar Doa:</b>";
+            snap.forEach(d => {
+                list.innerHTML += `<div class="item-row"><span>${d.val().judul}</span><button class="btn-danger" onclick="hapusDoa('${d.key}')">Hapus</button></div>`;
+            });
+        });
+    }
+    function hapusDoa(key) { if(confirm("Hapus doa ini?")) db.ref('doa_harian/'+key).remove(); }
 
     // --- LOGIKA UJIAN ---
     async function saveUjianConfig() {
@@ -155,7 +189,7 @@
             tanggal: document.getElementById('uj-tanggal').value,
             durasi: document.getElementById('uj-durasi').value
         });
-        alert("Jadwal Ujian Disimpan!");
+        alert("Jadwal Disimpan!");
     }
 
     async function simpanSoalMassal() {
@@ -171,19 +205,11 @@
             }
             await db.ref(`bank_soal/${kls}/Ujian`).push(p);
         }
-        alert("Berhasil Upload Soal!");
+        alert("Soal Berhasil Masuk!");
         document.getElementById('uj-teks-bulk').value = "";
     }
 
-    async function hapusSemuaSoal() {
-        if(confirm("Hapus semua soal di kelas ini?")) {
-            const kls = document.getElementById('uj-kls').value;
-            await db.ref(`bank_soal/${kls}/Ujian`).remove();
-            alert("Bank Soal Dikosongkan!");
-        }
-    }
-
-    // --- TAHFIDZ & SANTRI ---
+    // --- LAIN-LAIN ---
     async function loadSantriThf() {
         const kls = document.getElementById('thf-kls').value;
         const sel = document.getElementById('thf-nama');
@@ -198,7 +224,7 @@
         const kat = document.getElementById('thf-kat').value;
         const mat = document.getElementById('thf-mat');
         mat.innerHTML = "";
-        const list = kat === "Jilid" ? ["Jilid 1", "Jilid 2", "Jilid 3", "Jilid 4"] : ["An-Naba", "An-Nazi'at", "Al-Baqarah"];
+        const list = kat === "Jilid" ? ["Jilid 1", "Jilid 2", "Jilid 3", "Jilid 4"] : (kat === "Tadarus" ? ["An-Naba", "An-Nazi'at"] : ["Al-Baqarah", "Ali-Imran"]);
         list.forEach(l => mat.options.add(new Option(l, l)));
     }
 
@@ -219,7 +245,7 @@
             kelas: document.getElementById('thf-kls').value
         };
         await db.ref(`tahfidz/${d.getFullYear()}/${d.getMonth()+1}/${nipd}`).push(payload);
-        alert("Tahfidz Tersimpan!");
+        alert("Tahfidz Disimpan!");
     }
 
     function monAbsen() {
@@ -235,7 +261,7 @@
         const email = document.getElementById('rew-email').value.replace(/\./g, ',');
         const jml = parseInt(document.getElementById('rew-ikan').value);
         db.ref(`users/${email}/ikan`).transaction(v => (v || 0) + jml);
-        alert("Ikan Terkirim!");
+        alert("Reward Terkirim!");
     }
 </script>
 </body>
