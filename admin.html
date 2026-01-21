@@ -162,12 +162,16 @@
 
     <div id="tab-reward" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-gift"></i> Kirim Hadiah Ikan</h3>
+            <h3><i class="fas fa-gift"></i> Kirim Hadiah Ikan & Pakan</h3>
+            <span class="label-kecil">EMAIL SANTRI</span>
             <input type="email" id="rew-email" placeholder="Email Santri">
-            <button class="btn btn-blue" onclick="kirimReward()">KIRIM 1 IKAN</button>
+            <div class="grid-2">
+                <button class="btn btn-blue" onclick="kirimReward()"><i class="fas fa-fish"></i> +1 IKAN</button>
+                <button class="btn btn-primary" style="background:#eab308; color:#1f6f51;" onclick="kirimPakan(50)"><i class="fas fa-cookie-bite"></i> +50 PAKAN</button>
+            </div>
         </div>
         <div class="card">
-            <h3><i class="fas fa-list"></i> Pantau Jumlah Ikan</h3>
+            <h3><i class="fas fa-list"></i> Pantau Stok Ikan & Pakan</h3>
             <div id="list-reward-monitor"></div>
         </div>
     </div>
@@ -202,43 +206,26 @@
         if(id === 'reward') loadRewardMonitor();
     }
 
-    // --- FUNGSI JADWAL UJIAN OTOMATIS ---
     async function saveUjian() {
         const kls = document.getElementById('uj-kls').value;
         const mapel = document.getElementById('uj-mapel').value;
         const tgl = document.getElementById('uj-tgl').value;
         const mulai = document.getElementById('uj-jam-mulai').value;
         const selesai = document.getElementById('uj-jam-selesai').value;
-
         if(!tgl || !mulai || !selesai) return alert("Mohon lengkapi Tanggal dan Jam!");
-
-        await db.ref(`jadwal_ujian/${kls}/${mapel}`).set({
-            tanggal: tgl,
-            jam_mulai: mulai,
-            jam_selesai: selesai,
-            status: "AKTIF"
-        });
-
+        await db.ref(`jadwal_ujian/${kls}/${mapel}`).set({ tanggal: tgl, jam_mulai: mulai, jam_selesai: selesai, status: "AKTIF" });
         alert(`SUKSES: Jadwal ${mapel} Kelas ${kls} sudah aktif!`);
     }
 
-    // --- SIMPAN SOAL ---
     async function simpanSoal() {
         const kls = document.getElementById('uj-kls').value;
         const mapel = document.getElementById('uj-mapel').value;
         const text = document.getElementById('uj-bulk').value.trim();
         if(!text) return alert("Isi soal dulu!");
-
         const lines = text.split('\n');
         for(let l of lines) {
             const s = l.split('|');
-            if(s.length >= 3) {
-                await db.ref(`bank_soal/${kls}/${mapel}`).push({ 
-                    soal: s[0], 
-                    opsi: s[1], 
-                    kunci: s[2] 
-                });
-            }
+            if(s.length >= 3) { await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] }); }
         }
         alert("Bank Soal " + mapel + " Berhasil Disimpan!");
         document.getElementById('uj-bulk').value = "";
@@ -279,47 +266,53 @@
         XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap-13")), `Rekap_Nilai_${kls}.xlsx`);
     }
 
-    // --- FUNGSI UPDATE MATERI (SINKRON KE DOA.HTML) ---
     function upMateri(type) {
         if(type === 'mahfuzat') {
-            db.ref('konten/mahfuzat').set({ 
-                arab: document.getElementById('mh-ar').value, 
-                indo: document.getElementById('mh-it').value 
-            });
+            db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value });
             alert("Mahfuzat Terupdate!");
         } else {
-            // Push ke doa_harian supaya jadi daftar list
             const judul = document.getElementById('doa-judul').value;
             const arab = document.getElementById('doa-ar').value;
             const indo = document.getElementById('doa-it').value;
-
             if(!judul || !arab || !indo) return alert("Lengkapi judul, arab, dan arti!");
-
-            db.ref('konten/doa_harian').push({ 
-                judul: judul,
-                arab: arab, 
-                indo: indo 
-            });
+            db.ref('konten/doa_harian').push({ judul: judul, arab: arab, indo: indo });
             alert("Doa Berhasil Ditambah ke Daftar!");
-            document.getElementById('doa-judul').value = "";
-            document.getElementById('doa-ar').value = "";
-            document.getElementById('doa-it').value = "";
         }
     }
 
+    // --- FUNGSI REWARD IKAN ---
     function kirimReward() {
         const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
-        if(!mail) return;
+        if(!mail) return alert("Isi Email!");
         db.ref(`users/${mail}/ikan`).transaction(v => (v || 0) + 1);
-        alert("1 Ikan Berhasil Dikirim!");
+        alert("1 Ikan Dikirim!");
     }
 
+    // --- FUNGSI REWARD PAKAN (BARU) ---
+    function kirimPakan(jumlah) {
+        const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
+        if(!mail) return alert("Isi Email!");
+        db.ref(`users/${mail}/pakan`).transaction(v => (v || 0) + jumlah);
+        alert(`${jumlah} Pakan Dikirim!`);
+    }
+
+    // --- MONITOR REWARD LENGKAP ---
     function loadRewardMonitor() {
         db.ref(`users`).on('value', snap => {
             const box = document.getElementById('list-reward-monitor'); box.innerHTML = "";
             snap.forEach(u => {
                 const d = u.val();
-                if(d.ikan > 0) box.innerHTML += `<div class="item-row"><b>${d.nama || u.key}</b><span><i class="fas fa-fish" style="color:var(--blue)"></i> ${d.ikan} Ikan</span></div>`;
+                if(d.ikan > 0 || d.pakan > 0) {
+                    box.innerHTML += `
+                    <div class="item-row">
+                        <b>${d.nama || u.key.replace(/,/g,'.')}</b>
+                        <span>
+                            <i class="fas fa-fish" style="color:var(--blue)"></i> ${d.ikan || 0} 
+                            &nbsp; | &nbsp; 
+                            <i class="fas fa-cookie-bite" style="color:var(--accent)"></i> ${d.pakan || 0}
+                        </span>
+                    </div>`;
+                }
             });
         });
     }
