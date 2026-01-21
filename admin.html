@@ -6,8 +6,6 @@
     <title>Master Admin | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; --gold: #f1c40f; --accent: #6c5ce7; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
@@ -32,17 +30,8 @@
         input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; margin-top: 5px; }
         
         .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
-        .hidden { display: none !important; }
-
-        /* TABEL REKAP */
-        .rekap-container { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 10px; min-width: 800px; }
-        th { background: #1f6f51; color: white; padding: 12px 8px; border: 1px solid #ddd; text-align: center; }
-        td { padding: 10px 8px; border: 1px solid #ddd; text-align: center; background: white; }
-        
-        /* TAHFIDZ STARS */
-        .star { cursor: pointer; font-size: 24px; color: #ddd; }
-        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; gap: 10px;}
+        .list-container { margin-top: 20px; max-height: 400px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -57,89 +46,87 @@
 <div id="admin-screen">
     <div class="sidebar">
         <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi</button>
-        <button class="nav-btn" onclick="showTab('tab-ujian', this)">Ujian & Bank Soal</button>
+        <button class="nav-btn" onclick="showTab('tab-ujian', this)">Ujian</button>
         <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
-        <button class="nav-btn" onclick="showTab('tab-materi', this)">Materi</button>
+        <button class="nav-btn" onclick="showTab('tab-materi', this)">Materi & Doa</button>
+        <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
         <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
         <button class="nav-btn" onclick="tutupAdmin()" style="background:#f8d7da; color:#721c24">Keluar</button>
     </div>
 
     <div class="content">
-        <div id="tab-ujian" class="tab-content hidden">
-            <div class="card" style="border: 2px solid var(--primary);">
-                <h3><i class="fas fa-tools"></i> Kontrol Ujian Aktif</h3>
-                <label>Pilih Mapel & Token</label>
-                <div style="display:flex; gap:10px;">
-                    <select id="set-mapel"><option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option></select>
-                    <input type="text" id="set-token" placeholder="TOKEN">
-                </div>
-                <button class="btn-action" onclick="setUjianStatus(true)">AKTIFKAN UJIAN</button>
-                <button class="btn-action" style="background:#e74c3c" onclick="setUjianStatus(false)">MATIKAN UJIAN</button>
-                <div id="status-aktif-skrg" style="margin-top:10px; font-size:11px;"></div>
+        <div id="tab-monitoring" class="tab-content">
+            <div class="card">
+                <h3>Monitoring Presensi</h3>
+                <select id="pilih-kelas-mon" onchange="loadAbsensi()">
+                    <option value="">-- Pilih Kelas --</option>
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                </select>
+                <div id="list-absensi" class="list-container"></div>
             </div>
+        </div>
 
-            <div class="card" style="border: 2px solid var(--accent);">
-                <h3><i class="fas fa-upload"></i> Import Soal Massal</h3>
-                <label>Target Kelas & Mapel</label>
-                <div style="display:flex; gap:10px;">
-                    <select id="in-kls-induk"><option value="7">Kelas 7</option><option value="8">Kelas 8</option><option value="9">Kelas 9</option></select>
-                    <select id="in-mapel-soal"><option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option></select>
-                </div>
-                <label>Format: Soal | Opsi A,B,C,D | Kunci</label>
-                <textarea id="bulk-soal-area" rows="5" placeholder="Contoh: Siapa Nabi kita?|Ibrahim, Musa, Muhammad|C"></textarea>
-                <button class="btn-action" style="background:var(--accent)" onclick="importSoalMassal()">SIMPAN SEMUA SOAL</button>
+        <div id="tab-ujian" class="tab-content hidden">
+            <div class="card">
+                <h3>Kontrol Ujian</h3>
+                <input type="text" id="set-token" placeholder="TOKEN UJIAN">
+                <button class="btn-action" onclick="setUjianStatus(true)">AKTIFKAN</button>
+                <button class="btn-action" style="background:red" onclick="setUjianStatus(false)">OFF</button>
             </div>
         </div>
 
         <div id="tab-tahfidz" class="tab-content hidden">
-            <div class="card" style="border-bottom: 5px solid var(--primary);">
-                <h3><i class="fas fa-check-double"></i> Monitoring Hari Ini</h3>
+            <div class="card">
+                <h3>Monitoring Tahfidz Hari Ini</h3>
                 <select id="kls-tahfidz-mon" onchange="loadTahfidzMonitor()">
                     <option value="">-- Pilih Kelas --</option>
                     <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
                     <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
                 </select>
-                <div id="list-tahfidz-check" style="margin-top:15px;"></div>
+                <div id="list-tahfidz-check" class="list-container"></div>
             </div>
+        </div>
 
+        <div id="tab-materi" class="tab-content hidden">
             <div class="card">
-                <h3><i class="fas fa-plus-circle"></i> Input Setoran Baru</h3>
-                <label>Nama Santri</label>
-                <select id="in-t-nama"><option value="">Pilih nama...</option></select>
-                <label>Materi & Hal/Ayat</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="in-t-materi" placeholder="Nama Surat/Jilid">
-                    <input type="text" id="in-t-ayat" placeholder="Hal/Ayat">
-                </div>
-                <label>Status & Bintang</label>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <select id="in-t-status"><option>Lulus</option><option>Sabaq</option></select>
-                    <div id="star-box">
-                        <span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span>
-                    </div>
-                    <input type="hidden" id="in-t-bintang" value="0">
-                </div>
-                <button class="btn-action" onclick="simpanTahfidzAdmin()">SIMPAN SETORAN</button>
+                <h3>Update Mahfuzat</h3>
+                <input type="text" id="m-arab" placeholder="Teks Arab" style="text-align:right">
+                <textarea id="m-indo" placeholder="Artinya"></textarea>
+                <button class="btn-action" onclick="saveMahfuzat()">SIMPAN MAHFUZAT</button>
             </div>
+            
+            <div class="card" style="border-top: 4px solid var(--accent)">
+                <h3>Input Doa Harian</h3>
+                <input type="text" id="doa-judul" placeholder="Judul Doa">
+                <input type="text" id="doa-arab" placeholder="Teks Arab" style="text-align:right">
+                <textarea id="doa-arti" placeholder="Terjemahan"></textarea>
+                <button class="btn-action" style="background:var(--accent)" onclick="saveDoaHarian()">TAMBAH DOA</button>
+                
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                <h3>Daftar & Hapus Doa</h3>
+                <div id="admin-list-doa" class="list-container"></div>
+            </div>
+        </div>
+
+        <div id="tab-aquarium" class="tab-content hidden">
+            <div class="card">
+                <h3>Kirim Hadiah Ikan (Email)</h3>
+                <input type="email" id="aq-email" placeholder="santri@gmail.com">
+                <input type="number" id="aq-jumlah" value="1">
+                <button class="btn-action" onclick="kirimIkanAdmin()">KIRIM 🐟</button>
+            </div>
+            <div id="riwayat-ikan" class="list-container"></div>
         </div>
 
         <div id="tab-pengaduan" class="tab-content hidden">
             <div class="card">
-                <h3>Daftar Pengaduan</h3>
-                <div id="list-pengaduan"></div>
+                <h3>Pesan Pengaduan</h3>
+                <div id="list-pengaduan" class="list-container"></div>
             </div>
         </div>
-
-        <div id="tab-monitoring" class="tab-content">
-            <div class="card">
-                <h3>Presensi Santri Hari Ini</h3>
-                <select id="pilih-kelas-mon" onchange="loadAbsensi()">
-                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                </select>
-                <div id="list-absensi" style="margin-top:15px;"></div>
-            </div>
-        </div>
-
     </div>
 </div>
 
@@ -151,147 +138,116 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- NAVIGASI ---
-    function bukaAdmin() { document.getElementById('reward-screen').style.display='none'; document.getElementById('admin-screen').style.display='block'; checkCurrentUjian(); }
+    function bukaAdmin() { document.getElementById('reward-screen').style.display='none'; document.getElementById('admin-screen').style.display='block'; }
     function tutupAdmin() { location.reload(); }
+
     function showTab(id, btn) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
         if(id === 'tab-pengaduan') loadPengaduan();
-        if(id === 'tab-tahfidz') ambilDataSantriTahfidz();
+        if(id === 'tab-aquarium') loadTopIkan();
+        if(id === 'tab-materi') loadDoaForAdmin();
     }
 
-    // --- LOGIKA UJIAN ---
-    function setUjianStatus(s) {
-        const m = document.getElementById('set-mapel').value;
-        const t = document.getElementById('set-token').value;
-        db.ref('pengaturan_ujian').set({ is_active:s, mapel:m, token:t }).then(()=>alert("Status Ujian Diupdate!"));
-    }
-    function checkCurrentUjian() {
-        db.ref('pengaturan_ujian').on('value', snap => {
-            const d = snap.val();
-            document.getElementById('status-aktif-skrg').innerHTML = d?.is_active ? `🟢 Aktif: ${d.mapel}` : "🔴 Ujian Off";
+    // DOA & MATERI
+    function saveDoaHarian() {
+        const d = {
+            judul: document.getElementById('doa-judul').value,
+            arab: document.getElementById('doa-arab').value,
+            arti: document.getElementById('doa-arti').value
+        };
+        if(!d.judul || !d.arab) return alert("Lengkapi data!");
+        db.ref('doa_harian').push(d).then(() => {
+            alert("Berhasil!");
+            ["doa-judul","doa-arab","doa-arti"].forEach(id => document.getElementById(id).value="");
         });
     }
-    function importSoalMassal() {
-        const kls = document.getElementById('in-kls-induk').value;
-        const mpl = document.getElementById('in-mapel-soal').value;
-        const raw = document.getElementById('bulk-soal-area').value.trim();
-        if(!raw) return;
-        const baris = raw.split('\n');
-        baris.forEach(b => {
-            const pecah = b.split('|');
-            if(pecah.length >= 2) db.ref(`bank_soal/${kls}/${mpl}`).push({ soal:pecah[0], opsi:pecah[1], kunci:pecah[2]||"" });
-        });
-        alert("Soal Berhasil Diimport!");
-        document.getElementById('bulk-soal-area').value = "";
-    }
 
-    // --- LOGIKA TAHFIDZ ---
-    function setStar(n) {
-        document.getElementById('in-t-bintang').value = n;
-        document.querySelectorAll('.star').forEach((s,i) => s.style.color = i<n ? "#f1c40f" : "#ddd");
-    }
-
-    function ambilDataSantriTahfidz() {
-        // Ambil daftar santri untuk dropdown input
-        db.ref('users').once('value', snap => {
-            const sel = document.getElementById('in-t-nama');
-            sel.innerHTML = '<option value="">-- Pilih Santri --</option>';
-            snap.forEach(s => {
-                const v = s.val();
-                sel.options.add(new Option(`${v.nama} (${v.kelas})`, s.key));
+    function loadDoaForAdmin() {
+        db.ref('doa_harian').on('value', snap => {
+            const list = document.getElementById('admin-list-doa'); list.innerHTML = "";
+            snap.forEach(d => {
+                list.innerHTML += `
+                <div class="item-row">
+                    <div style="flex-grow:1"><b>${d.val().judul}</b></div>
+                    <button onclick="hapusDoa('${d.key}')" style="background:#ff7675; color:white; border:none; padding:5px 10px; border-radius:8px"><i class="fas fa-trash"></i></button>
+                </div>`;
             });
         });
     }
 
-    function simpanTahfidzAdmin() {
-        const nipd = document.getElementById('in-t-nama').value;
-        const mat = document.getElementById('in-t-materi').value;
-        const ayt = document.getElementById('in-t-ayat').value;
-        const bin = document.getElementById('in-t-bintang').value;
-        const tgl = new Date();
-        const path = `${tgl.getFullYear()}/${tgl.getMonth()+1}/${nipd}`;
-        
-        db.ref(`tahfidz/${path}`).push({
-            nama: document.getElementById('in-t-nama').options[document.getElementById('in-t-nama').selectedIndex].text.split(' (')[0],
-            materi: mat, ayat: ayt, nilai: bin, status: document.getElementById('in-t-status').value,
-            tgl: tgl.toLocaleDateString('id-ID'),
-            kelas: document.getElementById('in-t-nama').options[document.getElementById('in-t-nama').selectedIndex].text.split('(')[1].replace(')','')
-        }).then(() => { alert("Berhasil!"); location.reload(); });
+    function hapusDoa(key) {
+        if(confirm("Hapus doa ini?")) db.ref(`doa_harian/${key}`).remove();
+    }
+
+    function saveMahfuzat() {
+        db.ref('konten/mahfuzat').set({ arab: document.getElementById('m-arab').value, indo: document.getElementById('m-indo').value }).then(() => alert("Mahfuzat Updated!"));
+    }
+
+    // AQUARIUM
+    function kirimIkanAdmin() {
+        const em = document.getElementById('aq-email').value.replace(/\./g, ',');
+        const jml = parseInt(document.getElementById('aq-jumlah').value);
+        if(!em) return alert("Isi Email!");
+        db.ref(`users/${em}/ikan`).transaction(v => (v||0)+jml).then(() => { alert("Terkirim!"); loadTopIkan(); });
+    }
+
+    function loadTopIkan() {
+        db.ref('users').orderByChild('ikan').limitToLast(5).once('value', snap => {
+            const res = document.getElementById('riwayat-ikan'); res.innerHTML = "<b>Top Koleksi:</b>";
+            snap.forEach(u => { if(u.val().ikan) res.innerHTML += `<div class="item-row">${u.val().nama} <span>${u.val().ikan} 🐟</span></div>`; });
+        });
+    }
+
+    // ABSENSI & TAHFIDZ
+    function loadAbsensi() {
+        const kls = document.getElementById('pilih-kelas-mon').value;
+        const now = new Date();
+        db.ref(`absensi/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}/${kls}`).on('value', snap => {
+            const con = document.getElementById('list-absensi'); con.innerHTML = "";
+            snap.forEach(s => con.innerHTML += `<div class="item-row"><b>${s.val().nama}</b> <span style="color:green">${s.val().status}</span></div>`);
+        });
     }
 
     function loadTahfidzMonitor() {
         const kls = document.getElementById('kls-tahfidz-mon').value;
-        const container = document.getElementById('list-tahfidz-check');
-        const tglHariIni = new Date().toLocaleDateString('id-ID');
-        const bln = new Date().getMonth()+1;
-        const thn = new Date().getFullYear();
-
+        const tgl = new Date().toLocaleDateString('id-ID');
         db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapU => {
-            db.ref(`tahfidz/${thn}/${bln}`).on('value', snapT => {
-                container.innerHTML = "";
+            db.ref(`tahfidz/${new Date().getFullYear()}/${new Date().getMonth()+1}`).on('value', snapT => {
+                const con = document.getElementById('list-tahfidz-check'); con.innerHTML = "";
                 const dataT = snapT.val() || {};
                 snapU.forEach(u => {
-                    const nipd = u.key;
-                    const nama = u.val().nama;
-                    let sudah = false;
-                    
-                    // Cek apakah nipd ini ada setoran di tanggal hari ini
-                    if(dataT[nipd]) {
-                        Object.values(dataT[nipd]).forEach(log => {
-                            if(log.tgl === tglHariIni) sudah = true;
-                        });
-                    }
-
-                    container.innerHTML += `
-                        <div class="item-row" style="border-left: 5px solid ${sudah?'#2ecc71':'#e74c3c'}">
-                            <b>${nama}</b>
-                            <span>${sudah ? '<b style="color:green">✅ SUDAH</b>' : '<b style="color:red">❌ BELUM</b>'}</span>
-                        </div>`;
+                    let sdh = false;
+                    if(dataT[u.key]) Object.values(dataT[u.key]).forEach(l => { if(l.tgl === tgl) sdh = true });
+                    con.innerHTML += `<div class="item-row"><b>${u.val().nama}</b> <span>${sdh?'✅':'❌'}</span></div>`;
                 });
             });
         });
     }
 
-    // --- LOGIKA PENGADUAN ---
+    // PENGADUAN
     function loadPengaduan() {
         db.ref('pengaduan').on('value', snap => {
-            const list = document.getElementById('list-pengaduan');
-            list.innerHTML = "";
+            const list = document.getElementById('list-pengaduan'); list.innerHTML = "";
             snap.forEach(i => {
-                list.innerHTML += `
-                    <div class="item-row">
-                        <div style="max-width:80%"><b>${i.val().nama}</b><p style="font-size:11px">${i.val().pesan}</p></div>
-                        <button onclick="db.ref('pengaduan/${i.key}').remove()" style="background:red; color:white; border:none; padding:5px 10px; border-radius:8px"><i class="fas fa-trash"></i></button>
-                    </div>`;
+                list.innerHTML += `<div class="item-row"><div style="flex-grow:1"><b>${i.val().nama}</b><p style="font-size:11px">${i.val().pesan}</p></div><button onclick="db.ref('pengaduan/${i.key}').remove()" style="color:red; border:none; background:none"><i class="fas fa-trash"></i></button></div>`;
             });
         });
     }
 
-    // --- ABSENSI ---
-    function loadAbsensi() {
-        const kls = document.getElementById('pilih-kelas-mon').value;
-        const t = new Date();
-        db.ref(`absensi/${t.getFullYear()}/${t.getMonth()+1}/${t.getDate()}/${kls}`).on('value', snap => {
-            const con = document.getElementById('list-absensi');
-            con.innerHTML = "";
-            snap.forEach(s => {
-                con.innerHTML += `<div class="item-row"><b>${s.val().nama}</b><span style="color:green">${s.val().status}</span></div>`;
-            });
-        });
+    function setUjianStatus(s) {
+        db.ref('pengaturan_ujian').update({ is_active: s, token: document.getElementById('set-token').value });
+        alert("Status Update!");
     }
 
     window.onload = function() {
-        // Load Leaderboard Guru (Reward)
-        const list = document.getElementById('leaderboard-list');
         db.ref(`budaya/${new Date().getFullYear()}/${new Date().getMonth()+1}`).on('value', snap => {
             let skor = {};
             snap.forEach(t => t.forEach(k => k.forEach(s => { if(s.val().guru) skor[s.val().guru] = (skor[s.val().guru]||0)+1 })));
             const sort = Object.keys(skor).sort((a,b)=>skor[b]-skor[a]);
-            list.innerHTML = "";
+            const list = document.getElementById('leaderboard-list'); list.innerHTML = "";
             sort.forEach((n,i) => list.innerHTML += `<div class="leaderboard-item"><span>${i+1}. ${n}</span><b>${skor[n]} Poin</b></div>`);
         });
     };
