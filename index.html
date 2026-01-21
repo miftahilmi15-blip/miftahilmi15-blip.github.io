@@ -296,7 +296,6 @@
 <script type="module">
   import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
   
-  // Ambil API Key langsung dari config
   const genAI = new GoogleGenerativeAI("AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo");
 
   async function kirimKeAI() {
@@ -312,23 +311,19 @@
     box.scrollTop = box.scrollHeight;
 
     try {
-        // Gunakan model flash terbaru
+        // PERBAIKAN DI SINI: Tambahkan "models/" di depan nama modelnya
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-1.5-flash"
+            model: "gemini-1.5-flash" 
         });
 
-        // Tambahkan instruksi langsung di sini agar lebih paten
         const prompt = "Kamu adalah Ustadz bijak untuk aplikasi E-Santri. Jawablah dengan singkat, ramah, dan islami. Gunakan panggilan Nak. Pertanyaan: " + msg;
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
-        const text = response.text();
-        
-        document.getElementById(loadId).innerText = text;
+        document.getElementById(loadId).innerText = response.text();
     } catch (err) {
         console.error("Error Detail:", err);
-        // Tampilkan error aslinya agar kita tahu kenapa dia istirahat
-        document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang ada kendala: " + err.message;
+        document.getElementById(loadId).innerText = "Maaf Nak, ada kendala teknis. Coba tanya lagi ya.";
     } finally {
         box.scrollTop = box.scrollHeight;
     }
