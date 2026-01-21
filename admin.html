@@ -3,21 +3,26 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Master Admin | E-Santri Pro</title>
+    <title>Master Admin & Rekap | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; }
+        :root { --primary: #1f6f51; --primary-grad: linear-gradient(135deg, #1f6f51, #2ecc71); --bg: #f4f7f6; --gold: #f1c40f; --accent: #6c5ce7; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Poppins", sans-serif; }
         body { background: var(--bg); color: #2d3436; padding-bottom: 50px; }
 
+        /* REWARD SCREEN */
         #reward-screen { background: linear-gradient(180deg, #1f6f51 0%, #133b2c 100%); min-height: 100vh; width: 100%; position: fixed; top: 0; left: 0; z-index: 2000; padding: 30px 20px; color: white; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
-        .btn-to-admin { position: fixed; bottom: 30px; right: 20px; background: white; color: var(--primary); padding: 15px 25px; border-radius: 50px; font-weight: 800; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; }
+        .trophy { font-size: 50px; color: var(--gold); margin-bottom: 10px; }
+        .leaderboard-item { background: rgba(255,255,255,0.1); width: 100%; max-width: 450px; padding: 15px 20px; border-radius: 20px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1); }
+        .btn-to-admin { position: fixed; bottom: 30px; right: 20px; background: white; color: var(--primary); padding: 15px 25px; border-radius: 50px; font-weight: 800; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); cursor: pointer; font-size: 13px; z-index: 2100; }
 
+        /* ADMIN SCREEN */
         #admin-screen { display: none; }
-        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; }
-        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; }
-        .nav-btn.active { background: var(--primary); color: white; }
+        .sidebar { background: white; padding: 15px; border-bottom: 2px solid #eee; display: flex; gap: 10px; overflow-x: auto; position: sticky; top: 0; z-index: 100; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+        .nav-btn { padding: 10px 18px; border-radius: 12px; border: none; background: #eee; font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; transition: 0.3s; color: #666; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(31,111,81,0.2); }
         
         .content { padding: 20px; max-width: 1000px; margin: 0 auto; width: 100%; }
         .card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
@@ -26,34 +31,47 @@
         input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 13px; outline: none; margin-top: 5px; }
         
         .btn-action { width: 100%; padding: 15px; border: none; background: var(--primary-grad); color: white; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-excel { background: #27ae60; color: white; padding: 15px; border-radius: 15px; text-align: center; font-weight: 700; margin-top: 10px; display: block; text-decoration: none; cursor: pointer; border: none; width: 100%; }
         .hidden { display: none !important; }
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; }
-        .bg-green { background: #d4edda; color: #155724; }
-        .bg-red { background: #f8d7da; color: #721c24; }
-        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+        .rekap-container { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid #eee; position: relative; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 10px; min-width: 1000px; }
+        th { background: #1f6f51; color: white; padding: 12px 8px; border: 1px solid #ddd; text-align: center; position: sticky; top: 0; z-index: 15; }
+        td { padding: 10px 8px; border: 1px solid #ddd; text-align: center; background: white; }
+        .nama-col { position: sticky; left: 0; z-index: 20; background: #f8fafc !important; font-weight: 600; text-align: left; min-width: 150px; border-right: 2px solid #ddd !important; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
+        th.nama-col { z-index: 25; }
+        .rata-col { background: #fff9db !important; font-weight: 800; color: #d35400; position: sticky; right: 0; z-index: 10; border-left: 2px solid #ddd !important; }
+        .item-row { background: #fff; padding: 15px; border-radius: 18px; border: 1px solid #eee; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div id="reward-screen">
-    <h2 style="margin-top:50px">E-SANTRI MASTER ADMIN</h2>
-    <button class="btn-to-admin" onclick="bukaAdmin()">MASUK KONTROL <i class="fas fa-arrow-right"></i></button>
+    <div class="trophy"><i class="fas fa-crown"></i></div>
+    <h2 style="font-weight: 800;">TEACHER REWARDS</h2>
+    <div id="leaderboard-list" style="width: 100%; max-width:450px;"></div>
+    <button class="btn-to-admin" onclick="bukaAdmin()">KONTROL ADMIN <i class="fas fa-arrow-right"></i></button>
 </div>
 
 <div id="admin-screen">
     <div class="sidebar">
-        <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi</button>
+        <button class="nav-btn active" onclick="showTab('tab-monitoring', this)">Absensi & Guru</button>
+        <button class="nav-btn" onclick="showTab('tab-ujian', this)">Ujian & Rekap</button>
         <button class="nav-btn" onclick="showTab('tab-tahfidz', this)">Tahfidz</button>
-        <button class="nav-btn" onclick="showTab('tab-ujian-manage', this)">Pengaturan Ujian</button>
-        <button class="nav-btn" onclick="showTab('tab-buat-soal', this)">Input Soal</button>
-        <button class="nav-btn" onclick="showTab('tab-ujian-rekap', this)">Rekap Nilai</button>
+        <button class="nav-btn" onclick="showTab('tab-materi', this)">Materi</button>
+        <button class="nav-btn" onclick="showTab('tab-aquarium', this)">Aquarium</button>
+        <button class="nav-btn" onclick="showTab('tab-pengaduan', this)">Pengaduan</button>
         <button class="nav-btn" onclick="tutupAdmin()" style="background:#f8d7da; color:#721c24">Keluar</button>
     </div>
 
     <div class="content">
         <div id="tab-monitoring" class="tab-content">
             <div class="card">
-                <h3>Presensi Santri (12 Kelas)</h3>
+                <h3>Monitoring Guru Hari Ini</h3>
+                <div id="list-guru-input"></div>
+            </div>
+            <div class="card">
+                <h3>Presensi Santri</h3>
                 <select id="pilih-kelas-mon" onchange="loadAbsensi()">
                     <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
                     <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
@@ -63,9 +81,72 @@
             </div>
         </div>
 
+        <div id="tab-ujian" class="tab-content hidden">
+            <div class="card" style="border: 2px solid var(--primary);">
+                <h3><i class="fas fa-tools"></i> Kontrol Ujian Aktif</h3>
+                <label>Pilih Mata Pelajaran</label>
+                <select id="set-mapel">
+                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option>
+                    <option>B.Indo</option><option>B.Ing</option><option>B.Arab</option><option>Fikih</option>
+                    <option>Aqidah</option><option>Tarikh</option><option>Infor</option>
+                </select>
+                <label>Durasi Ujian (Menit)</label>
+                <input type="number" id="set-durasi" value="60">
+                <label>Token / Password Ujian</label>
+                <input type="text" id="set-token" placeholder="Contoh: SANTRI99">
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button class="btn-action" style="background:#2ecc71" onclick="setUjianStatus(true)">AKTIFKAN UJIAN</button>
+                    <button class="btn-action" style="background:#e74c3c" onclick="setUjianStatus(false)">MATIKAN UJIAN</button>
+                </div>
+                <div id="status-aktif-skrg" style="margin-top:10px; font-size:11px; font-weight:bold; color:var(--primary)"></div>
+            </div>
+
+            <div class="card" style="border: 2px solid var(--accent);">
+                <h3><i class="fas fa-edit"></i> Input Bank Soal</h3>
+                <label>Target Kelas Utama</label>
+                <select id="in-kls-induk">
+                    <option value="7">Kelas 7</option>
+                    <option value="8">Kelas 8</option>
+                    <option value="9">Kelas 9</option>
+                </select>
+                <label>Pilih Mapel</label>
+                <select id="in-mapel-soal">
+                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option>
+                    <option>B.Indo</option><option>B.Ing</option><option>B.Arab</option><option>Fikih</option>
+                </select>
+                <label>Teks Soal</label>
+                <textarea id="in-soal-teks" rows="3" placeholder="Tulis soal di sini..."></textarea>
+                <label>Opsi Jawaban (Khusus PG, pisahkan dengan koma)</label>
+                <input type="text" id="in-opsi-pg" placeholder="A, B, C, D">
+                <label>Kunci Jawaban</label>
+                <input type="text" id="in-kunci-soal" placeholder="A atau Jawaban Singkat">
+                <button class="btn-action" style="background:var(--accent)" onclick="simpanSoalKeBank()">SIMPAN KE BANK SOAL</button>
+            </div>
+
+            <div class="card">
+                <h3>Rekap Nilai Siswa</h3>
+                <select id="rekap-kelas-pilih">
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                </select>
+                <button class="btn-action" onclick="generateRekap()" style="background:var(--accent); margin-top:10px;">LIHAT REKAP NILAI</button>
+                <button id="btn-download" class="btn-excel hidden" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
+                <div id="container-grafik" style="margin-top:20px; height: 250px;">
+                    <canvas id="chartNilai12Kelas"></canvas>
+                </div>
+                <div class="rekap-container">
+                    <table id="tabel-rekap">
+                        <thead id="head-rekap"></thead>
+                        <tbody id="body-rekap"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div id="tab-tahfidz" class="tab-content hidden">
             <div class="card">
-                <h3>Cek Setoran Tahfidz</h3>
+                <h3>Checklist Monitoring Tahfidz (Hari Ini)</h3>
                 <select id="kls-tahfidz" onchange="loadTahfidz()">
                     <option value="">-- Pilih Kelas --</option>
                     <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
@@ -76,31 +157,34 @@
             </div>
         </div>
 
-        <div id="tab-ujian-manage" class="tab-content hidden">
+        <div id="tab-materi" class="tab-content hidden">
             <div class="card">
-                <h3>Kontrol Ujian & Waktu</h3>
-                <label>Durasi Ujian (Menit)</label>
-                <input type="number" id="set-durasi" value="60">
-                <label>Token Ujian</label>
-                <input type="text" id="set-token" placeholder="Contoh: SUKSES2026">
-                <div style="display:flex; gap:10px; margin-top:20px;">
-                    <button class="btn-action" style="background:#2ecc71" onclick="setUjianStatus(true)">AKTIFKAN</button>
-                    <button class="btn-action" style="background:#e74c3c" onclick="setUjianStatus(false)">MATIKAN</button>
-                </div>
+                <h3>Update Mahfuzat</h3>
+                <input type="text" id="m-arab" placeholder="Teks Arab..." style="text-align:right">
+                <textarea id="m-indo" rows="2" placeholder="Terjemahan..."></textarea>
+                <button class="btn-action" onclick="saveMahfuzat()">UPDATE SEKARANG</button>
             </div>
-            <div id="current-status-ujian"></div>
         </div>
 
-        <div id="tab-ujian-rekap" class="tab-content hidden">
+        <div id="tab-aquarium" class="tab-content hidden">
             <div class="card">
-                <h3>Rekap Nilai (12 Kelas)</h3>
-                <select id="rekap-kelas-pilih">
-                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-                </select>
-                <button class="btn-action" onclick="generateRekap()">LIHAT DATA</button>
-                <div id="body-rekap" style="margin-top:20px"></div>
+                <h3>Kirim Hadiah Ikan</h3>
+                <label>Email Santri</label>
+                <input type="email" id="aq-email" placeholder="santri@gmail.com">
+                <label>Jumlah Ikan</label>
+                <input type="number" id="aq-jumlah" value="1">
+                <button class="btn-action" onclick="kirimIkanByEmail()">KIRIM HADIAH</button>
+            </div>
+            <div class="card">
+                <h3>Riwayat Pengiriman</h3>
+                <div id="riwayat-ikan"></div>
+            </div>
+        </div>
+
+        <div id="tab-pengaduan" class="tab-content hidden">
+            <div class="card">
+                <h3>Daftar Pengaduan Santri</h3>
+                <div id="list-pengaduan"></div>
             </div>
         </div>
     </div>
@@ -113,8 +197,76 @@
     const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const LIST_MAPEL = ["Mtk", "IPA", "IPS", "PKN", "B.Indo", "B.Ing", "B.Arab", "Fikih", "Aqidah", "Tarikh", "Infor", "B.Daerah", "Seni"];
+    let myChart;
 
-    function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; }
+    // --- FITUR UJIAN ---
+    function setUjianStatus(status) {
+        const mapel = document.getElementById('set-mapel').value;
+        const durasi = document.getElementById('set-durasi').value;
+        const token = document.getElementById('set-token').value;
+        if(status && !token) return alert("Isi Token dulu!");
+        db.ref('pengaturan_ujian').set({ is_active: status, mapel: mapel, durasi: durasi, token: token }).then(() => {
+            alert(status ? "UJIAN AKTIF!" : "UJIAN DIMATIKAN");
+        });
+    }
+
+    function checkCurrentUjian() {
+        db.ref('pengaturan_ujian').on('value', snap => {
+            const d = snap.val();
+            const info = document.getElementById('status-aktif-skrg');
+            if(d && d.is_active) info.innerHTML = `<i class="fas fa-circle" style="color:#2ecc71"></i> Aktif: ${d.mapel} (${d.durasi}m) | Token: ${d.token}`;
+            else info.innerHTML = `<i class="fas fa-circle" style="color:#e74c3c"></i> Ujian Tidak Aktif`;
+        });
+    }
+
+    function simpanSoalKeBank() {
+        const kls = document.getElementById('in-kls-induk').value;
+        const mpl = document.getElementById('in-mapel-soal').value;
+        const soal = document.getElementById('in-soal-teks').value;
+        const opsi = document.getElementById('in-opsi-pg').value;
+        const kunci = document.getElementById('in-kunci-soal').value;
+        if(!soal || !kunci) return alert("Soal/Kunci kosong!");
+        db.ref(`bank_soal/${kls}/${mpl}`).push({ soal, opsi, kunci }).then(() => {
+            alert("Soal Disimpan!");
+            document.getElementById('in-soal-teks').value = "";
+            document.getElementById('in-opsi-pg').value = "";
+            document.getElementById('in-kunci-soal').value = "";
+        });
+    }
+
+    // --- TAHFIDZ (DATA REALTIME) ---
+    function loadTahfidz() {
+        const kls = document.getElementById('kls-tahfidz').value;
+        const container = document.getElementById('list-tahfidz-check');
+        const tgl = new Date().toISOString().split('T')[0];
+        if (!kls) return;
+        
+        // Ambil daftar santri di kelas tsb
+        db.ref('users').orderByChild('kelas').equalTo(kls).once('value', snapU => {
+            db.ref('tahfidz').on('value', snapT => {
+                const dataT = snapT.val() || {};
+                container.innerHTML = ""; 
+                snapU.forEach(u => {
+                    const nama = u.val().nama;
+                    let sudah = false;
+                    // Cek di tabel tahfidz apakah nama ini sudah setor di tanggal hari ini
+                    Object.values(dataT).forEach(t => { 
+                        if (t.nama === nama && t.tanggal === tgl) sudah = true; 
+                    });
+                    
+                    container.innerHTML += `
+                        <div class="item-row" style="border-left: 5px solid ${sudah?'#2ecc71':'#e74c3c'}">
+                            <b>${nama}</b>
+                            <span style="font-size:18px;">${sudah ? '✅ <small style="font-size:10px; color:green">Sudah</small>' : '❌ <small style="font-size:10px; color:red">Belum</small>'}</span>
+                        </div>`;
+                });
+            });
+        });
+    }
+
+    // --- FUNGSI DASAR ADMIN ---
+    function bukaAdmin() { document.getElementById('reward-screen').style.display = 'none'; document.getElementById('admin-screen').style.display = 'block'; checkCurrentUjian(); }
     function tutupAdmin() { document.getElementById('reward-screen').style.display = 'flex'; document.getElementById('admin-screen').style.display = 'none'; }
     
     function showTab(id, btn) {
@@ -122,47 +274,142 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(id).classList.remove('hidden');
         btn.classList.add('active');
+        if(id === 'tab-monitoring') { loadMonitorGuru(); loadAbsensi(); }
+        if(id === 'tab-tahfidz') loadTahfidz(); 
+        if(id === 'tab-pengaduan') loadPengaduan();
+        if(id === 'tab-aquarium') loadRiwayatIkan();
     }
 
-    function setUjianStatus(status) {
-        db.ref('pengaturan_ujian').update({
-            is_active: status,
-            durasi: document.getElementById('set-durasi').value,
-            token: document.getElementById('set-token').value
-        }).then(() => alert("Berhasil diupdate!"));
+    function generateRekap() {
+        const kls = document.getElementById('rekap-kelas-pilih').value;
+        const body = document.getElementById('body-rekap');
+        const head = document.getElementById('head-rekap');
+        let headHtml = `<tr><th class="nama-col">Nama Santri</th>`;
+        LIST_MAPEL.forEach(m => headHtml += `<th>${m}</th>`);
+        headHtml += `<th class="rata-col">Rata2</th></tr>`;
+        head.innerHTML = headHtml;
+        db.ref(`hasil_ujian/${kls}`).once('value', snap => {
+            if(!snap.exists()) { body.innerHTML = "<tr><td colspan='20'>Belum ada data nilai.</td></tr>"; updateGrafik12Kelas(); return; }
+            let dataSantri = {};
+            snap.forEach(c => {
+                const v = c.val();
+                if(!dataSantri[v.nama]) dataSantri[v.nama] = {};
+                dataSantri[v.nama][v.mapel] = v.nilai_pg;
+            });
+            body.innerHTML = "";
+            for(let nama in dataSantri) {
+                let total = 0, count = 0, row = `<tr><td class="nama-col">${nama}</td>`;
+                LIST_MAPEL.forEach(m => {
+                    let nilai = dataSantri[nama][m];
+                    if(nilai !== undefined) { total += nilai; count++; row += `<td>${nilai}</td>`; }
+                    else { row += `<td>-</td>`; }
+                });
+                row += `<td class="rata-col">${count > 0 ? (total/count).toFixed(1) : 0}</td></tr>`;
+                body.innerHTML += row;
+            }
+            document.getElementById('btn-download').classList.remove('hidden');
+            updateGrafik12Kelas();
+        });
+    }
+
+    async function updateGrafik12Kelas() {
+        const daftarKelas = ["7A","7B","7C","7D","8A","8B","8C","8D","9A","9B","9C","9D"];
+        let rataRataPerKelas = [];
+        for (let k of daftarKelas) {
+            const snap = await db.ref(`hasil_ujian/${k}`).once('value');
+            let totalNilai = 0, jumlahData = 0;
+            if (snap.exists()) {
+                snap.forEach(c => { totalNilai += parseFloat(c.val().nilai_pg || 0); jumlahData++; });
+                rataRataPerKelas.push((totalNilai / jumlahData).toFixed(1));
+            } else { rataRataPerKelas.push(0); }
+        }
+        const ctx = document.getElementById('chartNilai12Kelas').getContext('2d');
+        if (myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: daftarKelas, datasets: [{ label: 'Rata-Rata Nilai', data: rataRataPerKelas, backgroundColor: '#1f6f51', borderRadius: 5 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+        });
     }
 
     function loadAbsensi() {
         const kls = document.getElementById('pilih-kelas-mon').value;
-        const t = new Date();
-        const path = `absensi/${t.getFullYear()}/${t.getMonth()+1}/${t.getDate()}/${kls}`;
+        const now = new Date();
+        const path = `absensi/${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()}/${kls}`;
         db.ref(path).on('value', snap => {
-            const cont = document.getElementById('list-absensi');
-            cont.innerHTML = "";
+            const container = document.getElementById('list-absensi');
+            container.innerHTML = "";
             snap.forEach(s => {
                 const v = s.val();
-                cont.innerHTML += `<div class="item-row"><b>${v.nama}</b><span style="color:${v.status=='Hadir'?'green':'red'}">${v.status}</span></div>`;
+                container.innerHTML += `<div class="item-row"><b>${v.nama}</b><span style="color:${v.status=='Hadir'?'green':'red'}">${v.status}</span></div>`;
             });
         });
     }
 
-    function loadTahfidz() {
-        const kls = document.getElementById('kls-tahfidz').value;
-        const cont = document.getElementById('list-tahfidz-check');
-        const tgl = new Date().toISOString().split('T')[0];
-        db.ref('users').orderByChild('kelas').equalTo(kls).once('value', sU => {
-            db.ref('laporan_tahfidz').once('value', sT => {
-                const dataT = sT.val() || {};
-                cont.innerHTML = "";
-                sU.forEach(u => {
-                    const nama = u.val().nama;
-                    let sudah = false;
-                    Object.values(dataT).forEach(l => { if(l.nama===nama && l.tanggal===tgl) sudah=true; });
-                    cont.innerHTML += `<div class="item-row"><b>${nama}</b><span>${sudah?'✅':'❌'}</span></div>`;
-                });
+    function loadMonitorGuru() {
+        const list = document.getElementById('list-guru-input');
+        const now = new Date();
+        db.ref(`budaya/${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`).on('value', snap => {
+            list.innerHTML = "";
+            snap.forEach(k => k.forEach(s => {
+                const d = s.val();
+                list.innerHTML += `<div class="item-row"><b>Ust. ${d.guru}</b><span>${d.kelas}</span></div>`;
+            }));
+        });
+    }
+
+    function kirimIkanByEmail() {
+        const em = document.getElementById('aq-email').value.replace(/\./g, ',');
+        const jml = parseInt(document.getElementById('aq-jumlah').value);
+        db.ref('users/'+em+'/ikan').transaction(v => (v||0)+jml).then(() => alert("Terkirim!"));
+    }
+
+    function loadRiwayatIkan() {
+        db.ref('users').orderByChild('ikan').limitToLast(5).once('value', snap => {
+            const list = document.getElementById('riwayat-ikan');
+            list.innerHTML = "";
+            snap.forEach(u => { if(u.val().ikan) list.innerHTML += `<div class="item-row"><b>${u.key.replace(/,/g,'.')}</b><span>${u.val().ikan} 🐟</span></div>`; });
+        });
+    }
+
+    function saveMahfuzat() {
+        const arb = document.getElementById('m-arab').value, ind = document.getElementById('m-indo').value;
+        db.ref('konten/mahfuzat').set({ arab: arb, indo: ind }).then(() => alert("Update!"));
+    }
+
+    function loadPengaduan() {
+        db.ref('pengaduan').on('value', snap => {
+            const list = document.getElementById('list-pengaduan');
+            list.innerHTML = "";
+            snap.forEach(i => { list.innerHTML += `<div class="item-row" style="flex-direction:column; align-items:start;"><b>${i.val().nama}</b><p style="font-size:11px;">${i.val().pesan}</p></div>`; });
+        });
+    }
+
+    function loadLeaderboard() {
+        const list = document.getElementById('leaderboard-list');
+        const now = new Date();
+        db.ref(`budaya/${now.getFullYear()}/${now.getMonth() + 1}`).on('value', snap => {
+            let guruSkor = {};
+            if(snap.exists()){
+                snap.forEach(tgl => tgl.forEach(kls => kls.forEach(s => { 
+                    const d = s.val(); if(d.guru) guruSkor[d.guru] = (guruSkor[d.guru] || 0) + 1; 
+                })));
+            }
+            const sorted = Object.keys(guruSkor).sort((a,b) => guruSkor[b] - guruSkor[a]);
+            list.innerHTML = "";
+            sorted.forEach((n, i) => {
+                list.innerHTML += `<div class="leaderboard-item"><span>${i+1}. ${n}</span><b>${guruSkor[n]} Poin</b></div>`;
             });
         });
     }
+
+    function downloadExcel() {
+        const table = document.getElementById("tabel-rekap").outerHTML;
+        const template = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body>${table}</body></html>`;
+        window.location.href = 'data:application/vnd.ms-excel;base64,' + btoa(unescape(encodeURIComponent(template)));
+    }
+
+    window.onload = loadLeaderboard;
 </script>
 </body>
 </html>
