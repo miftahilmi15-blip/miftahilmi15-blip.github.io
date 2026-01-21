@@ -319,10 +319,15 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{
-                    parts: [{ text: "Jawablah sebagai seorang Ustadz yang bijak. Gunakan bahasa Indonesia yang ramah. Panggil saya 'Nak'. Pertanyaan: " + msg }]
-                }]
+                    parts: [{ text: "Berperanlah sebagai ustadz. Jawablah pertanyaan ini dengan bijak: " + msg }]
+                }],
+                generationConfig: {
+                    temperature: 0.5,
+                    topK: 1,
+                    topP: 1,
+                    maxOutputTokens: 250
+                }
             })
-        });
 
         const data = await response.json();
         
