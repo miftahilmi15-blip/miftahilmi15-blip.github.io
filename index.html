@@ -249,45 +249,57 @@
 
   // 4. STREAK MONITORING (BERDASARKAN EMAIL)
   function monitoringStreak(emailUser) {
-    const emailKey = emailUser.replace(/\./g, ','); // Ubah titik jadi koma
+    if(!emailUser) return;
+
+    // Ubah format email: miftah@gmail.com -> miftah@gmail,com
+    const emailKey = emailUser.replace(/\./g, ',');
     const hariIni = new Date().toISOString().split('T')[0];
+    
+    // Ambil tanggal kemarin untuk cek apakah streak putus
     const kemarinDate = new Date();
     kemarinDate.setDate(kemarinDate.getDate() - 1);
     const tglKemarin = kemarinDate.toISOString().split('T')[0];
 
+    // Referensi ke folder user berdasarkan email di database
     db.ref('users/' + emailKey).on('value', snap => {
         const data = snap.val();
         const streakText = document.getElementById('streak-text');
         const fire = document.getElementById('fire-api');
 
         if(!data) {
-            streakText.innerText = "0 Hari Istiqomah";
-            fire.classList.add('fire-off');
+            if(streakText) streakText.innerText = "0 Hari Istiqomah";
+            if(fire) fire.classList.add('fire-off');
             return;
         }
 
         let streak = data.streak || 0;
         const tglBaca = data.tgl_terakhir_api || "";
 
-        // Reset if missed a day
+        // LOGIKA RESET: Jika tidak baca hari ini DAN kemarin, streak jadi 0
         if (tglBaca !== hariIni && tglBaca !== tglKemarin && streak > 0) {
             streak = 0;
             db.ref('users/' + emailKey).update({ streak: 0 });
         }
 
-        streakText.innerText = streak + " Hari Istiqomah";
-        
-        if (tglBaca === hariIni) {
-            fire.classList.remove('fire-off');
-            fire.style.opacity = "1";
-            fire.style.filter = "grayscale(0%) brightness(1.2)";
-        } else {
-            fire.classList.add('fire-off');
-            fire.style.opacity = "0.2";
+        // UPDATE TAMPILAN TEXT
+        if(streakText) streakText.innerText = streak + " Hari Istiqomah";
+
+        // UPDATE VISUAL API
+        if (fire) {
+            if (tglBaca === hariIni) {
+                // NYALA (Sudah baca hari ini)
+                fire.classList.remove('fire-off');
+                fire.style.opacity = "1";
+                fire.style.filter = "grayscale(0%) brightness(1.2)";
+            } else {
+                // REDUP (Belum baca hari ini)
+                fire.classList.add('fire-off');
+                fire.style.opacity = "0.3";
+                fire.style.filter = "grayscale(100%)";
+            }
         }
     });
-  }
-
+}
   // 5. MAIN LOGIC
   auth.onAuthStateChanged(user => {
     if(user){
