@@ -15,30 +15,34 @@
         .header h1 { font-size: 1.2rem; font-weight: 800; }
         
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-
         .card { background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid #f1f5f9; }
+        
         .status-badge { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
         .status-on { background: #dcfce7; color: #166534; }
         .status-off { background: #fee2e2; color: #991b1b; }
 
         label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 15px; }
         input, select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; }
-        textarea { min-height: 120px; resize: none; border: 2px solid #e2e8f0; }
-
-        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 20px; }
-
-        #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         
+        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; }
+        
+        /* Soal Card */
         .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
         .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; }
-        .teks-soal { font-weight: 700; font-size: 15px; margin-bottom: 20px; color: #334155; }
+        .teks-soal { font-weight: 700; font-size: 15px; margin-bottom: 15px; }
+        
+        .option-label { display: flex; align-items: center; padding: 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; }
+        .option-label input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--primary); }
 
-        .option-label { display: flex; align-items: center; padding: 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; }
-        .option-label:hover { border-color: var(--primary); }
-        .option-label input { width: 18px; height: 18px; margin-right: 12px; accent-color: var(--primary); }
-        .option-text { font-size: 14px; font-weight: 600; color: #475569; }
-
+        #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; z-index: 1000; }
         .hidden { display: none !important; }
+
+        /* Style Rekap Nilai Terkunci */
+        #rekap-area { margin-top: 50px; border-top: 2px dashed #ccc; padding-top: 20px; }
+        .btn-koreksi { background: none; border: none; color: #ccc; font-size: 10px; cursor: pointer; width: 100%; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
+        th { background: #f8fafc; color: var(--primary); }
     </style>
 </head>
 <body>
@@ -67,12 +71,29 @@
                 <button class="btn-start" onclick="cekMasuk()">MULAI UJIAN</button>
             </div>
         </div>
+
+        <div id="rekap-area">
+            <button class="btn-koreksi" onclick="bukaKoreksi()">🔒 Guru: Lihat Rekap Nilai</button>
+            <div id="koreksi-content" class="card hidden" style="margin-top:10px;">
+                <h3 style="font-size:14px; margin-bottom:10px;">Rekap Nilai Masuk</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Mapel</th>
+                            <th>Skor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabel-rekap-body"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <div id="exam-screen" class="hidden">
         <div id="timer">⏳ <span id="time-left">00:00</span></div>
         <div id="konten-soal"></div>
-        <button class="btn-start" onclick="kirimJawaban()" style="background: #6c5ce7; margin-bottom: 80px;">SELESAI & KIRIM JAWABAN</button>
+        <button class="btn-start" onclick="kirimJawaban()" style="background: #6c5ce7; margin-bottom: 80px;">SELESAI & KIRIM</button>
     </div>
 </div>
 
@@ -88,11 +109,10 @@
     let listSoal = [];
     let intervalTimer;
 
-    // 1. MONITOR JADWAL
+    // MONITOR JADWAL
     document.getElementById('user-kelas').onchange = function() {
         const kls = this.value;
         if(!kls) return;
-        
         db.ref(`jadwal_ujian/${kls}`).on('value', snap => {
             sesiUjian = snap.val();
             const badge = document.getElementById('badge-status');
@@ -110,64 +130,41 @@
         });
     };
 
-    // 2. CEK MASUK & AMBIL SOAL
+    // CEK MASUK
     function cekMasuk() {
         const nama = document.getElementById('user-nama').value.trim();
         const kls = document.getElementById('user-kelas').value;
         if(!nama) return alert("Nama jangan kosong!");
-
         db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum diupload oleh Admin!");
-            
+            if(!snap.exists()) return alert("Soal belum tersedia!");
             listSoal = [];
             snap.forEach(s => { listSoal.push(s.val()); });
             mulaiUjian(nama, kls);
         });
     }
 
-    // 3. RENDER SOAL (PG & ESSAY GABUNG)
+    // MULAI UJIAN
     function mulaiUjian(nama, kls) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
         document.getElementById('top-title').innerText = sesiUjian.mapel;
         document.getElementById('user-display').innerText = `${nama} | ${kls}`;
-
         const container = document.getElementById('konten-soal');
         container.innerHTML = "";
-
         listSoal.forEach((s, i) => {
             let htmlOpsi = "";
-            // Cek apakah Pilihan Ganda (punya opsi yang dipisah koma)
             if(s.opsi && s.opsi.includes(',')) {
                 const opsiArray = s.opsi.split(',').map(item => item.trim());
                 const huruf = ['A','B','C','D'];
                 opsiArray.forEach((teks, idx) => {
-                    if(idx < 4) {
-                        htmlOpsi += `
-                            <label class="option-label">
-                                <input type="radio" name="q${i}" value="${huruf[idx]}">
-                                <span class="option-text"><b>${huruf[idx]}.</b> ${teks}</span>
-                            </label>`;
-                    }
+                    htmlOpsi += `<label class="option-label"><input type="radio" name="q${i}" value="${huruf[idx]}"> <span class="option-text"><b>${huruf[idx]}.</b> ${teks}</span></label>`;
                 });
             } else {
-                // Jika tidak ada opsi koma, anggap ESSAY
-                htmlOpsi = `<textarea id="essay${i}" placeholder="Ketik jawaban essay di sini..."></textarea>`;
+                htmlOpsi = `<textarea id="essay${i}" placeholder="Tulis jawaban essay..."></textarea>`;
             }
-
-            container.innerHTML += `
-                <div class="soal-card">
-                    <div class="nomor-soal">${i+1}</div>
-                    <div class="teks-soal">${s.soal}</div>
-                    <div>${htmlOpsi}</div>
-                </div>`;
+            container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><div class="teks-soal">${s.soal}</div><div>${htmlOpsi}</div></div>`;
         });
-
-        startTimer(sesiUjian.durasi || 60);
-    }
-
-    function startTimer(menit) {
-        let detik = menit * 60;
+        let detik = (sesiUjian.durasi || 60) * 60;
         intervalTimer = setInterval(() => {
             let m = Math.floor(detik/60); let s = detik%60;
             document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
@@ -176,36 +173,54 @@
         }, 1000);
     }
 
+    // KIRIM JAWABAN
     function kirimJawaban(auto = false) {
-        if(!auto && !confirm("Kirim semua jawaban sekarang?")) return;
+        if(!auto && !confirm("Kirim jawaban?")) return;
         clearInterval(intervalTimer);
-
-        let benar = 0; let totalPG = 0;
-        let jawEssay = [];
-
+        let benar = 0; let totalPG = 0; let jawEssay = [];
         listSoal.forEach((s, i) => {
             if(s.opsi && s.opsi.includes(',')) {
                 totalPG++;
                 const pil = document.querySelector(`input[name="q${i}"]:checked`);
                 if(pil && pil.value === s.kunci) benar++;
             } else {
-                const isi = document.getElementById(`essay${i}`).value;
-                jawEssay.push({ soal: s.soal, jawaban: isi });
+                jawEssay.push({ soal: s.soal, jawaban: document.getElementById(`essay${i}`).value });
             }
         });
-
         const skor = totalPG > 0 ? Math.round((benar/totalPG)*100) : 0;
         const kls = document.getElementById('user-kelas').value;
         const nama = document.getElementById('user-nama').value;
-
-        db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({
-            nama: nama, 
-            skor: skor, 
-            essay: jawEssay,
-            waktu: new Date().toLocaleString('id-ID')
-        }).then(() => {
-            alert("Alhamdulillah! Jawaban terkirim.\nSkor PG: " + skor);
+        db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({ nama, skor, essay: jawEssay, waktu: new Date().toLocaleString('id-ID') }).then(() => {
+            alert("Jawaban Terkirim! Skor PG: " + skor);
             location.reload();
+        });
+    }
+
+    // FITUR REKAP TERKUNCI
+    function bukaKoreksi() {
+        const pin = prompt("Masukkan PIN Khusus Guru:");
+        if (pin === "152003") { // Ganti PIN sesuai keinginan Bos
+            document.getElementById('koreksi-content').classList.remove('hidden');
+            loadRekapData();
+        } else {
+            alert("PIN Salah!");
+        }
+    }
+
+    function loadRekapData() {
+        const kls = document.getElementById('user-kelas').value;
+        if(!kls) return alert("Pilih kelas dulu di atas!");
+        
+        db.ref(`nilai_ujian/${kls}`).on('value', snap => {
+            const body = document.getElementById('tabel-rekap-body');
+            body.innerHTML = "";
+            snap.forEach(mapelSnap => {
+                const mapelName = mapelSnap.key;
+                mapelSnap.forEach(siswaSnap => {
+                    const d = siswaSnap.val();
+                    body.innerHTML += `<tr><td>${d.nama}</td><td>${mapelName}</td><td style="font-weight:bold; color:green;">${d.skor}</td></tr>`;
+                });
+            });
         });
     }
 </script>
