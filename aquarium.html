@@ -121,13 +121,18 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // VARIASI IKAN DITAMBAH BIAR MAKIN RAMAI
     const icons = [
         "https://api.iconify.design/noto:fish.svg",
         "https://api.iconify.design/noto:tropical-fish.svg",
-        "https://api.iconify.design/noto:blowfish.svg"
+        "https://api.iconify.design/noto:blowfish.svg",
+        "https://api.iconify.design/noto:shark.svg",
+        "https://api.iconify.design/noto:dolphin.svg",
+        "https://api.iconify.design/noto:octopus.svg",
+        "https://api.iconify.design/noto:whale.svg"
     ];
 
-    let activeFishes = []; // Menyimpan data ikan untuk diupdate di Loop
+    let activeFishes = []; 
 
     // 2. LISTEN TO DATA (REALTIME)
     firebase.auth().onAuthStateChanged(user => {
@@ -141,24 +146,23 @@
         }
     });
 
-    // 3. SPAWN SYSTEM (Membangun Ikan)
+    // 3. SPAWN SYSTEM
     function spawnFishes(total) {
         const container = document.getElementById('ocean');
         document.querySelectorAll('.fish-entity').forEach(f => f.remove());
         activeFishes = [];
 
-        // LIMIT VISUAL: Cukup tampilkan maksimal 20 ekor agar tidak lag
         let visualLimit = total > 20 ? 20 : total;
         let color = total > 40 ? "#e74c3c" : (total > 15 ? "#f1c40f" : "#00b4d8");
 
         for (let i = 0; i < visualLimit; i++) {
             const el = document.createElement('div');
             el.className = 'fish-entity';
+            // Memilih icon acak dari daftar icons yang sudah diperbanyak
             el.innerHTML = `<img src="${icons[Math.floor(Math.random()*icons.length)]}" class="fish-img" style="filter: drop-shadow(0 0 10px ${color})">`;
             
             container.appendChild(el);
 
-            // Set posisi awal acak
             let startX = Math.random() * 80 + 10;
             let startY = Math.random() * 80 + 10;
 
@@ -174,32 +178,27 @@
         }
     }
 
-    // 4. GAME LOOP (Animasi Anti-Lag)
+    // 4. GAME LOOP
     function updateFrame() {
         activeFishes.forEach(f => {
-            // Gerak menuju target (Smoothing)
             f.x += (f.targetX - f.x) * f.speed;
             f.y += (f.targetY - f.y) * f.speed;
 
-            // Update posisi DOM
             f.el.style.left = f.x + "vw";
             f.el.style.top = f.y + "vh";
 
-            // Jika sampai di dekat target, pilih target baru
             if (Math.abs(f.targetX - f.x) < 1) {
                 f.targetX = Math.random() * 80 + 10;
                 f.targetY = Math.random() * 80 + 10;
-                // Balik arah gambar
                 f.img.style.transform = (f.targetX < f.x) ? "scaleX(-1)" : "scaleX(1)";
             }
         });
         requestAnimationFrame(updateFrame);
     }
 
-    // Jalankan Animasi
     requestAnimationFrame(updateFrame);
 
-    // 5. AMBIENCE (Bubbles & Sound)
+    // 5. AMBIENCE
     setInterval(() => {
         const b = document.createElement('div');
         b.className = 'bubble';
