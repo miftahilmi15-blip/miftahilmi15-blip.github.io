@@ -7,62 +7,85 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --primary: #00b894; --accent: #6c5ce7; --bg: #f8fafc; --text: #2d3436; }
+        :root { --primary: #1f6f51; --accent: #6c5ce7; --bg: #f0f2f5; --text: #2d3436; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); line-height: 1.6; }
-        .header-top { background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
-        .logo { font-weight: 800; font-size: 1.2rem; color: var(--primary); letter-spacing: -1px; }
+        body { background: var(--bg); color: var(--text); line-height: 1.6; user-select: none; }
+        
+        .header-top { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-weight: 800; font-size: 1.2rem; color: var(--primary); }
+        
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .welcome-card { background: linear-gradient(135deg, #00b894, #00cec9); padding: 30px 20px; border-radius: 24px; color: white; margin-bottom: 25px; box-shadow: 0 20px 40px rgba(0,184,148,0.2); }
-        .card { background: white; border-radius: 24px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; margin-bottom: 20px; }
-        label { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
-        input[type="text"], select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; margin-bottom: 20px; }
-        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 20px; font-weight: 800; cursor: pointer; }
-        #timer { position: fixed; top: 80px; right: 20px; background: #1e293b; color: white; padding: 10px 20px; border-radius: 15px; font-weight: 800; z-index: 1000; font-size: 18px; }
-        .soal-card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #eee; }
-        .option { display: block; padding: 12px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-size: 14px; }
-        .option input { margin-right: 10px; }
+        .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        
+        .welcome-card { background: linear-gradient(135deg, var(--primary), #2ecc71); padding: 30px 20px; border-radius: 24px; color: white; text-align: center; margin-bottom: 20px; }
+        
+        label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 10px; }
+        input, select, textarea { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; background: #f8fafc; font-size: 14px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--primary); }
+        
+        .btn-start { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        
+        #timer { position: fixed; top: 75px; right: 10px; background: #1e293b; color: white; padding: 8px 15px; border-radius: 12px; font-weight: 800; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        .soal-card { background: white; padding: 20px; border-radius: 18px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .option { display: block; padding: 12px 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .option:hover { border-color: var(--primary); background: #f0fdf4; }
+        .option input { margin-right: 10px; accent-color: var(--primary); }
+        
         .hidden { display: none !important; }
-        .status-off { text-align: center; padding: 20px; color: #e74c3c; font-weight: 700; }
+        .status-off { text-align: center; color: #e74c3c; padding: 40px 20px; }
     </style>
 </head>
 <body>
 
 <div class="header-top">
-    <div class="logo">E-SANTRI <span style="color:#636e72">PRO</span></div>
-    <div id="status-koneksi" style="font-size: 10px; color: green;">● Online</div>
+    <div class="logo"><i class="fas fa-file-signature"></i> EXAM <span style="color:#636e72">CENTER</span></div>
+    <div id="user-info" style="font-size: 11px; font-weight: 700; color: #64748b;"></div>
 </div>
 
 <div class="container">
     <div id="login-screen">
         <div class="welcome-card">
-            <h1>Ujian Digital 👋</h1>
-            <p id="info-ujian-aktif">Mengecek ujian tersedia...</p>
+            <h2 id="mapel-aktif">Memeriksa Ujian...</h2>
+            <p style="font-size: 13px; opacity: 0.9;">E-Santri Pro Digital Examination</p>
         </div>
         
-        <div class="card" id="form-masuk">
+        <div id="form-masuk" class="card hidden">
+            <label>Mata Pelajaran</label>
+            <input type="text" id="display-mapel" readonly style="background: #edf2f7; font-weight: 700;">
+
             <label>Pilih Kelas</label>
             <select id="user-kelas">
-                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
             </select>
+
             <label>Nama Lengkap</label>
-            <input type="text" id="user-nama" placeholder="Nama sesuai absen">
-            <label>Token Ujian (Dapatkan dari Admin)</label>
-            <input type="text" id="user-token" placeholder="Masukkan 6 digit token">
-            <button class="btn-start" onclick="cekToken()">MULAI UJIAN SEKARANG</button>
+            <input type="text" id="user-nama" placeholder="Masukkan nama lengkap">
+
+            <label>Token Ujian</label>
+            <input type="text" id="user-token" placeholder="6 Digit Token" maxlength="6" style="text-align: center; letter-spacing: 5px; font-weight: 800;">
+
+            <button class="btn-start" onclick="cekToken()">MASUK UJIAN</button>
         </div>
+
         <div id="pesan-off" class="card hidden status-off">
-            Mohon maaf, saat ini tidak ada ujian yang sedang diaktifkan oleh Admin.
+            <i class="fas fa-clock-rotate-left fa-3x" style="margin-bottom: 15px; opacity: 0.3;"></i>
+            <p>Mohon maaf, saat ini tidak ada jadwal ujian yang diaktifkan oleh Admin.</p>
         </div>
     </div>
 
     <div id="exam-screen" class="hidden">
         <div id="timer"><i class="far fa-clock"></i> <span id="time-left">00:00</span></div>
-        <div id="judul-ujian" style="font-weight: 800; margin-bottom: 15px;"></div>
+        <div id="judul-exam" style="margin-bottom: 20px;">
+            <h3 id="current-mapel"></h3>
+            <p style="font-size: 12px; color: #64748b;">Kerjakan dengan jujur, Allah Maha Melihat.</p>
+        </div>
+        
         <div id="konten-soal"></div>
-        <button class="btn-start" onclick="selesaiUjian()" style="background: var(--accent); margin-top: 20px;">KIRIM SEMUA JAWABAN</button>
+        
+        <button class="btn-start" onclick="selesaiUjian()" style="background: var(--accent); margin-top: 20px; margin-bottom: 50px;">KIRIM JAWABAN SAYA</button>
     </div>
 </div>
 
@@ -70,7 +93,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
 <script>
-    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
+    const firebaseConfig = { 
+        databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" 
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
@@ -78,127 +103,144 @@
     let bankSoal = [];
     let timer;
 
-    // 1. CEK STATUS UJIAN DARI ADMIN
+    // 1. CEK STATUS UJIAN DARI ADMIN SECARA REALTIME
     db.ref('pengaturan_ujian').on('value', snap => {
         dataUjian = snap.val();
         if (dataUjian && dataUjian.is_active) {
-            document.getElementById('info-ujian-aktif').innerText = `Ujian Aktif: ${dataUjian.mapel}`;
+            document.getElementById('mapel-aktif').innerText = dataUjian.mapel;
+            document.getElementById('display-mapel').value = dataUjian.mapel;
             document.getElementById('form-masuk').classList.remove('hidden');
             document.getElementById('pesan-off').classList.add('hidden');
         } else {
-            document.getElementById('info-ujian-aktif').innerText = `Ujian Belum Tersedia`;
+            document.getElementById('mapel-aktif').innerText = "OFFLINE";
             document.getElementById('form-masuk').classList.add('hidden');
             document.getElementById('pesan-off').classList.remove('hidden');
         }
     });
 
-    // 2. VERIFIKASI TOKEN & KELAS
+    // 2. VERIFIKASI TOKEN & AMBIL SOAL
     function cekToken() {
-        const nama = document.getElementById('user-nama').value;
-        const token = document.getElementById('user-token').value;
+        const nama = document.getElementById('user-nama').value.trim();
+        const token = document.getElementById('user-token').value.trim();
         const kelas = document.getElementById('user-kelas').value;
 
-        if (!nama || !token) return alert("Nama dan Token wajib diisi!");
-        
-        if (token !== dataUjian.token) {
-            return alert("Token Salah! Silakan tanya ke pengawas.");
-        }
+        if (!nama || !token) return alert("Lengkapi Nama dan Token!");
+        if (token !== dataUjian.token) return alert("Token Salah!");
 
-        // Ambil soal dari Bank Soal berdasarkan Kelas & Mapel
-        const klsInduk = kelas.substring(0,1); // Ambil angka depannya saja (7, 8, atau 9)
-        db.ref(`bank_soal/${klsInduk}/${dataUjian.mapel}`).once('value', snap => {
-            if (!snap.exists()) return alert("Soal belum diupload Admin untuk kelas ini!");
+        // Ambil soal dari folder bank_soal/[AngkaKelas]/[Mapel]
+        const klsUtama = kelas.charAt(0); // Ambil angka depan saja (7, 8, atau 9)
+        
+        db.ref(`bank_soal/${klsUtama}/${dataUjian.mapel}`).once('value', snap => {
+            if (!snap.exists()) return alert("Soal belum tersedia untuk kelas & mapel ini!");
             
             bankSoal = [];
-            snap.forEach(s => { bankSoal.push({ id: s.key, ...s.val() }); });
-            startExam();
+            snap.forEach(s => { 
+                bankSoal.push({ id: s.key, ...s.val() }); 
+            });
+            
+            // Acak Soal (Optional)
+            bankSoal.sort(() => Math.random() - 0.5);
+            
+            startExam(nama, kelas);
         });
     }
 
-    // 3. MULAI UJIAN
-    function startExam() {
+    // 3. MULAI UJIAN & GENERATE SOAL
+    function startExam(nama, kelas) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
-        document.getElementById('judul-ujian').innerText = `UJIAN: ${dataUjian.mapel}`;
+        document.getElementById('current-mapel').innerText = "Ujian " + dataUjian.mapel;
+        document.getElementById('user-info').innerText = `${nama} (${kelas})`;
 
         const area = document.getElementById('konten-soal');
         area.innerHTML = "";
 
         bankSoal.forEach((s, i) => {
-            let opsiHtml = "";
-            if (s.opsi) {
+            let htmlOpsi = "";
+            if (s.opsi) { // Jika PG
                 const arrOpsi = s.opsi.split(',');
-                const huruf = ['A', 'B', 'C', 'D'];
-                arrOpsi.forEach((opt, idx) => {
-                    opsiHtml += `
+                const abcd = ['A', 'B', 'C', 'D'];
+                arrOpsi.forEach((teks, idx) => {
+                    htmlOpsi += `
                         <label class="option">
-                            <input type="radio" name="soal${i}" value="${huruf[idx]}"> 
-                            <b>${huruf[idx]}.</b> ${opt.trim()}
+                            <input type="radio" name="soal${i}" value="${abcd[idx]}"> 
+                            <b>${abcd[idx]}.</b> ${teks.trim()}
                         </label>`;
                 });
-            } else {
-                opsiHtml = `<textarea id="essay${i}" rows="3" placeholder="Tulis jawaban essay..."></textarea>`;
+            } else { // Jika Essay
+                htmlOpsi = `<textarea id="ans-essay${i}" rows="3" placeholder="Ketik jawaban kamu di sini..."></textarea>`;
             }
 
             area.innerHTML += `
                 <div class="soal-card">
-                    <p style="font-weight:800; margin-bottom:10px;">Soal ${i+1}</p>
-                    <p style="margin-bottom:15px;">${s.soal}</p>
-                    ${opsiHtml}
+                    <p style="font-weight:800; margin-bottom:12px; color:var(--primary);">SOAL NO. ${i+1}</p>
+                    <p style="margin-bottom:15px; font-weight:600;">${s.soal}</p>
+                    ${htmlOpsi}
                 </div>`;
         });
 
         startTimer(dataUjian.durasi);
+        
+        // Anti Curang: Deteksi Pindah Tab
+        window.onblur = () => {
+            alert("PERINGATAN! Jangan meninggalkan halaman ujian atau jawaban akan otomatis terkirim!");
+        };
     }
 
-    // 4. LOGIKA TIMER
+    // 4. SISTEM TIMER
     function startTimer(menit) {
-        let sisa = menit * 60;
+        let detik = menit * 60;
         timer = setInterval(() => {
-            let m = Math.floor(sisa / 60);
-            let s = sisa % 60;
-            document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0' + s : s}`;
-            if (sisa <= 0) {
+            let m = Math.floor(detik / 60);
+            let s = detik % 60;
+            document.getElementById('time-left').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            if (detik <= 0) {
                 clearInterval(timer);
-                alert("Waktu Habis! Jawaban akan dikirim otomatis.");
+                alert("WAKTU HABIS!");
                 selesaiUjian(true);
             }
-            sisa--;
+            detik--;
         }, 1000);
     }
 
-    // 5. SELESAI & KIRIM
+    // 5. SELESAI & KIRIM HASIL
     function selesaiUjian(isAuto = false) {
-        if (!isAuto && !confirm("Yakin ingin mengumpulkan?")) return;
+        if (!isAuto && !confirm("Yakin ingin mengumpulkan sekarang?")) return;
         clearInterval(timer);
 
-        let benar = 0;
-        let totalPG = 0;
-        const kelas = document.getElementById('user-kelas').value;
+        let skorBenar = 0;
+        let jumlahPG = 0;
         const nama = document.getElementById('user-nama').value;
+        const kelas = document.getElementById('user-kelas').value;
+        let jawabanEssay = [];
 
         bankSoal.forEach((s, i) => {
-            if (s.opsi) { // Jika PG
-                totalPG++;
-                const jaw = document.querySelector(`input[name="soal${i}"]:checked`);
-                if (jaw && jaw.value.trim().toUpperCase() === s.kunci.trim().toUpperCase()) {
-                    benar++;
+            if (s.opsi) { // Hitung PG
+                jumlahPG++;
+                const terpilih = document.querySelector(`input[name="soal${i}"]:checked`);
+                if (terpilih && terpilih.value === s.kunci) {
+                    skorBenar++;
                 }
+            } else { // Ambil Jawaban Essay
+                const isiEssay = document.getElementById(`ans-essay${i}`).value;
+                jawabanEssay.push({ soal: s.soal, jawaban: isiEssay });
             }
         });
 
-        const nilaiFinal = totalPG > 0 ? Math.round((benar / totalPG) * 100) : 0;
+        const nilaiFinal = jumlahPG > 0 ? Math.round((skorBenar / jumlahPG) * 100) : 0;
 
-        const laporan = {
+        const dataHasil = {
             nama: nama,
             mapel: dataUjian.mapel,
             nilai_pg: nilaiFinal,
-            waktu_selesai: new Date().toLocaleString(),
+            jawaban_essay: jawabanEssay,
+            waktu_selesai: new Date().toLocaleString('id-ID'),
             status: "Selesai"
         };
 
-        db.ref(`hasil_ujian/${kelas}`).push(laporan).then(() => {
-            alert(`Alhamdulillah, Ujian Selesai!\nNilai PG Kamu: ${nilaiFinal}`);
+        // Simpan ke Firebase
+        db.ref(`hasil_ujian/${kelas}`).push(dataHasil).then(() => {
+            alert(`Alhamdulillah!\nJawaban berhasil dikirim.\nNilai PG Kamu: ${nilaiFinal}`);
             location.reload();
         });
     }
