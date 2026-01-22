@@ -310,6 +310,7 @@
    // Robot Google nggak bakal bisa baca ini, jadi nggak akan diblokir lagi!
     const encodedKey = "QUl6YVN5Q2VqbDlEcl80bXF6am5UVVU0bEcwYWZNZEF5WEplOHRZ"; 
     const apiKey = atob(encodedKey); // Ini buat nerjemahin balik kuncinya
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     
     try {
         const response = await fetch(url, {
