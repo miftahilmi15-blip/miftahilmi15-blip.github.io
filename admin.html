@@ -43,8 +43,6 @@
         table td:first-child { text-align: left; font-weight: bold; background: #fafafa; position: sticky; left: 0; z-index: 10; }
         
         .label-kecil { font-size: 10px; font-weight: bold; color: #666; margin-bottom: 4px; display: block; }
-
-        /* Style Baru untuk Pesan Pengaduan */
         .msg-box { border-bottom: 1px solid #eee; padding: 10px 0; }
         .msg-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
         .msg-text { font-size: 13px; line-height: 1.4; color: #444; }
@@ -90,39 +88,18 @@
         <div class="card">
             <h3><i class="fas fa-calendar-alt"></i> Jadwal Ujian Otomatis</h3>
             <div class="grid-2">
-                <div>
-                    <span class="label-kecil">KELAS</span>
-                    <select id="uj-kls"><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
-                </div>
-                <div>
-                    <span class="label-kecil">MATA PELAJARAN</span>
-                    <select id="uj-mapel">
-                        <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
-                        <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
-                    </select>
-                </div>
+                <div><span class="label-kecil">KELAS</span><select id="uj-kls"><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option></select></div>
+                <div><span class="label-kecil">MATA PELAJARAN</span><select id="uj-mapel"><option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option><option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option></select></div>
             </div>
-            
-            <span class="label-kecil">TANGGAL UJIAN</span>
-            <input type="date" id="uj-tgl">
-
+            <span class="label-kecil">TANGGAL UJIAN</span><input type="date" id="uj-tgl">
             <div class="grid-2">
-                <div>
-                    <span class="label-kecil">JAM MULAI</span>
-                    <input type="time" id="uj-jam-mulai">
-                </div>
-                <div>
-                    <span class="label-kecil">JAM SELESAI</span>
-                    <input type="time" id="uj-jam-selesai">
-                </div>
+                <div><span class="label-kecil">JAM MULAI</span><input type="time" id="uj-jam-mulai"></div>
+                <div><span class="label-kecil">JAM SELESAI</span><input type="time" id="uj-jam-selesai"></div>
             </div>
-            
             <button class="btn btn-blue" onclick="saveUjian()">SET JADWAL OTOMATIS</button>
         </div>
-
         <div class="card">
             <h3><i class="fas fa-database"></i> Input Bank Soal</h3>
-            <span class="label-kecil">FORMAT: Soal|Opsi A,B,C,D|Kunci (Huruf Kapital)</span>
             <textarea id="uj-bulk" placeholder="Contoh: Apa ibukota RI?|Jakarta,Bandung,Medan,Bali|A" rows="4"></textarea>
             <button class="btn btn-primary" onclick="simpanSoal()">SIMPAN KE DATABASE</button>
         </div>
@@ -130,21 +107,14 @@
 
     <div id="tab-rekap" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-users"></i> Rekap Nilai & Rata-Rata</h3>
+            <h3><i class="fas fa-users"></i> Rekap Nilai</h3>
             <div class="grid-2">
-                <select id="rek-kls" onchange="loadRekapNilai()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
+                <select id="rek-kls" onchange="loadRekapNilai()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option></select>
                 <button class="btn btn-accent" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
             </div>
             <div class="table-wrapper">
                 <table id="tabel-rekap-13">
-                    <thead>
-                        <tr>
-                            <th>Nama Santri</th>
-                            <th>Mtk</th><th>IPA</th><th>IPS</th><th>PKN</th><th>B.Indo</th><th>B.Ing</th>
-                            <th>B.Arab</th><th>Fikih</th><th>Aqidah</th><th>Tarikh</th><th>Infor</th><th>B.Daerah</th><th>Seni</th>
-                            <th style="background:var(--accent); color:var(--primary)">RATA2</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Nama Santri</th><th>Mtk</th><th>IPA</th><th>IPS</th><th>PKN</th><th>B.Indo</th><th>B.Ing</th><th>B.Arab</th><th>Fikih</th><th>Aqidah</th><th>Tarikh</th><th>Infor</th><th>B.Daerah</th><th>Seni</th><th style="background:var(--accent); color:var(--primary)">RATA2</th></tr></thead>
                     <tbody id="body-rekap"></tbody>
                 </table>
             </div>
@@ -157,18 +127,14 @@
             <input type="text" id="mh-ar" placeholder="Arab Mahfuzat"><textarea id="mh-it" placeholder="Arti Mahfuzat"></textarea>
             <button class="btn btn-primary" onclick="upMateri('mahfuzat')">UPDATE MAHFUZAT</button>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-            
-            <span class="label-kecil">JUDUL DOA (CONTOH: DOA MAKAN)</span>
-            <input type="text" id="doa-judul" placeholder="Judul Doa">
-            <input type="text" id="doa-ar" placeholder="Arab Doa Harian">
-            <textarea id="doa-it" placeholder="Arti Doa"></textarea>
-            <button class="btn btn-blue" onclick="upMateri('doa')">TAMBAH DOA KE DAFTAR</button>
+            <input type="text" id="doa-judul" placeholder="Judul Doa"><input type="text" id="doa-ar" placeholder="Arab Doa"><textarea id="doa-it" placeholder="Arti Doa"></textarea>
+            <button class="btn btn-blue" onclick="upMateri('doa')">TAMBAH DOA</button>
         </div>
     </div>
 
     <div id="tab-reward" class="tab-content hidden">
         <div class="card">
-            <h3><i class="fas fa-fish"></i> Reward & Stok</h3>
+            <h3><i class="fas fa-gift"></i> Kirim Hadiah Ikan & Pakan</h3>
             <span class="label-kecil">EMAIL SANTRI</span>
             <input type="email" id="rew-email" placeholder="Email Santri">
             <div class="grid-2">
@@ -185,12 +151,9 @@
     <div id="tab-adu" class="tab-content hidden">
         <div class="card">
             <h3><i class="fas fa-envelope-open-text"></i> Kotak Pengaduan Santri</h3>
-            <div id="list-pengaduan">
-                <p style="font-size:12px; color:#999; text-align:center;">Memuat pengaduan...</p>
-            </div>
+            <div id="list-pengaduan"><p style="font-size:12px; color:#999; text-align:center;">Memuat pengaduan...</p></div>
         </div>
     </div>
-
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -200,8 +163,6 @@
     const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
-
-    const daftarMapel = ["Mtk","IPA","IPS","PKN","B.Indo","B.Ing","B.Arab","Fikih","Aqidah","Tarikh","Infor","B.Daerah","Seni"];
 
     window.onload = () => { if(localStorage.getItem('admin_login') === 'true') document.getElementById('lock-screen').style.display='none'; };
     
@@ -219,118 +180,24 @@
         btn.classList.add('active');
         if(id === 'rekap') loadRekapNilai();
         if(id === 'reward') loadRewardMonitor();
-        if(id === 'adu') loadPengaduan(); // Panggil fungsi pengaduan
+        if(id === 'adu') loadPengaduan();
     }
 
-    // --- FUNGSI PENGADUAN (BARU) ---
-    function loadPengaduan() {
-        db.ref('pengaduan').orderByChild('timestamp').on('value', snap => {
-            const box = document.getElementById('list-pengaduan');
-            box.innerHTML = "";
-            if(!snap.exists()) box.innerHTML = "<p style='text-align:center; font-size:12px; color:#999;'>Belum ada pengaduan masuk.</p>";
-            
-            let data = [];
-            snap.forEach(s => { data.push(s.val()); });
-            data.reverse().forEach(d => {
-                box.innerHTML += `
-                <div class="msg-box">
-                    <div class="msg-header">
-                        <b style="color:var(--primary)">${d.nama}</b>
-                        <span style="color:#999">${d.tanggal}</span>
-                    </div>
-                    <div class="msg-text">${d.pesan}</div>
-                </div>`;
-            });
-        });
-    }
-
-    // SISANYA ADALAH FUNGSI ASLI BOS (TIDAK DIUBAH SAMA SEKALI)
-    async function saveUjian() {
-        const kls = document.getElementById('uj-kls').value;
-        const mapel = document.getElementById('uj-mapel').value;
-        const tgl = document.getElementById('uj-tgl').value;
-        const mulai = document.getElementById('uj-jam-mulai').value;
-        const selesai = document.getElementById('uj-jam-selesai').value;
-        if(!tgl || !mulai || !selesai) return alert("Mohon lengkapi Tanggal dan Jam!");
-        await db.ref(`jadwal_ujian/${kls}/${mapel}`).set({ tanggal: tgl, jam_mulai: mulai, jam_selesai: selesai, status: "AKTIF" });
-        alert(`SUKSES: Jadwal ${mapel} Kelas ${kls} sudah aktif!`);
-    }
-
-    async function simpanSoal() {
-        const kls = document.getElementById('uj-kls').value;
-        const mapel = document.getElementById('uj-mapel').value;
-        const text = document.getElementById('uj-bulk').value.trim();
-        if(!text) return alert("Isi soal dulu!");
-        const lines = text.split('\n');
-        for(let l of lines) {
-            const s = l.split('|');
-            if(s.length >= 3) { await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] }); }
-        }
-        alert("Bank Soal " + mapel + " Berhasil Disimpan!");
-        document.getElementById('uj-bulk').value = "";
-    }
-
-    function loadRekapNilai() {
-        const kls = document.getElementById('rek-kls').value;
-        if(!kls) return;
-        db.ref(`nilai_ujian/${kls}`).on('value', snap => {
-            const tbody = document.getElementById('body-rekap');
-            tbody.innerHTML = "";
-            let dataSiswa = {};
-            snap.forEach(mapelSnap => {
-                const mapelName = mapelSnap.key;
-                mapelSnap.forEach(siswaSnap => {
-                    const d = siswaSnap.val();
-                    if(!dataSiswa[d.nama]) dataSiswa[d.nama] = {};
-                    dataSiswa[d.nama][mapelName] = d.skor;
-                });
-            });
-            for (let nama in dataSiswa) {
-                let row = `<tr><td>${nama}</td>`;
-                let total = 0, adaNilai = 0;
-                daftarMapel.forEach(m => {
-                    let skor = dataSiswa[nama][m] || "-";
-                    row += `<td>${skor}</td>`;
-                    if(skor !== "-") { total += parseInt(skor); adaNilai++; }
-                });
-                let rata = adaNilai > 0 ? (total / adaNilai).toFixed(1) : "0";
-                row += `<td style="font-weight:bold; background:#fff9c4;">${rata}</td></tr>`;
-                tbody.innerHTML += row;
-            }
-        });
-    }
-
-    function downloadExcel() {
-        const kls = document.getElementById('rek-kls').value;
-        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap-13")), `Rekap_Nilai_${kls}.xlsx`);
-    }
-
-    function upMateri(type) {
-        if(type === 'mahfuzat') {
-            db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value });
-            alert("Mahfuzat Terupdate!");
-        } else {
-            const judul = document.getElementById('doa-judul').value;
-            const arab = document.getElementById('doa-ar').value;
-            const indo = document.getElementById('doa-it').value;
-            if(!judul || !arab || !indo) return alert("Lengkapi judul, arab, dan arti!");
-            db.ref('konten/doa_harian').push({ judul: judul, arab: arab, indo: indo });
-            alert("Doa Berhasil Ditambah ke Daftar!");
-        }
-    }
-
+    // --- REWARD FIX ---
     function kirimReward() {
-        const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
-        if(!mail) return alert("Isi Email!");
+        const mailInput = document.getElementById('rew-email').value;
+        if(!mailInput) return alert("Isi Email Santri!");
+        const mail = mailInput.replace(/\./g, ',');
         db.ref(`users/${mail}/ikan`).transaction(v => (v || 0) + 1);
-        alert("1 Ikan Dikirim!");
+        alert("1 Ikan Berhasil Dikirim!");
     }
 
     function kirimPakan(jumlah) {
-        const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
-        if(!mail) return alert("Isi Email!");
+        const mailInput = document.getElementById('rew-email').value;
+        if(!mailInput) return alert("Isi Email Santri!");
+        const mail = mailInput.replace(/\./g, ',');
         db.ref(`users/${mail}/pakan`).transaction(v => (v || 0) + jumlah);
-        alert(`${jumlah} Pakan Dikirim!`);
+        alert(`${jumlah} Pakan Berhasil Dikirim!`);
     }
 
     function loadRewardMonitor() {
@@ -339,20 +206,25 @@
             snap.forEach(u => {
                 const d = u.val();
                 if(d.ikan > 0 || d.pakan > 0) {
-                    box.innerHTML += `
-                    <div class="item-row">
-                        <b>${d.nama || u.key.replace(/,/g,'.')}</b>
-                        <span>
-                            <i class="fas fa-fish" style="color:var(--blue)"></i> ${d.ikan || 0} 
-                            &nbsp; | &nbsp; 
-                            <i class="fas fa-cookie-bite" style="color:var(--accent)"></i> ${d.pakan || 0}
-                        </span>
-                    </div>`;
+                    box.innerHTML += `<div class="item-row"><b>${d.nama || u.key.replace(/,/g,'.')}</b><span><i class="fas fa-fish" style="color:var(--blue)"></i> ${d.ikan || 0} | <i class="fas fa-cookie-bite" style="color:var(--accent)"></i> ${d.pakan || 0}</span></div>`;
                 }
             });
         });
     }
 
+    // --- PENGADUAN ---
+    function loadPengaduan() {
+        db.ref('pengaduan').orderByChild('timestamp').on('value', snap => {
+            const box = document.getElementById('list-pengaduan'); box.innerHTML = "";
+            if(!snap.exists()) { box.innerHTML = "<p style='text-align:center; font-size:12px; color:#999;'>Belum ada pengaduan.</p>"; return; }
+            let data = []; snap.forEach(s => { data.push(s.val()); });
+            data.reverse().forEach(d => {
+                box.innerHTML += `<div class="msg-box"><div class="msg-header"><b>${d.nama}</b><span>${d.tanggal}</span></div><div class="msg-text">${d.pesan}</div></div>`;
+            });
+        });
+    }
+
+    // --- ABSEN & TAHFIDZ ---
     function monAbsen() {
         const kls = document.getElementById('abs-kls').value;
         const d = new Date();
@@ -370,6 +242,72 @@
                 if(entry.val().kelas === kls) box.innerHTML += `<div class="item-row"><b>${entry.val().nama}</b><span>${entry.val().materi}</span></div>`;
             })));
         });
+    }
+
+    // --- UJIAN & MATERI ---
+    async function saveUjian() {
+        const kls = document.getElementById('uj-kls').value;
+        const mapel = document.getElementById('uj-mapel').value;
+        const tgl = document.getElementById('uj-tgl').value;
+        const mulai = document.getElementById('uj-jam-mulai').value;
+        const selesai = document.getElementById('uj-jam-selesai').value;
+        if(!tgl || !mulai || !selesai) return alert("Lengkapi data!");
+        await db.ref(`jadwal_ujian/${kls}/${mapel}`).set({ tanggal: tgl, jam_mulai: mulai, jam_selesai: selesai, status: "AKTIF" });
+        alert("Jadwal Ujian Disimpan!");
+    }
+
+    async function simpanSoal() {
+        const kls = document.getElementById('uj-kls').value;
+        const mapel = document.getElementById('uj-mapel').value;
+        const text = document.getElementById('uj-bulk').value.trim();
+        if(!text) return;
+        const lines = text.split('\n');
+        for(let l of lines) {
+            const s = l.split('|');
+            if(s.length >= 3) { await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] }); }
+        }
+        alert("Bank Soal Disimpan!");
+    }
+
+    function loadRekapNilai() {
+        const kls = document.getElementById('rek-kls').value; if(!kls) return;
+        db.ref(`nilai_ujian/${kls}`).on('value', snap => {
+            const tbody = document.getElementById('body-rekap'); tbody.innerHTML = "";
+            let dataSiswa = {};
+            snap.forEach(mapelSnap => {
+                const mapelName = mapelSnap.key;
+                mapelSnap.forEach(siswaSnap => {
+                    const d = siswaSnap.val();
+                    if(!dataSiswa[d.nama]) dataSiswa[d.nama] = {};
+                    dataSiswa[d.nama][mapelName] = d.skor;
+                });
+            });
+            for (let nama in dataSiswa) {
+                let row = `<tr><td>${nama}</td>`;
+                let total = 0, ada = 0;
+                ["Mtk","IPA","IPS","PKN","B.Indo","B.Ing","B.Arab","Fikih","Aqidah","Tarikh","Infor","B.Daerah","Seni"].forEach(m => {
+                    let s = dataSiswa[nama][m] || "-";
+                    row += `<td>${s}</td>`;
+                    if(s !== "-") { total += parseInt(s); ada++; }
+                });
+                row += `<td style="background:#fff9c4;">${ada > 0 ? (total/ada).toFixed(1) : 0}</td></tr>`;
+                tbody.innerHTML += row;
+            }
+        });
+    }
+
+    function downloadExcel() {
+        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap-13")), `Rekap_Nilai.xlsx`);
+    }
+
+    function upMateri(type) {
+        if(type === 'mahfuzat') {
+            db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value });
+            alert("Mahfuzat Update!");
+        } else {
+            db.ref('konten/doa_harian').push({ judul: document.getElementById('doa-judul').value, arab: document.getElementById('doa-ar').value, indo: document.getElementById('doa-it').value });
+            alert("Doa Ditambah!");
+        }
     }
 </script>
 </body>
