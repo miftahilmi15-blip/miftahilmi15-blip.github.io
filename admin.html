@@ -183,33 +183,33 @@
         if(id === 'adu') loadPengaduan();
     }
 
-    // --- REWARD FIX ---
+    // --- REWARD FIX (IKAN & PAKAN) ---
     function kirimReward() {
-    const mailInput = document.getElementById('rew-email').value;
-    if(!mailInput) return alert("Isi Email Santri!");
-    
-    // 1. Ubah titik jadi koma (Wajib buat Firebase)
-    const mail = mailInput.replace(/\./g, ',');
-    
-    // 2. Gunakan transaksi agar angka tidak 'mentok'
-    db.ref(`users/${mail}/ikan`).transaction((currentValue) => {
-        // Pastikan nilai awal adalah angka 0 jika kosong
-        return (Number(currentValue) || 0) + 1;
-    }, (error, committed, snapshot) => {
-        if (committed) {
-            alert("Mantap Bos! 1 Ikan berhasil dikirim.");
-        } else {
-            alert("Gagal kirim! Cek koneksi atau format email.");
-        }
-    });
-}
+        const mailInput = document.getElementById('rew-email').value;
+        if(!mailInput) return alert("Pilih/Isi Email Santri dulu!");
+        
+        const mail = mailInput.replace(/\./g, ',');
+        
+        db.ref(`users/${mail}/ikan`).transaction((v) => {
+            return (Number(v) || 0) + 1;
+        }, (error, committed) => {
+            if (committed) alert("Mantap Bos! 1 Ikan berhasil dikirim.");
+            else alert("Gagal! Cek koneksi.");
+        });
+    }
 
     function kirimPakan(jumlah) {
         const mailInput = document.getElementById('rew-email').value;
-        if(!mailInput) return alert("Isi Email Santri!");
+        if(!mailInput) return alert("Pilih/Isi Email Santri dulu!");
+        
         const mail = mailInput.replace(/\./g, ',');
-        db.ref(`users/${mail}/pakan`).transaction(v => (v || 0) + jumlah);
-        alert(`${jumlah} Pakan Berhasil Dikirim!`);
+        
+        db.ref(`users/${mail}/pakan`).transaction((v) => {
+            return (Number(v) || 0) + jumlah;
+        }, (error, committed) => {
+            if (committed) alert(`Sip! ${jumlah} Pakan berhasil dikirim.`);
+            else alert("Gagal! Cek koneksi.");
+        });
     }
 
     function loadRewardMonitor() {
