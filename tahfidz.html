@@ -273,9 +273,17 @@
     };
 
     function cekLogin() {
-        if (document.getElementById('passcode').value === KODE_RAHASIA) {
+        // Ambil nilai dari input passcode
+        const input = document.getElementById('passcode').value;
+        
+        // Cek apakah sama dengan KODE_RAHASIA (152003)
+        if (input === KODE_RAHASIA) {
             document.getElementById('lock-screen').style.display = 'none';
-        } else { alert("Kode Salah!"); }
+            alert("Selamat bertugas, Ustadz/Ustadzah! tetap semangatt yaa 🥰🥰🥰");
+        } else {
+            alert("Kode Salah! Akses Ditolak.");
+            document.getElementById('passcode').value = "";
+        }
     }
 
     function updateSubMateri() {
