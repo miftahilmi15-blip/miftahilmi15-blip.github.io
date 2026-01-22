@@ -104,33 +104,40 @@
     });
 
     function spawnFishes(count) {
-    const container = document.getElementById('ocean');
-    // Hapus semua ikan lama biar gak numpuk
-    container.querySelectorAll('.fish-entity').forEach(f => f.remove());
-    fishes = [];
+        const container = document.getElementById('ocean');
+        // Hapus semua ikan lama
+        container.querySelectorAll('.fish-entity').forEach(f => f.remove());
+        fishes = [];
+        
+        // Daftar icon ikan yang paling stabil dan anti-kempes
+        const stableFishIcons = [
+            "https://api.iconify.design/noto:fish.svg",
+            "https://api.iconify.design/noto:tropical-fish.svg",
+            "https://api.iconify.design/noto:blowfish.svg"
+        ];
+        
+        for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.className = 'fish-entity';
+            
+            const randomIcon = stableFishIcons[Math.floor(Math.random() * stableFishIcons.length)];
+            
+            // Ukuran kita patok 60px biar proporsional
+            el.innerHTML = `<img src="${randomIcon}" class="fish-img" style="width:60px; height:60px;">`;
+            container.appendChild(el);
+            
+            fishes.push({
+                el: el, 
+                img: el.querySelector('.fish-img'),
+                x: Math.random() * 90, 
+                y: Math.random() * 90,
+                tx: Math.random() * 90, 
+                ty: Math.random() * 90,
+                v: 0.2 + Math.random() * 0.3
+            });
+        }
+    }    
     
-    for (let i = 0; i < count; i++) {
-        const el = document.createElement('div');
-        el.className = 'fish-entity';
-        // Pakai link gambar emoji langsung dari Google biar stabil
-        const randomFish = [
-            "https://fonts.gstatic.com/s/e/notoemoji/latest/1f41f/512.gif",
-            "https://fonts.gstatic.com/s/e/notoemoji/latest/1f420/512.gif",
-            "https://fonts.gstatic.com/s/e/notoemoji/latest/1f421/512.gif"
-        ][Math.floor(Math.random()*3)];
-        
-        el.innerHTML = `<img src="${randomFish}" class="fish-img" style="width:60px;">`;
-        container.appendChild(el);
-        
-        fishes.push({
-            el: el, 
-            img: el.querySelector('.fish-img'),
-            x: Math.random()*90, y: Math.random()*90,
-            tx: Math.random()*90, ty: Math.random()*90,
-            v: 0.2 + Math.random()*0.3
-        });
-    }
-}
     // FUNGSI SPAWN PAKAN
     function spawnPellet(e) {
         if (currentPakan <= 0) return;
