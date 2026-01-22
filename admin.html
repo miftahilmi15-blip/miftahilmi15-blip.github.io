@@ -185,12 +185,24 @@
 
     // --- REWARD FIX ---
     function kirimReward() {
-        const mailInput = document.getElementById('rew-email').value;
-        if(!mailInput) return alert("Isi Email Santri!");
-        const mail = mailInput.replace(/\./g, ',');
-        db.ref(`users/${mail}/ikan`).transaction(v => (v || 0) + 1);
-        alert("1 Ikan Berhasil Dikirim!");
-    }
+    const mailInput = document.getElementById('rew-email').value;
+    if(!mailInput) return alert("Isi Email Santri!");
+    
+    // 1. Ubah titik jadi koma (Wajib buat Firebase)
+    const mail = mailInput.replace(/\./g, ',');
+    
+    // 2. Gunakan transaksi agar angka tidak 'mentok'
+    db.ref(`users/${mail}/ikan`).transaction((currentValue) => {
+        // Pastikan nilai awal adalah angka 0 jika kosong
+        return (Number(currentValue) || 0) + 1;
+    }, (error, committed, snapshot) => {
+        if (committed) {
+            alert("Mantap Bos! 1 Ikan berhasil dikirim.");
+        } else {
+            alert("Gagal kirim! Cek koneksi atau format email.");
+        }
+    });
+}
 
     function kirimPakan(jumlah) {
         const mailInput = document.getElementById('rew-email').value;
