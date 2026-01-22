@@ -300,7 +300,6 @@
     const msg = input.value.trim();
     if (!msg) return;
 
-    // Tampilkan pesan user
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
     const loadId = "ai-" + Date.now();
@@ -308,7 +307,7 @@
     box.scrollTop = box.scrollHeight;
 
     try {
-        // GANTI INI dengan alamat Worker yang Bos buat tadi
+        // Ini adalah alamat "Otak" yang baru Bos buat di Cloudflare
         const workerUrl = "https://ustadz-ai.miftahilmi15-3c9.workers.dev"; 
 
         const res = await fetch(workerUrl, {
@@ -322,10 +321,10 @@
         if (data.reply) {
             document.getElementById(loadId).innerText = data.reply;
         } else {
-            document.getElementById(loadId).innerText = "Maaf Nak, ada kendala teknis.";
+            document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang tidak enak badan.";
         }
     } catch (err) {
-        document.getElementById(loadId).innerText = "Maaf Nak, koneksi ke pusat terputus.";
+        document.getElementById(loadId).innerText = "Maaf Nak, ustadz gagal merenung. Cek koneksi ya.";
     } finally {
         box.scrollTop = box.scrollHeight;
     }
