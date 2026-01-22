@@ -183,32 +183,39 @@
         if(id === 'adu') loadPengaduan();
     }
 
-    // --- REWARD FIX (IKAN & PAKAN) ---
+ // --- REWARD VERSI DEBUG (BIAR KETAHUAN SALAHNYA) ---
     function kirimReward() {
         const mailInput = document.getElementById('rew-email').value;
-        if(!mailInput) return alert("Pilih/Isi Email Santri dulu!");
+        if(!mailInput) return alert("Pilih Email Santri!");
         
-        const mail = mailInput.replace(/\./g, ',');
+        const mail = mailInput.trim().replace(/\./g, ','); // Tambah trim() biar gak ada spasi nyelip
         
         db.ref(`users/${mail}/ikan`).transaction((v) => {
             return (Number(v) || 0) + 1;
-        }, (error, committed) => {
-            if (committed) alert("Mantap Bos! 1 Ikan berhasil dikirim.");
-            else alert("Gagal! Cek koneksi.");
+        }, (error, committed, snapshot) => {
+            if (error) {
+                // INI PENTING: Biar kita tahu kenapa gagal (Permission denied atau apa)
+                alert("Error Firebase: " + error.message);
+            } else if (committed) {
+                alert("Mantap Bos! 1 Ikan terkirim.");
+            }
         });
     }
 
     function kirimPakan(jumlah) {
         const mailInput = document.getElementById('rew-email').value;
-        if(!mailInput) return alert("Pilih/Isi Email Santri dulu!");
+        if(!mailInput) return alert("Pilih Email Santri!");
         
-        const mail = mailInput.replace(/\./g, ',');
+        const mail = mailInput.trim().replace(/\./g, ',');
         
         db.ref(`users/${mail}/pakan`).transaction((v) => {
             return (Number(v) || 0) + jumlah;
-        }, (error, committed) => {
-            if (committed) alert(`Sip! ${jumlah} Pakan berhasil dikirim.`);
-            else alert("Gagal! Cek koneksi.");
+        }, (error, committed, snapshot) => {
+            if (error) {
+                alert("Error Firebase: " + error.message);
+            } else if (committed) {
+                alert(`${jumlah} Pakan terkirim.`);
+            }
         });
     }
 
