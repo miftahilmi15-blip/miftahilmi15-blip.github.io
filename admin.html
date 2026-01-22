@@ -202,14 +202,43 @@
 
     function loadRewardMonitor() {
         db.ref(`users`).on('value', snap => {
-            const box = document.getElementById('list-reward-monitor'); box.innerHTML = "";
+            const box = document.getElementById('list-reward-monitor'); 
+            box.innerHTML = "";
+            
+            if(!snap.exists()) {
+                box.innerHTML = "<p style='text-align:center; font-size:12px;'>Data santri kosong.</p>";
+                return;
+            }
+
             snap.forEach(u => {
                 const d = u.val();
-                if(d.ikan > 0 || d.pakan > 0) {
-                    box.innerHTML += `<div class="item-row"><b>${d.nama || u.key.replace(/,/g,'.')}</b><span><i class="fas fa-fish" style="color:var(--blue)"></i> ${d.ikan || 0} | <i class="fas fa-cookie-bite" style="color:var(--accent)"></i> ${d.pakan || 0}</span></div>`;
-                }
+                const emailSantri = u.key.replace(/,/g,'.');
+                const namaSantri = d.nama || "Santri Baru";
+                const jmlIkan = d.ikan || 0;
+                const jmlPakan = d.pakan || 0;
+
+                // Tampilkan semua tanpa syarat > 0
+                box.innerHTML += `
+                <div class="item-row" style="cursor:pointer;" onclick="isiEmail('${emailSantri}')">
+                    <div style="flex:1">
+                        <b style="font-size:13px">${namaSantri}</b>
+                        <div style="font-size:10px; color:#999">${emailSantri}</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-fish" style="color:var(--blue)"></i> <b>${jmlIkan}</b>
+                        &nbsp;|&nbsp;
+                        <i class="fas fa-cookie-bite" style="color:var(--accent)"></i> <b>${jmlPakan}</b>
+                    </div>
+                </div>`;
             });
         });
+    }
+
+    // Fungsi tambahan biar Bos tinggal klik nama, email langsung terisi otomatis
+    function isiEmail(email) {
+        document.getElementById('rew-email').value = email;
+        // Kasih efek getar atau scroll ke atas dikit biar Bos tahu email udah masuk
+        window.scrollTo({ top: document.getElementById('rew-email').offsetTop - 100, behavior: 'smooth' });
     }
 
     // --- PENGADUAN ---
