@@ -316,9 +316,10 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "Kamu adalah ustadz pesantren yang bijak. Jawab dengan ramah dan islami. Panggil saya Nak. Pertanyaan: " + msg }] }]
-            })
-        });
+            contents: [{ 
+                parts: [{ text: msg }] 
+            }]
+        })
 
         const data = await response.json();
         
