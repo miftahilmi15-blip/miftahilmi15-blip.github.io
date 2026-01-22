@@ -300,14 +300,13 @@
     const msg = input.value.trim();
     if (!msg) return;
 
-    // Tampilkan chat user
+    // Munculkan chat user
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
     const loadId = "ai-" + Date.now();
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // PAKAI KUNCI BARU YANG AKHIRNYA ...oCTA atau ...e8tY TADI DI SINI
     const apiKey = "AIzaSyCLgxNb4sNFHMtscaTztvZIrZaGZIUoCTA"; 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
@@ -316,24 +315,20 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-            contents: [{ 
-                parts: [{ text: msg }] 
-            }]
-        })
+                contents: [{ parts: [{ text: msg }] }]
+            })
+        });
 
         const data = await response.json();
         
-        // Perbaikan pembacaan data Google (Sering gagal di sini)
-        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
+        if (data.candidates && data.candidates[0].content) {
             const jawaban = data.candidates[0].content.parts[0].text;
             document.getElementById(loadId).innerText = jawaban;
         } else {
-            // Jika Google kirim error seperti safety filter atau quota
-            console.error(data);
-            document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang tidak fokus. Bisa ulangi pertanyaannya?";
+            document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang kurang sehat (Error API).";
         }
     } catch (err) {
-        document.getElementById(loadId).innerText = "Koneksi terputus, Nak. Coba lagi ya.";
+        document.getElementById(loadId).innerText = "Maaf Nak, ustadz gagal merenung (Koneksi bermasalah).";
     } finally {
         box.scrollTop = box.scrollHeight;
     }
