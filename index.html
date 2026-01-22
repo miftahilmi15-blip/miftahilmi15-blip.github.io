@@ -298,21 +298,17 @@
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const msg = input.value.trim();
-    
-    // Jangan kirim kalau kosong
-    if(!msg) return;
+    if (!msg) return;
 
-    // 1. Tampilkan pesan user ke layar
+    // Tampilkan chat user
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
-    input.value = ""; // Bersihkan kolom input
-    
-    // 2. Siapkan tempat jawaban (animasi loading)
+    input.value = "";
     const loadId = "ai-" + Date.now();
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // 3. Konfigurasi API Google
-    const apiKey = "AIzaSyCejl9Dr_4mqzjnTUU4lG0afMdAyXJe8tY";
+    // PAKAI KUNCI BARU YANG AKHIRNYA ...oCTA atau ...e8tY TADI DI SINI
+    const apiKey = "AIzaSyCejl9Dr_4mqzjnTUU4lG0afMdAyXJe8tY"; 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     try {
@@ -320,46 +316,27 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: "Berperanlah sebagai ustadz yang bijak. Jawab singkat, ramah, dan islami. Panggil saya Nak. Pertanyaan: " + msg }]
-                }],
-                safetySettings: [
-                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                ],
-                generationConfig: {
-                    temperature: 0.7,
-                    maxOutputTokens: 500
-                }
+                contents: [{ parts: [{ text: "Kamu adalah ustadz pesantren yang bijak. Jawab dengan ramah dan islami. Panggil saya Nak. Pertanyaan: " + msg }] }]
             })
         });
 
         const data = await response.json();
         
-        // 4. Ambil teks jawaban
-        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+        // Perbaikan pembacaan data Google (Sering gagal di sini)
+        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts) {
             const jawaban = data.candidates[0].content.parts[0].text;
             document.getElementById(loadId).innerText = jawaban;
         } else {
-            // Jika kena sensor Google
-            document.getElementById(loadId).innerText = "Maaf Nak, ustadz belum bisa menjawab itu. Coba tanya hal lain ya.";
-            console.log("Detail dari Google:", data);
+            // Jika Google kirim error seperti safety filter atau quota
+            console.error(data);
+            document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang tidak fokus. Bisa ulangi pertanyaannya?";
         }
-
     } catch (err) {
-        // Jika koneksi internet bermasalah
-        document.getElementById(loadId).innerText = "Aduh, koneksi ke ustadz terganggu, Nak.";
-        console.error("Koneksi Error:", err);
+        document.getElementById(loadId).innerText = "Koneksi terputus, Nak. Coba lagi ya.";
     } finally {
-        // Scroll otomatis ke bawah
         box.scrollTop = box.scrollHeight;
     }
   }
-
-  // Pastikan fungsi ini terbaca secara global oleh tombol
-  window.kirimKeAI = kirimKeAI;
 </script>
 </body>
 </html>
