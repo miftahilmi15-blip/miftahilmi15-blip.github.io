@@ -1,154 +1,155 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>E-SANTRI TAHFIDZ | v12 Sync</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-SANTRI | Tahfidz & Qiraati</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #10b981; --bg: #f1f5f9; --white: #ffffff; --text: #0f172a; --accent: #eab308; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); padding: 15px; display: flex; justify-content: center; }
-        .wadah { width: 100%; max-width: 450px; background: var(--white); padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
         .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #eee; padding: 4px; border-radius: 12px; }
         .tab-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 700; font-size: 11px; cursor: pointer; color: #666; }
         .tab-btn.active { background: var(--primary); color: white; }
         .form-grup { margin-bottom: 15px; }
-        label { font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 5px; text-transform: uppercase; }
-        select, input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 14px; outline: none; }
-        .rating { display: flex; gap: 8px; justify-content: center; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #cbd5e1; }
+        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        select, input, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; font-size: 14px; outline: none; }
+        .rating { display: flex; gap: 8px; justify-content: center; background: #f9f9f9; padding: 10px; border-radius: 12px; }
         .star { cursor: pointer; font-size: 26px; color: #ddd; }
-        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        .hidden { display: none; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+        .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        .wadah-tabel { overflow-x: auto; margin-top: 15px; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 450px; }
         th, td { padding: 10px; border: 1px solid #eee; text-align: left; }
-        th { background: #f8fafc; color: var(--primary); }
+        th { background: #f9f9f9; color: var(--primary); }
+        #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <div id="lock-screen" style="position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
-    <h2 style="margin-bottom:20px;">🔒 PIN TAHFIDZ</h2>
-    <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
-    <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
+    <h2 style="margin-bottom:20px;">🔒 PIN PETUGAS</h2>
+    <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px;" placeholder="****">
+    <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">MASUK</button>
 </div>
 
 <div class="wadah">
     <header><h1>E-SANTRI TAHFIDZ</h1></header>
     <div class="nav-tabs">
-        <button id="tabInput" class="tab-btn active" onclick="switchMenu('input')">INPUT DATA</button>
-        <button id="tabRekap" class="tab-btn" onclick="switchMenu('rekap')">REKAP FIREBASE</button>
+        <button id="tabInput" class="tab-btn active" onclick="switchMenu('input')">INPUT</button>
+        <button id="tabRekap" class="tab-btn" onclick="switchMenu('rekap')">REKAP</button>
     </div>
 
     <div id="areaInput">
-        <div class="form-grup"><label>Pilih Kelas</label>
+        <div class="form-grup"><label>Kelas</label>
             <select id="pilih-kelas" onchange="loadSantri()">
-                <option value="">-- Pilih Kelas --</option>
-                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option>
-                <option value="8A">8A</option><option value="8B">8B</option><option value="9A">9A</option>
+                <option value="">-- Pilih --</option>
+                <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
+                <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
+                <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
             </select>
         </div>
-        <div class="form-grup"><label>Nama Santri</label>
-            <select id="pilih-santri"><option value="">-- Pilih Kelas Dulu --</option></select>
-        </div>
-        <div class="form-grup"><label>Materi</label>
-            <input type="text" id="materi" placeholder="Contoh: An-Naba' / Jilid 2">
-        </div>
-        <div class="form-grup"><label>Halaman / Ayat</label>
-            <input type="text" id="ayat" placeholder="Contoh: Hal 15 / Ayat 1-10">
-        </div>
-        <div class="form-grup"><label>Status</label>
-            <select id="status"><option value="Lulus">✅ Lulus</option><option value="Sabaq">🔄 Sabaq</option></select>
-        </div>
-        <div class="form-grup"><label>Kualitas (Bintang)</label>
-            <div class="rating">
-                <span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span><span class="star" onclick="setStar(4)">★</span><span class="star" onclick="setStar(5)">★</span>
-            </div>
-            <input type="hidden" id="nilai-bintang" value="0">
-        </div>
-        <button class="btn-simpan" onclick="simpanData()">SIMPAN KE FIREBASE</button>
+        <div class="form-grup"><label>Nama Santri</label><select id="pilih-santri"><option value="">-- Pilih Kelas Dulu --</option></select></div>
+        <div class="form-grup"><label>Kategori</label><select id="kategori" onchange="updateSub()"><option value="">-- Pilih --</option><option value="Jilid">Qiraati</option><option value="Tahfidz">Tahfidz</option></select></div>
+        <div class="form-grup"><label>Detail</label><select id="materi"></select></div>
+        <div class="form-grup"><label>Hal/Ayat</label><input type="text" id="ayat" placeholder="Contoh: 1-10"></div>
+        <div class="form-grup"><label>Status</label><select id="status"><option value="Lulus">✅ Lulus</option><option value="Sabaq">🔄 Sabaq</option></select></div>
+        <div class="form-grup"><label>Nilai</label><div class="rating"><span class="star" onclick="setStar(1)">★</span><span class="star" onclick="setStar(2)">★</span><span class="star" onclick="setStar(3)">★</span><span class="star" onclick="setStar(4)">★</span><span class="star" onclick="setStar(5)">★</span></div><input type="hidden" id="nilai" value="0"></div>
+        <div id="loading">⏳ Proses...</div>
+        <button class="btn-simpan" onclick="simpan()">SIMPAN</button>
     </div>
 
     <div id="areaRekap" class="hidden">
-        <div class="form-grup">
-            <select id="kls-rekap"><option value="">Pilih Kelas</option><option>7A</option><option>7B</option><option>8A</option></select>
-            <button onclick="prosesRekap()" class="btn-simpan">TAMPILKAN REKAP</button>
-        </div>
-        <div id="wadah-tabel" style="overflow-x:auto;"></div>
+        <select id="kls-rekap" style="margin-bottom:10px;"><option value="">Pilih Kelas</option><option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
+        <button onclick="prosesRekap()" class="btn-simpan" style="margin-bottom:10px;">CARI DATA</button>
+        <div class="wadah-tabel" id="wadah-tabel"></div>
+        <button onclick="exportExcel()" class="btn-simpan" style="background:#107c41;">DOWNLOAD EXCEL</button>
     </div>
 </div>
 
 <script>
-    // DISAMAKAN DENGAN ABSENSI V12
+    // URL SCRIPT_URL DIAMBIL DARI ABSENSI YANG SUDAH JALAN
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
     const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/tahfidz.json";
-    const KODE = "152003";
+    const PIN = "152003";
 
-    // Fitur Ingat Login
-    window.onload = () => { if(localStorage.getItem('tahfidz_login')==='true') document.getElementById('lock-screen').style.display='none'; };
-    function cekLogin() { if(document.getElementById('passcode').value===KODE){ localStorage.setItem('tahfidz_login','true'); document.getElementById('lock-screen').style.display='none'; } else alert("PIN Salah!"); }
+    window.onload = () => { if(localStorage.getItem('login')==='true') document.getElementById('lock-screen').style.display='none'; };
+    function cekLogin(){ if(document.getElementById('passcode').value===PIN){ localStorage.setItem('login','true'); document.getElementById('lock-screen').style.display='none'; } else alert("PIN Salah!"); }
+    function switchMenu(m){ document.getElementById('areaInput').classList.toggle('hidden', m!=='input'); document.getElementById('areaRekap').classList.toggle('hidden', m!=='rekap'); }
+    function setStar(n){ document.getElementById('nilai').value=n; document.querySelectorAll('.star').forEach((s,i)=>s.style.color=i<n?"#eab308":"#ddd"); }
 
-    function switchMenu(m) {
-        document.getElementById('areaInput').classList.toggle('hidden', m !== 'input');
-        document.getElementById('areaRekap').classList.toggle('hidden', m !== 'rekap');
-        document.getElementById('tabInput').classList.toggle('active', m === 'input');
-        document.getElementById('tabRekap').classList.toggle('active', m === 'rekap');
-    }
-
-    // AMBIL NAMA SANTRI (Sama dengan logika Absensi)
     async function loadSantri() {
         const kls = document.getElementById('pilih-kelas').value;
         const sel = document.getElementById('pilih-santri');
         if(!kls) return;
-        sel.innerHTML = '<option>Memuat Nama...</option>';
-        const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-        const data = await res.json();
-        sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-        data.forEach(s => sel.options.add(new Option(s.nama, s.nipd)));
+        sel.innerHTML = '<option>Memuat...</option>';
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+            const data = await res.json();
+            sel.innerHTML = '<option value="">-- Pilih --</option>';
+            data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
+        } catch (e) {
+            sel.innerHTML = '<option>Gagal memuat!</option>';
+        }
     }
 
-    function setStar(n) {
-        document.getElementById('nilai-bintang').value = n;
-        document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd");
-    }
-
-    async function simpanData() {
+    async function simpan() {
         const s = document.getElementById('pilih-santri');
-        if(!s.value || document.getElementById('nilai-bintang').value === "0") return alert("Lengkapi data & bintang!");
-        
-        const payload = {
-            nipd: s.value,
-            nama: s.options[s.selectedIndex].text,
-            kelas: document.getElementById('pilih-kelas').value,
-            materi: document.getElementById('materi').value,
-            ayat: document.getElementById('ayat').value,
-            status: document.getElementById('status').value,
-            nilai: document.getElementById('nilai-bintang').value,
-            tanggal: new Date().toLocaleDateString('id-ID')
+        if(!s.value || document.getElementById('nilai').value=="0") return alert("Lengkapi data!");
+        const p = { 
+            nipd: s.value, 
+            nama: s.options[s.selectedIndex].text, 
+            kelas: document.getElementById('pilih-kelas').value, 
+            surah: document.getElementById('materi').value, 
+            ayat: document.getElementById('ayat').value, 
+            status: document.getElementById('status').value, 
+            nilai: document.getElementById('nilai').value,
+            tgl: new Date().toLocaleDateString('id-ID')
         };
-
-        await fetch(FIREBASE_URL, { method: 'POST', body: JSON.stringify(payload) });
-        alert("✅ Data Tahfidz Berhasil Disimpan!");
-        location.reload();
+        document.getElementById('loading').style.display='block';
+        try {
+            await fetch(FIREBASE_URL, { method:'POST', body: JSON.stringify(p) });
+            alert("✅ Berhasil Simpan ke Firebase!");
+            location.reload();
+        } catch (e) {
+            alert("Gagal simpan!");
+        }
+        document.getElementById('loading').style.display='none';
     }
 
     async function prosesRekap() {
         const kls = document.getElementById('kls-rekap').value;
         if(!kls) return alert("Pilih kelas!");
-        document.getElementById('wadah-tabel').innerHTML = "Memuat data...";
-        
+        document.getElementById('wadah-tabel').innerHTML = "Memuat...";
         const res = await fetch(FIREBASE_URL);
         const data = await res.json();
-        let html = `<table><tr><th>Nama</th><th>Materi</th><th>Hal</th><th>★</th></tr>`;
+        let h = `<table><tr><th>Nama</th><th>Materi</th><th>Hal</th><th>Stat</th><th>★</th></tr>`;
+        let adaData = false;
         for(let id in data) {
             if(data[id].kelas === kls) {
-                html += `<tr><td>${data[id].nama}</td><td>${data[id].materi}</td><td>${data[id].ayat}</td><td>${data[id].nilai}</td></tr>`;
+                h += `<tr><td>${data[id].nama}</td><td>${data[id].surah}</td><td>${data[id].ayat}</td><td>${data[id].status}</td><td>${data[id].nilai}</td></tr>`;
+                adaData = true;
             }
         }
-        document.getElementById('wadah-tabel').innerHTML = html + `</table>`;
+        document.getElementById('wadah-tabel').innerHTML = adaData ? h + `</table>` : "Tidak ada data untuk kelas ini.";
+    }
+
+    function exportExcel() { 
+        const t = document.querySelector("table");
+        if(!t) return alert("Cari data dulu!");
+        XLSX.writeFile(XLSX.utils.table_to_book(t), `Rekap_Tahfidz_${document.getElementById('kls-rekap').value}.xlsx`); 
+    }
+
+    function updateSub() { 
+        const m = document.getElementById('materi'); m.innerHTML=""; 
+        const kat = document.getElementById('kategori').value;
+        const d = kat==="Jilid"?["Jilid 1","Jilid 2","Jilid 3","Jilid 4","Jilid 5","Jilid 6"]:["An-Naba","An-Nazi'at","'Abasa","At-Takwir","Al-Infitar","Al-Mutaffifin"];
+        d.forEach(x=>m.options.add(new Option(x,x)));
     }
 </script>
 </body>
