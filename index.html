@@ -294,20 +294,24 @@
 </script>
 
 <script>
-  async function kirimKeAI() {
+  // Pakai 'window.' agar bisa dipanggil oleh atribut onkeypress/onclick di HTML
+  window.kirimKeAI = async function() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const msg = input.value.trim();
     if (!msg) return;
 
+    // Tampilkan pesan user
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
+    
+    // Animasi loading
     const loadId = "ai-" + Date.now();
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
     try {
-        // Ini adalah alamat "Otak" yang baru Bos buat di Cloudflare
+        // Alamat Worker Cloudflare Bos
         const workerUrl = "https://ustadz-ai.miftahilmi15-3c9.workers.dev"; 
 
         const res = await fetch(workerUrl, {
@@ -321,7 +325,7 @@
         if (data.reply) {
             document.getElementById(loadId).innerText = data.reply;
         } else {
-            document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang tidak enak badan.";
+            document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang tidak enak badan (Error API).";
         }
     } catch (err) {
         document.getElementById(loadId).innerText = "Maaf Nak, ustadz gagal merenung. Cek koneksi ya.";
