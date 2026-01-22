@@ -40,40 +40,98 @@
   .header-box { text-align: center; padding: 25px 0; }
   .title { font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
 
-  /* SIDEBAR & UI ELEMENTS */
-  .menu-trigger { position: fixed; top: 25px; right: 25px; z-index: 1400; background: white; color: var(--primary); width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--shadow); cursor: pointer; border: 1px solid #eee; }
-  .sidebar { position: fixed; top: 0; right: -100%; width: 280px; height: 100%; background: white; z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
+  .menu-trigger { 
+    position: fixed; top: 25px; right: 25px; z-index: 1400; 
+    background: white; color: var(--primary); width: 48px; height: 48px; 
+    border-radius: 14px; display: flex; align-items: center; justify-content: center; 
+    font-size: 20px; box-shadow: var(--shadow); cursor: pointer; border: 1px solid #eee;
+  }
+  .sidebar { 
+    position: fixed; top: 0; right: -100%; width: 280px; height: 100%; 
+    background: white; z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+  }
   .sidebar.open { right: 0; }
   .close-sidebar { align-self: flex-end; font-size: 24px; color: #ccc; cursor: pointer; margin-bottom: 15px; }
+
   .profile { text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; width: 100%; }
   .profile img { width: 75px; height: 75px; border-radius: 20px; margin-bottom: 10px; box-shadow: var(--shadow); border: 2px solid white; object-fit: cover; }
-  .nav { display: flex; flex-direction: column; gap: 5px; width: 100%; }
-  .nav a { display: flex; align-items: center; gap: 12px; padding: 12px 15px; text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px; border-radius: 12px; transition: 0.2s; }
-  .nav a i { font-size: 16px; color: var(--primary); width: 20px; text-align: center; }
+  .profile h3 { font-size: 15px; font-weight: 700; color: var(--text); }
 
-  /* DASHBOARD COMPONENTS */
-  .streak-card { background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 15px 35px rgba(31,111,81,0.2); }
-  .fire-icon { font-size: 40px; display: inline-block; filter: drop-shadow(0 0 10px rgba(255,165,0,0.8)); animation: flicker 1.5s infinite alternate; }
-  @keyframes flicker { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+  .nav { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+  .nav a { 
+    display: flex; align-items: center; gap: 12px; padding: 12px 15px; 
+    text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px;
+    border-radius: 12px; transition: 0.2s;
+  }
+  .nav a i { font-size: 16px; color: var(--primary); width: 20px; text-align: center; }
+  .nav a:hover { background: #f0f7f4; color: var(--primary); }
+
+  .streak-card { 
+    background: var(--primary-grad); border-radius: 24px; padding: 20px; color: white; 
+    margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; 
+    box-shadow: 0 15px 35px rgba(31,111,81,0.2);
+  }
+
+  .fire-icon { 
+    font-size: 40px; 
+    display: inline-block;
+    filter: drop-shadow(0 0 10px rgba(255,165,0,0.8));
+    animation: flicker 1.5s infinite alternate;
+  }
+
+  @keyframes flicker {
+    0% { transform: scale(1); filter: drop-shadow(0 0 5px orange); }
+    100% { transform: scale(1.1); filter: drop-shadow(0 0 15px red); }
+  }
+
   .fire-off { filter: grayscale(100%) opacity(0.3) !important; animation: none !important; }
 
+  .mahfuzat-box { 
+    background: white; padding: 15px 20px; border-radius: 50px; margin-bottom: 25px; 
+    display: flex; align-items: center; box-shadow: var(--shadow); border: 1px solid #f0f0f0; cursor: pointer;
+  }
+  .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; }
+
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .menu-item { background: white; padding: 22px 10px; border-radius: 24px; text-align: center; box-shadow: var(--shadow); transition: 0.3s; cursor: pointer; text-decoration: none; color: inherit; }
+  .menu-item { 
+    background: white; padding: 22px 10px; border-radius: 24px; text-align: center; 
+    box-shadow: var(--shadow); transition: 0.3s; cursor: pointer; text-decoration: none; color: inherit;
+  }
   .menu-item:active { transform: scale(0.9); }
   .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
+  .menu-item span:not(.menu-symbol) { font-size: 11px; font-weight: 700; color: #555; }
 
-  /* AI CHAT WINDOW */
-  #ai-window { display: none; position: fixed; bottom: 90px; right: 20px; width: 300px; height: 420px; background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid #eee; }
+  .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
+  .card-login input { 
+    width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid #eee; outline: none; background: #fafafa;
+  }
+  .btn-google { 
+    width: 100%; padding: 14px; border-radius: 16px; border: 1.5px solid #eee; 
+    background: white; display: flex; align-items: center; justify-content: center; 
+    gap: 12px; font-weight: 700; color: #444; cursor: pointer; margin-top: 15px;
+  }
+  .btn-google img { width: 20px; height: 20px; }
+
+  .hidden { display: none !important; }
+
+  /* AI CHAT */
+  #ai-window {
+    display: none; position: fixed; bottom: 90px; right: 20px; 
+    width: 300px; height: 420px; background: white; 
+    border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+    z-index: 1000; flex-direction: column; overflow: hidden; border: 1px solid #eee;
+  }
   .ai-header { background: #15803d; color: white; padding: 15px; font-weight: bold; text-align: center; font-size: 14px; position: relative; }
   .ai-header .close-ai { position: absolute; right: 15px; top: 15px; cursor: pointer; }
+  
   #chatContent { flex: 1; padding: 15px; overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; background: #fdfdfd; }
   .msg-user { background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; margin-bottom: 10px; align-self: flex-end; max-width: 85%; }
   .msg-ai { background: #f1f1f1; color: #333; padding: 10px 15px; border-radius: 15px 15px 15px 0; margin-bottom: 10px; align-self: flex-start; max-width: 85%; line-height: 1.5; }
+
   .ai-input-area { padding: 10px 15px 15px 15px; border-top: 1px solid #eee; display: flex; background: white; align-items: center; }
   .ai-input-area input { flex: 1; border: none; outline: none; padding: 8px 12px; background: #f5f5f5; border-radius: 10px; font-size: 13px; }
   .btn-send-ai { color: #15803d; font-weight: bold; background: none; border: none; cursor: pointer; padding-left: 10px; }
-
-  .hidden { display: none !important; }
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -95,21 +153,25 @@
     <a href="#" onclick="location.reload()"><i class="fa-solid fa-house"></i> Dashboard</a>
     <a href="admin.html" id="admin-menu" class="hidden" style="background: #fff5f5; color: #e74c3c;"><i class="fa-solid fa-user-shield"></i> Menu Admin</a>
     <a href="waktu-sholat.html"><i class="fa-solid fa-mosque"></i> Waktu Sholat</a>
-    <a href="alquran.html"><i class="fa-solid fa-book-quran"></i> Al-Quran</a>
-    <a href="#" onclick="logout()" style="color:#e74c3c; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 15px;"><i class="fa-solid fa-power-off"></i> Keluar</a>
+    <a href="kalender.html"><i class="fa-solid fa-calendar-alt"></i> Kalender</a>
+    <a href="pengaduan.html"><i class="fa-solid fa-bullhorn"></i> Pengaduan</a>
+    <a href="aquarium.html"><i class="fa-solid fa-fish"></i> Aquarium Mengaji</a>
+    <a href="#" onclick="logout()" style="color:#e74c3c; margin-top: 15px; border-top: 1px solid #f0f0f0; padding-top: 15px;">
+      <i class="fa-solid fa-power-off"></i> Keluar
+    </a>
   </div>
 </div>
 
 <main class="container">
   <header class="header-box"><h1 class="title">E-SANTRI</h1></header>
 
-  <div id="login-card" class="card-login" style="background:white; padding:40px 30px; border-radius:35px; box-shadow:var(--shadow); text-align:center;">
+  <div id="login-card" class="card-login hidden">
     <h2 style="color:var(--primary); margin-bottom:25px;">Ahlan wa Sahlan</h2>
-    <input type="email" id="email" placeholder="Email Santri" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid #eee; background:#fafafa;">
-    <input type="password" id="password" placeholder="Password" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid #eee; background:#fafafa;">
+    <input type="email" id="email" placeholder="Email Santri">
+    <input type="password" id="password" placeholder="Password">
     <button onclick="login()" style="width:100%; padding:16px; border-radius:16px; border:none; background:var(--primary-grad); color:white; font-weight:700; cursor:pointer;">MASUK</button>
     <div style="margin: 20px 0; color:#ccc; font-size: 11px;">— ATAU —</div>
-    <button onclick="loginGoogle()" style="width:100%; padding:14px; border-radius:16px; border:1.5px solid #eee; background:white; display:flex; align-items:center; justify-content:center; gap:12px; font-weight:700; cursor:pointer;"><img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg" style="width:20px;"> Masuk dengan Google</button>
+    <button class="btn-google" onclick="loginGoogle()"><img src="https://fonts.gstatic.com/s/i/productlogos/googleg/v6/24px.svg"> Masuk dengan Google</button>
   </div>
 
   <section id="dashboard" class="hidden">
@@ -118,13 +180,24 @@
       <div id="fire-api" class="fire-icon">🔥</div>
     </div>
 
+    <div class="mahfuzat-box">
+      <div class="m-label">MAHFUZAT</div>
+      <marquee scrollamount="4" style="color:#555; font-weight:600; width: 100%;">
+        <span id="runArab" style="font-family:'Noto Naskh Arabic'; color:var(--primary); font-size:17px;">...</span>
+        <span id="runIndo" style="margin-left:15px;">Mencari mutiara hikmah...</span>
+      </marquee>
+    </div>
+
     <div class="menu-grid">
       <a href="tahfidz.html" class="menu-item"><span class="menu-symbol">🏆</span><span>Tahfidz</span></a>
+      <a href="absensi.html" class="menu-item"><span class="menu-symbol">📝</span><span>Absensi</span></a>
+      <a href="budayasekolah.html" class="menu-item"><span class="menu-symbol">🕌</span><span>Budaya</span></a>
+      <a href="pelajaran.html" class="menu-item"><span class="menu-symbol">📅</span><span>Jadwal</span></a>
       <a href="alquran.html" class="menu-item"><span class="menu-symbol">📖</span><span>Al-Quran</span></a>
       <a href="doa.html" class="menu-item"><span class="menu-symbol">🤲</span><span>Doa-doa</span></a>
-      <a href="absensi.html" class="menu-item"><span class="menu-symbol">📝</span><span>Absensi</span></a>
+      <a href="perpustakaan.html" class="menu-item"><span class="menu-symbol">📚</span><span>Perpus</span></a>
       <a href="kamus.html" class="menu-item"><span class="menu-symbol">📑</span><span>Kamus</span></a>
-      <a href="pelajaran.html" class="menu-item"><span class="menu-symbol">📅</span><span>Jadwal</span></a>
+      <a href="ujian.html" class="menu-item"><span class="menu-symbol">💡</span><span>Ujian</span></a>
     </div>
   </section>
 </main>
@@ -137,13 +210,13 @@
     <div class="ai-header">Asisten E-Santri <span class="close-ai" onclick="toggleChat()">✕</span></div>
     <div id="chatContent"><div class="msg-ai">Assalamu'alaikum! Ada yang bisa saya bantu?</div></div>
     <div class="ai-input-area">
-        <input type="text" id="aiInput" placeholder="Tanya ustadz..." onkeypress="if(event.key==='Enter') window.kirimKeAI()">
+        <input type="text" id="aiInput" placeholder="Tanya sesuatu..." onkeypress="if(event.key==='Enter') window.kirimKeAI()">
         <button onclick="window.kirimKeAI()" class="btn-send-ai">Kirim</button>
     </div>
 </div>
 
 <script>
-  // --- KONFIGURASI FIREBASE (DARI BOS) ---
+  // --- KONFIGURASI FIREBASE ---
   const firebaseConfig = {
     apiKey: "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo",
     authDomain: "e-santri-b62be.firebaseapp.com",
@@ -159,6 +232,7 @@
   const auth = firebase.auth();
   const db = firebase.database();
 
+  // --- FUNGSI LOGIN & SIDEBAR ---
   function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
   function logout() { auth.signOut().then(() => location.reload()); }
   function login() {
@@ -173,6 +247,25 @@
   document.getElementById('menu-btn').onclick = () => document.getElementById('sidebar').classList.add('open');
   document.getElementById('closeBtn').onclick = () => document.getElementById('sidebar').classList.remove('open');
 
+  // --- LOGIKA STREAK ---
+  function monitoringStreak(emailUser) {
+    if(!emailUser) return;
+    const key = emailUser.replace(/\./g, ',');
+    const hariIni = new Date().toISOString().split('T')[0];
+    db.ref('users/' + key).on('value', snap => {
+      const data = snap.val();
+      if(!data) return;
+      document.getElementById('streak-text').innerText = (data.streak || 0) + " Hari Istiqomah";
+      const fire = document.getElementById('fire-api');
+      if(data.tgl_terakhir_api === hariIni) {
+        fire.classList.remove('fire-off');
+      } else {
+        fire.classList.add('fire-off');
+      }
+    });
+  }
+
+  // --- LOGIKA UTAMA AUTH ---
   auth.onAuthStateChanged(user => {
     if(user){
         document.getElementById("dashboard").classList.remove("hidden");
@@ -181,6 +274,16 @@
         document.getElementById("ai-button").style.display = "flex";
         document.getElementById("uName").innerText = user.displayName || "Santri";
         document.getElementById("uEmail").innerText = user.email;
+        if(user.photoURL) document.getElementById("uImg").src = user.photoURL;
+        if (user.email === "miftahilmi15@gmail.com") document.getElementById("admin-menu").classList.remove("hidden");
+        monitoringStreak(user.email);
+        db.ref('konten/mahfuzat').on('value', snap => {
+            const d = snap.val();
+            if(d) {
+                document.getElementById('runArab').innerText = d.arab || "";
+                document.getElementById('runIndo').innerText = " — " + (d.indo || "");
+            }
+        });
     } else {
         document.getElementById("login-card").classList.remove("hidden");
         document.getElementById("dashboard").classList.add("hidden");
@@ -188,19 +291,27 @@
         document.getElementById("ai-button").style.display = "none";
     }
   });
+</script>
 
-  // --- SCRIPT AI GEMINI (DARI BOS) ---
+<script>
   async function kirimKeAI() {
     const input = document.getElementById('aiInput');
     const box = document.getElementById('chatContent');
     const msg = input.value.trim();
+    
+    // Jangan kirim kalau kosong
     if(!msg) return;
+
+    // 1. Tampilkan pesan user ke layar
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
-    input.value = "";
+    input.value = ""; // Bersihkan kolom input
+    
+    // 2. Siapkan tempat jawaban (animasi loading)
     const loadId = "ai-" + Date.now();
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
-    
+
+    // 3. Konfigurasi API Google
     const apiKey = "AIzaSyCFVjE7ey5g__Iv4vUOZftB7g8GtSTSsEo";
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
@@ -209,18 +320,45 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: "Berperanlah sebagai ustadz yang bijak. Jawab singkat, ramah, dan islami. Panggil saya Nak. Pertanyaan: " + msg }] }]
+                contents: [{
+                    parts: [{ text: "Berperanlah sebagai ustadz yang bijak. Jawab singkat, ramah, dan islami. Panggil saya Nak. Pertanyaan: " + msg }]
+                }],
+                safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                ],
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 500
+                }
             })
         });
+
         const data = await response.json();
-        const jawaban = data.candidates[0].content.parts[0].text;
-        document.getElementById(loadId).innerText = jawaban;
+        
+        // 4. Ambil teks jawaban
+        if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+            const jawaban = data.candidates[0].content.parts[0].text;
+            document.getElementById(loadId).innerText = jawaban;
+        } else {
+            // Jika kena sensor Google
+            document.getElementById(loadId).innerText = "Maaf Nak, ustadz belum bisa menjawab itu. Coba tanya hal lain ya.";
+            console.log("Detail dari Google:", data);
+        }
+
     } catch (err) {
-        document.getElementById(loadId).innerText = "Aduh, koneksi ustadz terganggu, Nak.";
+        // Jika koneksi internet bermasalah
+        document.getElementById(loadId).innerText = "Aduh, koneksi ke ustadz terganggu, Nak.";
+        console.error("Koneksi Error:", err);
     } finally {
+        // Scroll otomatis ke bawah
         box.scrollTop = box.scrollHeight;
     }
   }
+
+  // Pastikan fungsi ini terbaca secara global oleh tombol
   window.kirimKeAI = kirimKeAI;
 </script>
 </body>
