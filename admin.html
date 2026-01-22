@@ -43,6 +43,11 @@
         table td:first-child { text-align: left; font-weight: bold; background: #fafafa; position: sticky; left: 0; z-index: 10; }
         
         .label-kecil { font-size: 10px; font-weight: bold; color: #666; margin-bottom: 4px; display: block; }
+        
+        /* Style Tambahan untuk Pengaduan */
+        .msg-box { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .msg-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
+        .msg-text { font-size: 13px; line-height: 1.4; color: #444; }
     </style>
 </head>
 <body>
@@ -60,6 +65,7 @@
     <button class="nav-item" onclick="showTab('rekap', this)"><i class="fas fa-chart-line"></i> Rekap</button>
     <button class="nav-item" onclick="showTab('materi', this)"><i class="fas fa-book"></i> Materi</button>
     <button class="nav-item" onclick="showTab('reward', this)"><i class="fas fa-fish"></i> Reward</button>
+    <button class="nav-item" onclick="showTab('adu', this)"><i class="fas fa-envelope"></i> Pengaduan</button>
 </div>
 
 <div class="container">
@@ -176,6 +182,13 @@
         </div>
     </div>
 
+    <div id="tab-adu" class="tab-content hidden">
+        <div class="card">
+            <h3><i class="fas fa-envelope-open-text"></i> Kotak Pengaduan Santri</h3>
+            <div id="list-pengaduan"><p style="font-size:12px; color:#999; text-align:center;">Memuat pengaduan...</p></div>
+        </div>
+    </div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -204,6 +217,7 @@
         btn.classList.add('active');
         if(id === 'rekap') loadRekapNilai();
         if(id === 'reward') loadRewardMonitor();
+        if(id === 'adu') loadPengaduan();
     }
 
     async function saveUjian() {
@@ -284,15 +298,17 @@
     function kirimReward() {
         const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
         if(!mail) return alert("Isi Email!");
-        db.ref(`users/${mail}/ikan`).transaction(v => (v || 0) + 1);
+        // Ditambahkan Number() supaya aman tidak mentok
+        db.ref(`users/${mail}/ikan`).transaction(v => (Number(v) || 0) + 1);
         alert("1 Ikan Dikirim!");
     }
 
-    // --- FUNGSI REWARD PAKAN (BARU) ---
+    // --- FUNGSI REWARD PAKAN ---
     function kirimPakan(jumlah) {
         const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
         if(!mail) return alert("Isi Email!");
-        db.ref(`users/${mail}/pakan`).transaction(v => (v || 0) + jumlah);
+        // Ditambahkan Number() supaya aman tidak mentok
+        db.ref(`users/${mail}/pakan`).transaction(v => (Number(v) || 0) + jumlah);
         alert(`${jumlah} Pakan Dikirim!`);
     }
 
@@ -313,6 +329,18 @@
                         </span>
                     </div>`;
                 }
+            });
+        });
+    }
+
+    // --- FUNGSI PENGADUAN ---
+    function loadPengaduan() {
+        db.ref('pengaduan').orderByChild('timestamp').on('value', snap => {
+            const box = document.getElementById('list-pengaduan'); box.innerHTML = "";
+            if(!snap.exists()) { box.innerHTML = "<p style='text-align:center; font-size:12px; color:#999;'>Belum ada pengaduan.</p>"; return; }
+            let data = []; snap.forEach(s => { data.push(s.val()); });
+            data.reverse().forEach(d => {
+                box.innerHTML += `<div class="msg-box"><div class="msg-header"><b>${d.nama}</b><span>${d.tanggal}</span></div><div class="msg-text">${d.pesan}</div></div>`;
             });
         });
     }
