@@ -300,38 +300,32 @@
     const msg = input.value.trim();
     if (!msg) return;
 
+    // Tampilkan pesan user
     box.innerHTML += `<div class="msg-user">${msg}</div>`;
     input.value = "";
     const loadId = "ai-" + Date.now();
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
-    // --- RAHASIA AGAR TIDAK DIBLOKIR GOOGLE ---
-    const rahasia = "QUl6YVN5Q0ZWakU3ZXk1Z19fSXY0dlVPWmZ0QjdnOEd0U1RTc0Vv"; 
-    const k = atob(rahasia); 
-    const u = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
-    // ------------------------------------------
-
     try {
-        const r = await fetch(u, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: "Jawablah sebagai ustadz yang bijak dan islami. Panggil saya Nak. Pertanyaan: " + msg }] }]
-            })
+        // GANTI INI dengan alamat Worker yang Bos buat tadi
+        const workerUrl = "https://ustadz-ai.miftahilmi15-3c9.workers.dev"; 
+
+        const res = await fetch(workerUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: msg })
         });
 
-        const d = await r.json();
+        const data = await res.json();
         
-        if (d.candidates && d.candidates[0].content) {
-            const jawaban = d.candidates[0].content.parts[0].text;
-            document.getElementById(loadId).innerText = jawaban;
+        if (data.reply) {
+            document.getElementById(loadId).innerText = data.reply;
         } else {
-            console.log(d); // Cek error di console browser
-            document.getElementById(loadId).innerText = "Maaf Nak, ustadz sedang kurang sehat (Error API).";
+            document.getElementById(loadId).innerText = "Maaf Nak, ada kendala teknis.";
         }
     } catch (err) {
-        document.getElementById(loadId).innerText = "Maaf Nak, ustadz gagal merenung (Koneksi bermasalah).";
+        document.getElementById(loadId).innerText = "Maaf Nak, koneksi ke pusat terputus.";
     } finally {
         box.scrollTop = box.scrollHeight;
     }
