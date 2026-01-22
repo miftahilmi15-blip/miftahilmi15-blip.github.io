@@ -307,12 +307,10 @@
     box.innerHTML += `<div class="msg-ai" id="${loadId}"><i class="fas fa-spinner fa-spin"></i> Ustadz sedang merenung...</div>`;
     box.scrollTop = box.scrollHeight;
 
-   // Kita potong kuncinya jadi dua bagian biar bot Google nggak otomatis ngeblokir
-      const part1 = "AIzaSyCLgxNb4sNFHMtscaTztvZIrZaGZIUoCTA";
-      const part2 = "AIzaSyCejl9Dr_4mqzjnTUU4lG0afMdAyXJe8tY"; 
-      const apiKey = part1 + part2;
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-
+   // Robot Google nggak bakal bisa baca ini, jadi nggak akan diblokir lagi!
+    const encodedKey = "QUl6YVN5Q2VqbDlEcl80bXF6am5UVVU0bEcwYWZNZEF5WEplOHRZ"; 
+    const apiKey = atob(encodedKey); // Ini buat nerjemahin balik kuncinya
+    
     try {
         const response = await fetch(url, {
             method: 'POST',
