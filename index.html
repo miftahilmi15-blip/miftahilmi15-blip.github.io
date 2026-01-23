@@ -94,13 +94,27 @@
   .m-label { background: #d4b96a; color: white; font-size: 9px; font-weight: 800; padding: 5px 12px; border-radius: 50px; margin-right: 12px; }
 
   .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  /* 1. Tampilan Standar */
   .menu-item { 
-    background: white; padding: 22px 10px; border-radius: 24px; text-align: center; 
-    box-shadow: var(--shadow); transition: 0.3s; cursor: pointer; text-decoration: none; color: inherit;
+    background: white; 
+    padding: 22px 10px; 
+    border-radius: 28px; 
+    text-align: center; 
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    cursor: pointer; 
+    text-decoration: none; 
+    color: inherit;
+    border: 1px solid #f0f0f0;
   }
-  .menu-item:active { transform: scale(0.9); }
-  .menu-symbol { font-size: 32px; display: block; margin-bottom: 8px; }
-  .menu-item span:not(.menu-symbol) { font-size: 11px; font-weight: 700; color: #555; }
+
+  /* 2. Tampilan Pas Disentuh (Tambahan) */
+  .menu-item:active, .menu-item:hover { 
+    transform: translateY(-5px) scale(1.03); 
+    box-shadow: 0 15px 30px rgba(31, 111, 81, 0.15);
+    border-color: var(--primary);
+    background: #ffffff;
+  }
 
   .card-login { background: white; padding: 40px 30px; border-radius: 35px; box-shadow: var(--shadow); text-align: center; }
   .card-login input { 
