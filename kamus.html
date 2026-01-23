@@ -3,20 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamus API Akurat | E-Santri</title>
+<title>VOCABIN | E-Santri</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; --white: #ffffff; }
-  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; overflow-x: hidden; }
 
   header { 
     background: var(--white); padding: 40px 20px 60px; text-align: center; 
     border-radius: 0 0 40px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    position: relative;
   }
   .title-4d {
     font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 900;
     color: #fff; -webkit-text-stroke: 1.2px var(--primary);
     text-transform: uppercase; text-shadow: 0 5px 15px rgba(31, 111, 81, 0.2);
+    margin: 0;
   }
 
   .search-container { max-width: 400px; margin: -30px auto 0; padding: 0 20px; }
@@ -24,8 +26,8 @@
     background: var(--white); display: flex; align-items: center;
     padding: 8px 20px; border-radius: 50px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);
   }
-  .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; }
-  .search-wrapper button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; }
+  .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; width: 100%; }
+  .search-wrapper button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
   .container { max-width: 450px; margin: 30px auto; padding: 0 20px; }
   .result-card {
@@ -42,6 +44,31 @@
   .lbl-indo { background: #2980b9; }
   .lbl-eng { background: #8e44ad; }
   
+  /* Game Styles ala Duolingo */
+  .game-btn-trigger {
+    background: linear-gradient(135deg, #58cc02, #23ac5e); color: white;
+    padding: 15px; border-radius: 20px; text-align: center; margin-top: 20px;
+    cursor: pointer; display: none; font-weight: bold; border-bottom: 4px solid #1a8a4b;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+  #gameOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: white; z-index: 9999; display: none; flex-direction: column; padding: 20px;
+    box-sizing: border-box;
+  }
+  .progress-bar { height: 12px; background: #e5e5e5; border-radius: 10px; flex: 1; margin: 0 15px; overflow: hidden; }
+  .progress-fill { width: 0%; height: 100%; background: #58cc02; transition: 0.5s; }
+  .option-btn {
+    background: white; border: 2px solid #e5e5e5; border-radius: 15px;
+    padding: 15px; font-size: 16px; font-weight: 600; margin-bottom: 10px;
+    cursor: pointer; transition: 0.2s; border-bottom: 4px solid #e5e5e5;
+  }
+  .option-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+  .option-btn.correct { background: #d7ffb1; border-color: #58cc02; color: #58cc02; }
+  .option-btn.wrong { background: #ffdfe0; border-color: #ee2a33; color: #ee2a33; }
+
   .loader { display: none; text-align: center; padding: 20px; }
   .spinner { width: 30px; height: 30px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -50,14 +77,14 @@
 <body>
 
 <header>
-  <a href="index.html" style="position: absolute; left: 20px; top: 35px; text-decoration: none; color: var(--primary); font-weight: bold;">←</a>
+  <a href="index.html" style="position: absolute; left: 20px; top: 35px; text-decoration: none; color: var(--primary); font-weight: bold; font-size: 20px;">←</a>
   <h1 class="title-4d">VOCABIN</h1>
-  <p style="font-size: 10px; color: #888;">Belajar Bahasa Itu Mudah</p>
+  <p style="font-size: 10px; color: #888; margin-top: 5px;">BELAJAR BAHASA ITU MUDAH</p>
 </header>
 
 <div class="search-container">
   <div class="search-wrapper">
-    <input type="text" id="searchInput" placeholder="Cari kosa kata...">
+    <input type="text" id="searchInput" placeholder="Ketik kata (Indo/English)...">
     <button onclick="cariKamus()">🔍</button>
   </div>
 </div>
@@ -66,95 +93,153 @@
   <div id="loader" class="loader"><div class="spinner"></div></div>
 
   <div id="resultCard" class="result-card">
-    <div id="resTitle" style="font-weight:900; color:var(--primary); font-size:20px; text-transform:uppercase;">...</div>
+    <div id="resTitle" style="font-weight:900; color:var(--primary); font-size:22px; text-transform:uppercase;">...</div>
     <div class="word-arabic" id="resArab">...</div>
 
     <div class="meaning-section">
       <span class="label-box lbl-arab">ARAB</span>
-      <p class="text-content" id="resArDetail">...</p>
+      <p id="resArDetail">...</p>
     </div>
 
     <div class="meaning-section">
       <span class="label-box lbl-indo">INDONESIA</span>
-      <p class="text-content" id="resIndo">...</p>
+      <p id="resIndo">...</p>
     </div>
 
     <div class="meaning-section">
       <span class="label-box lbl-eng">INGGRIS</span>
-      <p class="text-content" id="resEng">...</p>
+      <p id="resEng">...</p>
+    </div>
+
+    <div id="btnGame" class="game-btn-trigger" onclick="openGame()">
+      🎮 UJI HAFALAN KATA INI?
     </div>
   </div>
 </div>
 
+<div id="gameOverlay">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span onclick="closeGame()" style="font-size: 24px; font-weight: bold; cursor: pointer;">✕</span>
+        <div class="progress-bar"><div id="pFill" class="progress-fill"></div></div>
+        <span id="streak" style="font-weight: bold; color: #ff9600;">🔥 0</span>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h3 id="gameInstruction" style="color: #afafaf; font-size: 14px; text-transform: uppercase;">Apa Bahasa Inggrisnya:</h3>
+        <h1 id="gameQuestion" style="font-size: 32px; margin: 10px 0 30px 0; color: #4b4b4b;">...</h1>
+        
+        <div id="optionsContainer" style="display: flex; flex-direction: column;">
+            </div>
+    </div>
+    
+    <div id="feedback" style="margin-top: auto; padding: 20px; border-radius: 20px; display: none;">
+        <h3 id="feedbackText">Benar!</h3>
+        <button onclick="nextSoal()" id="btnNext" style="width: 100%; padding: 15px; border-radius: 15px; border: none; background: #58cc02; color: white; font-weight: bold; cursor: pointer;">LANJUT</button>
+    </div>
+</div>
+
 <script>
-  // Fungsi utama untuk mengeluarkan suara
+  let lastData = { id: '', ar: '', en: '' };
+  let currentStreak = 0;
+
   function playSound(text, lang) {
     const msg = new SpeechSynthesisUtterance();
-    msg.text = text;
-    msg.lang = lang; // 'ar-SA' untuk Arab, 'en-US' untuk Inggris
-    msg.rate = 0.8;  // Kecepatan bicara agak pelan agar jelas
+    msg.text = text; msg.lang = lang; msg.rate = 0.8;
     window.speechSynthesis.speak(msg);
   }
 
   async function cariKamus() {
     const query = document.getElementById('searchInput').value.trim();
-    const card = document.getElementById('resultCard');
-    const loader = document.getElementById('loader');
-
     if (!query) return;
-    loader.style.display = 'block';
-    card.style.display = 'none';
+
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('resultCard').style.display = 'none';
 
     try {
-      const resAr = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=ar&dt=t&q=${encodeURI(query)}`);
-      const resEn = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=id&tl=en&dt=t&q=${encodeURI(query)}`);
+      const [resAr, resEn] = await Promise.all([
+        fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ar&dt=t&q=${encodeURI(query)}`),
+        fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURI(query)}`)
+      ]);
       
       const dataAr = await resAr.json();
       const dataEn = await resEn.json();
 
-      const arabRaw = dataAr[0][0][0];
-      const engRaw = dataEn[0][0][0];
+      lastData = { id: query, ar: dataAr[0][0][0], en: dataEn[0][0][0] };
 
-      // Tampilkan Hasil & Update Tombol Suara
       document.getElementById('resTitle').innerText = query;
-      document.getElementById('resArab').innerHTML = `
-        ${arabRaw} 
-        <button onclick="playSound('${arabRaw}', 'ar-SA')" style="background:none; border:none; cursor:pointer; font-size:20px;">🔊</button>
-      `;
-      
-      document.getElementById('resArDetail').innerText = `Kosa kata Arab untuk "${query}"`;
-      document.getElementById('resIndo').innerText = `Arti kata "${query}" dalam Bahasa Indonesia.`;
-      
-      document.getElementById('resEng').innerHTML = `
-        ${engRaw} 
-        <button onclick="playSound('${engRaw}', 'en-US')" style="background:none; border:none; cursor:pointer; font-size:16px;">🔊</button>
-      `;
+      document.getElementById('resArab').innerHTML = `${lastData.ar} <button onclick="playSound('${lastData.ar}', 'ar-SA')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-size:24px;">🔊</button>`;
+      document.getElementById('resArDetail').innerText = `Bahasa Arab dari "${query}"`;
+      document.getElementById('resIndo').innerText = query;
+      document.getElementById('resEng').innerHTML = `${lastData.en} <button onclick="playSound('${lastData.en}', 'en-US')" style="background:none; border:none; color:#8e44ad; cursor:pointer; font-size:20px;">🔊</button>`;
 
-      loader.style.display = 'none';
-      card.style.display = 'block';
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('resultCard').style.display = 'block';
+      document.getElementById('btnGame').style.display = 'block';
 
-    } catch (error) {
-      loader.style.display = 'none';
-      alert("Gagal memuat suara/data.");
+    } catch (e) {
+      document.getElementById('loader').style.display = 'none';
+      alert("Koneksi bermasalah.");
     }
   }
-</script>
 
-<style>
-  /* Tambahan Style agar tombol suara rapi */
-  .word-arabic button {
-    vertical-align: middle;
-    margin-right: 10px;
-    color: var(--primary);
-    transition: 0.3s;
+  // --- GAME LOGIC ---
+  function openGame() {
+    document.getElementById('gameOverlay').style.display = 'flex';
+    nextSoal();
   }
-  .word-arabic button:hover { transform: scale(1.2); }
-  
-  .text-content button {
-    margin-left: 5px;
-    color: #8e44ad;
+
+  function closeGame() {
+    document.getElementById('gameOverlay').style.display = 'none';
   }
-</style>
+
+  function nextSoal() {
+    document.getElementById('feedback').style.display = 'none';
+    const isEnglishTask = Math.random() > 0.5;
+    const qText = lastData.id;
+    const correctAns = isEnglishTask ? lastData.en : lastData.ar;
+    
+    document.getElementById('gameInstruction').innerText = isEnglishTask ? "Apa Bahasa Inggrisnya:" : "Apa Bahasa Arabnya:";
+    document.getElementById('gameQuestion').innerText = qText;
+
+    // Bikin pilihan jebakan (dummy)
+    const distractors = isEnglishTask ? ["Pen", "House", "Car", "Water"] : ["قلم", "بيت", "سيارة", "ماء"];
+    let options = [correctAns, distractors[0], distractors[1]];
+    options.sort(() => Math.random() - 0.5);
+
+    let html = "";
+    options.forEach(opt => {
+        html += `<button class="option-btn" onclick="checkGameAns(this, '${opt}', '${correctAns}')">${opt}</button>`;
+    });
+    document.getElementById('optionsContainer').innerHTML = html;
+  }
+
+  function checkGameAns(btn, selected, correct) {
+    const allBtns = document.querySelectorAll('.option-btn');
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+    if (selected === correct) {
+        btn.classList.add('correct');
+        currentStreak++;
+        document.getElementById('streak').innerText = "🔥 " + currentStreak;
+        document.getElementById('pFill').style.width = (currentStreak * 10) + "%";
+        showFeedback(true);
+    } else {
+        btn.classList.add('wrong');
+        currentStreak = 0;
+        document.getElementById('streak').innerText = "🔥 0";
+        showFeedback(false);
+    }
+  }
+
+  function showFeedback(isCorrect) {
+    const f = document.getElementById('feedback');
+    const ft = document.getElementById('feedbackText');
+    f.style.display = 'block';
+    f.style.background = isCorrect ? '#d7ffb1' : '#ffdfe0';
+    ft.style.color = isCorrect ? '#58cc02' : '#ee2a33';
+    ft.innerText = isCorrect ? "Luar Biasa! +10" : "Kurang Tepat, Semangat!";
+  }
+</script>
 
 </body>
 </html>
