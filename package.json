@@ -1,0 +1,11 @@
+{
+  "name": "e-santri-wa-gateway",
+  "version": "1.0.0",
+  "description": "WA Gateway E-Santri",
+  "main": "server.js",
+  "dependencies": {
+    "whatsapp-web.js": "^1.23.0",
+    "qrcode-terminal": "^0.12.0",
+    "firebase-admin": "^11.10.1"
+  }
+}
