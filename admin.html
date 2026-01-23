@@ -30,6 +30,7 @@
         .btn-primary { background: var(--primary); }
         .btn-accent { background: var(--accent); color: var(--primary); }
         .btn-blue { background: var(--blue); }
+        .btn-wa { background: #25d366; color: white; } /* Hijau WA */
 
         .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; font-size: 12px; }
         .hidden { display: none; }
@@ -44,7 +45,6 @@
         
         .label-kecil { font-size: 10px; font-weight: bold; color: #666; margin-bottom: 4px; display: block; }
         
-        /* Style Tambahan untuk Pengaduan */
         .msg-box { border-bottom: 1px solid #eee; padding: 10px 0; }
         .msg-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
         .msg-text { font-size: 13px; line-height: 1.4; color: #444; }
@@ -66,6 +66,7 @@
     <button class="nav-item" onclick="showTab('materi', this)"><i class="fas fa-book"></i> Materi</button>
     <button class="nav-item" onclick="showTab('reward', this)"><i class="fas fa-fish"></i> Reward</button>
     <button class="nav-item" onclick="showTab('adu', this)"><i class="fas fa-envelope"></i> Pengaduan</button>
+    <button class="nav-item" onclick="showTab('wa', this)"><i class="fab fa-whatsapp"></i> WA Gateway</button>
 </div>
 
 <div class="container">
@@ -102,24 +103,14 @@
                     </select>
                 </div>
             </div>
-            
             <span class="label-kecil">TANGGAL UJIAN</span>
             <input type="date" id="uj-tgl">
-
             <div class="grid-2">
-                <div>
-                    <span class="label-kecil">JAM MULAI</span>
-                    <input type="time" id="uj-jam-mulai">
-                </div>
-                <div>
-                    <span class="label-kecil">JAM SELESAI</span>
-                    <input type="time" id="uj-jam-selesai">
-                </div>
+                <div><span class="label-kecil">JAM MULAI</span><input type="time" id="uj-jam-mulai"></div>
+                <div><span class="label-kecil">JAM SELESAI</span><input type="time" id="uj-jam-selesai"></div>
             </div>
-            
             <button class="btn btn-blue" onclick="saveUjian()">SET JADWAL OTOMATIS</button>
         </div>
-
         <div class="card">
             <h3><i class="fas fa-database"></i> Input Bank Soal</h3>
             <span class="label-kecil">FORMAT: Soal|Opsi A,B,C,D|Kunci (Huruf Kapital)</span>
@@ -157,7 +148,6 @@
             <input type="text" id="mh-ar" placeholder="Arab Mahfuzat"><textarea id="mh-it" placeholder="Arti Mahfuzat"></textarea>
             <button class="btn btn-primary" onclick="upMateri('mahfuzat')">UPDATE MAHFUZAT</button>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
-            
             <span class="label-kecil">JUDUL DOA (CONTOH: DOA MAKAN)</span>
             <input type="text" id="doa-judul" placeholder="Judul Doa">
             <input type="text" id="doa-ar" placeholder="Arab Doa Harian">
@@ -186,6 +176,26 @@
         <div class="card">
             <h3><i class="fas fa-envelope-open-text"></i> Kotak Pengaduan Santri</h3>
             <div id="list-pengaduan"><p style="font-size:12px; color:#999; text-align:center;">Memuat pengaduan...</p></div>
+        </div>
+    </div>
+
+    <div id="tab-wa" class="tab-content hidden">
+        <div class="card">
+            <h3><i class="fas fa-users-cog"></i> Update Database WA Santri</h3>
+            <span class="label-kecil">FORMAT: Nama Santri,NomorWA (Satu baris satu santri)</span>
+            <textarea id="wa-bulk-input" placeholder="Ahmad Fauzi,62812345678&#10;Zaidan,62857112233" rows="6"></textarea>
+            <button class="btn btn-primary" onclick="simpanNomorMassal()">SINKRON 300 NOMOR</button>
+        </div>
+        <div class="card">
+            <h3><i class="fas fa-paper-plane"></i> Kirim Laporan Massal</h3>
+            <select id="wa-kls-kirim">
+                <option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option>
+            </select>
+            <button class="btn btn-wa" id="btnKirimWA" onclick="kirimLaporanWA()" style="margin-top: 10px;"><i class="fab fa-whatsapp"></i> KIRIM LAPORAN KE ANTRIAN</button>
+            <div id="wa-progress" class="hidden" style="margin-top: 15px;">
+                <progress id="wa-bar" value="0" max="100" style="width:100%"></progress>
+                <p id="wa-status" style="font-size: 10px; text-align: center;">Memproses...</p>
+            </div>
         </div>
     </div>
 
@@ -220,6 +230,7 @@
         if(id === 'adu') loadPengaduan();
     }
 
+    // --- FUNGSI ASLI TETAP DI SINI ---
     async function saveUjian() {
         const kls = document.getElementById('uj-kls').value;
         const mapel = document.getElementById('uj-mapel').value;
@@ -241,7 +252,7 @@
             const s = l.split('|');
             if(s.length >= 3) { await db.ref(`bank_soal/${kls}/${mapel}`).push({ soal: s[0], opsi: s[1], kunci: s[2] }); }
         }
-        alert("Bank Soal " + mapel + " Berhasil Disimpan!");
+        alert("Bank Soal Berhasil Disimpan!");
         document.getElementById('uj-bulk').value = "";
     }
 
@@ -294,46 +305,32 @@
         }
     }
 
-    // --- FUNGSI REWARD IKAN ---
     function kirimReward() {
         const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
         if(!mail) return alert("Isi Email!");
-        // Ditambahkan Number() supaya aman tidak mentok
         db.ref(`users/${mail}/ikan`).transaction(v => (Number(v) || 0) + 1);
         alert("1 Ikan Dikirim!");
     }
 
-    // --- FUNGSI REWARD PAKAN ---
     function kirimPakan(jumlah) {
         const mail = document.getElementById('rew-email').value.replace(/\./g, ',');
         if(!mail) return alert("Isi Email!");
-        // Ditambahkan Number() supaya aman tidak mentok
         db.ref(`users/${mail}/pakan`).transaction(v => (Number(v) || 0) + jumlah);
         alert(`${jumlah} Pakan Dikirim!`);
     }
 
-    // --- MONITOR REWARD LENGKAP ---
     function loadRewardMonitor() {
         db.ref(`users`).on('value', snap => {
             const box = document.getElementById('list-reward-monitor'); box.innerHTML = "";
             snap.forEach(u => {
                 const d = u.val();
                 if(d.ikan > 0 || d.pakan > 0) {
-                    box.innerHTML += `
-                    <div class="item-row">
-                        <b>${d.nama || u.key.replace(/,/g,'.')}</b>
-                        <span>
-                            <i class="fas fa-fish" style="color:var(--blue)"></i> ${d.ikan || 0} 
-                            &nbsp; | &nbsp; 
-                            <i class="fas fa-cookie-bite" style="color:var(--accent)"></i> ${d.pakan || 0}
-                        </span>
-                    </div>`;
+                    box.innerHTML += `<div class="item-row"><b>${d.nama || u.key.replace(/,/g,'.')}</b><span><i class="fas fa-fish" style="color:var(--blue)"></i> ${d.ikan || 0} &nbsp; | &nbsp; <i class="fas fa-cookie-bite" style="color:var(--accent)"></i> ${d.pakan || 0}</span></div>`;
                 }
             });
         });
     }
 
-    // --- FUNGSI PENGADUAN ---
     function loadPengaduan() {
         db.ref('pengaduan').orderByChild('timestamp').on('value', snap => {
             const box = document.getElementById('list-pengaduan'); box.innerHTML = "";
@@ -362,6 +359,86 @@
                 if(entry.val().kelas === kls) box.innerHTML += `<div class="item-row"><b>${entry.val().nama}</b><span>${entry.val().materi}</span></div>`;
             })));
         });
+    }
+
+    // --- KODE KHUSUS WA GATEWAY (TARUH DI PALING BAWAH) ---
+
+    async function simpanNomorMassal() {
+        const t = document.getElementById('wa-bulk-input').value.trim();
+        if(!t) return alert("Data Kosong, Bos!");
+        const lines = t.split('\n');
+        let c = 0;
+        for(let l of lines) {
+            const s = l.split(',');
+            if(s.length >= 2) {
+                let n = s[1].trim().replace(/\D/g, ''); // Ambil angka saja
+                if (n.startsWith('0')) n = '62' + n.slice(1); // Ubah 08 ke 62
+                await db.ref(`data_santri_wa/${s[0].trim()}`).set({ 
+                    nama: s[0].trim(), 
+                    no_wa: n 
+                });
+                c++;
+            }
+        }
+        alert("Mantap Bos! " + c + " Nomor WA Santri Tersimpan.");
+        document.getElementById('wa-bulk-input').value = "";
+    }
+
+    async function kirimLaporanWA() {
+        const kls = document.getElementById('wa-kls-kirim').value;
+        if(!kls) return alert("Pilih Kelas dulu, Bos!");
+        
+        const btn = document.getElementById('btnKirimWA');
+        const prog = document.getElementById('wa-progress');
+        const bar = document.getElementById('wa-bar');
+        const stat = document.getElementById('wa-status');
+
+        btn.disabled = true; 
+        prog.classList.remove('hidden');
+
+        // Ambil data nomor WA dan Nilai
+        const snapWA = await db.ref(`data_santri_wa`).once('value');
+        const dataWA = snapWA.val();
+        const snapNilai = await db.ref(`nilai_ujian/${kls}`).once('value');
+        const dataNilai = snapNilai.val();
+
+        if(!dataNilai) { 
+            alert("Data Nilai Kelas ini masih kosong!"); 
+            btn.disabled = false; 
+            return; 
+        }
+
+        // Ambil daftar nama unik dari data nilai
+        let listSiswa = [];
+        for(let m in dataNilai) { 
+            for(let id in dataNilai[m]) { 
+                if(!listSiswa.includes(dataNilai[m][id].nama)) listSiswa.push(dataNilai[m][id].nama); 
+            } 
+        }
+
+        let t = 0;
+        for(let n of listSiswa) {
+            const no = dataWA && dataWA[n] ? dataWA[n].no_wa : null;
+            if(no) {
+                // Susun pesan laporan
+                const p = `*LAPORAN BULANAN E-SANTRI*\n\nAssalamu'alaikum, laporan bulanan Ananda *${n}* (Kelas ${kls}) sudah tersedia di aplikasi.\n\nSyukron.`;
+                
+                // Lempar ke antrian Firebase
+                await db.ref('antrian_wa').push({ 
+                    nomor: no, 
+                    pesan: p,
+                    timestamp: Date.now()
+                });
+                t++;
+            }
+            // Update progress bar
+            bar.value = (t / listSiswa.length) * 100;
+            stat.innerText = `Mengantrekan: ${t}/${listSiswa.length} Orang...`;
+        }
+
+        alert("Antrian Selesai! Kurir WA akan mengirimnya satu per satu.");
+        btn.disabled = false; 
+        prog.classList.add('hidden');
     }
 </script>
 </body>
