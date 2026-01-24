@@ -12,49 +12,58 @@
             width: 210mm;
             min-height: 297mm;
             background: white;
-            padding: 15mm 20mm;
+            padding: 10mm 15mm;
             position: relative;
             box-shadow: 0 0 15px rgba(0,0,0,0.3);
             page-break-after: always;
         }
 
-        /* Kop Surat */
-        .kop { display: flex; align-items: center; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
-        .kop img { width: 90px; height: auto; margin-right: 15px; mix-blend-mode: multiply; }
+        /* Kop Surat Sesuai Dokumen */
+        .kop { 
+            display: flex; 
+            align-items: center; 
+            border-bottom: 3px double #000; 
+            padding-bottom: 5px; 
+            margin-bottom: 15px;
+        }
+        .kop img { 
+            width: 90px; 
+            height: auto; 
+            margin-right: 15px;
+            mix-blend-mode: multiply;
+        }
         .kop-text { text-align: center; flex-grow: 1; }
         .kop-text .yayasan { font-size: 11pt; font-weight: bold; }
         .kop-text .arab { font-size: 18pt; margin: 2px 0; font-family: 'Times New Roman', serif; color: #1f6f51; font-weight: bold; }
         .kop-text h1 { font-size: 15pt; color: #1f6f51; font-weight: 900; }
-        .kop-text .izin { font-size: 7pt; margin: 2px 0; }
-        .kop-text .kontak { font-size: 7.5pt; border-top: 1px solid #000; padding-top: 2px; }
+        .kop-text .akreditasi { font-size: 9pt; font-weight: bold; }
+        .kop-text .izin { font-size: 7.5pt; margin: 2px 0; }
+        .kop-text .kontak { font-size: 8pt; border-top: 1px solid #000; padding-top: 3px; margin-top: 3px; }
 
         .judul-area { text-align: center; margin: 20px 0; }
         .judul-area .basmalah { font-family: "Times New Roman", serif; font-style: italic; font-size: 12pt; margin-bottom: 5px; }
-        .judul-area h3 { font-size: 11pt; font-weight: bold; line-height: 1.4; }
+        .judul-area h3 { font-size: 11.5pt; font-weight: bold; line-height: 1.4; text-transform: uppercase; }
 
-        /* Area Data Siswa Sejajar */
-        .info-table { width: 100%; margin-bottom: 20px; font-size: 10.5pt; border: none; }
-        .info-table td { border: none; padding: 3px 0; vertical-align: top; }
-        .label { width: 120px; }
+        /* Area Data Siswa Sejajar Sesuai Tabel Docx */
+        .info-table { width: 100%; margin-bottom: 20px; font-size: 10.5pt; border-collapse: collapse; }
+        .info-table td { padding: 4px 0; vertical-align: top; }
+        .label { width: 100px; }
         .titik { width: 15px; }
-        .val { font-weight: bold; }
+        .val { font-weight: bold; width: 220px; }
 
-        /* Tabel Pencapaian - UKURAN DISESUAIKAN */
+        /* Tabel Pencapaian - UKURAN PERSIS DOCX */
         .main-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .main-table th { border: 1px solid #000; padding: 10px; background: #fff; font-size: 10pt; text-transform: uppercase; }
+        .main-table th { border: 1px solid #000; padding: 10px; background: #fff; font-size: 10pt; font-weight: bold; }
         .main-table td { border: 1px solid #000; padding: 15px; font-size: 11pt; vertical-align: top; }
         
-        /* Ukuran Kolom */
-        .no-col { width: 50px; text-align: center; font-weight: bold; }
+        .no-col { width: 50px; text-align: center; }
         .capai-col { width: 200px; font-weight: bold; }
-        .ket-col { line-height: 1.6; text-align: justify; }
+        .ket-col { height: 120px; line-height: 1.5; }
 
-        /* Tinggi Baris Keterangan */
-        .row-data { height: 180px; } /* Memberikan ruang tinggi yang sesuai */
-
-        .footer-ttd { margin-top: 50px; display: flex; justify-content: space-between; font-size: 10.5pt; }
-        .ttd-item { width: 320px; }
-        .space-ttd { height: 80px; }
+        /* Tanda Tangan Sesuai Dokumen */
+        .footer-ttd { margin-top: 50px; display: flex; justify-content: space-between; font-size: 10.5pt; width: 100%; }
+        .ttd-box { width: 45%; text-align: center; }
+        .space-ttd { height: 75px; }
         .nama-orang { font-weight: bold; text-decoration: underline; }
 
         @media print {
@@ -76,13 +85,15 @@
         const kelas = urlParams.get('kelas');
 
         if (mode === 'kelas') {
-            const res = await fetch(`${FIREBASE_URL}/${kelas}.json`);
-            const data = await res.json();
-            if (data) {
-                container.innerHTML = "";
-                for (let id in data) render(data[id], container);
-                setTimeout(() => { window.print(); }, 1500);
-            }
+            try {
+                const res = await fetch(`${FIREBASE_URL}/${kelas}.json`);
+                const data = await res.json();
+                if (data) {
+                    container.innerHTML = "";
+                    for (let id in data) render(data[id], container);
+                    setTimeout(() => { window.print(); }, 1500);
+                }
+            } catch (e) { console.error(e); }
         } else {
             render(Object.fromEntries(urlParams.entries()), container);
             setTimeout(() => { window.print(); }, 1000);
@@ -98,7 +109,7 @@
                     <div class="yayasan">YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</div>
                     <div class="arab">المدرسة المتوسطة الإرشاد الإسلامية</div>
                     <h1>SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h1>
-                    <div class="izin" style="font-weight:bold">“TERAKREDITASI A” SK. Nomor: 582/BAN-SM/SK/2023</div>
+                    <div class="akreditasi">“TERAKREDITASI A” SK. Nomor: 582/BAN-SM/SK/2023</div>
                     <div class="izin">Izin Operasional : SK. Wali Kota Cirebon No.100.3.3.3/4452/2024 | NSS : 204026304019 | NPSN : 20222153</div>
                     <div class="kontak">🏠 Jl. Panjunan No. 27 Cirebon 45112 | ☏ (0231) 234191 | ✉ smpalirsyad_crb@yahoo.co.id | 🌐 smp.alirsyadcrb.id</div>
                 </div>
@@ -112,15 +123,15 @@
             <table class="info-table">
                 <tr>
                     <td class="label">Nama</td><td class="titik">:</td><td class="val">${d.nama}</td>
-                    <td class="label" style="padding-left:40px">Kelas</td><td class="titik">:</td><td class="val">${d.kelas}</td>
+                    <td class="label" style="padding-left:20px">Kelas</td><td class="titik">:</td><td class="val">${d.kelas}</td>
                 </tr>
                 <tr>
                     <td class="label">NISN</td><td class="titik">:</td><td class="val">${d.nisn}</td>
-                    <td class="label" style="padding-left:40px">Semester</td><td class="titik">:</td><td class="val">${d.semester}</td>
+                    <td class="label" style="padding-left:20px">Semester</td><td class="titik">:</td><td class="val">${d.semester}</td>
                 </tr>
                 <tr>
                     <td class="label">Sekolah</td><td class="titik">:</td><td class="val">SMP Al-Irsyad Al-Islamiyyah Cirebon</td>
-                    <td class="label" style="padding-left:40px">Tahun Pelajaran</td><td class="titik">:</td><td class="val">${d.tp}</td>
+                    <td class="label" style="padding-left:20px">Tahun Pelajaran</td><td class="titik">:</td><td class="val">${d.tp}</td>
                 </tr>
                 <tr>
                     <td class="label">Alamat</td><td class="titik">:</td><td colspan="4" class="val">Jl. Panjunan No. 27 Kota Cirebon</td>
@@ -136,29 +147,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="row-data">
-                        <td class="no-col">1</td>
-                        <td class="capai-col">Tahsin<br><br><span style="font-weight:normal">${d.tahsin || '-'}</span></td>
-                        <td class="ket-col">${d.k_tahsin || '-'}</td>
+                    <tr>
+                        <td class="no-col" align="center">1</td>
+                        <td class="capai-col">Tahsin<br><br><span style="font-weight:normal">${d.tahsin || ''}</span></td>
+                        <td class="ket-col">${d.k_tahsin || ''}</td>
                     </tr>
-                    <tr class="row-data">
-                        <td class="no-col">2</td>
-                        <td class="capai-col">Tahfizh<br><br><span style="font-weight:normal">${d.tahfizh || '-'}</span></td>
-                        <td class="ket-col">${d.k_tahfizh || d.k_t_tahfizh || '-'}</td>
+                    <tr>
+                        <td class="no-col" align="center">2</td>
+                        <td class="capai-col">Tahfizh<br><br><span style="font-weight:normal">${d.tahfizh || ''}</span></td>
+                        <td class="ket-col">${d.k_tahfizh || d.k_t_tahfizh || ''}</td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="footer-ttd">
-                <div class="ttd-item">
+                <div class="ttd-box">
                     <p>Mengetahui,</p>
                     <p>Kepala SMP Al-Irsyad Al-Islamiyyah Kota Cirebon</p>
                     <div class="space-ttd"></div>
                     <p class="nama-orang">Siti Hamidah, M.Pd</p>
                     <p>NIK. 19860720192027</p>
                 </div>
-                <div class="ttd-item" style="text-align:left; padding-left:60px;">
-                    <p>Cirebon, ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}</p>
+                <div class="ttd-box">
+                    <p>Cirebon, 22 Desember 2025</p>
                     <p>PJ. Al-Qur’an</p>
                     <div class="space-ttd"></div>
                     <p class="nama-orang">Ria Setiawati, A.Md</p>
