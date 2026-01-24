@@ -2,60 +2,133 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Rapor Al-Irsyad - Gasa Bos!</title>
     <style>
-        :root { --hijau-emerald: #1f6f51; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, sans-serif; background: #222; padding: 20px; }
+        :root { 
+            --hijau-emerald: #1f6f51; 
+            --abu-bg: #222;
+            --putih: #ffffff;
+        }
 
-        /* KONTROL TAMPILAN */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--abu-bg); 
+            padding: 20px; 
+            color: #333;
+        }
+
+        /* --- KONTROL TAMPILAN --- */
         #layar-input { display: block; }
         #layar-cetak { display: none; }
 
-        /* STYLE FORM INPUT (Mirip Screenshot Bos) */
+        /* --- STYLE FORM INPUT --- */
         .form-card { 
-            max-width: 600px; margin: auto; background: white; 
-            padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 700px; 
+            margin: 20px auto; 
+            background: var(--putih); 
+            padding: 35px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
         }
-        .form-card h2 { color: var(--hijau-emerald); text-align: center; margin-bottom: 25px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #333; }
+
+        .form-card h2 { 
+            color: var(--hijau-emerald); 
+            text-align: center; 
+            margin-bottom: 25px; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .group { margin-bottom: 18px; }
+
+        label { 
+            display: block; 
+            font-size: 13px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: #555; 
+        }
+
         input, textarea, select { 
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none;
+            width: 100%; 
+            padding: 12px 15px; 
+            border: 1.5px solid #eee; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            transition: 0.3s;
+            background: #fafafa;
         }
-        input:focus { border-color: var(--hijau-emerald); }
+
+        input:focus, textarea:focus { 
+            border-color: var(--hijau-emerald); 
+            background: #fff;
+            box-shadow: 0 0 8px rgba(31, 111, 81, 0.2);
+            outline: none;
+        }
+
         .btn-simpan { 
-            width: 100%; padding: 15px; background: var(--hijau-emerald); color: white; 
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px;
+            width: 100%; 
+            padding: 15px; 
+            background: var(--hijau-emerald); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            font-size: 16px;
+            cursor: pointer; 
+            margin-top: 15px;
+            transition: 0.3s;
         }
 
-        /* STYLE RAPOR (Layout F4 Rapi) */
+        .btn-simpan:hover { background: #16523c; transform: translateY(-2px); }
+
+        /* --- STYLE RAPOR (Layout F4) --- */
         .page { 
-            width: 215mm; height: 330mm; background: white; padding: 15mm 20mm; 
-            margin: auto; position: relative; color: black;
+            width: 215mm; 
+            min-height: 330mm; 
+            background: white; 
+            padding: 20mm; 
+            margin: auto; 
+            position: relative; 
+            color: black;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
-        .kop { display: flex; align-items: center; border-bottom: 1px solid #000; padding-bottom: 10px; }
-        .kop img { width: 100px; mix-blend-mode: multiply; margin-right: 20px; }
-        .kop-text { text-align: center; flex: 1; }
-        .kop-text h1 { font-size: 16pt; color: var(--hijau-emerald); font-weight: 900; }
-        .kop-text .arab { font-size: 22pt; color: var(--hijau-emerald); font-family: 'Times New Roman'; font-weight: bold; }
-        .kop-text p { font-size: 8pt; color: #000; }
-        .garis-db { border-bottom: 4px double #000; margin: 3px 0 25px 0; }
-        
-        .info-siswa { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 11pt; }
-        table { width: 100%; border-collapse: collapse; border: 2px solid #000; margin-top: 10px; }
-        th, td { border: 1px solid #000; padding: 12px; vertical-align: top; }
-        .h-isi { height: 180px; }
 
-        .footer { margin-top: 60px; display: flex; justify-content: space-between; font-size: 11pt; }
-        .nama-ttd { margin-top: 80px; font-weight: bold; text-decoration: underline; display: block; }
+        .kop { display: flex; align-items: center; padding-bottom: 10px; }
+        .kop img { width: 90px; margin-right: 20px; }
+        .kop-text { text-align: center; flex: 1; }
+        .kop-text p { font-size: 10pt; margin-bottom: 2px; }
+        .kop-text h1 { font-size: 17pt; color: var(--hijau-emerald); font-weight: 900; line-height: 1.2; }
+        .kop-text .arab { 
+            font-size: 24pt; 
+            color: var(--hijau-emerald); 
+            font-family: 'Traditional Arabic', serif; 
+            font-weight: bold; 
+            margin: 5px 0;
+        }
+
+        .garis-db { border-bottom: 3px solid #000; border-top: 1px solid #000; height: 3px; margin: 5px 0 25px 0; }
+        
+        .info-siswa { display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 11pt; line-height: 1.6; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1.5px solid #000; padding: 12px; vertical-align: top; }
+        th { background: #f2f2f2; text-transform: uppercase; font-size: 11px; }
+        
+        .h-isi { height: 180px; white-space: pre-wrap; font-size: 11pt; }
+
+        .footer { margin-top: 50px; display: flex; justify-content: space-between; font-size: 11pt; }
+        .nama-ttd { margin-top: 75px; font-weight: bold; text-decoration: underline; display: block; }
 
         @media print {
             body { background: white; padding: 0; }
             #layar-input, .btn-kembali { display: none !important; }
             #layar-cetak { display: block !important; }
-            .page { box-shadow: none; margin: 0; }
+            .page { box-shadow: none; margin: 0; width: 100%; }
         }
     </style>
 </head>
@@ -67,23 +140,34 @@
             <form id="formRapor">
                 <div class="group">
                     <label>Nama Lengkap Santri</label>
-                    <input type="text" id="nama" placeholder="Contoh: Adibah" required>
+                    <input type="text" id="nama" placeholder="Masukkan nama santri..." required>
                 </div>
+                
                 <div class="grid">
-                    <div class="group"><label>NISN</label><input type="text" id="nisn"></div>
-                    <div class="group"><label>Kelas</label><input type="text" id="kelas" placeholder="7A"></div>
+                    <div class="group"><label>NISN</label><input type="text" id="nisn" placeholder="Nomor Induk..."></div>
+                    <div class="group"><label>Kelas</label><input type="text" id="kelas" placeholder="Contoh: 7A"></div>
                 </div>
+
                 <div class="grid">
                     <div class="group">
                         <label>Semester</label>
-                        <select id="semester"><option>Ganjil</option><option>Genap</option></select>
+                        <select id="semester">
+                            <option value="Ganjil">Ganjil</option>
+                            <option value="Genap">Genap</option>
+                        </select>
                     </div>
                     <div class="group"><label>Tahun Pelajaran</label><input type="text" id="tp" value="2025/2026"></div>
                 </div>
-                <div class="group"><label>Pencapaian Tahsin</label><textarea id="tahsin"></textarea></div>
-                <div class="group"><label>Keterangan Tahsin</label><textarea id="k_tahsin"></textarea></div>
-                <div class="group"><label>Pencapaian Tahfizh</label><textarea id="tahfizh"></textarea></div>
-                <div class="group"><label>Keterangan Tahfizh</label><textarea id="k_tahfizh"></textarea></div>
+
+                <div class="grid">
+                    <div class="group"><label>Pencapaian Tahsin</label><textarea id="tahsin" rows="3" placeholder="Jilid / Hal..."></textarea></div>
+                    <div class="group"><label>Keterangan Tahsin</label><textarea id="k_tahsin" rows="3" placeholder="Catatan perkembangan..."></textarea></div>
+                </div>
+
+                <div class="grid">
+                    <div class="group"><label>Pencapaian Tahfizh</label><textarea id="tahfizh" rows="3" placeholder="Surah / Juz..."></textarea></div>
+                    <div class="group"><label>Keterangan Tahfizh</label><textarea id="k_tahfizh" rows="3" placeholder="Catatan hafalan..."></textarea></div>
+                </div>
                 
                 <button type="button" class="btn-simpan" onclick="simpanData()">🚀 SIMPAN & LIHAT RAPOR</button>
             </form>
@@ -92,13 +176,13 @@
 
     <div id="layar-cetak">
         <div style="text-align: center; margin-bottom: 20px;" class="btn-kembali">
-            <button onclick="lokasiLayarInput()" style="padding:10px 20px; background:#f44336; color:white; border:none; border-radius:5px; cursor:pointer;">⬅️ Kembali ke Input</button>
-            <button onclick="window.print()" style="padding:10px 20px; background:#222; color:white; border:none; border-radius:5px; cursor:pointer; margin-left:10px;">🖨️ Cetak Rapor (F4)</button>
+            <button onclick="lokasiLayarInput()" style="padding:10px 20px; background:#f44336; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">⬅️ Edit Data</button>
+            <button onclick="window.print()" style="padding:10px 20px; background:#1f6f51; color:white; border:none; border-radius:5px; cursor:pointer; margin-left:10px; font-weight:bold;">🖨️ Cetak PDF / F4</button>
         </div>
 
         <div class="page">
             <div class="kop">
-                <img src="logo.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png'">
+                <img src="https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png" alt="Logo">
                 <div class="kop-text">
                     <p>YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</p>
                     <p class="arab">المدرسة المتوسطة الإرشاد الإسلامية</p>
@@ -107,22 +191,53 @@
                 </div>
             </div>
             <div class="garis-db"></div>
-            <h3 style="text-align:center; margin-bottom:20px; font-size:12pt;">LAPORAN HASIL BELAJAR TAHSIN & TAHFIZH</h3>
+
+            <h3 style="text-align:center; margin-bottom:20px; font-size:12pt; text-decoration: underline;">LAPORAN HASIL BELAJAR TAHSIN & TAHFIZH</h3>
             
             <div class="info-siswa">
-                <div>Nama : <b id="r-nama"></b><br>NISN : <span id="r-nisn"></span></div>
-                <div style="text-align:right">Kelas : <b id="r-kelas"></b><br>Semester : <span id="r-smstr"></span></div>
+                <div>
+                    Nama : <b id="r-nama">-</b><br>
+                    NISN : <span id="r-nisn">-</span>
+                </div>
+                <div style="text-align:right">
+                    Kelas : <b id="r-kelas">-</b><br>
+                    Semester : <span id="r-smstr">-</span> / <span id="r-tp"></span>
+                </div>
             </div>
 
             <table>
-                <tr><th width="50">NO</th><th width="200">PENCAPAIAN</th><th>KETERANGAN</th></tr>
-                <tr><td align="center">1</td><td><b>Tahsin</b><br><span id="r-tahsin"></span></td><td id="r-ktahsin" class="h-isi"></td></tr>
-                <tr><td align="center">2</td><td><b>Tahfizh</b><br><span id="r-tahfizh"></span></td><td id="r-ktahfizh" class="h-isi"></td></tr>
+                <thead>
+                    <tr>
+                        <th width="40">NO</th>
+                        <th width="220">PENCAPAIAN</th>
+                        <th>KETERANGAN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td align="center">1</td>
+                        <td><b>TAHSIN</b><br><br><span id="r-tahsin"></span></td>
+                        <td id="r-ktahsin" class="h-isi"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">2</td>
+                        <td><b>TAHFIZH</b><br><br><span id="r-tahfizh"></span></td>
+                        <td id="r-ktahfizh" class="h-isi"></td>
+                    </tr>
+                </tbody>
             </table>
 
             <div class="footer">
-                <div>Mengetahui,<br>Kepala SMP Al-Irsyad<br><span class="nama-ttd">Siti Hamidah, M.Pd</span>NIK. 19860720192027</div>
-                <div style="text-align:right">Cirebon, 22 Desember 2025<br>PJ. Al-Qur'an<br><span class="nama-ttd">Ria Setiawati, A.Md</span>NIK. 19900720172057</div>
+                <div>
+                    Mengetahui,<br>Kepala SMP Al-Irsyad<br>
+                    <span class="nama-ttd">Siti Hamidah, M.Pd</span>
+                    NIK. 19860720192027
+                </div>
+                <div style="text-align:right">
+                    Cirebon, 22 Desember 2025<br>PJ. Al-Qur'an<br>
+                    <span class="nama-ttd">Ria Setiawati, A.Md</span>
+                    NIK. 19900720172057
+                </div>
             </div>
         </div>
     </div>
@@ -153,12 +268,12 @@
             });
 
             if(res.ok) {
-                alert("✅ Alhamdulillah, Data Tersimpan!");
-                // Isi data ke tampilan rapor
+                // Mapping data ke tampilan rapor
                 document.getElementById('r-nama').innerText = d.nama;
                 document.getElementById('r-nisn').innerText = d.nisn;
                 document.getElementById('r-kelas').innerText = d.kelas;
                 document.getElementById('r-smstr').innerText = d.semester;
+                document.getElementById('r-tp').innerText = d.tp;
                 document.getElementById('r-tahsin').innerText = d.tahsin;
                 document.getElementById('r-ktahsin').innerText = d.k_tahsin;
                 document.getElementById('r-tahfizh').innerText = d.tahfizh;
@@ -167,8 +282,11 @@
                 // Tukar Layar
                 document.getElementById('layar-input').style.display = 'none';
                 document.getElementById('layar-cetak').style.display = 'block';
+                window.scrollTo(0,0);
             }
-        } catch (e) { alert("Gagal Simpan Bos!"); }
+        } catch (e) { 
+            alert("Gagal koneksi ke Firebase Bos! Periksa internet."); 
+        }
     }
 
     function lokasiLayarInput() {
