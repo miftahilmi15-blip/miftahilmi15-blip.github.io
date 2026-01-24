@@ -2,15 +2,13 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rapor Tahfidz SMP Al-Irsyad - F4 Massal</title>
+    <title>Rapor Final SMP Al-Irsyad - F4</title>
     <style>
         @page { size: 215mm 330mm; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         
-        /* PEMISAHAN WARNA SESUAI INSTRUKSI BOS */
         :root { 
-            --hijau-tulisan-smp: #1f6f51; /* Hijau Emerald khas tulisan Al-Irsyad */
-            --hijau-arab: #1f6f51; 
+            --hijau-emerald: #1f6f51; /* Warna hijau tulisan sesuai instruksi */
         }
 
         body { background: #555; display: flex; flex-direction: column; align-items: center; padding: 20px; }
@@ -25,33 +23,14 @@
 
         /* KOP SURAT */
         .kop { display: flex; align-items: center; padding-bottom: 5px; }
-        .kop img { 
-            width: 95px; height: auto; margin-right: 20px; 
-            mix-blend-mode: multiply; /* Biar logo nyatu sama kertas */
-        }
-        
+        .kop img { width: 95px; height: auto; margin-right: 20px; mix-blend-mode: multiply; }
         .kop-text { text-align: center; flex: 1; }
         .kop-text .yayas { font-size: 10.5pt; font-weight: bold; color: #000; }
-        
-        /* WARNA TULISAN HIJAU DISINI */
-        .kop-text .arab { 
-            font-size: 20pt; 
-            font-family: 'Times New Roman', serif; 
-            color: var(--hijau-arab); 
-            font-weight: bold; 
-            margin: 2px 0; 
-        }
-        .kop-text h1 { 
-            font-size: 15pt; 
-            color: var(--hijau-tulisan-smp); 
-            font-weight: 900; 
-            letter-spacing: 0.2px; 
-        }
-        
-        .kop-text .kecil { font-size: 7.5pt; line-height: 1.3; font-weight: normal; color: #000; }
+        .kop-text .arab { font-size: 20pt; font-family: 'Times New Roman', serif; color: var(--hijau-emerald); font-weight: bold; margin: 2px 0; }
+        .kop-text h1 { font-size: 15pt; color: var(--hijau-emerald); font-weight: 900; }
+        .kop-text .kecil { font-size: 7.5pt; line-height: 1.3; font-weight: normal; }
         .garis-db { border-bottom: 4px double #000; margin-top: 2px; margin-bottom: 20px; }
 
-        /* JUDUL LAPORAN */
         .judul { text-align: center; margin-bottom: 25px; }
         .judul i { font-size: 12pt; font-family: "Times New Roman", serif; font-style: italic; }
         .judul h3 { font-size: 11pt; font-weight: bold; margin-top: 8px; text-transform: uppercase; line-height: 1.4; }
@@ -64,8 +43,8 @@
         .titik { width: 15px; }
         .val { flex: 1; font-weight: bold; }
 
-        /* TABEL PENCAPAIAN */
-        table { width: 100%; border-collapse: collapse; border: 1.5px solid #000; }
+        /* TABEL */
+        table { width: 100%; border-collapse: collapse; border: 2px solid #000; }
         th { border: 1px solid #000; padding: 10px; font-size: 10pt; background: #fff; font-weight: bold; }
         td { border: 1px solid #000; padding: 12px; font-size: 10.5pt; vertical-align: top; }
         .row-judul { background: #f9f9f9; font-weight: bold; }
@@ -93,40 +72,36 @@
     async function init() {
         const container = document.getElementById('container-rapor');
         const mode = urlParams.get('mode');
-        const kelasTarget = urlParams.get('kelas');
+        const kelasTarget = (urlParams.get('kelas') || "").toLowerCase().trim();
 
-        container.innerHTML = "<h2 style='color:white;text-align:center;margin-top:50px'>⏳ Menarik Data Massal...</h2>";
+        container.innerHTML = "<h2 style='color:white;text-align:center;margin-top:100px;'>⏳ Sedang Menarik Seluruh Data...</h2>";
 
         try {
             const res = await fetch(FIREBASE_URL);
             const dataRoot = await res.json();
             
-            if (!dataRoot) { container.innerHTML = "<h1>Data Kosong!</h1>"; return; }
+            if (!dataRoot) { container.innerHTML = "<h1>Database Kosong!</h1>"; return; }
 
             container.innerHTML = "";
             let ketemu = false;
 
-            for (let emailKey in dataRoot) {
-                const subData = dataRoot[emailKey];
-                for (let keySiswa in subData) {
-                    const s = subData[keySiswa];
+            // SCAN SEMUA FOLDER EMAIL (ditavans, miftahilmi, dsb)
+            Object.values(dataRoot).forEach(folderEmail => {
+                Object.values(folderEmail).forEach(s => {
+                    const kelasSiswa = (s.kelas || "").toString().toLowerCase().trim();
                     
                     if (mode === 'kelas') {
-                        if (s.kelas && s.kelas.toString().trim() === kelasTarget.trim()) { 
-                            render(s, container); 
-                            ketemu = true; 
-                        }
-                    } else if (s.nama === urlParams.get('nama')) {
-                        render(s, container); 
-                        ketemu = true;
+                        if (kelasSiswa === kelasTarget) { render(s, container); ketemu = true; }
+                    } else {
+                        if (s.nama === urlParams.get('nama')) { render(s, container); ketemu = true; }
                     }
-                }
-            }
+                });
+            });
 
             if (ketemu) {
                 setTimeout(() => { window.print(); }, 2500);
             } else {
-                container.innerHTML = `<h1 style='color:white;text-align:center'>Data Kelas ${kelasTarget} Tidak Ditemukan!</h1>`;
+                container.innerHTML = `<h1 style='color:white;text-align:center'>Data Kelas ${urlParams.get('kelas')} Tidak Ditemukan!</h1>`;
             }
         } catch (e) { container.innerHTML = "<h1>Error: " + e.message + "</h1>"; }
     }
@@ -142,7 +117,7 @@
                     <h1>SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h1>
                     <p class="kecil">"TERAKREDITASI A" SK. Nomor: 582/BAN-SM/SK/2023<br>
                     Izin Operasional: No.100.3.3.3/4452/2024 | NSS: 204026304019 | NPSN: 20222153<br>
-                    Jl. Panjunan No. 27 Cirebon | ☏ (0231) 234191 | smp.alirsyadcrb.id</p>
+                    🏠 Jl. Panjunan No. 27 Cirebon | ☏ (0231) 234191 | smp.alirsyadcrb.id</p>
                 </div>
             </div>
             <div class="garis-db"></div>
