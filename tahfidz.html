@@ -29,12 +29,9 @@
         th, td { padding: 10px; border: 1px solid #eee; text-align: left; }
         th { background: #f9f9f9; color: var(--primary); font-weight: 700; }
         .menu-rekap { margin-top: 25px; padding-top: 15px; border-top: 2px dashed #eee; text-align: center; }
-        .btn-cetak { width: 100%; background: var(--blue); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; margin-bottom: 5px; }
         .btn-excel { width: 100%; background: #107c41; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
         #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
         .hidden { display: none; }
-        
-        /* CSS KHUSUS RAPOR */
         .box-rapor { border: 2px solid #1f6f51; padding: 15px; border-radius: 15px; background: #fff; margin-top: 10px; }
         .btn-rapor-final { width:100%; background:var(--red); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px; }
         .btn-masal { background: #2563eb !important; }
@@ -148,10 +145,12 @@
 
     let dataSiswaRapor = [];
 
+    // --- DAFTAR SURAH LENGKAP 114 ---
+    const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
+
+    // --- LOGIN & TABS ---
     window.onload = function() {
-        if(localStorage.getItem('isLoggedIn') === 'true') {
-            document.getElementById('lock-screen').style.display = 'none';
-        }
+        if(localStorage.getItem('isLoggedIn') === 'true') { document.getElementById('lock-screen').style.display = 'none'; }
     }
     function cekLogin() {
         if (document.getElementById('passcode').value === KODE_RAHASIA) {
@@ -159,7 +158,6 @@
             document.getElementById('lock-screen').style.display = 'none';
         } else { alert("Kode Salah!"); }
     }
-
     function switchMenu(m) {
         document.getElementById('areaInput').classList.toggle('hidden', m !== 'input');
         document.getElementById('areaRekap').classList.toggle('hidden', m !== 'rekap');
@@ -169,6 +167,7 @@
         document.getElementById('tabRapor').classList.toggle('active', m === 'rapor');
     }
 
+    // --- INPUT SECTION ---
     async function loadSantri() {
         const kelas = document.getElementById('pilih-kelas').value;
         const sel = document.getElementById('pilih-santri');
@@ -180,6 +179,25 @@
         data.forEach(x => sel.options.add(new Option(x.nama, x.nipd)));
     }
 
+    function updateSubMateri() {
+        const kat = document.getElementById('kategori-materi').value;
+        const sub = document.getElementById('materi');
+        sub.innerHTML = '<option value="">-- Pilih Detail --</option>';
+        
+        const dataMateri = {
+            "Jilid": ["Jilid 1A", "Jilid 1B", "Jilid 2A", "Jilid 2B", "Jilid 3A", "Jilid 3B", "Jilid 4A", "Jilid 4B"],
+            "Tadarus27": ["Adz-Dzariyat", "Ath-Thur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid"],
+            "Tadarus30": surah30Juz,
+            "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`),
+            "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`),
+            "Tahfidz": surah30Juz
+        };
+
+        if (dataMateri[kat]) {
+            dataMateri[kat].forEach(x => sub.options.add(new Option(x, x)));
+        }
+    }
+
     async function simpan() {
         const s = document.getElementById('pilih-santri');
         const kls = document.getElementById('pilih-kelas').value;
@@ -187,6 +205,7 @@
         const kat = document.getElementById('kategori-materi').value;
         const bin = document.getElementById('nilai-bintang').value;
         if(!s.value || !kls || !mat || bin == "0") return alert("Lengkapi data!");
+        
         const skrg = new Date();
         const bln = skrg.getMonth() + 1;
         const tgl = skrg.getDate();
@@ -201,6 +220,7 @@
             catatan: document.getElementById('catatan').value,
             tgl_input: `${tgl}/${bln}/2026`
         };
+        
         document.getElementById('loading').style.display = 'block';
         try {
             const path = `${FIREBASE_BASE_URL}/${bln}/${tgl}.json`;
@@ -211,6 +231,7 @@
         } catch(e) { alert("Gagal koneksi!"); } finally { document.getElementById('loading').style.display = 'none'; }
     }
 
+    // --- REKAP SECTION ---
     async function prosesRekap() {
         const kls = document.getElementById('kls-rekap').value;
         if(!kls) return alert("Pilih kelas!");
@@ -228,6 +249,7 @@
         } catch(e) { document.getElementById('wadah-tabel').innerHTML = "Gagal memuat rekap."; }
     }
 
+    // --- RAPOR SECTION ---
     async function loadSantriRapor() {
         const kls = document.getElementById('r-kelas').value;
         const sel = document.getElementById('r-nama');
@@ -235,25 +257,19 @@
         const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
         dataSiswaRapor = await res.json();
         sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-        dataSiswaRapor.forEach((x, index) => {
-            sel.options.add(new Option(x.nama, index));
-        });
+        dataSiswaRapor.forEach((x, index) => { sel.options.add(new Option(x.nama, index)); });
     }
 
     function isiNisnotomatis() {
         const idx = document.getElementById('r-nama').value;
-        if(idx !== "") {
-            document.getElementById('r-nisn').value = dataSiswaRapor[idx].nisn || "";
-        }
+        if(idx !== "") { document.getElementById('r-nisn').value = dataSiswaRapor[idx].nisn || ""; }
     }
 
     async function cetakRaporFinal() {
         const idx = document.getElementById('r-nama').value;
         if(idx === "") return alert("Pilih Nama!");
-        
         const kelas = document.getElementById('r-kelas').value;
         const nisn = document.getElementById('r-nisn').value;
-        
         const data = {
             nama: dataSiswaRapor[idx].nama,
             kelas: kelas,
@@ -265,33 +281,21 @@
             tahfizh: document.getElementById('r-tahfizh').value,
             k_tahfizh: document.getElementById('r-ket-tahfizh').value
         };
-
-        // SIMPAN KE FIREBASE SEBELUM CETAK
         try {
             document.getElementById('loading').style.display = 'block';
             const path = `https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor/${kelas}/${nisn}.json`;
             await fetch(path, { method: 'PUT', body: JSON.stringify(data) });
-            
             const params = new URLSearchParams(data);
             window.open(`${LINK_GITHUB_PAGES_BOS}?${params.toString()}`, '_blank');
-        } catch(e) {
-            alert("Gagal menyimpan data ke database!");
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-        }
+        } catch(e) { alert("Gagal menyimpan!"); } finally { document.getElementById('loading').style.display = 'none'; }
     }
 
     function cetakSatuKelas() {
         const kls = document.getElementById('r-kelas').value;
         if(!kls) return alert("Pilih Kelas!");
-        const tp = document.getElementById('r-tp').value;
-        const sem = document.getElementById('r-semester').value;
-        window.open(`${LINK_GITHUB_PAGES_BOS}?mode=kelas&kelas=${kls}&tp=${tp}&semester=${sem}`, '_blank');
+        window.open(`${LINK_GITHUB_PAGES_BOS}?mode=kelas&kelas=${kls}`, '_blank');
     }
 
-    const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
-    const subMateri = { "Jilid": ["Jilid 1A", "Jilid 1B", "Jilid 2A", "Jilid 2B", "Jilid 3A", "Jilid 3B", "Jilid 4A", "Jilid 4B"], "Tadarus27": ["Adz-Dzariyat", "Ath-Thur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid"], "Tadarus30": surah30Juz, "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`), "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`), "Tahfidz": surah30Juz };
-    function updateSubMateri() { const kat = document.getElementById('kategori-materi').value; const sub = document.getElementById('materi'); sub.innerHTML = '<option value="">-- Pilih Detail --</option>'; if (subMateri[kat]) { subMateri[kat].forEach(x => sub.options.add(new Option(x, x))); } }
     function setStar(n) { document.getElementById('nilai-bintang').value = n; document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd"); }
     function exportExcel() { XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap")), `Rekap_Tahfidz.xlsx`); }
 </script>
