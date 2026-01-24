@@ -3,295 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Rapor Al-Irsyad - Gasa Bos!</title>
+    <title>E-SANTRI | Input Masal Rapor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --hijau-emerald: #1f6f51; 
-            --abu-bg: #222;
-            --putih: #ffffff;
-        }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #222; padding: 15px; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* KONTROL TAMPILAN */
+        #hal-input { display: block; max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 20px; }
+        #hal-rapor-masal { display: none; background: #ddd; padding: 20px; }
+
+        /* UI COMPONENTS */
+        .header { text-align: center; margin-bottom: 20px; color: var(--primary); }
+        .form-grup { margin-bottom: 15px; }
+        label { font-size: 12px; font-weight: bold; display: block; margin-bottom: 5px; }
+        select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--abu-bg); 
-            padding: 20px; 
-            color: #333;
+        /* TABEL INPUT MASAL */
+        .tabel-masal { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+        .tabel-masal th, .tabel-masal td { border: 1px solid #eee; padding: 8px; }
+        .tabel-masal th { background: var(--primary); color: white; }
+        .input-tabel { border: none; background: #f9f9f9; padding: 5px; width: 100%; }
+
+        .btn-aksi { width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; color: white; }
+        .btn-biru { background: #2563eb; }
+        .btn-hijau { background: var(--primary); }
+
+        /* STYLE RAPOR (SESUAI SCREENSHOT) */
+        .kertas { 
+            background: white; width: 215mm; min-height: 330mm; margin: 20px auto; padding: 15mm 20mm; color: black;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5); page-break-after: always;
         }
-
-        /* --- KONTROL TAMPILAN --- */
-        #layar-input { display: block; }
-        #layar-cetak { display: none; }
-
-        /* --- STYLE FORM INPUT --- */
-        .form-card { 
-            max-width: 700px; 
-            margin: 20px auto; 
-            background: var(--putih); 
-            padding: 35px; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-        }
-
-        .form-card h2 { 
-            color: var(--hijau-emerald); 
-            text-align: center; 
-            margin-bottom: 25px; 
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .group { margin-bottom: 18px; }
-
-        label { 
-            display: block; 
-            font-size: 13px; 
-            font-weight: 700; 
-            margin-bottom: 8px; 
-            color: #555; 
-        }
-
-        input, textarea, select { 
-            width: 100%; 
-            padding: 12px 15px; 
-            border: 1.5px solid #eee; 
-            border-radius: 8px; 
-            font-size: 14px; 
-            transition: 0.3s;
-            background: #fafafa;
-        }
-
-        input:focus, textarea:focus { 
-            border-color: var(--hijau-emerald); 
-            background: #fff;
-            box-shadow: 0 0 8px rgba(31, 111, 81, 0.2);
-            outline: none;
-        }
-
-        .btn-simpan { 
-            width: 100%; 
-            padding: 15px; 
-            background: var(--hijau-emerald); 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            font-size: 16px;
-            cursor: pointer; 
-            margin-top: 15px;
-            transition: 0.3s;
-        }
-
-        .btn-simpan:hover { background: #16523c; transform: translateY(-2px); }
-
-        /* --- STYLE RAPOR (Layout F4) --- */
-        .page { 
-            width: 215mm; 
-            min-height: 330mm; 
-            background: white; 
-            padding: 20mm; 
-            margin: auto; 
-            position: relative; 
-            color: black;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-        }
-
-        .kop { display: flex; align-items: center; padding-bottom: 10px; }
-        .kop img { width: 90px; margin-right: 20px; }
-        .kop-text { text-align: center; flex: 1; }
-        .kop-text p { font-size: 10pt; margin-bottom: 2px; }
-        .kop-text h1 { font-size: 17pt; color: var(--hijau-emerald); font-weight: 900; line-height: 1.2; }
-        .kop-text .arab { 
-            font-size: 24pt; 
-            color: var(--hijau-emerald); 
-            font-family: 'Traditional Arabic', serif; 
-            font-weight: bold; 
-            margin: 5px 0;
-        }
-
-        .garis-db { border-bottom: 3px solid #000; border-top: 1px solid #000; height: 3px; margin: 5px 0 25px 0; }
-        
-        .info-siswa { display: flex; justify-content: space-between; margin-bottom: 25px; font-size: 11pt; line-height: 1.6; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1.5px solid #000; padding: 12px; vertical-align: top; }
-        th { background: #f2f2f2; text-transform: uppercase; font-size: 11px; }
-        
-        .h-isi { height: 180px; white-space: pre-wrap; font-size: 11pt; }
-
-        .footer { margin-top: 50px; display: flex; justify-content: space-between; font-size: 11pt; }
-        .nama-ttd { margin-top: 75px; font-weight: bold; text-decoration: underline; display: block; }
+        .kop { display: flex; align-items: center; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        .kop img { width: 80px; margin-right: 15px; }
+        .kop-text { text-align: center; flex: 1; line-height: 1.2; }
+        .kop-text h2 { font-size: 14pt; color: var(--primary); }
+        .kop-text .arab { font-size: 18pt; font-family: 'Times New Roman'; font-weight: bold; color: var(--primary); }
+        .kop-text p { font-size: 8pt; }
+        .garis-db { border-bottom: 3px solid #000; margin-top: 2px; margin-bottom: 15px; }
+        .judul { text-align: center; font-weight: bold; margin-bottom: 15px; font-size: 11pt; }
+        .info-sw { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 10px; }
+        .tabel-n { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .tabel-n th, .tabel-n td { border: 1px solid black; padding: 8px; font-size: 10pt; vertical-align: top; }
+        .isi-h { height: 100px; white-space: pre-wrap; }
+        .ftr { margin-top: 30px; display: flex; justify-content: space-between; font-size: 10pt; }
+        .ttd { margin-top: 60px; font-weight: bold; text-decoration: underline; }
 
         @media print {
             body { background: white; padding: 0; }
-            #layar-input, .btn-kembali { display: none !important; }
-            #layar-cetak { display: block !important; }
-            .page { box-shadow: none; margin: 0; width: 100%; }
+            #hal-input, .no-print { display: none !important; }
+            #hal-rapor-masal { display: block !important; background: white; padding: 0; }
+            .kertas { box-shadow: none; margin: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div id="layar-input">
-        <div class="form-card">
-            <h2>Input Data Rapor Tahfidz</h2>
-            <form id="formRapor">
-                <div class="group">
-                    <label>Nama Lengkap Santri</label>
-                    <input type="text" id="nama" placeholder="Masukkan nama santri..." required>
-                </div>
-                
-                <div class="grid">
-                    <div class="group"><label>NISN</label><input type="text" id="nisn" placeholder="Nomor Induk..."></div>
-                    <div class="group"><label>Kelas</label><input type="text" id="kelas" placeholder="Contoh: 7A"></div>
-                </div>
-
-                <div class="grid">
-                    <div class="group">
-                        <label>Semester</label>
-                        <select id="semester">
-                            <option value="Ganjil">Ganjil</option>
-                            <option value="Genap">Genap</option>
-                        </select>
-                    </div>
-                    <div class="group"><label>Tahun Pelajaran</label><input type="text" id="tp" value="2025/2026"></div>
-                </div>
-
-                <div class="grid">
-                    <div class="group"><label>Pencapaian Tahsin</label><textarea id="tahsin" rows="3" placeholder="Jilid / Hal..."></textarea></div>
-                    <div class="group"><label>Keterangan Tahsin</label><textarea id="k_tahsin" rows="3" placeholder="Catatan perkembangan..."></textarea></div>
-                </div>
-
-                <div class="grid">
-                    <div class="group"><label>Pencapaian Tahfizh</label><textarea id="tahfizh" rows="3" placeholder="Surah / Juz..."></textarea></div>
-                    <div class="group"><label>Keterangan Tahfizh</label><textarea id="k_tahfizh" rows="3" placeholder="Catatan hafalan..."></textarea></div>
-                </div>
-                
-                <button type="button" class="btn-simpan" onclick="simpanData()">🚀 SIMPAN & LIHAT RAPOR</button>
-            </form>
+<div id="hal-input">
+    <div class="header"><h1>GASA BOS! INPUT MASAL 1 KELAS</h1></div>
+    
+    <div style="display: flex; gap: 10px;">
+        <div class="form-grup" style="flex: 1;">
+            <label>Pilih Kelas</label>
+            <select id="pilih-kelas" onchange="ambilSiswa()">
+                <option value="">-- Pilih --</option>
+                <option value="7A">7A</option><option value="7B">7B</option>
+                <option value="8A">8A</option><option value="8B">8B</option>
+                <option value="9A">9A</option><option value="9B">9B</option>
+            </select>
         </div>
+        <div class="form-grup" style="flex: 1;"><label>Semester</label><select id="in-smstr"><option>Ganjil</option><option>Genap</option></select></div>
+        <div class="form-grup" style="flex: 1;"><label>TP</label><input type="text" id="in-tp" value="2025/2026"></div>
     </div>
 
-    <div id="layar-cetak">
-        <div style="text-align: center; margin-bottom: 20px;" class="btn-kembali">
-            <button onclick="lokasiLayarInput()" style="padding:10px 20px; background:#f44336; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold;">⬅️ Edit Data</button>
-            <button onclick="window.print()" style="padding:10px 20px; background:#1f6f51; color:white; border:none; border-radius:5px; cursor:pointer; margin-left:10px; font-weight:bold;">🖨️ Cetak PDF / F4</button>
-        </div>
+    <div id="loading" style="display:none; text-align:center;">⏳ Memuat data siswa...</div>
 
-        <div class="page">
+    <table class="tabel-masal" id="tabel-input-masal">
+        <thead>
+            <tr>
+                <th>NAMA SANTRI</th>
+                <th>CAPAIAN TAHSIN</th>
+                <th>KET. TAHSIN</th>
+                <th>CAPAIAN TAHFIZH</th>
+                <th>KET. TAHFIZH</th>
+            </tr>
+        </thead>
+        <tbody id="list-siswa">
+            </tbody>
+    </table>
+
+    <button class="btn-aksi btn-hijau" onclick="simpanMasal()">🚀 SIMPAN & TERBITKAN RAPOR KELAS</button>
+</div>
+
+<div id="hal-rapor-masal">
+    <div class="no-print" style="position: fixed; top: 10px; right: 10px; z-index: 100;">
+        <button onclick="window.location.reload()" style="padding:10px; background:red; color:white; border:none; border-radius:5px; cursor:pointer;">⬅️ Batal</button>
+        <button onclick="window.print()" style="padding:10px; background:green; color:white; border:none; border-radius:5px; cursor:pointer;">🖨️ Cetak Semua</button>
+    </div>
+    <div id="daftar-kertas-rapor"></div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+    const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor";
+
+    let daftarSiswa = [];
+
+    async function ambilSiswa() {
+        const kls = document.getElementById('pilih-kelas').value;
+        if(!kls) return;
+        document.getElementById('loading').style.display = 'block';
+        
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+            daftarSiswa = await res.json();
+            
+            let html = "";
+            daftarSiswa.forEach((s, i) => {
+                html += `
+                <tr>
+                    <td><b>${s.nama}</b><input type="hidden" class="m-nisn" value="${s.nisn || ''}"></td>
+                    <td><input type="text" class="m-tahsin input-tabel" placeholder="..."></td>
+                    <td><textarea class="m-ktahsin input-tabel" rows="2"></textarea></td>
+                    <td><input type="text" class="m-tahfizh input-tabel" placeholder="..."></td>
+                    <td><textarea class="m-ktahfizh input-tabel" rows="2"></textarea></td>
+                </tr>`;
+            });
+            document.getElementById('list-siswa').innerHTML = html;
+        } catch(e) { alert("Gagal ambil data!"); }
+        document.getElementById('loading').style.display = 'none';
+    }
+
+    async function simpanMasal() {
+        const kls = document.getElementById('pilih-kelas').value;
+        const rows = document.querySelectorAll('#list-siswa tr');
+        if(rows.length === 0) return alert("Belum ada data!");
+
+        let raporHTML = "";
+        
+        for(let i=0; i < rows.length; i++) {
+            const data = {
+                nama: daftarSiswa[i].nama,
+                nisn: rows[i].querySelector('.m-nisn').value,
+                kelas: kls,
+                semester: document.getElementById('in-smstr').value,
+                tp: document.getElementById('in-tp').value,
+                tahsin: rows[i].querySelector('.m-tahsin').value,
+                k_tahsin: rows[i].querySelector('.m-ktahsin').value,
+                tahfizh: rows[i].querySelector('.m-tahfizh').value,
+                k_tahfizh: rows[i].querySelector('.m-ktahfizh').value
+            };
+
+            // Simpan ke Firebase (Async tapi gak usah ditunggu biar cepet)
+            fetch(`${FIREBASE_URL}/${kls}/${data.nisn || data.nama}.json`, { 
+                method: 'PUT', 
+                body: JSON.stringify(data) 
+            });
+
+            // Generate HTML Rapor untuk tiap siswa
+            raporHTML += buatTemplateRapor(data);
+        }
+
+        document.getElementById('daftar-kertas-rapor').innerHTML = raporHTML;
+        document.getElementById('hal-input').style.display = 'none';
+        document.getElementById('hal-rapor-masal').style.display = 'block';
+    }
+
+    function buatTemplateRapor(d) {
+        return `
+        <div class="kertas">
             <div class="kop">
-                <img src="https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png" alt="Logo">
+                <img src="https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png">
                 <div class="kop-text">
                     <p>YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</p>
                     <p class="arab">المدرسة المتوسطة الإرشاد الإسلامية</p>
-                    <h1>SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h1>
+                    <h2>SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h2>
                     <p>Jl. Panjunan No. 27 Cirebon | ☏ (0231) 234191</p>
                 </div>
             </div>
             <div class="garis-db"></div>
-
-            <h3 style="text-align:center; margin-bottom:20px; font-size:12pt; text-decoration: underline;">LAPORAN HASIL BELAJAR TAHSIN & TAHFIZH</h3>
-            
-            <div class="info-siswa">
-                <div>
-                    Nama : <b id="r-nama">-</b><br>
-                    NISN : <span id="r-nisn">-</span>
-                </div>
-                <div style="text-align:right">
-                    Kelas : <b id="r-kelas">-</b><br>
-                    Semester : <span id="r-smstr">-</span> / <span id="r-tp"></span>
-                </div>
+            <div class="judul">LAPORAN PERKEMBANGAN HASIL BELAJAR TAHSIN & TAHFIZH</div>
+            <div class="info-sw">
+                <div>Nama : <b>${d.nama}</b><br>NISN : ${d.nisn}</div>
+                <div style="text-align:right">Kelas : <b>${d.kelas}</b><br>Semester : ${d.semester}</div>
             </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th width="40">NO</th>
-                        <th width="220">PENCAPAIAN</th>
-                        <th>KETERANGAN</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td align="center">1</td>
-                        <td><b>TAHSIN</b><br><br><span id="r-tahsin"></span></td>
-                        <td id="r-ktahsin" class="h-isi"></td>
-                    </tr>
-                    <tr>
-                        <td align="center">2</td>
-                        <td><b>TAHFIZH</b><br><br><span id="r-tahfizh"></span></td>
-                        <td id="r-ktahfizh" class="h-isi"></td>
-                    </tr>
-                </tbody>
+            <table class="tabel-n">
+                <tr><th width="40">NO</th><th width="180">PENCAPAIAN</th><th>KETERANGAN</th></tr>
+                <tr><td align="center">1</td><td><b>Tahsin</b><br>${d.tahsin}</td><td class="isi-h">${d.k_tahsin}</td></tr>
+                <tr><td align="center">2</td><td><b>Tahfizh</b><br>${d.tahfizh}</td><td class="isi-h">${d.k_tahfizh}</td></tr>
             </table>
-
-            <div class="footer">
-                <div>
-                    Mengetahui,<br>Kepala SMP Al-Irsyad<br>
-                    <span class="nama-ttd">Siti Hamidah, M.Pd</span>
-                    NIK. 19860720192027
-                </div>
-                <div style="text-align:right">
-                    Cirebon, 22 Desember 2025<br>PJ. Al-Qur'an<br>
-                    <span class="nama-ttd">Ria Setiawati, A.Md</span>
-                    NIK. 19900720172057
-                </div>
+            <div class="ftr">
+                <div>Mengetahui,<br>Kepala SMP Al-Irsyad<br><div class="ttd">Siti Hamidah, M.Pd</div></div>
+                <div style="text-align:right">Cirebon, 22 Desember 2025<br>PJ. Al-Qur'an<br><div class="ttd">Ria Setiawati, A.Md</div></div>
             </div>
-        </div>
-    </div>
-
-<script>
-    const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor";
-
-    async function simpanData() {
-        const d = {
-            nama: document.getElementById('nama').value,
-            nisn: document.getElementById('nisn').value,
-            kelas: document.getElementById('kelas').value,
-            semester: document.getElementById('semester').value,
-            tp: document.getElementById('tp').value,
-            tahsin: document.getElementById('tahsin').value,
-            k_tahsin: document.getElementById('k_tahsin').value,
-            tahfizh: document.getElementById('tahfizh').value,
-            k_tahfizh: document.getElementById('k_tahfizh').value
-        };
-
-        if(!d.nama) { alert("Nama wajib diisi Bos!"); return; }
-
-        try {
-            const id = d.nama.replace(/\s+/g, '_').toLowerCase();
-            const res = await fetch(`${FIREBASE_URL}/${id}.json`, {
-                method: 'PUT',
-                body: JSON.stringify(d)
-            });
-
-            if(res.ok) {
-                // Mapping data ke tampilan rapor
-                document.getElementById('r-nama').innerText = d.nama;
-                document.getElementById('r-nisn').innerText = d.nisn;
-                document.getElementById('r-kelas').innerText = d.kelas;
-                document.getElementById('r-smstr').innerText = d.semester;
-                document.getElementById('r-tp').innerText = d.tp;
-                document.getElementById('r-tahsin').innerText = d.tahsin;
-                document.getElementById('r-ktahsin').innerText = d.k_tahsin;
-                document.getElementById('r-tahfizh').innerText = d.tahfizh;
-                document.getElementById('r-ktahfizh').innerText = d.k_tahfizh;
-
-                // Tukar Layar
-                document.getElementById('layar-input').style.display = 'none';
-                document.getElementById('layar-cetak').style.display = 'block';
-                window.scrollTo(0,0);
-            }
-        } catch (e) { 
-            alert("Gagal koneksi ke Firebase Bos! Periksa internet."); 
-        }
-    }
-
-    function lokasiLayarInput() {
-        document.getElementById('layar-input').style.display = 'block';
-        document.getElementById('layar-cetak').style.display = 'none';
+        </div>`;
     }
 </script>
 </body>
