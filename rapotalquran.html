@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapor Al-Qur'an - SMP Al-Irsyad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #555; margin: 0; padding: 0; }
+        .kertas { 
+            width: 210mm; min-height: 290mm; padding: 15mm 20mm; margin: 10mm auto; 
+            background: white; position: relative; box-sizing: border-box;
+            page-break-after: always;
+        }
+        .header { text-align: center; border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 10px; position: relative; }
+        .logo-kiri { position: absolute; left: 0; top: 0; width: 80px; }
+        .arab { font-family: 'Amiri', serif; font-size: 22px; font-weight: bold; display: block; margin: 5px 0; }
+        .judul-rapor { text-align: center; font-weight: bold; margin: 20px 0; font-size: 16px; }
+        
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
+        .info-table td { padding: 4px 0; }
+        
+        .nilai-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .nilai-table th, .nilai-table td { border: 1px solid black; padding: 12px; font-size: 14px; }
+        .nilai-table th { background: #f2f2f2; text-transform: uppercase; }
+
+        .ttd-box { margin-top: 50px; display: flex; justify-content: space-between; text-align: center; font-size: 14px; }
+        .ttd-kolom { width: 250px; }
+
+        @media print {
+            body { background: white; }
+            .kertas { margin: 0; border: none; width: 100%; height: auto; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loading-screen" class="no-print" style="color:white; text-align:center; padding:100px;">
+    <h2>⏳ Menyiapkan Dokumen Rapor...</h2>
+</div>
+
+<div id="render-area"></div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+
+    window.onload = async function() {
+        const params = new URLSearchParams(window.location.search);
+        const mode = params.get('mode');
+        const area = document.getElementById('render-area');
+
+        if(mode === 'kelas') {
+            const kls = params.get('kelas');
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+                const siswaArr = await res.json();
+                document.getElementById('loading-screen').style.display = 'none';
+                
+                siswaArr.forEach(s => {
+                    area.innerHTML += buatTemplate({
+                        nama: s.nama,
+                        kelas: kls,
+                        nisn: s.nisn,
+                        semester: params.get('semester'),
+                        tp: params.get('tp'),
+                        tahsin: "", // Kosongkan untuk diisi manual/pulpen
+                        k_tahsin: "",
+                        tahfizh: "",
+                        k_tahfizh: ""
+                    });
+                });
+            } catch (e) { alert("Gagal mengambil data kelas!"); }
+        } else {
+            // Mode Satuan
+            document.getElementById('loading-screen').style.display = 'none';
+            area.innerHTML = buatTemplate({
+                nama: params.get('nama'),
+                kelas: params.get('kelas'),
+                nisn: params.get('nisn'),
+                semester: params.get('semester'),
+                tp: params.get('tp'),
+                tahsin: params.get('tahsin'),
+                k_tahsin: params.get('k_tahsin'),
+                tahfizh: params.get('tahfizh'),
+                k_tahfizh: params.get('k_tahfizh')
+            });
+        }
+
+        setTimeout(() => { window.print(); }, 1500);
+    };
+
+    function buatTemplate(d) {
+        return `
+        <div class="kertas">
+            <div class="header">
+                <h3 style="margin:0">YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h3>
+                <span class="arab">المدرسة المتوسطة الإرشاد الإسلامية</span>
+                <h2 style="margin:0">SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h2>
+                <p style="font-size:10px; margin:5px 0">Jl. Panjunan No. 27 Cirebon 45112 | ☏ (0231) 234191</p>
+            </div>
+
+            <div class="judul-rapor">
+                Bismillahirrohmaanirrohiim<br>
+                LAPORAN PERKEMBANGAN HASIL BELAJAR PESERTA DIDIK<br>
+                TAHSIN DAN TAHFIZH AL-QUR’AN
+            </div>
+
+            <table class="info-table">
+                <tr>
+                    <td width="15%">Nama</td><td width="2%">:</td><td width="40%"><b>${d.nama || ''}</b></td>
+                    <td width="15%">Kelas</td><td width="2%">:</td><td>${d.kelas || ''}</td>
+                </tr>
+                <tr>
+                    <td>NISN</td><td>:</td><td>${d.nisn || '-'}</td>
+                    <td>Semester</td><td>:</td><td>${d.semester || ''}</td>
+                </tr>
+                <tr>
+                    <td>Sekolah</td><td>:</td><td>SMP Al-Irsyad Al-Islamiyyah</td>
+                    <td>Tahun Pelajaran</td><td>:</td><td>${d.tp || ''}</td>
+                </tr>
+            </table>
+
+            <table class="nilai-table">
+                <thead>
+                    <tr>
+                        <th width="5%">NO.</th>
+                        <th width="30%">PENCAPAIAN</th>
+                        <th>KETERANGAN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td align="center">1</td>
+                        <td><b>Tahsin</b><br>${d.tahsin || ''}</td>
+                        <td style="height:80px">${d.k_tahsin || ''}</td>
+                    </tr>
+                    <tr>
+                        <td align="center">2</td>
+                        <td><b>Tahfizh</b><br>${d.tahfizh || ''}</td>
+                        <td style="height:80px">${d.k_tahfizh || ''}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="ttd-box">
+                <div class="ttd-kolom">
+                    <p>Mengetahui,</p>
+                    <p>Kepala Sekolah</p>
+                    <br><br><br>
+                    <p><b>Siti Hamidah, S.Pd.I</b></p>
+                </div>
+                <div class="ttd-kolom">
+                    <p>Cirebon, ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}</p>
+                    <p>Guru Al-Qur'an</p>
+                    <br><br><br>
+                    <p><b>____________________</b></p>
+                </div>
+            </div>
+        </div>`;
+    }
+</script>
+</body>
+</html>
