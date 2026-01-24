@@ -34,9 +34,10 @@
         #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
         .hidden { display: none; }
         
-        /* CSS TAMBAHAN KHUSUS RAPOR TANPA RUBAH CSS ASLI */
+        /* CSS KHUSUS RAPOR */
         .box-rapor { border: 2px solid #1f6f51; padding: 15px; border-radius: 15px; background: #fff; margin-top: 10px; }
-        .btn-rapor-final { width:100%; background:var(--red); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:15px; }
+        .btn-rapor-final { width:100%; background:var(--red); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px; }
+        .btn-masal { background: #2563eb !important; }
     </style>
 </head>
 <body>
@@ -117,9 +118,10 @@
             <label>Data Dasar Rapor</label>
             <select id="r-kelas" onchange="loadSantriRapor()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>8A</option><option>8B</option><option>8C</option><option>8D</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
         </div>
-        <div class="form-grup"><select id="r-nama"><option value="">-- Pilih Nama --</option></select></div>
+        <div class="form-grup"><select id="r-nama" onchange="isiNisnotomatis()"><option value="">-- Pilih Nama --</option></select></div>
         <div class="box-rapor">
-            <input type="number" id="r-nisn" placeholder="NISN" style="margin-bottom:8px">
+            <label>NISN</label>
+            <input type="number" id="r-nisn" placeholder="Terisi otomatis" style="margin-bottom:8px">
             <div style="display:flex; gap:5px; margin-bottom:8px">
                 <select id="r-semester"><option value="Ganjil">Ganjil</option><option value="Genap">Genap</option></select>
                 <input type="text" id="r-tp" value="2025/2026">
@@ -132,18 +134,24 @@
             <input type="text" id="r-tahfizh" placeholder="Contoh: Juz 30 (An-Naba)">
             <textarea id="r-ket-tahfizh" rows="2" placeholder="Keterangan Tahfizh..."></textarea>
             
-            <button class="btn-rapor-final" onclick="cetakRaporFinal()">🚀 BUAT RAPOR PDF</button>
+            <button class="btn-rapor-final" onclick="cetakRaporFinal()">🚀 BUAT RAPOR SATUAN</button>
+            <button class="btn-rapor-final btn-masal" onclick="cetakSatuKelas()">🖨️ CETAK SATU KELAS (MASAL)</button>
         </div>
     </div>
 </div>
 
 <script>
-    // KODE AKSES DAN SCRIPT URL ASLI BOS
+    // DATA CONFIG
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
     const FIREBASE_BASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/tahfidz/2026";
     const KODE_RAHASIA = "152003"; 
+    
+    // GANTI INI DENGAN LINK GITHUB BOS YANG BENER (Contoh: https://alirsyad-cirebon.github.io/rapor/)
+    const LINK_GITHUB_PAGES_BOS = "https://username-bos.github.io/rapor-digital/"; 
 
-    // --- FITUR AUTO LOGIN (REFRESH GA MASUKIN KODE LAGI) ---
+    let dataSiswaRapor = [];
+
+    // --- AUTO LOGIN (TIDAK BERUBAH) ---
     window.onload = function() {
         if(localStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('lock-screen').style.display = 'none';
@@ -151,12 +159,12 @@
     }
     function cekLogin() {
         if (document.getElementById('passcode').value === KODE_RAHASIA) {
-            localStorage.setItem('isLoggedIn', 'true'); // Simpan status
+            localStorage.setItem('isLoggedIn', 'true');
             document.getElementById('lock-screen').style.display = 'none';
         } else { alert("Kode Salah!"); }
     }
 
-    // --- LOGIKA TAB ---
+    // --- NAVIGASI TAB (TIDAK BERUBAH) ---
     function switchMenu(m) {
         document.getElementById('areaInput').classList.toggle('hidden', m !== 'input');
         document.getElementById('areaRekap').classList.toggle('hidden', m !== 'rekap');
@@ -226,19 +234,31 @@
         } catch(e) { document.getElementById('wadah-tabel').innerHTML = "Gagal memuat rekap."; }
     }
 
-    // --- FUNGSI TAMBAHAN UNTUK RAPOR ---
+    // --- LOGIKA BARU: LOAD SANTRI RAPOR (DENGAN NISN) ---
     async function loadSantriRapor() {
         const kls = document.getElementById('r-kelas').value;
         const sel = document.getElementById('r-nama');
+        sel.innerHTML = '<option>Memuat...</option>';
         const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-        const data = await res.json();
+        dataSiswaRapor = await res.json();
         sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-        data.forEach(x => sel.options.add(new Option(x.nama, x.nama)));
+        dataSiswaRapor.forEach((x, index) => {
+            sel.options.add(new Option(x.nama, index));
+        });
+    }
+
+    function isiNisnotomatis() {
+        const idx = document.getElementById('r-nama').value;
+        if(idx !== "") {
+            document.getElementById('r-nisn').value = dataSiswaRapor[idx].nisn || "";
+        }
     }
 
     function cetakRaporFinal() {
+        const idx = document.getElementById('r-nama').value;
+        if(idx === "") return alert("Pilih Nama!");
         const data = {
-            nama: document.getElementById('r-nama').value,
+            nama: dataSiswaRapor[idx].nama,
             kelas: document.getElementById('r-kelas').value,
             nisn: document.getElementById('r-nisn').value,
             semester: document.getElementById('r-semester').value,
@@ -249,11 +269,19 @@
             k_tahfizh: document.getElementById('r-ket-tahfizh').value
         };
         const params = new URLSearchParams(data);
-        window.open(`https://username-bos.github.io/rapor-digital/index.html?${params.toString()}`, '_blank');
+        window.open(`${LINK_GITHUB_PAGES_BOS}index.html?${params.toString()}`, '_blank');
     }
 
-    // MATERI ASLI BOS
-    const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
+    function cetakSatuKelas() {
+        const kls = document.getElementById('r-kelas').value;
+        if(!kls) return alert("Pilih Kelas!");
+        const tp = document.getElementById('r-tp').value;
+        const sem = document.getElementById('r-semester').value;
+        window.open(`${LINK_GITHUB_PAGES_BOS}index.html?mode=kelas&kelas=${kls}&tp=${tp}&semester=${sem}`, '_blank');
+    }
+
+    // MATERI (TIDAK BERUBAH)
+    const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi' Alt-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
     const subMateri = { "Jilid": ["Jilid 1A", "Jilid 1B", "Jilid 2A", "Jilid 2B", "Jilid 3A", "Jilid 3B", "Jilid 4A", "Jilid 4B"], "Tadarus27": ["Adz-Dzariyat", "Ath-Thur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid"], "Tadarus30": surah30Juz, "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`), "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`), "Tahfidz": surah30Juz };
     function updateSubMateri() { const kat = document.getElementById('kategori-materi').value; const sub = document.getElementById('materi'); sub.innerHTML = '<option value="">-- Pilih Detail --</option>'; if (subMateri[kat]) { subMateri[kat].forEach(x => sub.options.add(new Option(x, x))); } }
     function setStar(n) { document.getElementById('nilai-bintang').value = n; document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd"); }
