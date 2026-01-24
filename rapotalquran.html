@@ -4,66 +4,84 @@
     <meta charset="UTF-8">
     <title>Rapor Resmi SMP Al-Irsyad</title>
     <style>
+        /* Standar Kertas A4 */
         @page { size: A4; margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Arial", sans-serif; }
+        
         body { background: #555; display: flex; flex-direction: column; align-items: center; padding: 20px; }
 
         .page {
             width: 210mm;
             min-height: 297mm;
             background: white;
-            padding: 10mm 15mm;
+            padding: 15mm 20mm; /* Margin dalam yang lega */
             position: relative;
             box-shadow: 0 0 15px rgba(0,0,0,0.3);
             page-break-after: always;
         }
 
-        /* Kop Surat Sesuai Dokumen */
+        /* Kop Surat */
         .kop { 
             display: flex; 
             align-items: center; 
             border-bottom: 3px double #000; 
-            padding-bottom: 5px; 
-            margin-bottom: 15px;
+            padding-bottom: 8px; 
+            margin-bottom: 20px;
         }
+        
+        /* Solusi Logo Background Hitam */
         .kop img { 
             width: 90px; 
             height: auto; 
-            margin-right: 15px;
+            margin-right: 20px;
+            /* Filter ini akan membalikkan warna hitam menjadi putih agar menyatu dengan kertas */
+            filter: invert(1) hue-rotate(180deg) brightness(1);
             mix-blend-mode: multiply;
         }
+
         .kop-text { text-align: center; flex-grow: 1; }
         .kop-text .yayasan { font-size: 11pt; font-weight: bold; }
-        .kop-text .arab { font-size: 18pt; margin: 2px 0; font-family: 'Times New Roman', serif; color: #1f6f51; font-weight: bold; }
+        .kop-text .arab { font-size: 19pt; margin: 3px 0; font-family: 'Times New Roman', serif; color: #1f6f51; font-weight: bold; }
         .kop-text h1 { font-size: 15pt; color: #1f6f51; font-weight: 900; }
-        .kop-text .akreditasi { font-size: 9pt; font-weight: bold; }
-        .kop-text .izin { font-size: 7.5pt; margin: 2px 0; }
+        .kop-text .akreditasi { font-size: 9pt; font-weight: bold; margin: 2px 0; }
+        .kop-text .izin { font-size: 7.5pt; line-height: 1.2; }
         .kop-text .kontak { font-size: 8pt; border-top: 1px solid #000; padding-top: 3px; margin-top: 3px; }
 
-        .judul-area { text-align: center; margin: 20px 0; }
-        .judul-area .basmalah { font-family: "Times New Roman", serif; font-style: italic; font-size: 12pt; margin-bottom: 5px; }
-        .judul-area h3 { font-size: 11.5pt; font-weight: bold; line-height: 1.4; text-transform: uppercase; }
+        /* Judul Laporan */
+        .judul-area { text-align: center; margin: 25px 0; }
+        .judul-area .basmalah { font-family: "Times New Roman", serif; font-style: italic; font-size: 12.5pt; margin-bottom: 8px; }
+        .judul-area h3 { font-size: 11pt; font-weight: bold; line-height: 1.5; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Area Data Siswa Sejajar Sesuai Tabel Docx */
-        .info-table { width: 100%; margin-bottom: 20px; font-size: 10.5pt; border-collapse: collapse; }
-        .info-table td { padding: 4px 0; vertical-align: top; }
-        .label { width: 100px; }
-        .titik { width: 15px; }
-        .val { font-weight: bold; width: 220px; }
+        /* Area Data Siswa (Grid 2 Kolom) */
+        .info-container { 
+            display: grid; 
+            grid-template-columns: 1.2fr 1fr; 
+            gap: 20px; 
+            margin: 20px 0; 
+            font-size: 10.5pt;
+        }
+        .info-row { display: grid; grid-template-columns: 100px 15px 1fr; margin-bottom: 5px; }
+        .info-val { font-weight: bold; }
 
-        /* Tabel Pencapaian - UKURAN PERSIS DOCX */
-        .main-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .main-table th { border: 1px solid #000; padding: 10px; background: #fff; font-size: 10pt; font-weight: bold; }
-        .main-table td { border: 1px solid #000; padding: 15px; font-size: 11pt; vertical-align: top; }
+        /* Tabel - Mengikuti Proporsi Docx */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { border: 1px solid #000; padding: 12px; background: #fff; font-size: 10pt; }
+        td { border: 1px solid #000; padding: 15px; font-size: 11pt; vertical-align: top; }
         
-        .no-col { width: 50px; text-align: center; }
-        .capai-col { width: 200px; font-weight: bold; }
-        .ket-col { height: 120px; line-height: 1.5; }
+        .no-col { width: 50px; text-align: center; font-weight: bold; }
+        .capai-col { width: 180px; font-weight: bold; }
+        .ket-col { line-height: 1.6; min-height: 150px; }
 
-        /* Tanda Tangan Sesuai Dokumen */
-        .footer-ttd { margin-top: 50px; display: flex; justify-content: space-between; font-size: 10.5pt; width: 100%; }
-        .ttd-box { width: 45%; text-align: center; }
-        .space-ttd { height: 75px; }
+        /* Footer Tanda Tangan */
+        .footer-ttd { 
+            margin-top: 50px; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            font-size: 10.5pt;
+        }
+        .ttd-box { padding-left: 20px; }
+        .ttd-box.kanan { text-align: left; padding-left: 80px; }
+        .space-ttd { height: 85px; }
         .nama-orang { font-weight: bold; text-decoration: underline; }
 
         @media print {
@@ -85,18 +103,16 @@
         const kelas = urlParams.get('kelas');
 
         if (mode === 'kelas') {
-            try {
-                const res = await fetch(`${FIREBASE_URL}/${kelas}.json`);
-                const data = await res.json();
-                if (data) {
-                    container.innerHTML = "";
-                    for (let id in data) render(data[id], container);
-                    setTimeout(() => { window.print(); }, 1500);
-                }
-            } catch (e) { console.error(e); }
+            const res = await fetch(`${FIREBASE_URL}/${kelas}.json`);
+            const data = await res.json();
+            if (data) {
+                container.innerHTML = "";
+                for (let id in data) render(data[id], container);
+                setTimeout(() => { window.print(); }, 2000);
+            }
         } else {
             render(Object.fromEntries(urlParams.entries()), container);
-            setTimeout(() => { window.print(); }, 1000);
+            setTimeout(() => { window.print(); }, 1500);
         }
     }
 
@@ -104,7 +120,7 @@
         const html = `
         <div class="page">
             <div class="kop">
-                <img src="logo.jpg" onerror="this.src='https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png'">
+                <img src="logo.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png'">
                 <div class="kop-text">
                     <div class="yayasan">YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</div>
                     <div class="arab">المدرسة المتوسطة الإرشاد الإسلامية</div>
@@ -120,40 +136,36 @@
                 <h3>LAPORAN PERKEMBANGAN HASIL BELAJAR PESERTA DIDIK<br>TAHSIN DAN TAHFIZH AL-QUR'AN</h3>
             </div>
 
-            <table class="info-table">
-                <tr>
-                    <td class="label">Nama</td><td class="titik">:</td><td class="val">${d.nama}</td>
-                    <td class="label" style="padding-left:20px">Kelas</td><td class="titik">:</td><td class="val">${d.kelas}</td>
-                </tr>
-                <tr>
-                    <td class="label">NISN</td><td class="titik">:</td><td class="val">${d.nisn}</td>
-                    <td class="label" style="padding-left:20px">Semester</td><td class="titik">:</td><td class="val">${d.semester}</td>
-                </tr>
-                <tr>
-                    <td class="label">Sekolah</td><td class="titik">:</td><td class="val">SMP Al-Irsyad Al-Islamiyyah Cirebon</td>
-                    <td class="label" style="padding-left:20px">Tahun Pelajaran</td><td class="titik">:</td><td class="val">${d.tp}</td>
-                </tr>
-                <tr>
-                    <td class="label">Alamat</td><td class="titik">:</td><td colspan="4" class="val">Jl. Panjunan No. 27 Kota Cirebon</td>
-                </tr>
-            </table>
+            <div class="info-container">
+                <div class="left-info">
+                    <div class="info-row"><div class="label">Nama</div><div>:</div><div class="info-val">${d.nama}</div></div>
+                    <div class="info-row"><div class="label">NISN</div><div>:</div><div class="info-val">${d.nisn}</div></div>
+                    <div class="info-row"><div class="label">Sekolah</div><div>:</div><div class="info-val">SMP Al-Irsyad Al-Islamiyyah Cirebon</div></div>
+                    <div class="info-row"><div class="label">Alamat</div><div>:</div><div class="info-val">Jl. Panjunan No. 27 Kota Cirebon</div></div>
+                </div>
+                <div class="right-info">
+                    <div class="info-row"><div class="label">Kelas</div><div>:</div><div class="info-val">${d.kelas}</div></div>
+                    <div class="info-row"><div class="label">Semester</div><div>:</div><div class="info-val">${d.semester}</div></div>
+                    <div class="info-row"><div class="label">Tahun Pelajaran</div><div>:</div><div class="info-val">${d.tp}</div></div>
+                </div>
+            </div>
 
-            <table class="main-table">
+            <table>
                 <thead>
                     <tr>
                         <th class="no-col">NO.</th>
                         <th class="capai-col">PENCAPAIAN</th>
-                        <th class="ket-col">KETERANGAN</th>
+                        <th>KETERANGAN</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="no-col" align="center">1</td>
+                        <td class="no-col">1</td>
                         <td class="capai-col">Tahsin<br><br><span style="font-weight:normal">${d.tahsin || ''}</span></td>
                         <td class="ket-col">${d.k_tahsin || ''}</td>
                     </tr>
                     <tr>
-                        <td class="no-col" align="center">2</td>
+                        <td class="no-col">2</td>
                         <td class="capai-col">Tahfizh<br><br><span style="font-weight:normal">${d.tahfizh || ''}</span></td>
                         <td class="ket-col">${d.k_tahfizh || d.k_t_tahfizh || ''}</td>
                     </tr>
@@ -168,7 +180,7 @@
                     <p class="nama-orang">Siti Hamidah, M.Pd</p>
                     <p>NIK. 19860720192027</p>
                 </div>
-                <div class="ttd-box">
+                <div class="ttd-box kanan">
                     <p>Cirebon, 22 Desember 2025</p>
                     <p>PJ. Al-Qur’an</p>
                     <div class="space-ttd"></div>
