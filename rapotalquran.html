@@ -34,14 +34,39 @@
         .judul-area p:first-child { font-family: 'Times New Roman', serif; font-size: 11pt; font-style: italic; margin-bottom: 5px; }
         .judul-area h3 { font-size: 10.5pt; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
 
-        /* INFO SISWA GRID */
-        .info-siswa { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 10pt; }
-        .info-kiri, .info-kanan { width: 48%; }
-        .row-info { display: flex; margin-bottom: 3px; }
-        .label { width: 75px; }
-        .titik { width: 15px; }
-        .val { flex: 1; font-weight: bold; }
+        /* INFO SISWA GRID - VERSI PRESISI */
+.info-siswa { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-bottom: 15px; 
+    font-size: 10pt; 
+}
 
+.info-kiri, .info-kanan { 
+    width: 49%; 
+}
+
+.row-info { 
+    display: flex; 
+    margin-bottom: 4px; /* Sedikit lebih renggang agar enak dibaca */
+    align-items: flex-start; 
+}
+
+.label { 
+    width: 105px;      /* Lebar ditingkatkan agar 'Tahun Pelajaran' tidak turun baris */
+    display: block; 
+}
+
+.titik { 
+    width: 20px;       /* Area titik dua dibuat tetap */
+    text-align: center; 
+}
+
+.val { 
+    flex: 1; 
+    font-weight: bold; 
+    line-height: 1.2;
+}
         /* TABEL NILAI - MIRIP SCREENSHOT */
         table { width: 100%; border-collapse: collapse; margin-top: 5px; }
         th { border: 1px solid #000; padding: 6px; font-size: 9pt; text-transform: uppercase; font-weight: bold; background: #fff; }
@@ -130,19 +155,18 @@
                 <h3>LAPORAN PERKEMBANGAN HASIL BELAJAR PESERTA DIDIK<br>TAHSIN DAN TAHFIZH AL-QUR'AN</h3>
             </div>
 
-            <div class="info-siswa">
-                <div class="info-kiri">
-                    <div class="row-info"><div class="label">Nama</div><div class="titik">:</div><div class="val">${d.nama || ''}</div></div>
-                    <div class="row-info"><div class="label">NISN</div><div class="titik">:</div><div class="val">${d.nisn || ''}</div></div>
-                    <div class="row-info"><div class="label">Sekolah</div><div class="titik">:</div><div class="val">SMP Al-Irsyad Al-Islamiyyah Cirebon</div></div>
-                    <div class="row-info"><div class="label">Alamat</div><div class="titik">:</div><div class="val">Jl. Panjunan No. 27 Kota Cirebon</div></div>
-                </div>
-                <div class="info-kanan">
-                    <div class="row-info"><div class="label">Kelas</div><div class="titik">:</div><div class="val">${d.kelas || ''}</div></div>
-                    <div class="row-info"><div class="label">Semester</div><div class="titik">:</div><div class="val">${d.semester || ''}</div></div>
-                    <div class="row-info"><div class="label" style="width:105px">Tahun Pelajaran</div><div class="titik">:</div><div class="val">${d.tp || ''}</div></div>
-                </div>
-            </div>
+ <div class="info-siswa">
+    <div class="info-kiri">
+        <div class="row-info"><div class="label">Nama</div><div class="titik">:</div><div class="val">${d.nama || ''}</div></div>
+        <div class="row-info"><div class="label">NISN</div><div class="titik">:</div><div class="val">${d.nisn || ''}</div></div>
+        <div class="row-info"><div class="label">Sekolah</div><div class="titik">:</div><div class="val">SMP Al-Irsyad Al-Islamiyyah Cirebon</div></div>
+        <div class="row-info"><div class="label">Alamat</div><div class="titik">:</div><div class="val">Jl. Panjunan No. 27 Kota Cirebon</div></div>
+    </div>
+    <div class="info-kanan" style="padding-left: 20px;"> <div class="row-info"><div class="label">Kelas</div><div class="titik">:</div><div class="val">${d.kelas || ''}</div></div>
+        <div class="row-info"><div class="label">Semester</div><div class="titik">:</div><div class="val">${d.semester || ''}</div></div>
+        <div class="row-info"><div class="label">Tahun Pelajaran</div><div class="titik">:</div><div class="val">${d.tp || ''}</div></div>
+    </div>
+</div>
 
             <table>
                 <thead>
