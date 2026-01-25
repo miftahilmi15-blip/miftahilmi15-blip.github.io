@@ -2,94 +2,76 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rapor Resmi SMP Al-Irsyad - F4 Massal</title>
+    <title>Rapor Resmi Al-Irsyad - Format Presisi</title>
     <style>
-        /* PENGATURAN KERTAS F4 */
+        /* SETUP KERTAS F4 */
         @page { size: 215mm 330mm; margin: 0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Arial", sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
         
         body { background: #555; display: flex; flex-direction: column; align-items: center; padding: 20px; }
 
         .page {
             width: 215mm; height: 330mm; background: white;
-            padding: 12mm 18mm; position: relative;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            padding: 10mm 15mm; position: relative;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
             page-break-after: always;
-            overflow: hidden;
         }
 
-        /* WARNA HIJAU SESUAI KODE BOS */
-        :root {
-            --green-logo: #013F00; /* Deep Forest Green */
-            --green-text: #008000; /* Islamic Green */
-        }
+        /* KOP SURAT PRESISI */
+        .kop { display: flex; align-items: center; padding-bottom: 5px; }
+        .kop img { width: 90px; height: auto; margin-right: 15px; }
+        .kop-text { text-align: center; flex: 1; color: #000; }
+        .kop-text .yayasan { font-size: 10pt; font-weight: bold; margin-bottom: 2px; }
+        .kop-text .arab { font-size: 18pt; font-family: 'Times New Roman', serif; color: #008000; font-weight: bold; margin: 2px 0; }
+        .kop-text .sekolah { font-size: 14pt; color: #013F00; font-weight: 900; margin-bottom: 2px; }
+        .kop-text .akreditasi { font-size: 8pt; font-weight: bold; }
+        .kop-text .alamat { font-size: 7.5pt; line-height: 1.2; margin-top: 2px; }
 
-        .kop-text .arab { 
-            font-size: 22pt; 
-            font-family: 'Times New Roman', serif; 
-            color: var(--green-text); 
-            margin: 2px 0; 
-            font-weight: bold; 
-        }
-        
-        .kop-text h1 { 
-            font-size: 16pt; 
-            color: var(--green-logo); 
-            font-weight: 900; 
-            letter-spacing: 0.5px;
-        }
+        .garis-double { border-bottom: 1px solid #000; border-top: 3px solid #000; height: 4px; margin-top: 2px; margin-bottom: 15px; }
 
-        .kop { display: flex; align-items: center; border-bottom: 1.5px solid #000; padding-bottom: 5px; }
-        .garis-double { border-bottom: 3.5px double #000; margin-bottom: 15px; margin-top: 2px; }
-        
-        .kop img { width: 100px; height: auto; margin-right: 15px; mix-blend-mode: multiply; }
-        .kop-text { text-align: center; flex: 1; }
-        .kop-text p { font-size: 10.5pt; font-weight: bold; color: #000; }
-        .kop-text .detail { font-size: 8pt; font-weight: normal; line-height: 1.3; color: #000; margin-top: 3px; }
+        /* JUDUL LAPORAN */
+        .judul-area { text-align: center; margin-bottom: 15px; }
+        .judul-area p:first-child { font-family: 'Times New Roman', serif; font-size: 11pt; font-style: italic; margin-bottom: 5px; }
+        .judul-area h3 { font-size: 10.5pt; font-weight: bold; line-height: 1.3; text-transform: uppercase; }
 
-        .judul-area { text-align: center; margin: 20px 0; color: #000; }
-        .judul-area i { font-family: "Times New Roman", serif; font-size: 12pt; font-style: italic; }
-        .judul-area h3 { 
-            font-size: 11.5pt; 
-            font-weight: bold; 
-            margin-top: 8px; 
-            line-height: 1.5; 
-            text-transform: uppercase;
-            border-bottom: 1px solid #000;
-            display: inline-block;
-            padding-bottom: 2px;
-        }
-
-        .info-grid { display: grid; grid-template-columns: 1.2fr 1fr; margin: 20px 0; font-size: 10.5pt; }
-        .info-row { display: flex; margin-bottom: 6px; }
-        .label { width: 90px; }
+        /* INFO SISWA GRID */
+        .info-siswa { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 10pt; }
+        .info-kiri, .info-kanan { width: 48%; }
+        .row-info { display: flex; margin-bottom: 3px; }
+        .label { width: 75px; }
         .titik { width: 15px; }
         .val { flex: 1; font-weight: bold; }
 
-        table { width: 100%; border-collapse: collapse; border: 2px solid #000; margin-top: 10px; }
-        th { border: 1px solid #000; padding: 10px; font-size: 10pt; background: #fff; font-weight: bold; }
-        td { border: 1px solid #000; padding: 12px 15px; font-size: 11pt; vertical-align: top; }
+        /* TABEL NILAI - MIRIP SCREENSHOT */
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th { border: 1px solid #000; padding: 6px; font-size: 9pt; text-transform: uppercase; font-weight: bold; background: #fff; }
+        td { border: 1px solid #000; font-size: 10pt; padding: 5px 10px; vertical-align: top; }
         
-        .row-judul { background: #f2f2f2; font-weight: bold; text-transform: uppercase; font-size: 10pt; }
-        .row-isi { height: 170px; } 
+        .sub-judul { font-weight: bold; border-bottom: none; padding-bottom: 0; }
+        .konten-baris { height: 120px; border-top: none; } /* Tinggi kotak isi */
 
-        .footer { margin-top: 50px; display: flex; justify-content: space-between; font-size: 11pt; }
-        .box-ttd { width: 48%; text-align: left; }
-        .box-ttd.kanan { text-align: right; }
-        .space { height: 85px; }
-        .nama { font-weight: bold; text-decoration: underline; }
+        /* FOOTER TTD */
+        .footer { margin-top: 30px; display: flex; justify-content: space-between; font-size: 10pt; padding: 0 10px; }
+        .box-ttd { width: 45%; }
+        .box-ttd.kanan { text-align: left; padding-left: 60px; }
+        .space-ttd { height: 75px; }
+        .nama-ttd { font-weight: bold; text-decoration: underline; }
 
         @media print {
             body { background: none; padding: 0; }
-            .page { margin: 0; box-shadow: none; border: none; width: 100%; }
+            .page { margin: 0; box-shadow: none; }
+            .no-print { display: none; }
         }
     </style>
 </head>
 <body>
-    <div id="container-rapor"></div>
+
+    <div id="container-rapor">
+        </div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
+    // Masukkan URL Firebase Bos di sini
     const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor.json";
 
     async function init() {
@@ -97,93 +79,98 @@
         const mode = urlParams.get('mode');
         const kelasTarget = urlParams.get('kelas');
 
-        container.innerHTML = "<h2 style='color:white; text-align:center; margin-top:100px;'>⏳ Menyiapkan Rapor Kelas " + (kelasTarget || "") + "...</h2>";
-
         try {
             const res = await fetch(FIREBASE_URL);
-            const rootData = await res.json();
+            const data = await res.json();
             
-            if (!rootData) {
-                container.innerHTML = "<h1 style='color:white; text-align:center;'>Database Kosong, Bos!</h1>";
-                return;
-            }
-
             container.innerHTML = ""; 
-            let count = 0;
-
+            
             if (mode === 'kelas') {
-                for (let emailKey in rootData) {
-                    const nodeSiswa = rootData[emailKey];
-                    for (let id in nodeSiswa) {
-                        const s = nodeSiswa[id];
-                        if (s.kelas && s.kelas.toString().trim().toUpperCase() === kelasTarget.trim().toUpperCase()) {
-                            render(s, container);
-                            count++;
+                for (let emailKey in data) {
+                    for (let id in data[emailKey]) {
+                        const s = data[emailKey][id];
+                        if (s.kelas && s.kelas.toUpperCase() === kelasTarget.toUpperCase()) {
+                            renderRapor(s, container);
                         }
                     }
                 }
-                
-                if (count > 0) {
-                    setTimeout(() => { window.print(); }, 2000);
-                } else {
-                    container.innerHTML = `<h1 style='color:white; text-align:center;'>Data Kelas ${kelasTarget} Tidak Ditemukan!</h1>`;
-                }
             } else {
-                render(Object.fromEntries(urlParams.entries()), container);
-                setTimeout(() => { window.print(); }, 1000);
+                // Render single (ambil dari param)
+                renderRapor(Object.fromEntries(urlParams.entries()), container);
             }
+            
+            // Auto print setelah load
+            setTimeout(() => { window.print(); }, 1500);
 
         } catch (e) {
-            container.innerHTML = "<h1 style='color:white; text-align:center;'>Gagal koneksi! Cek Internet atau URL Firebase.</h1>";
+            container.innerHTML = "<h1 style='color:white'>Gagal muat data, Bos.</h1>";
         }
     }
 
-    function render(d, target) {
+    function renderRapor(d, target) {
         target.innerHTML += `
         <div class="page">
             <div class="kop">
                 <img src="https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png">
                 <div class="kop-text">
-                    <p>YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</p>
+                    <p class="yayasan">YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</p>
                     <div class="arab">المدرسة المتوسطة الإرشاد الإسلامية</div>
-                    <h1>SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h1>
-                    <p style="font-size:8.5pt; font-weight:bold; color:var(--green-text);">"TERAKREDITASI A" SK. Nomor: 582/BAN-SM/SK/2023</p>
-                    <div class="detail">
+                    <h1 class="sekolah">SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h1>
+                    <p class="akreditasi">"TERAKREDITASI A" SK. Nomor: 582/BAN-SM/SK/2023</p>
+                    <p class="alamat">
                         Izin Operasional : SK. Wali Kota Cirebon No.100.3.3.3/4452/2024 | NSS : 204026304019 | NPSN : 20222153<br>
-                        🏠 Jl. Panjunan No. 27 Cirebon 45112 | ☏ (0231) 234191 | smp.alirsyadcrb.id
-                    </div>
+                        Jl. Panjunan No. 27 Cirebon 45112 | Telp: (0231) 234191 | Website: smp.alirsyadcrb.id
+                    </p>
                 </div>
             </div>
             <div class="garis-double"></div>
 
             <div class="judul-area">
-                <i>Bismillahirrahmaanirrohiim</i><br>
+                <p>Bismillahirrahrohmaanirrohiim</p>
                 <h3>LAPORAN PERKEMBANGAN HASIL BELAJAR PESERTA DIDIK<br>TAHSIN DAN TAHFIZH AL-QUR'AN</h3>
             </div>
 
-            <div class="info-grid">
-                <div>
-                    <div class="info-row"><div class="label">Nama</div><div class="titik">:</div><div class="val">${d.nama || ''}</div></div>
-                    <div class="info-row"><div class="label">NISN</div><div class="titik">:</div><div class="val">${d.nisn || ''}</div></div>
-                    <div class="info-row"><div class="label">Sekolah</div><div class="titik">:</div><div class="val">SMP Al-Irsyad Al-Islamiyyah Cirebon</div></div>
-                    <div class="info-row"><div class="label">Alamat</div><div class="titik">:</div><div class="val">Jl. Panjunan No. 27 Kota Cirebon</div></div>
+            <div class="info-siswa">
+                <div class="info-kiri">
+                    <div class="row-info"><div class="label">Nama</div><div class="titik">:</div><div class="val">${d.nama || ''}</div></div>
+                    <div class="row-info"><div class="label">NISN</div><div class="titik">:</div><div class="val">${d.nisn || ''}</div></div>
+                    <div class="row-info"><div class="label">Sekolah</div><div class="titik">:</div><div class="val">SMP Al-Irsyad Al-Islamiyyah Cirebon</div></div>
+                    <div class="row-info"><div class="label">Alamat</div><div class="titik">:</div><div class="val">Jl. Panjunan No. 27 Kota Cirebon</div></div>
                 </div>
-                <div style="padding-left:40px">
-                    <div class="info-row"><div class="label">Kelas</div><div class="titik">:</div><div class="val">${d.kelas || ''}</div></div>
-                    <div class="info-row"><div class="label">Semester</div><div class="titik">:</div><div class="val">${d.semester || ''}</div></div>
-                    <div class="info-row"><div class="label" style="width:110px">Tahun Pelajaran</div><div class="titik">:</div><div class="val">${d.tp || d.tahun_pelajaran || ''}</div></div>
+                <div class="info-kanan">
+                    <div class="row-info"><div class="label">Kelas</div><div class="titik">:</div><div class="val">${d.kelas || ''}</div></div>
+                    <div class="row-info"><div class="label">Semester</div><div class="titik">:</div><div class="val">${d.semester || ''}</div></div>
+                    <div class="row-info"><div class="label" style="width:105px">Tahun Pelajaran</div><div class="titik">:</div><div class="val">${d.tp || ''}</div></div>
                 </div>
             </div>
 
             <table>
                 <thead>
-                    <tr><th style="width:50px">NO.</th><th style="width:220px">PENCAPAIAN</th><th>KETERANGAN</th></tr>
+                    <tr>
+                        <th width="40">NO.</th>
+                        <th width="220">PENCAPAIAN</th>
+                        <th>KETERANGAN</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    <tr class="row-judul"><td align="center">1</td><td>Tahsin</td><td></td></tr>
-                    <tr class="row-isi"><td></td><td>${d.tahsin || ''}</td><td style="text-align:justify; line-height:1.4;">${d.k_tahsin || ''}</td></tr>
-                    <tr class="row-judul"><td align="center">2</td><td>Tahfizh</td><td></td></tr>
-                    <tr class="row-isi"><td></td><td>${d.tahfizh || ''}</td><td style="text-align:justify; line-height:1.4;">${d.k_tahfizh || d.k_t_tahfizh || ''}</td></tr>
+                    <tr>
+                        <td rowspan="2" align="center" style="vertical-align:middle">1</td>
+                        <td class="sub-judul">Tahsin</td>
+                        <td style="border-bottom:none"></td>
+                    </tr>
+                    <tr>
+                        <td class="konten-baris">${d.tahsin || ''}</td>
+                        <td class="konten-baris" style="text-align:justify">${d.k_tahsin || ''}</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" align="center" style="vertical-align:middle">2</td>
+                        <td class="sub-judul">Tahfizh</td>
+                        <td style="border-bottom:none"></td>
+                    </tr>
+                    <tr>
+                        <td class="konten-baris">${d.tahfizh || ''}</td>
+                        <td class="konten-baris" style="text-align:justify">${d.k_tahfizh || ''}</td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -191,16 +178,16 @@
                 <div class="box-ttd">
                     <p>Mengetahui,</p>
                     <p>Kepala SMP Al-Irsyad Al-Islamiyyah Kota Cirebon</p>
-                    <div class="space"></div>
-                    <p class="nama">Siti Hamidah, M.Pd</p>
+                    <div class="space-ttd"></div>
+                    <p class="nama-ttd">Siti Hamidah, M.Pd</p>
                     <p>NIK. 19860720192027</p>
                 </div>
                 <div class="box-ttd kanan">
                     <p>Cirebon, 22 Desember 2025</p>
-                    <p>PJ. Al-Qur'an</p>
-                    <div class="space"></div>
-                    <p class="nama" style="display:inline-block; text-align:left;">Ria Setiawati, A.Md</p>
-                    <p style="text-align:right; padding-right:15px;">NIK. 19900720172057</p>
+                    <p>P.J. Al-Qur'an</p>
+                    <div class="space-ttd"></div>
+                    <p class="nama-ttd">Ria Setiawati, A.Md</p>
+                    <p>NIK. 19900720172057</p>
                 </div>
             </div>
         </div>`;
