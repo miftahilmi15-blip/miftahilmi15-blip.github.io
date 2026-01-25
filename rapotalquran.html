@@ -18,44 +18,70 @@
             overflow: hidden;
         }
 
-        /* WARNA HIJAU SESUAI REQUEST */
-        .kop-text .arab { font-size: 20pt; font-family: 'Times New Roman', serif; color: #1f6f51; margin: 2px 0; font-weight: bold; }
-        .kop-text h1 { font-size: 15pt; color: #1f6f51; font-weight: 900; }
+        /* WARNA HIJAU SESUAI KODE BOS */
+        :root {
+            --green-logo: #013F00; /* Deep Forest Green */
+            --green-text: #008000; /* Islamic Green */
+        }
 
-        .kop { display: flex; align-items: center; border-bottom: 1px solid #000; padding-bottom: 5px; }
+        .kop-text .arab { 
+            font-size: 22pt; 
+            font-family: 'Times New Roman', serif; 
+            color: var(--green-text); 
+            margin: 2px 0; 
+            font-weight: bold; 
+        }
+        
+        .kop-text h1 { 
+            font-size: 16pt; 
+            color: var(--green-logo); 
+            font-weight: 900; 
+            letter-spacing: 0.5px;
+        }
+
+        .kop { display: flex; align-items: center; border-bottom: 1.5px solid #000; padding-bottom: 5px; }
         .garis-double { border-bottom: 3.5px double #000; margin-bottom: 15px; margin-top: 2px; }
         
-        .kop img { width: 95px; height: auto; margin-right: 15px; mix-blend-mode: multiply; }
-        .kop-text { text-align: center; flex: 1; margin-right: 40px; }
-        .kop-text p { font-size: 10pt; font-weight: bold; }
-        .kop-text .detail { font-size: 7.5pt; font-weight: normal; line-height: 1.3; color: #000; }
+        .kop img { width: 100px; height: auto; margin-right: 15px; mix-blend-mode: multiply; }
+        .kop-text { text-align: center; flex: 1; }
+        .kop-text p { font-size: 10.5pt; font-weight: bold; color: #000; }
+        .kop-text .detail { font-size: 8pt; font-weight: normal; line-height: 1.3; color: #000; margin-top: 3px; }
 
-        .judul-area { text-align: center; margin: 20px 0; }
+        .judul-area { text-align: center; margin: 20px 0; color: #000; }
         .judul-area i { font-family: "Times New Roman", serif; font-size: 12pt; font-style: italic; }
-        .judul-area h3 { font-size: 11pt; font-weight: bold; margin-top: 8px; line-height: 1.4; text-transform: uppercase; }
+        .judul-area h3 { 
+            font-size: 11.5pt; 
+            font-weight: bold; 
+            margin-top: 8px; 
+            line-height: 1.5; 
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            padding-bottom: 2px;
+        }
 
         .info-grid { display: grid; grid-template-columns: 1.2fr 1fr; margin: 20px 0; font-size: 10.5pt; }
         .info-row { display: flex; margin-bottom: 6px; }
-        .label { width: 85px; }
+        .label { width: 90px; }
         .titik { width: 15px; }
         .val { flex: 1; font-weight: bold; }
 
         table { width: 100%; border-collapse: collapse; border: 2px solid #000; margin-top: 10px; }
         th { border: 1px solid #000; padding: 10px; font-size: 10pt; background: #fff; font-weight: bold; }
-        td { border: 1px solid #000; padding: 15px; font-size: 11pt; vertical-align: top; }
+        td { border: 1px solid #000; padding: 12px 15px; font-size: 11pt; vertical-align: top; }
         
-        .row-judul { background: #f9f9f9; font-weight: bold; }
-        .row-isi { height: 160px; } 
+        .row-judul { background: #f2f2f2; font-weight: bold; text-transform: uppercase; font-size: 10pt; }
+        .row-isi { height: 170px; } 
 
         .footer { margin-top: 50px; display: flex; justify-content: space-between; font-size: 11pt; }
-        .box-ttd { width: 45%; text-align: left; }
-        .box-ttd.kanan { padding-left: 50px; }
-        .space { height: 80px; }
+        .box-ttd { width: 48%; text-align: left; }
+        .box-ttd.kanan { text-align: right; }
+        .space { height: 85px; }
         .nama { font-weight: bold; text-decoration: underline; }
 
         @media print {
             body { background: none; padding: 0; }
-            .page { margin: 0; box-shadow: none; border: none; }
+            .page { margin: 0; box-shadow: none; border: none; width: 100%; }
         }
     </style>
 </head>
@@ -71,14 +97,14 @@
         const mode = urlParams.get('mode');
         const kelasTarget = urlParams.get('kelas');
 
-        container.innerHTML = "<h2 style='color:white; text-align:center; margin-top:100px;'>⏳ Menarik Data Rapor Al-Irsyad...</h2>";
+        container.innerHTML = "<h2 style='color:white; text-align:center; margin-top:100px;'>⏳ Menyiapkan Rapor Kelas " + (kelasTarget || "") + "...</h2>";
 
         try {
             const res = await fetch(FIREBASE_URL);
             const rootData = await res.json();
             
             if (!rootData) {
-                container.innerHTML = "<h1 style='color:white;'>Database Kosong!</h1>";
+                container.innerHTML = "<h1 style='color:white; text-align:center;'>Database Kosong, Bos!</h1>";
                 return;
             }
 
@@ -86,13 +112,11 @@
             let count = 0;
 
             if (mode === 'kelas') {
-                // Loop folder email admin
                 for (let emailKey in rootData) {
                     const nodeSiswa = rootData[emailKey];
                     for (let id in nodeSiswa) {
                         const s = nodeSiswa[id];
-                        // Trim spasi biar ga "lucu" lagi pas nyari kelas
-                        if (s.kelas && s.kelas.toString().trim().toLowerCase() === kelasTarget.trim().toLowerCase()) {
+                        if (s.kelas && s.kelas.toString().trim().toUpperCase() === kelasTarget.trim().toUpperCase()) {
                             render(s, container);
                             count++;
                         }
@@ -100,18 +124,17 @@
                 }
                 
                 if (count > 0) {
-                    setTimeout(() => { window.print(); }, 2500);
+                    setTimeout(() => { window.print(); }, 2000);
                 } else {
-                    container.innerHTML = `<h1 style='color:white; text-align:center;'>Data Kelas ${kelasTarget} Tidak Ada, Bos!</h1>`;
+                    container.innerHTML = `<h1 style='color:white; text-align:center;'>Data Kelas ${kelasTarget} Tidak Ditemukan!</h1>`;
                 }
             } else {
-                // Mode Tunggal (dari Parameter URL)
                 render(Object.fromEntries(urlParams.entries()), container);
-                setTimeout(() => { window.print(); }, 1500);
+                setTimeout(() => { window.print(); }, 1000);
             }
 
         } catch (e) {
-            container.innerHTML = "<h1 style='color:white;'>Gagal koneksi, Bos! Cek internet.</h1>";
+            container.innerHTML = "<h1 style='color:white; text-align:center;'>Gagal koneksi! Cek Internet atau URL Firebase.</h1>";
         }
     }
 
@@ -119,12 +142,12 @@
         target.innerHTML += `
         <div class="page">
             <div class="kop">
-                <img src="logo.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png'">
+                <img src="https://upload.wikimedia.org/wikipedia/id/1/10/Logo_Al-Irsyad_Al-Islamiyyah.png">
                 <div class="kop-text">
                     <p>YAYASAN AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</p>
                     <div class="arab">المدرسة المتوسطة الإرشاد الإسلامية</div>
                     <h1>SMP AL-IRSYAD AL-ISLAMIYYAH KOTA CIREBON</h1>
-                    <p style="font-size:8pt; font-weight:bold;">"TERAKREDITASI A" SK. Nomor: 582/BAN-SM/SK/2023</p>
+                    <p style="font-size:8.5pt; font-weight:bold; color:var(--green-text);">"TERAKREDITASI A" SK. Nomor: 582/BAN-SM/SK/2023</p>
                     <div class="detail">
                         Izin Operasional : SK. Wali Kota Cirebon No.100.3.3.3/4452/2024 | NSS : 204026304019 | NPSN : 20222153<br>
                         🏠 Jl. Panjunan No. 27 Cirebon 45112 | ☏ (0231) 234191 | smp.alirsyadcrb.id
@@ -134,7 +157,7 @@
             <div class="garis-double"></div>
 
             <div class="judul-area">
-                <i>Bismillahirrahmaanirrohiim</i>
+                <i>Bismillahirrahmaanirrohiim</i><br>
                 <h3>LAPORAN PERKEMBANGAN HASIL BELAJAR PESERTA DIDIK<br>TAHSIN DAN TAHFIZH AL-QUR'AN</h3>
             </div>
 
@@ -158,9 +181,9 @@
                 </thead>
                 <tbody>
                     <tr class="row-judul"><td align="center">1</td><td>Tahsin</td><td></td></tr>
-                    <tr class="row-isi"><td></td><td>${d.tahsin || ''}</td><td style="text-align:justify">${d.k_tahsin || ''}</td></tr>
+                    <tr class="row-isi"><td></td><td>${d.tahsin || ''}</td><td style="text-align:justify; line-height:1.4;">${d.k_tahsin || ''}</td></tr>
                     <tr class="row-judul"><td align="center">2</td><td>Tahfizh</td><td></td></tr>
-                    <tr class="row-isi"><td></td><td>${d.tahfizh || ''}</td><td style="text-align:justify">${d.k_tahfizh || d.k_t_tahfizh || ''}</td></tr>
+                    <tr class="row-isi"><td></td><td>${d.tahfizh || ''}</td><td style="text-align:justify; line-height:1.4;">${d.k_tahfizh || d.k_t_tahfizh || ''}</td></tr>
                 </tbody>
             </table>
 
@@ -176,8 +199,8 @@
                     <p>Cirebon, 22 Desember 2025</p>
                     <p>PJ. Al-Qur'an</p>
                     <div class="space"></div>
-                    <p class="nama">Ria Setiawati, A.Md</p>
-                    <p>NIK. 19900720172057</p>
+                    <p class="nama" style="display:inline-block; text-align:left;">Ria Setiawati, A.Md</p>
+                    <p style="text-align:right; padding-right:15px;">NIK. 19900720172057</p>
                 </div>
             </div>
         </div>`;
