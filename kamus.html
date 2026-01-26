@@ -3,58 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VOCABIN PRO | E-Santri</title>
+<title>VOCABIN PRO</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Noto+Naskh+Arabic:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; --white: #ffffff; --red: #ff4b4b; --green: #58cc02; }
-  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 0; overflow-x: hidden; }
+  :root { --primary: #1f6f51; --accent: #d4b96a; --bg: #f3fbf7; --white: #ffffff; --green: #58cc02; }
+  body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 0; }
 
-  /* HEADER */
+  /* HEADER MODERN */
   header { 
     background: var(--white); padding: 30px 20px; text-align: center; 
-    border-radius: 0 0 30px 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    border-radius: 0 0 35px 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   }
   .title-4d {
-    font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900;
-    color: #fff; -webkit-text-stroke: 1.2px var(--primary); text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif; font-size: 32px; font-weight: 900;
+    color: var(--primary); text-transform: uppercase; letter-spacing: -1px;
   }
-  .status-bar { display: flex; justify-content: center; gap: 20px; margin-top: 10px; font-weight: bold; align-items: center; }
-  
-  /* BATERAI & API */
-  .bat-shell { width: 35px; height: 18px; border: 2px solid #333; border-radius: 4px; position: relative; display: inline-block; }
-  .bat-shell::after { content: ''; position: absolute; right: -6px; top: 4px; width: 4px; height: 7px; background: #333; }
-  .bat-level { height: 100%; background: var(--green); transition: 0.5s; }
-  .api-nyala { animation: blink 1s infinite alternate; }
-  @keyframes blink { from { opacity: 0.4; } to { opacity: 1; } }
+  .status-bar { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
+  .stat-badge { background: #f0fdf4; padding: 6px 15px; border-radius: 20px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 5px; border: 1px solid #dcfce7; }
 
-  /* SEARCH & RESULT */
-  .container { max-width: 450px; margin: -20px auto 30px; padding: 0 20px; }
-  .search-wrapper { background: var(--white); display: flex; padding: 5px 15px; border-radius: 50px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); align-items: center; }
+  /* SEARCH BOX */
+  .container { max-width: 450px; margin: -25px auto 30px; padding: 0 20px; }
+  .search-wrapper { 
+    background: var(--white); display: flex; padding: 8px 18px; 
+    border-radius: 100px; box-shadow: 0 15px 35px rgba(31,111,81,0.15); align-items: center; 
+  }
   .search-wrapper input { flex: 1; border: none; outline: none; padding: 12px; font-size: 16px; background: transparent; }
-  .search-wrapper button { background: var(--primary); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+  .search-wrapper button { background: var(--primary); color: white; border: none; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; font-size: 18px; }
 
-  .result-card { background: var(--white); border-radius: 25px; padding: 25px; margin-top: 25px; display: none; border-top: 6px solid var(--accent); }
-  .word-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
-  .word-row:last-child { border: none; }
-  .lang-tag { font-size: 10px; font-weight: 800; color: #aaa; }
-  .txt-val { font-size: 18px; font-weight: 600; color: #333; }
-  .txt-ar { font-family: 'Noto Naskh Arabic', serif; font-size: 24px; direction: rtl; }
+  /* RESULT CARD */
+  .result-card { 
+    background: var(--white); border-radius: 30px; padding: 25px; margin-top: 25px; 
+    display: none; border-top: 8px solid var(--accent); animation: slideUp 0.3s ease-out;
+  }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* GAME OVERLAY */
-  #gameOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1000; display: none; flex-direction: column; }
-  .game-header { padding: 20px; display: flex; align-items: center; border-bottom: 2px solid #eee; }
-  .progress-container { flex: 1; height: 12px; background: #eee; border-radius: 10px; margin: 0 15px; overflow: hidden; }
-  .progress-fill { width: 0%; height: 100%; background: var(--green); transition: 0.4s; }
+  .word-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f1f1; }
+  .word-row:last-of-type { border: none; }
+  .lang-tag { font-size: 10px; font-weight: 800; color: #aaa; letter-spacing: 1px; }
+  .txt-val { font-size: 18px; font-weight: 700; color: #333; }
+  .txt-ar { font-family: 'Noto Naskh Arabic', serif; font-size: 24px; color: var(--primary); }
 
-  .scroll-area { flex: 1; overflow-y: auto; padding: 20px; text-align: center; }
-  .btn-lang { width: 100%; padding: 15px; margin-bottom: 10px; border: 2px solid #eee; border-radius: 15px; background: white; font-weight: bold; cursor: pointer; text-align: left; display: flex; justify-content: space-between; }
-  .option-card { width: 100%; padding: 18px; margin-bottom: 12px; border: 2px solid #eee; border-bottom: 5px solid #eee; border-radius: 15px; background: white; font-weight: 600; cursor: pointer; text-align: left; }
-  
-  .correct { background: #d7ffb1 !important; border-color: var(--green) !important; color: #189918 !important; }
-  .wrong { background: #ffdfe0 !important; border-color: var(--red) !important; color: var(--red) !important; }
-
-  #feedback { position: fixed; bottom: 0; width: 100%; padding: 20px; box-sizing: border-box; display: none; z-index: 1100; text-align: center; border-top: 2px solid #ddd; }
-  .btn-main { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--green); color: white; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #46a302; }
+  /* MENU BUTTONS */
+  .btn-play { 
+    width: 100%; padding: 20px; margin-top: 20px; border-radius: 20px; border: none; 
+    background: var(--green); color: white; font-weight: 900; font-size: 16px;
+    cursor: pointer; box-shadow: 0 6px 0 #46a302; text-decoration: none; display: block; text-align: center; box-sizing: border-box;
+  }
+  .btn-play:active { transform: translateY(4px); box-shadow: none; }
 </style>
 </head>
 <body>
@@ -62,93 +57,47 @@
 <header>
   <h1 class="title-4d">VOCABIN</h1>
   <div class="status-bar">
-    <div><span id="apiIcon">🔥</span> <span id="mainStreak">0</span></div>
-    <div style="display:flex; align-items:center; gap:5px;">
-      <div class="bat-shell"><div id="batLevel" class="bat-level"></div></div>
-      <span id="batText" style="font-size: 12px;">100%</span>
-    </div>
+    <div class="stat-badge">🔥 <span id="streak">0</span></div>
+    <div class="stat-badge">⚡ <span id="battery">100%</span></div>
   </div>
 </header>
 
 <div class="container">
   <div class="search-wrapper">
-    <input type="text" id="searchInput" placeholder="Cari kata...">
+    <input type="text" id="searchInput" placeholder="Cari kata apa saja...">
     <button onclick="cariKamus()">🔍</button>
   </div>
 
   <div id="resultCard" class="result-card">
     <div class="word-row">
       <div><span class="lang-tag">INDONESIA</span><br><span id="resIndo" class="txt-val"></span></div>
-      <button onclick="bicara(document.getElementById('resIndo').innerText, 'id')" style="border:none; background:none; font-size:20px;">🔊</button>
+      <button onclick="bicara('resIndo', 'id')" style="border:none; background:none; font-size:22px;">🔊</button>
     </div>
     <div class="word-row">
       <div><span class="lang-tag">ARAB</span><br><span id="resArab" class="txt-val txt-ar"></span></div>
-      <button onclick="bicara(document.getElementById('resArab').innerText, 'ar')" style="border:none; background:none; font-size:20px;">🔊</button>
+      <button onclick="bicara('resArab', 'ar')" style="border:none; background:none; font-size:22px;">🔊</button>
     </div>
     <div class="word-row">
       <div><span class="lang-tag">INGGRIS</span><br><span id="resEng" class="txt-val"></span></div>
-      <button onclick="bicara(document.getElementById('resEng').innerText, 'en')" style="border:none; background:none; font-size:20px;">🔊</button>
+      <button onclick="bicara('resEng', 'en')" style="border:none; background:none; font-size:22px;">🔊</button>
     </div>
-    <button class="btn-main" style="margin-top:15px;" onclick="openGame()">PELAJARI TEMA LAIN 🎮</button>
-  </div>
-</div>
-
-<div id="gameOverlay">
-  <div class="game-header">
-    <span onclick="closeGame()" style="font-size: 24px; cursor: pointer;">✕</span>
-    <div class="progress-container"><div id="xpFill" class="progress-fill"></div></div>
-    <div id="gameBat" style="font-weight:bold; font-size:12px; color:var(--red);">⚡ 100%</div>
-  </div>
-
-  <div id="langMenu" class="scroll-area">
-    <h2 style="margin-bottom:20px;">Pilih Tema Bahasa:</h2>
-    <button class="btn-lang" onclick="startLevel('en', 'Inggris')">🇬🇧 English <span>→</span></button>
-    <button class="btn-lang" onclick="startLevel('ar', 'Arab')">🇸🇦 Arab <span>→</span></button>
-    <button class="btn-lang" onclick="startLevel('ja', 'Jepang')">🇯🇵 Jepang <span>→</span></button>
-    <button class="btn-lang" onclick="startLevel('ko', 'Korea')">🇰🇷 Korea <span>→</span></button>
-    <button class="btn-lang" onclick="startLevel('fr', 'Prancis')">🇫🇷 Prancis <span>→</span></button>
-  </div>
-
-  <div id="playArea" class="scroll-area" style="display:none; padding-bottom: 120px;">
-    <p id="instr" style="color:#aaa; font-size:12px; text-transform:uppercase;"></p>
-    <h1 id="qText" style="margin-bottom:25px;">...</h1>
-    <div id="optionsGrid"></div>
-  </div>
-
-  <div id="feedback">
-    <h3 id="feedMsg" style="margin-bottom:15px;"></h3>
-    <button id="btnNext" class="btn-main">LANJUT</button>
+    
+    <a href="game.html" class="btn-play">MASUK MODE GAME 🎮</a>
   </div>
 </div>
 
 <script>
-  let userData = JSON.parse(localStorage.getItem('vocabin_v7')) || {
-    streak: 0, battery: 100, lastDate: null, currentLevel: 1
-  };
-
-  let targetLang = 'en', targetName = 'Inggris', xp = 0;
-
-  function updateDisplay() {
-    const today = new Date().toLocaleDateString('en-CA');
-    document.getElementById('mainStreak').innerText = userData.streak;
-    document.getElementById('batLevel').style.width = userData.battery + "%";
-    document.getElementById('batText').innerText = userData.battery + "%";
-    document.getElementById('gameBat').innerText = "⚡ " + userData.battery + "%";
-    document.getElementById('apiIcon').className = (userData.lastDate === today) ? "api-nyala" : "";
-    localStorage.setItem('vocabin_v7', JSON.stringify(userData));
-  }
-  updateDisplay();
-
-  function bicara(t, l) {
-    window.speechSynthesis.cancel();
-    const m = new SpeechSynthesisUtterance(t);
-    m.lang = l === 'ar' ? 'ar-SA' : l === 'ja' ? 'ja-JP' : l === 'ko' ? 'ko-KR' : 'en-US';
-    window.speechSynthesis.speak(m);
-  }
+  // Ambil data lokal
+  let data = JSON.parse(localStorage.getItem('vocabin_pro')) || { streak: 0, battery: 100 };
+  document.getElementById('streak').innerText = data.streak;
+  document.getElementById('battery').innerText = data.battery + "%";
 
   async function cariKamus() {
     const q = document.getElementById('searchInput').value;
     if(!q) return;
+    const card = document.getElementById('resultCard');
+    card.style.display = 'block';
+    
     try {
       const [rA, rE, rI] = await Promise.all([
         fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ar&dt=t&q=${q}`),
@@ -158,100 +107,16 @@
       document.getElementById('resIndo').innerText = (await rI.json())[0][0][0];
       document.getElementById('resArab').innerText = (await rA.json())[0][0][0];
       document.getElementById('resEng').innerText = (await rE.json())[0][0][0];
-      document.getElementById('resultCard').style.display = 'block';
-    } catch(e) { alert("Cek koneksi!"); }
+    } catch(e) { alert("Cek koneksi internet, Bos!"); }
   }
 
-  function openGame() {
-    if(userData.battery <= 0) return alert("Baterai Habis! Istirahat dulu.");
-    document.getElementById('gameOverlay').style.display = 'flex';
-    document.getElementById('langMenu').style.display = 'block';
-    document.getElementById('playArea').style.display = 'none';
-    document.getElementById('feedback').style.display = 'none';
-    xp = 0; document.getElementById('xpFill').style.width = "0%";
+  function bicara(id, lang) {
+    const teks = document.getElementById(id).innerText;
+    window.speechSynthesis.cancel();
+    const m = new SpeechSynthesisUtterance(teks);
+    m.lang = lang === 'ar' ? 'ar-SA' : lang === 'id' ? 'id-ID' : 'en-US';
+    window.speechSynthesis.speak(m);
   }
-
-  function startLevel(l, n) {
-    targetLang = l; targetName = n;
-    document.getElementById('langMenu').style.display = 'none';
-    document.getElementById('playArea').style.display = 'block';
-    nextRound();
-  }
-
-  async function nextRound() {
-    document.getElementById('feedback').style.display = 'none';
-    const grid = document.getElementById('optionsGrid');
-    grid.innerHTML = "Memutar otak...";
-    try {
-      let query = "";
-      if(userData.currentLevel > 10) {
-        const S = ["Saya", "Kamu", "Guru"]; const P = ["sedang makan", "sedang membaca", "pergi ke masjid"];
-        query = S[Math.floor(Math.random()*S.length)] + " " + P[Math.floor(Math.random()*P.length)];
-      } else {
-        const r = await fetch(`https://api.datamuse.com/words?sp=????&max=20`);
-        const w = await r.json(); query = w[Math.floor(Math.random()*w.length)].word;
-      }
-      const [tI, tT] = await Promise.all([
-        fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=id&dt=t&q=${query}`),
-        fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${query}`)
-      ]);
-      const cor = (await tT.json())[0][0][0];
-      const qIndo = (await tI.json())[0][0][0];
-      
-      document.getElementById('instr').innerText = `Terjemahkan ke ${targetName}:`;
-      document.getElementById('qText').innerText = qIndo.toUpperCase();
-      
-      let opts = [cor, "Salah 1", "Salah 2", "Salah 3", "Salah 4"]; 
-      // Ambil pengecoh beneran dari API biar keren
-      const rE = await fetch(`https://api.datamuse.com/words?ml=${query}&max=5`);
-      const wE = await rE.json();
-      for(let i=0; i<4; i++) {
-        if(wE[i]) {
-          const tE = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${wE[i].word}`);
-          opts[i+1] = (await tE.json())[0][0][0];
-        }
-      }
-
-      grid.innerHTML = "";
-      [...new Set(opts)].sort(()=>Math.random()-0.5).forEach(o => {
-        grid.innerHTML += `<div class="option-card" onclick="handleSel(this, '${o.replace(/'/g,"\\'")}', '${cor.replace(/'/g,"\\")}')">${o}</div>`;
-      });
-    } catch(e) { grid.innerHTML = "Error koneksi!"; }
-  }
-
-  function handleSel(el, s, c) {
-    bicara(s, targetLang);
-    document.querySelectorAll('.option-card').forEach(k => k.style.pointerEvents = 'none');
-    if(s === c) {
-      el.classList.add('correct'); xp += 25;
-      document.getElementById('xpFill').style.width = xp + "%";
-      if(xp >= 100) { showFinish(); } else { showFeed(true); }
-    } else {
-      el.classList.add('wrong'); userData.battery -= 20; if(userData.battery < 0) userData.battery = 0;
-      updateDisplay(); showFeed(false);
-    }
-  }
-
-  function showFeed(win) {
-    const f = document.getElementById('feedback');
-    f.style.display = 'block'; f.style.background = win ? '#d7ffb1' : '#ffdfe0';
-    document.getElementById('feedMsg').innerText = win ? "BENAR! +25XP" : "KURANG TEPAT! -20⚡";
-    document.getElementById('btnNext').innerText = "LANJUT";
-    document.getElementById('btnNext').onclick = nextRound;
-  }
-
-  function showFinish() {
-    const today = new Date().toLocaleDateString('en-CA');
-    if(userData.lastDate !== today) { userData.streak++; userData.lastDate = today; }
-    userData.currentLevel++; updateDisplay();
-    const f = document.getElementById('feedback');
-    f.style.display = 'block'; f.style.background = '#d7ffb1';
-    document.getElementById('feedMsg').innerText = "LEVEL SELESAI! 🔥";
-    document.getElementById('btnNext').innerText = "BELAJAR LAGI";
-    document.getElementById('btnNext').onclick = openGame;
-  }
-
-  function closeGame() { document.getElementById('gameOverlay').style.display = 'none'; }
 </script>
 </body>
 </html>
