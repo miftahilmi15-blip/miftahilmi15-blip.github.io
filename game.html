@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VOCABIN GAME | Belajar Seru</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --green: #58cc02; --red: #ff4b4b; --blue: #1cb0f6; --white: #ffffff; --text: #4b4b4b; }
+  body { font-family: 'Poppins', sans-serif; background: var(--white); margin: 0; overflow: hidden; color: var(--text); }
+
+  /* HEADER DUO STYLE */
+  .game-header { 
+    padding: 20px; display: flex; align-items: center; gap: 15px; 
+    border-bottom: 2px solid #e5e5e5; height: 70px; box-sizing: border-box;
+  }
+  .close-btn { font-size: 24px; font-weight: bold; color: #afafaf; cursor: pointer; border: none; background: none; }
+  
+  .progress-container { flex: 1; height: 16px; background: #e5e5e5; border-radius: 10px; overflow: hidden; }
+  .progress-fill { width: 0%; height: 100%; background: var(--green); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 10px; }
+  
+  .heart-box { display: flex; align-items: center; gap: 5px; color: var(--red); font-weight: bold; font-size: 18px; }
+
+  /* PLAY AREA */
+  .play-area { padding: 30px 20px; text-align: left; height: calc(100vh - 160px); overflow-y: auto; }
+  .instr { font-size: 14px; font-weight: 800; color: #afafaf; text-transform: uppercase; letter-spacing: 1px; }
+  .question { font-size: 24px; font-weight: 700; margin-top: 10px; margin-bottom: 30px; }
+
+  /* OPTIONS GRID */
+  .options-grid { display: grid; gap: 12px; }
+  .opt-card { 
+    border: 2px solid #e5e5e5; border-bottom: 5px solid #e5e5e5; 
+    padding: 15px 20px; border-radius: 15px; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 10px;
+  }
+  .opt-card:active { transform: translateY(2px); border-bottom-width: 2px; }
+  .opt-num { width: 30px; height: 30px; border: 2px solid #e5e5e5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #afafaf; }
+
+  /* FEEDBACK BAR */
+  .feedback-bar { 
+    position: fixed; bottom: 0; left: 0; right: 0; padding: 25px 20px; 
+    display: none; transform: translateY(100%); transition: 0.3s; z-index: 100;
+  }
+  .btn-next { 
+    width: 100%; padding: 15px; border-radius: 15px; border: none; 
+    color: white; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase;
+  }
+
+  /* CORRECT / WRONG STYLE */
+  .correct-ui { border-color: #a5ed6e !important; color: #189918 !important; background: #d7ffb1; border-bottom: 5px solid #58a700 !important; }
+  .wrong-ui { border-color: #ffc1c1 !important; color: #ea2b2b !important; background: #ffdfe0; border-bottom: 5px solid #ff4b4b !important; }
+  
+  .bar-correct { display: block !important; transform: translateY(0); background: #d7ffb1; }
+  .bar-wrong { display: block !important; transform: translateY(0); background: #ffdfe0; }
+  .btn-correct { background: var(--green); box-shadow: 0 5px 0 #46a302; }
+  .btn-wrong { background: var(--red); box-shadow: 0 5px 0 #c42d2d; }
+</style>
+</head>
+<body>
+
+<div class="game-header">
+  <button class="close-btn" onclick="location.href='index.html'">✕</button>
+  <div class="progress-container"><div id="progress" class="progress-fill"></div></div>
+  <div class="heart-box">❤️ <span id="hearts">5</span></div>
+</div>
+
+<div class="play-area">
+  <p class="instr">Pilih terjemahan yang tepat</p>
+  <h1 class="question" id="qText">...</h1>
+  <div class="options-grid" id="optGrid"></div>
+</div>
+
+<div id="feedback" class="feedback-bar">
+  <h3 id="feedMsg" style="margin-top:0; margin-bottom:15px;">Keren Banget!</h3>
+  <button id="btnNext" class="btn-next">Lanjut</button>
+</div>
+
+<script>
+  let xp = 0;
+  let hearts = 5;
+  let currentAns = "";
+  
+  // Contoh Data (Bisa diganti dari API/Database)
+  const bankSoal = [
+    { q: "Belajar", a: "Learning", opts: ["Learning", "Eating", "Sleeping"] },
+    { q: "Rumah", a: "House", opts: ["Car", "House", "Tree"] },
+    { q: "Buku", a: "Book", opts: ["Book", "Pen", "Paper"] }
+  ];
+
+  function startRound() {
+    const feed = document.getElementById('feedback');
+    feed.className = "feedback-bar";
+    
+    const soal = bankSoal[Math.floor(Math.random() * bankSoal.length)];
+    currentAns = soal.a;
+    
+    document.getElementById('qText').innerText = soal.q;
+    const grid = document.getElementById('optGrid');
+    grid.innerHTML = "";
+    
+    soal.opts.sort(() => Math.random() - 0.5).forEach((o, i) => {
+      grid.innerHTML += `
+        <div class="opt-card" onclick="checkAns(this, '${o}')">
+          <div class="opt-num">${i+1}</div>
+          ${o}
+        </div>`;
+    });
+  }
+
+  function checkAns(el, choice) {
+    if(document.getElementById('feedback').classList.contains('bar-correct')) return;
+
+    if(choice === currentAns) {
+      el.classList.add('correct-ui');
+      showFeedback(true);
+      xp += 33.4; 
+      document.getElementById('progress').style.width = xp + "%";
+      if(xp >= 100) finishGame();
+    } else {
+      el.classList.add('wrong-ui');
+      hearts--;
+      document.getElementById('hearts').innerText = hearts;
+      showFeedback(false);
+      if(hearts <= 0) alert("Nyawa Habis! Ulangi lagi.");
+    }
+    // Suara
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(choice));
+  }
+
+  function showFeedback(isCorrect) {
+    const bar = document.getElementById('feedback');
+    const btn = document.getElementById('btnNext');
+    const msg = document.getElementById('feedMsg');
+    
+    bar.classList.add(isCorrect ? 'bar-correct' : 'bar-wrong');
+    btn.className = 'btn-next ' + (isCorrect ? 'btn-correct' : 'btn-wrong');
+    msg.innerText = isCorrect ? "BENAR! LUAR BIASA 🔥" : "KURANG TEPAT! Jawabannya: " + currentAns;
+    
+    btn.onclick = isCorrect ? startRound : () => { bar.classList.remove('bar-wrong'); };
+  }
+
+  function finishGame() {
+    alert("LEVEL SELESAI! +100 XP 🔥");
+    location.href = 'index.html';
+  }
+
+  startRound();
+</script>
+</body>
+</html>
