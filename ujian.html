@@ -6,50 +6,31 @@
     <title>Exam Center | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
     <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-
     <style>
         :root { --primary: #1f6f51; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gold: #eab308; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); line-height: 1.6; user-select: none; }
-
         .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header h1 { font-size: 1.2rem; font-weight: 800; }
-        
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         .card { background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid #f1f5f9; }
-        
         .status-badge { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
         .status-on { background: #dcfce7; color: #166534; }
         .status-off { background: #fee2e2; color: #991b1b; }
-
         label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 15px; }
         input, select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; }
-        
-        /* CSS KHUSUS AI CAMERA */
-        #ai-container { position: relative; width: 100%; max-width: 300px; margin: 15px auto; border-radius: 20px; overflow: hidden; border: 3px solid var(--gold); display: none; }
-        #webcam { width: 100%; transform: scaleX(-1); }
-        #ai-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
+        #ai-container { position: relative; width: 100%; max-width: 280px; margin: 15px auto; border-radius: 20px; overflow: hidden; border: 3px solid var(--gold); display: none; }
+        #webcam { width: 100%; transform: scaleX(-1); border-radius: 15px; }
         .scanning-line { position: absolute; width: 100%; height: 2px; background: var(--gold); top: 0; animation: scan 2s infinite linear; z-index: 5; }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
         .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; }
         .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
         .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; }
-        .teks-soal { font-weight: 700; font-size: 15px; margin-bottom: 15px; }
-        
         .option-label { display: flex; align-items: center; padding: 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; }
-        .option-label input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--primary); }
-
         #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; z-index: 1000; }
         .hidden { display: none !important; }
-
-        #rekap-area { margin-top: 50px; border-top: 2px dashed #ccc; padding-top: 20px; }
-        .btn-koreksi { background: none; border: none; color: #ccc; font-size: 10px; cursor: pointer; width: 100%; text-align: center; }
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
         th, td { border: 1px solid #eee; padding: 8px; text-align: left; }
-        th { background: #f8fafc; color: var(--primary); }
         .essay-view { background: #fffde7; padding: 5px; font-size: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ffe082; }
     </style>
 </head>
@@ -63,8 +44,8 @@
 <div class="container">
     <div id="login-screen">
         <div class="card">
-            <div id="badge-status" class="status-badge status-off">Mengecek...</div>
-            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Pilih Kelas & Mapel</h2>
+            <div id="badge-status" class="status-badge status-off">Menunggu...</div>
+            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Portal Ujian</h2>
 
             <label>Pilih Kelas</label>
             <select id="user-kelas" onchange="resetForm()">
@@ -82,51 +63,37 @@
             </select>
 
             <div id="form-isi" class="hidden">
+                <hr style="margin: 20px 0; border: 1px dashed #eee;">
                 <label>Nomor Induk (NIPD)</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="number" id="user-nipd" placeholder="Ketik NIPD">
                     <button onclick="verifikasiSiswa()" id="btn-cek-nipd" style="width: 70px; background: #eab308; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: white;">CEK</button>
                 </div>
 
-                <label>Nama Lengkap (Otomatis)</label>
+                <label>Nama Lengkap</label>
                 <input type="text" id="user-nama" placeholder="Nama muncul otomatis..." readonly style="background: #f1f5f9;">
                 
                 <div id="ai-section" class="hidden" style="text-align: center; margin-top: 20px;">
-                    <label id="ai-label">Konfirmasi Wajah</label>
                     <div id="ai-container">
                         <div class="scanning-line"></div>
                         <video id="webcam" autoplay muted playsinline></video>
-                        <canvas id="ai-canvas"></canvas>
                     </div>
-                    <p id="ai-status" style="font-size: 10px; color: var(--gold); font-weight: 800;">AI Sedang Memuat...</p>
+                    <p id="ai-status" style="font-size: 10px; color: var(--gold); font-weight: 800;">MENUNGGU WAJAH...</p>
                 </div>
 
                 <div id="btn-mulai-box" class="hidden">
-                    <button class="btn-start" onclick="cekMasuk()" style="margin-top: 20px;">MULAI UJIAN</button>
+                    <button class="btn-start" onclick="cekMasuk()" style="margin-top: 20px;">MULAI UJIAN SEKARANG</button>
                 </div>
             </div>
         </div>
 
         <div id="rekap-area">
-            <button class="btn-koreksi" onclick="bukaKoreksi()">🔒 Guru: Lihat Rekap Nilai</button>
+            <button onclick="bukaKoreksi()" style="background:none; border:none; color:#ccc; font-size:10px; width:100%;">🔒 Mode Guru</button>
             <div id="koreksi-content" class="card hidden" style="margin-top:10px;">
-                <h3 style="font-size:14px; margin-bottom:10px;">Rekap & Koreksi Guru</h3>
-                
-                <label>Filter Mapel</label>
-                <select id="filter-rekap-mapel" onchange="loadRekapData()">
-                    <option value="">Semua Mapel</option>
-                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
-                    <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
-                </select>
-
+                <h3 style="font-size:14px; margin-bottom:10px;">Rekap Nilai</h3>
+                <select id="filter-rekap-mapel" onchange="loadRekapData()"><option value="">Pilih Mapel</option></select>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Nama</th>
-                            <th>Skor PG</th>
-                            <th>Koreksi Essay</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Nama</th><th>PG</th><th>Essay</th></tr></thead>
                     <tbody id="tabel-rekap-body"></tbody>
                 </table>
             </div>
@@ -142,362 +109,6 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
-<script>
-    const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
-
-    let sesiUjian = null;
-    let listSoal = [];
-    let intervalTimer;
-    let faceAiLoaded = false;
-
-    // 1. LOAD AI MODELS SAAT PAGE DIBUKA
-    async function loadAi() {
-        try {
-            const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
-            await Promise.all([
-                faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-                faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
-            ]);
-            faceAiLoaded = true;
-            console.log("AI Model Loaded");
-        } catch (e) { console.error("AI Gagal Load", e); }
-    }
-    loadAi();
-
-    function resetForm() {
-        document.getElementById('user-mapel').value = "";
-        document.getElementById('form-isi').classList.add('hidden');
-        document.getElementById('ai-section').classList.add('hidden');
-        document.getElementById('badge-status').className = "status-badge status-off";
-        document.getElementById('badge-status').innerText = "Mengecek...";
-        stopCamera();
-    }
-
-    function cekJadwalAktif() {
-        const kls = document.getElementById('user-kelas').value;
-        const mpl = document.getElementById('user-mapel').value;
-        if(!kls || !mpl) return;
-
-        db.ref(`jadwal_ujian/${kls}/${mpl}`).on('value', snap => {
-            sesiUjian = snap.val();
-            if(!sesiUjian) return;
-            sesiUjian.mapel = mpl;
-            
-            const badge = document.getElementById('badge-status');
-            const infoMapel = document.getElementById('info-mapel');
-            
-            const sekarang = new Date();
-            const tglSekarang = sekarang.toISOString().split('T')[0];
-            const jamSekarang = sekarang.getHours().toString().padStart(2, '0') + ":" + sekarang.getMinutes().toString().padStart(2, '0');
-
-            if(tglSekarang !== sesiUjian.tanggal) {
-                badge.innerText = "Bukan Hari Ini"; badge.className = "status-badge status-off";
-            } else if(jamSekarang < sesiUjian.jam_mulai) {
-                badge.innerText = "Belum Dimulai"; badge.className = "status-badge status-off";
-            } else if(jamSekarang > sesiUjian.jam_selesai) {
-                badge.innerText = "Waktu Habis"; badge.className = "status-badge status-off";
-            } else {
-                badge.innerText = "Ujian Aktif";
-                badge.className = "status-badge status-on";
-                infoMapel.innerText = mpl;
-                document.getElementById('form-isi').classList.remove('hidden');
-            }
-        });
-    }
-
-    async function verifikasiSiswa() {
-        const kls = document.getElementById('user-kelas').value;
-        const nipd = document.getElementById('user-nipd').value;
-        const btn = document.getElementById('btn-cek-nipd');
-
-        if(!nipd) return alert("Masukkan NIPD!");
-        btn.innerText = "...";
-        
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-            const dataSiswa = await res.json();
-            const siswa = dataSiswa.find(s => s.nipd == nipd);
-
-            if(siswa) {
-                document.getElementById('user-nama').value = siswa.nama;
-                alert("NIPD Ditemukan. Silakan Verifikasi Wajah!");
-                startFaceScan(); // BUKA SCANNER
-            } else {
-                alert("NIPD tidak ditemukan!");
-            }
-        } catch (e) { alert("Gagal koneksi server!"); }
-        finally { btn.innerText = "CEK"; }
-    }
-
-    // 2. FUNGSI SCANNER WAJAH
-    let scannerActive = false;
-    async function startFaceScan() {
-        const aiSection = document.getElementById('ai-section');
-        const aiContainer = document.getElementById('ai-container');
-        const video = document.getElementById('webcam');
-        const status = document.getElementById('ai-status');
-
-        aiSection.classList.remove('hidden');
-        aiContainer.style.display = "block";
-        status.innerText = "Membuka Kamera...";
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-            video.srcObject = stream;
-            scannerActive = true;
-
-            video.addEventListener('play', () => {
-                const canvas = document.getElementById('ai-canvas');
-                const displaySize = { width: video.videoWidth, height: video.videoHeight };
-                faceapi.matchDimensions(canvas, displaySize);
-
-                const interval = setInterval(async () => {
-                    if(!scannerActive) { clearInterval(interval); return; }
-
-                    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
-                    
-                    if(detections.length > 0) {
-                        status.innerText = "WAJAH TERDETEKSI! OK";
-                        status.style.color = "#00ff00";
-                        document.getElementById('btn-mulai-box').classList.remove('hidden');
-                        // Optional: Berhenti scan jika sudah ketemu
-                        // stopCamera(); scannerActive = false;
-                    } else {
-                        status.innerText = "Posisikan Wajah di Tengah";
-                        status.style.color = var(--gold);
-                        document.getElementById('btn-mulai-box').classList.add('hidden');
-                    }
-                }, 500);
-            });
-        } catch (e) {
-            status.innerText = "Gagal Akses Kamera!";
-            console.error(e);
-        }
-    }
-
-    function stopCamera() {
-        const video = document.getElementById('webcam');
-        if(video.srcObject) {
-            video.srcObject.getTracks().forEach(track => track.stop());
-        }
-        scannerActive = false;
-    }
-
-    function cekMasuk() {
-        stopCamera(); // Matikan kamera saat mulai ujian
-        const nama = document.getElementById('user-nama').value.trim();
-        const kls = document.getElementById('user-kelas').value;
-        const mpl = sesiUjian.mapel;
-
-        db.ref(`bank_soal/${kls}/${mpl}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum tersedia!");
-            listSoal = [];
-            snap.forEach(s => { listSoal.push(s.val()); });
-            mulaiUjian(nama, kls);
-        });
-    }
-
-    // --- SISA FUNGSI (mulaiUjian, kirimJawaban, dll) TETAP SAMA ---
-
-    function mulaiUjian(nama, kls) {
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('exam-screen').classList.remove('hidden');
-        document.getElementById('top-title').innerText = sesiUjian.mapel;
-        document.getElementById('user-display').innerText = `${nama} | ${kls}`;
-        
-        const container = document.getElementById('konten-soal');
-        container.innerHTML = "";
-        
-        listSoal.forEach((s, i) => {
-            let htmlOpsi = "";
-            if(s.opsi && s.opsi.includes(',')) {
-                const opsiArray = s.opsi.split(',').map(item => item.trim());
-                const huruf = ['A','B','C','D'];
-                opsiArray.forEach((teks, idx) => {
-                    htmlOpsi += `<label class="option-label"><input type="radio" name="q${i}" value="${huruf[idx]}"> <span class="option-text"><b>${huruf[idx]}.</b> ${teks}</span></label>`;
-                });
-            } else {
-                htmlOpsi = `<textarea id="essay${i}" placeholder="Tulis jawaban essay..."></textarea>`;
-            }
-            container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><div class="teks-soal">${s.soal}</div><div>${htmlOpsi}</div></div>`;
-        });
-
-        const sekarang = new Date();
-        const [jamS, minS] = sesiUjian.jam_selesai.split(':');
-        const waktuSelesai = new Date();
-        waktuSelesai.setHours(jamS, minS, 0);
-        
-        let detik = Math.floor((waktuSelesai - sekarang) / 1000);
-        if(detik <= 0) detik = 3600;
-
-        intervalTimer = setInterval(() => {
-            let m = Math.floor(detik/60); let s = detik%60;
-            document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
-            if(detik <= 0) { clearInterval(intervalTimer); kirimJawaban(true); }
-            detik--;
-        }, 1000);
-    }
-
-    function kirimJawaban(auto = false) {
-        if(!auto && !confirm("Kirim jawaban sekarang?")) return;
-        clearInterval(intervalTimer);
-        let benar = 0; let totalPG = 0; let jawEssay = [];
-        
-        listSoal.forEach((s, i) => {
-            if(s.opsi && s.opsi.includes(',')) {
-                totalPG++;
-                const pil = document.querySelector(`input[name="q${i}"]:checked`);
-                if(pil && pil.value === s.kunci) benar++;
-            } else {
-                const essayField = document.getElementById(`essay${i}`);
-                jawEssay.push({ soal: s.soal, jawaban: essayField ? essayField.value : "" });
-            }
-        });
-
-        const skor = totalPG > 0 ? Math.round((benar/totalPG)*100) : 0;
-<!doctype html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Exam Center | E-Santri Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-
-    <style>
-        :root { --primary: #1f6f51; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gold: #eab308; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: var(--text); line-height: 1.6; user-select: none; }
-
-        .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header h1 { font-size: 1.2rem; font-weight: 800; }
-        
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .card { background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid #f1f5f9; }
-        
-        .status-badge { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
-        .status-on { background: #dcfce7; color: #166534; }
-        .status-off { background: #fee2e2; color: #991b1b; }
-
-        label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 15px; }
-        input, select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; }
-        
-        #ai-container { position: relative; width: 100%; max-width: 300px; margin: 15px auto; border-radius: 20px; overflow: hidden; border: 3px solid var(--gold); display: none; }
-        #webcam { width: 100%; transform: scaleX(-1); }
-        #ai-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
-        .scanning-line { position: absolute; width: 100%; height: 2px; background: var(--gold); top: 0; animation: scan 2s infinite linear; z-index: 5; }
-        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-
-        .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; }
-        .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
-        .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; }
-        .teks-soal { font-weight: 700; font-size: 15px; margin-bottom: 15px; }
-        
-        .option-label { display: flex; align-items: center; padding: 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; }
-        .option-label input { margin-right: 12px; width: 18px; height: 18px; accent-color: var(--primary); }
-
-        #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; z-index: 1000; }
-        .hidden { display: none !important; }
-
-        #rekap-area { margin-top: 50px; border-top: 2px dashed #ccc; padding-top: 20px; }
-        .btn-koreksi { background: none; border: none; color: #ccc; font-size: 10px; cursor: pointer; width: 100%; text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
-        th, td { border: 1px solid #eee; padding: 8px; text-align: left; }
-        th { background: #f8fafc; color: var(--primary); }
-        .essay-view { background: #fffde7; padding: 5px; font-size: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ffe082; }
-    </style>
-</head>
-<body>
-
-<div class="header">
-    <h1 id="top-title">UJIAN DIGITAL</h1>
-    <p id="user-display" style="font-size: 11px; opacity: 0.8; margin-top: 5px;"></p>
-</div>
-
-<div class="container">
-    <div id="login-screen">
-        <div class="card">
-            <div id="badge-status" class="status-badge status-off">Mengecek...</div>
-            <h2 id="info-mapel" style="font-size: 20px; font-weight: 800;">Pilih Kelas & Mapel</h2>
-
-            <label>Pilih Kelas</label>
-            <select id="user-kelas" onchange="resetForm()">
-                <option value="">-- Pilih Kelas --</option>
-                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-            </select>
-
-            <label>Pilih Mata Pelajaran</label>
-            <select id="user-mapel" onchange="cekJadwalAktif()">
-                <option value="">-- Pilih Mapel --</option>
-                <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
-                <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
-            </select>
-
-            <div id="form-isi" class="hidden">
-                <label>Nomor Induk (NIPD)</label>
-                <div style="display: flex; gap: 8px;">
-                    <input type="number" id="user-nipd" placeholder="Ketik NIPD">
-                    <button onclick="verifikasiSiswa()" id="btn-cek-nipd" style="width: 70px; background: #eab308; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; color: white;">CEK</button>
-                </div>
-
-                <label>Nama Lengkap (Otomatis)</label>
-                <input type="text" id="user-nama" placeholder="Nama muncul otomatis..." readonly style="background: #f1f5f9;">
-                
-                <div id="ai-section" class="hidden" style="text-align: center; margin-top: 20px;">
-                    <label id="ai-label">Konfirmasi Wajah</label>
-                    <div id="ai-container">
-                        <div class="scanning-line"></div>
-                        <video id="webcam" autoplay muted playsinline></video>
-                        <canvas id="ai-canvas"></canvas>
-                    </div>
-                    <p id="ai-status" style="font-size: 10px; color: var(--gold); font-weight: 800;">AI Sedang Memuat...</p>
-                </div>
-
-                <div id="btn-mulai-box" class="hidden">
-                    <button class="btn-start" onclick="cekMasuk()" style="margin-top: 20px;">MULAI UJIAN</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="rekap-area">
-            <button class="btn-koreksi" onclick="bukaKoreksi()">🔒 Guru: Lihat Rekap Nilai</button>
-            <div id="koreksi-content" class="card hidden" style="margin-top:10px;">
-                <h3 style="font-size:14px; margin-bottom:10px;">Rekap & Koreksi Guru</h3>
-                <label>Filter Mapel</label>
-                <select id="filter-rekap-mapel" onchange="loadRekapData()">
-                    <option value="">Semua Mapel</option>
-                    <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
-                    <option>B.Arab</option><option>Fikih</option><option>Aqidah</option><option>Tarikh</option><option>Infor</option><option>B.Daerah</option><option>Seni</option>
-                </select>
-                <table>
-                    <thead>
-                        <tr><th>Nama</th><th>Skor PG</th><th>Koreksi Essay</th></tr>
-                    </thead>
-                    <tbody id="tabel-rekap-body"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div id="exam-screen" class="hidden">
-        <div id="timer">⏳ <span id="time-left">00:00</span></div>
-        <div id="konten-soal"></div>
-        <button class="btn-start" onclick="kirimJawaban()" style="background: #6c5ce7; margin-bottom: 80px;">SELESAI & KIRIM</button>
-    </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
-
 <script>
     const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(firebaseConfig);
@@ -507,27 +118,19 @@
     let sesiUjian = null;
     let listSoal = [];
     let intervalTimer;
-    let faceAiLoaded = false;
+    let scannerActive = false;
 
     async function loadAi() {
-        try {
-            const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
-            await Promise.all([
-                faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-                faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
-            ]);
-            faceAiLoaded = true;
-            console.log("AI Model Loaded");
-        } catch (e) { console.error("AI Gagal Load", e); }
+        const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+        await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+        console.log("AI Ready");
     }
     loadAi();
 
     function resetForm() {
-        document.getElementById('user-mapel').value = "";
         document.getElementById('form-isi').classList.add('hidden');
         document.getElementById('ai-section').classList.add('hidden');
-        document.getElementById('badge-status').className = "status-badge status-off";
-        document.getElementById('badge-status').innerText = "Mengecek...";
+        document.getElementById('btn-mulai-box').classList.add('hidden');
         stopCamera();
     }
 
@@ -536,27 +139,32 @@
         const mpl = document.getElementById('user-mapel').value;
         if(!kls || !mpl) return;
 
-        db.ref(`jadwal_ujian/${kls}/${mpl}`).on('value', snap => {
+        // Pakai ONCE supaya tidak duplikat saat data berubah
+        db.ref(`jadwal_ujian/${kls}/${mpl}`).once('value', snap => {
             sesiUjian = snap.val();
-            if(!sesiUjian) return;
-            sesiUjian.mapel = mpl;
             const badge = document.getElementById('badge-status');
-            const infoMapel = document.getElementById('info-mapel');
-            const sekarang = new Date();
-            const tglSekarang = sekarang.toISOString().split('T')[0];
-            const jamSekarang = sekarang.getHours().toString().padStart(2, '0') + ":" + sekarang.getMinutes().toString().padStart(2, '0');
+            const form = document.getElementById('form-isi');
+            
+            if(!sesiUjian) {
+                badge.innerText = "Tidak Ada Jadwal";
+                badge.className = "status-badge status-off";
+                form.classList.add('hidden');
+                return;
+            }
 
-            if(tglSekarang !== sesiUjian.tanggal) {
-                badge.innerText = "Bukan Hari Ini"; badge.className = "status-badge status-off";
-            } else if(jamSekarang < sesiUjian.jam_mulai) {
-                badge.innerText = "Belum Dimulai"; badge.className = "status-badge status-off";
-            } else if(jamSekarang > sesiUjian.jam_selesai) {
-                badge.innerText = "Waktu Habis"; badge.className = "status-badge status-off";
-            } else {
+            sesiUjian.mapel = mpl;
+            const sekarang = new Date();
+            const jamSkrg = sekarang.getHours().toString().padStart(2,'0')+":"+sekarang.getMinutes().toString().padStart(2,'0');
+            const tglSkrg = sekarang.toISOString().split('T')[0];
+
+            if(tglSkrg === sesiUjian.tanggal && jamSkrg >= sesiUjian.jam_mulai && jamSkrg <= sesiUjian.jam_selesai) {
                 badge.innerText = "Ujian Aktif";
                 badge.className = "status-badge status-on";
-                infoMapel.innerText = mpl;
-                document.getElementById('form-isi').classList.remove('hidden');
+                form.classList.remove('hidden');
+            } else {
+                badge.innerText = "Tutup / Belum Mulai";
+                badge.className = "status-badge status-off";
+                form.classList.add('hidden');
             }
         });
     }
@@ -564,163 +172,130 @@
     async function verifikasiSiswa() {
         const kls = document.getElementById('user-kelas').value;
         const nipd = document.getElementById('user-nipd').value;
-        const btn = document.getElementById('btn-cek-nipd');
-        if(!nipd) return alert("Masukkan NIPD!");
-        btn.innerText = "...";
-        try {
-            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-            const dataSiswa = await res.json();
-            const siswa = dataSiswa.find(s => s.nipd == nipd);
-            if(siswa) {
-                document.getElementById('user-nama').value = siswa.nama;
-                alert("NIPD Ditemukan. Silakan Verifikasi Wajah!");
-                startFaceScan();
-            } else { alert("NIPD tidak ditemukan!"); }
-        } catch (e) { alert("Gagal koneksi server!"); }
-        finally { btn.innerText = "CEK"; }
+        if(!nipd) return alert("Isi NIPD!");
+        
+        document.getElementById('btn-cek-nipd').innerText = "...";
+        const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+        const data = await res.json();
+        const s = data.find(item => item.nipd == nipd);
+        
+        if(s) {
+            document.getElementById('user-nama').value = s.nama;
+            startFaceScan();
+        } else { alert("Data tidak ada!"); }
+        document.getElementById('btn-cek-nipd').innerText = "CEK";
     }
 
-    let scannerActive = false;
     async function startFaceScan() {
-        const aiSection = document.getElementById('ai-section');
-        const aiContainer = document.getElementById('ai-container');
         const video = document.getElementById('webcam');
-        const status = document.getElementById('ai-status');
-        aiSection.classList.remove('hidden');
-        aiContainer.style.display = "block";
-        status.innerText = "Membuka Kamera...";
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-            video.srcObject = stream;
-            scannerActive = true;
-            video.onplay = () => {
-                const canvas = document.getElementById('ai-canvas');
-                const displaySize = { width: video.videoWidth, height: video.videoHeight };
-                faceapi.matchDimensions(canvas, displaySize);
-                const interval = setInterval(async () => {
-                    if(!scannerActive) { clearInterval(interval); return; }
-                    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
-                    if(detections.length > 0) {
-                        status.innerText = "WAJAH TERDETEKSI! OK";
-                        status.style.color = "#00ff00";
-                        document.getElementById('btn-mulai-box').classList.remove('hidden');
-                    } else {
-                        status.innerText = "Posisikan Wajah di Tengah";
-                        status.style.color = "#eab308";
-                        document.getElementById('btn-mulai-box').classList.add('hidden');
-                    }
-                }, 500);
-            };
-        } catch (e) { status.innerText = "Gagal Akses Kamera!"; }
+        document.getElementById('ai-section').classList.remove('hidden');
+        document.getElementById('ai-container').style.display = "block";
+        
+        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+        video.srcObject = stream;
+        scannerActive = true;
+
+        const loop = setInterval(async () => {
+            if(!scannerActive) { clearInterval(loop); return; }
+            const deteksi = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions());
+            if(deteksi.length > 0) {
+                document.getElementById('ai-status').innerText = "WAJAH TERDETEKSI ✅";
+                document.getElementById('ai-status').style.color = "#166534";
+                document.getElementById('btn-mulai-box').classList.remove('hidden');
+            } else {
+                document.getElementById('ai-status').innerText = "POSISIKAN WAJAH DI CAMERA ⚠️";
+                document.getElementById('ai-status').style.color = "#eab308";
+                document.getElementById('btn-mulai-box').classList.add('hidden');
+            }
+        }, 600);
     }
 
     function stopCamera() {
-        const video = document.getElementById('webcam');
-        if(video.srcObject) video.srcObject.getTracks().forEach(track => track.stop());
         scannerActive = false;
+        const video = document.getElementById('webcam');
+        if(video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
     }
 
     function cekMasuk() {
-        stopCamera();
-        const nama = document.getElementById('user-nama').value.trim();
         const kls = document.getElementById('user-kelas').value;
-        const mpl = sesiUjian.mapel;
-        db.ref(`bank_soal/${kls}/${mpl}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum tersedia!");
+        db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
+            if(!snap.exists()) return alert("Soal Kosong!");
             listSoal = [];
-            snap.forEach(s => { listSoal.push(s.val()); });
-            mulaiUjian(nama, kls);
+            snap.forEach(s => listSoal.push(s.val()));
+            stopCamera();
+            mulaiUjian();
         });
     }
 
-    function mulaiUjian(nama, kls) {
+    function mulaiUjian() {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('exam-screen').classList.remove('hidden');
-        document.getElementById('top-title').innerText = sesiUjian.mapel;
-        document.getElementById('user-display').innerText = `${nama} | ${kls}`;
         const container = document.getElementById('konten-soal');
         container.innerHTML = "";
+        
         listSoal.forEach((s, i) => {
-            let htmlOpsi = "";
+            let opsi = "";
             if(s.opsi && s.opsi.includes(',')) {
-                const opsiArray = s.opsi.split(',').map(item => item.trim());
-                const huruf = ['A','B','C','D'];
-                opsiArray.forEach((teks, idx) => {
-                    htmlOpsi += `<label class="option-label"><input type="radio" name="q${i}" value="${huruf[idx]}"> <span class="option-text"><b>${huruf[idx]}.</b> ${teks}</span></label>`;
+                const arr = s.opsi.split(',');
+                const hrf = ['A','B','C','D'];
+                arr.forEach((t, x) => {
+                    opsi += `<label class="option-label"><input type="radio" name="q${i}" value="${hrf[x]}"> ${hrf[x]}. ${t}</label>`;
                 });
             } else {
-                htmlOpsi = `<textarea id="essay${i}" placeholder="Tulis jawaban essay..."></textarea>`;
+                opsi = `<textarea id="essay${i}" placeholder="Jawaban essay..."></textarea>`;
             }
-            container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><div class="teks-soal">${s.soal}</div><div>${htmlOpsi}</div></div>`;
+            container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><p>${s.soal}</p><br>${opsi}</div>`;
         });
-        const sekarang = new Date();
-        const [jamS, minS] = sesiUjian.jam_selesai.split(':');
-        const waktuSelesai = new Date();
-        waktuSelesai.setHours(jamS, minS, 0);
-        let detik = Math.floor((waktuSelesai - sekarang) / 1000);
-        if(detik <= 0) detik = 3600;
+
+        // Timer Logic
+        let limit = 60 * 60; // Default 1 jam
         intervalTimer = setInterval(() => {
-            let m = Math.floor(detik/60); let s = detik%60;
+            let m = Math.floor(limit/60); let s = limit%60;
             document.getElementById('time-left').innerText = `${m}:${s<10?'0'+s:s}`;
-            if(detik <= 0) { clearInterval(intervalTimer); kirimJawaban(true); }
-            detik--;
+            if(limit <= 0) kirimJawaban(true);
+            limit--;
         }, 1000);
     }
 
-    function kirimJawaban(auto = false) {
-        if(!auto && !confirm("Kirim jawaban sekarang?")) return;
+    function kirimJawaban(auto=false) {
+        if(!auto && !confirm("Kirim sekarang?")) return;
         clearInterval(intervalTimer);
-        let benar = 0; let totalPG = 0; let jawEssay = [];
+        let benar = 0; let totalPG = 0; let essay = [];
+        
         listSoal.forEach((s, i) => {
             if(s.opsi && s.opsi.includes(',')) {
                 totalPG++;
-                const pil = document.querySelector(`input[name="q${i}"]:checked`);
-                if(pil && pil.value === s.kunci) benar++;
+                const cek = document.querySelector(`input[name="q${i}"]:checked`);
+                if(cek && cek.value === s.kunci) benar++;
             } else {
-                const essayField = document.getElementById(`essay${i}`);
-                jawEssay.push({ soal: s.soal, jawaban: essayField ? essayField.value : "" });
+                essay.push({ q: s.soal, a: document.getElementById(`essay${i}`).value });
             }
         });
-        const skor = totalPG > 0 ? Math.round((benar/totalPG)*100) : 0;
+
         const kls = document.getElementById('user-kelas').value;
-        const nama = document.getElementById('user-nama').value;
-        db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({ 
-            nama, skor, essay: jawEssay, waktu: new Date().toLocaleString('id-ID') 
-        }).then(() => { alert("Jawaban terkirim!"); location.reload(); });
+        db.ref(`nilai_ujian/${kls}/${sesiUjian.mapel}`).push({
+            nama: document.getElementById('user-nama').value,
+            skor: totalPG > 0 ? Math.round((benar/totalPG)*100) : 0,
+            essay: essay,
+            waktu: new Date().toLocaleString()
+        }).then(() => { alert("Sukses!"); location.reload(); });
     }
 
     function bukaKoreksi() {
-        const pin = prompt("Masukkan PIN Guru:");
-        if (pin === "152003") {
-            document.getElementById('koreksi-content').classList.remove('hidden');
-            loadRekapData();
-        } else { alert("PIN Salah!"); }
+        if(prompt("PIN:") === "152003") document.getElementById('koreksi-content').classList.remove('hidden');
     }
 
     function loadRekapData() {
         const kls = document.getElementById('user-kelas').value;
-        const filterMpl = document.getElementById('filter-rekap-mapel').value;
-        if(!kls) return alert("Pilih kelas dulu!");
-        db.ref(`nilai_ujian/${kls}`).on('value', snap => {
+        const mpl = document.getElementById('user-mapel').value;
+        db.ref(`nilai_ujian/${kls}/${mpl}`).on('value', snap => {
             const body = document.getElementById('tabel-rekap-body');
             body.innerHTML = "";
-            snap.forEach(mapelSnap => {
-                const mapelName = mapelSnap.key;
-                if(filterMpl && mapelName !== filterMpl) return;
-                mapelSnap.forEach(siswaSnap => {
-                    const d = siswaSnap.val();
-                    const keySiswa = siswaSnap.key;
-                    let essayHtml = "";
-                    if(d.essay) d.essay.forEach(e => { essayHtml += `<div class="essay-view"><b>Q:</b> ${e.soal}<br><b>A:</b> ${e.jawaban}</div>`; });
-                    body.innerHTML += `<tr><td><b>${d.nama}</b><br><small>${mapelName}</small>${essayHtml}</td><td>${d.skor}</td><td><input type="number" id="manual-${keySiswa}" style="width:50px; padding:5px;" value="${d.nilai_essay || 0}"><button onclick="simpanKoreksi('${kls}','${mapelName}','${keySiswa}')" style="font-size:9px; background:var(--primary); color:white; border:none; padding:5px; border-radius:5px; margin-top:5px;">Simpan</button></td></tr>`;
-                });
+            snap.forEach(s => {
+                const d = s.val();
+                body.innerHTML += `<tr><td>${d.nama}</td><td>${d.skor}</td><td>Ada</td></tr>`;
             });
         });
-    }
-
-    function simpanKoreksi(kls, mpl, key) {
-        const n = document.getElementById(`manual-${key}`).value;
-        db.ref(`nilai_ujian/${kls}/${mpl}/${key}`).update({ nilai_essay: n }).then(() => alert("Tersimpan!"));
     }
 </script>
 </body>
