@@ -3,148 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>VOCABIN GAME | Belajar Seru</title>
+<title>VOCABIN GAME | Level 1</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --green: #58cc02; --red: #ff4b4b; --blue: #1cb0f6; --white: #ffffff; --text: #4b4b4b; }
+  :root { --green: #58cc02; --red: #ff4b4b; --blue: #1cb0f6; --white: #ffffff; --text: #4b4b4b; --gray: #e5e5e5; }
   body { font-family: 'Poppins', sans-serif; background: var(--white); margin: 0; overflow: hidden; color: var(--text); }
 
-  /* HEADER DUO STYLE */
+  /* PROGRESS BAR AREA */
   .game-header { 
     padding: 20px; display: flex; align-items: center; gap: 15px; 
-    border-bottom: 2px solid #e5e5e5; height: 70px; box-sizing: border-box;
+    height: 70px; box-sizing: border-box;
   }
-  .close-btn { font-size: 24px; font-weight: bold; color: #afafaf; cursor: pointer; border: none; background: none; }
+  .close-btn { font-size: 28px; color: #afafaf; cursor: pointer; border: none; background: none; font-weight: 300; }
+  .progress-bg { flex: 1; height: 16px; background: var(--gray); border-radius: 20px; position: relative; }
+  .progress-fill { 
+    width: 0%; height: 100%; background: var(--green); border-radius: 20px;
+    transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+    position: relative;
+  }
+  .progress-fill::after { content: ''; position: absolute; top: 3px; left: 5px; right: 5px; height: 4px; background: rgba(255,255,255,0.3); border-radius: 10px; }
+  .heart { color: var(--red); font-weight: bold; font-size: 18px; display: flex; align-items: center; gap: 5px; }
+
+  /* SOAL AREA */
+  .content { padding: 30px 25px; max-width: 500px; margin: 0 auto; }
+  .instr { font-size: 18px; font-weight: 700; color: #3c3c3c; margin-bottom: 30px; }
   
-  .progress-container { flex: 1; height: 16px; background: #e5e5e5; border-radius: 10px; overflow: hidden; }
-  .progress-fill { width: 0%; height: 100%; background: var(--green); transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 10px; }
+  .question-box { display: flex; align-items: center; gap: 20px; margin-bottom: 40px; }
+  .character { width: 80px; height: 80px; background: #eee; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2px solid var(--gray); }
+  .bubble { 
+    position: relative; padding: 15px 20px; border: 2px solid var(--gray); border-radius: 15px; 
+    font-size: 18px; font-weight: 500;
+  }
+  .bubble::before {
+    content: ''; position: absolute; left: -10px; top: 50%; transform: translateY(-50%);
+    border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-right: 10px solid var(--gray);
+  }
+
+  /* PILIHAN JAWABAN */
+  .options-container { display: grid; gap: 12px; }
+  .option {
+    padding: 15px 20px; border: 2px solid var(--gray); border-bottom: 5px solid var(--gray);
+    border-radius: 15px; font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: all 0.1s; text-align: left; background: white;
+  }
+  .option:hover { background: #f7f7f7; }
+  .option:active { transform: translateY(2px); border-bottom-width: 2px; }
+  .option.selected { border-color: var(--blue); background: #ddf4ff; color: var(--blue); border-bottom-color: #1899d6; }
+
+  /* FOOTER FEEDBACK (MODAL BAWAH) */
+  .footer-check {
+    position: fixed; bottom: 0; width: 100%; padding: 25px 20px 40px;
+    box-sizing: border-box; background: white; border-top: 2px solid var(--gray);
+    display: flex; flex-direction: column; gap: 20px; transform: translateY(0);
+  }
+  .btn-check {
+    width: 100%; padding: 18px; border-radius: 15px; border: none;
+    background: var(--gray); color: #afafaf; font-family: 'Poppins';
+    font-weight: 800; font-size: 16px; text-transform: uppercase; cursor: pointer;
+  }
+  .btn-ready { background: var(--green); color: white; box-shadow: 0 5px 0 #46a302; cursor: pointer; }
+
+  /* FEEDBACK STATES */
+  .status-bar { display: none; position: fixed; bottom: 0; width: 100%; padding: 25px 20px 40px; box-sizing: border-box; z-index: 100; animation: slideUp 0.3s ease-out; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
   
-  .heart-box { display: flex; align-items: center; gap: 5px; color: var(--red); font-weight: bold; font-size: 18px; }
-
-  /* PLAY AREA */
-  .play-area { padding: 30px 20px; text-align: left; height: calc(100vh - 160px); overflow-y: auto; }
-  .instr { font-size: 14px; font-weight: 800; color: #afafaf; text-transform: uppercase; letter-spacing: 1px; }
-  .question { font-size: 24px; font-weight: 700; margin-top: 10px; margin-bottom: 30px; }
-
-  /* OPTIONS GRID */
-  .options-grid { display: grid; gap: 12px; }
-  .opt-card { 
-    border: 2px solid #e5e5e5; border-bottom: 5px solid #e5e5e5; 
-    padding: 15px 20px; border-radius: 15px; font-size: 16px; font-weight: 600;
-    cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 10px;
-  }
-  .opt-card:active { transform: translateY(2px); border-bottom-width: 2px; }
-  .opt-num { width: 30px; height: 30px; border: 2px solid #e5e5e5; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #afafaf; }
-
-  /* FEEDBACK BAR */
-  .feedback-bar { 
-    position: fixed; bottom: 0; left: 0; right: 0; padding: 25px 20px; 
-    display: none; transform: translateY(100%); transition: 0.3s; z-index: 100;
-  }
-  .btn-next { 
-    width: 100%; padding: 15px; border-radius: 15px; border: none; 
-    color: white; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase;
-  }
-
-  /* CORRECT / WRONG STYLE */
-  .correct-ui { border-color: #a5ed6e !important; color: #189918 !important; background: #d7ffb1; border-bottom: 5px solid #58a700 !important; }
-  .wrong-ui { border-color: #ffc1c1 !important; color: #ea2b2b !important; background: #ffdfe0; border-bottom: 5px solid #ff4b4b !important; }
+  .correct-bar { background: #d7ffb1; display: block; }
+  .wrong-bar { background: #ffdfe0; display: block; }
   
-  .bar-correct { display: block !important; transform: translateY(0); background: #d7ffb1; }
-  .bar-wrong { display: block !important; transform: translateY(0); background: #ffdfe0; }
-  .btn-correct { background: var(--green); box-shadow: 0 5px 0 #46a302; }
-  .btn-wrong { background: var(--red); box-shadow: 0 5px 0 #c42d2d; }
+  .status-text { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+  .status-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: white; font-size: 20px; }
+  .correct-msg { color: #58a700; font-weight: 800; font-size: 20px; }
+  .wrong-msg { color: #ea2b2b; font-weight: 800; font-size: 20px; }
 </style>
 </head>
 <body>
 
 <div class="game-header">
   <button class="close-btn" onclick="location.href='index.html'">✕</button>
-  <div class="progress-container"><div id="progress" class="progress-fill"></div></div>
-  <div class="heart-box">❤️ <span id="hearts">5</span></div>
+  <div class="progress-bg"><div id="prog" class="progress-fill"></div></div>
+  <div class="heart">❤️ 5</div>
 </div>
 
-<div class="play-area">
-  <p class="instr">Pilih terjemahan yang tepat</p>
-  <h1 class="question" id="qText">...</h1>
-  <div class="options-grid" id="optGrid"></div>
+<div class="content">
+  <p class="instr">Pilih arti yang tepat</p>
+  
+  <div class="question-box">
+    <div class="character">🦉</div>
+    <div class="bubble" id="qWord">Capaian Tahfidz</div>
+  </div>
+
+  <div class="options-container" id="opts">
+    </div>
 </div>
 
-<div id="feedback" class="feedback-bar">
-  <h3 id="feedMsg" style="margin-top:0; margin-bottom:15px;">Keren Banget!</h3>
-  <button id="btnNext" class="btn-next">Lanjut</button>
+<div class="footer-check" id="footerNormal">
+  <button class="btn-check" id="mainBtn" disabled>Periksa</button>
+</div>
+
+<div class="status-bar correct-bar" id="correctBar">
+  <div class="status-text">
+    <div class="status-icon">✔️</div>
+    <div class="correct-msg">Luar Biasa!</div>
+  </div>
+  <button class="btn-check btn-ready" onclick="nextRound()">Lanjut</button>
+</div>
+
+<div class="status-bar wrong-bar" id="wrongBar">
+  <div class="status-text">
+    <div class="status-icon">❌</div>
+    <div class="wrong-msg">Aduh, Salah...</div>
+  </div>
+  <p id="correctAnswer" style="color:#ea2b2b; margin-top:-15px; font-weight:600;"></p>
+  <button class="btn-check" style="background:#ff4b4b; color:white; box-shadow:0 5px 0 #c42d2d;" onclick="closeWrong()">Oke</button>
 </div>
 
 <script>
   let xp = 0;
-  let hearts = 5;
-  let currentAns = "";
-  
-  // Contoh Data (Bisa diganti dari API/Database)
-  const bankSoal = [
-    { q: "Belajar", a: "Learning", opts: ["Learning", "Eating", "Sleeping"] },
-    { q: "Rumah", a: "House", opts: ["Car", "House", "Tree"] },
-    { q: "Buku", a: "Book", opts: ["Book", "Pen", "Paper"] }
+  let selected = null;
+  const db = [
+    { q: "Capaian Tahfidz", a: "Tahfizh Achievement", opts: ["Tahfizh Achievement", "Daily Report", "Student Record"] },
+    { q: "Sangat Baik", a: "Excellent", opts: ["Bad", "Excellent", "Good Enough"] },
+    { q: "Murojaah", a: "Reviewing", opts: ["Reviewing", "Sleeping", "Reading"] }
   ];
 
-  function startRound() {
-    const feed = document.getElementById('feedback');
-    feed.className = "feedback-bar";
+  function loadGame() {
+    const soal = db[Math.floor(Math.random()*db.length)];
+    document.getElementById('qWord').innerText = soal.q;
+    const container = document.getElementById('opts');
+    container.innerHTML = "";
+    selected = null;
     
-    const soal = bankSoal[Math.floor(Math.random() * bankSoal.length)];
-    currentAns = soal.a;
-    
-    document.getElementById('qText').innerText = soal.q;
-    const grid = document.getElementById('optGrid');
-    grid.innerHTML = "";
-    
-    soal.opts.sort(() => Math.random() - 0.5).forEach((o, i) => {
-      grid.innerHTML += `
-        <div class="opt-card" onclick="checkAns(this, '${o}')">
-          <div class="opt-num">${i+1}</div>
-          ${o}
-        </div>`;
+    // Reset buttons
+    document.getElementById('mainBtn').className = "btn-check";
+    document.getElementById('mainBtn').disabled = true;
+
+    soal.opts.sort(() => Math.random() - 0.5).forEach(o => {
+      const div = document.createElement('div');
+      div.className = "option";
+      div.innerText = o;
+      div.onclick = function() {
+        document.querySelectorAll('.option').forEach(x => x.className = "option");
+        this.className = "option selected";
+        selected = o;
+        const btn = document.getElementById('mainBtn');
+        btn.className = "btn-check btn-ready";
+        btn.disabled = false;
+        btn.onclick = () => checkResult(soal.a);
+      };
+      container.appendChild(div);
     });
   }
 
-  function checkAns(el, choice) {
-    if(document.getElementById('feedback').classList.contains('bar-correct')) return;
-
-    if(choice === currentAns) {
-      el.classList.add('correct-ui');
-      showFeedback(true);
-      xp += 33.4; 
-      document.getElementById('progress').style.width = xp + "%";
-      if(xp >= 100) finishGame();
+  function checkResult(correct) {
+    if(selected === correct) {
+      document.getElementById('correctBar').style.display = 'block';
+      xp += 34;
+      document.getElementById('prog').style.width = xp + "%";
     } else {
-      el.classList.add('wrong-ui');
-      hearts--;
-      document.getElementById('hearts').innerText = hearts;
-      showFeedback(false);
-      if(hearts <= 0) alert("Nyawa Habis! Ulangi lagi.");
+      document.getElementById('correctAnswer').innerText = "Jawaban benar: " + correct;
+      document.getElementById('wrongBar').style.display = 'block';
     }
-    // Suara
-    window.speechSynthesis.speak(new SpeechSynthesisUtterance(choice));
   }
 
-  function showFeedback(isCorrect) {
-    const bar = document.getElementById('feedback');
-    const btn = document.getElementById('btnNext');
-    const msg = document.getElementById('feedMsg');
-    
-    bar.classList.add(isCorrect ? 'bar-correct' : 'bar-wrong');
-    btn.className = 'btn-next ' + (isCorrect ? 'btn-correct' : 'btn-wrong');
-    msg.innerText = isCorrect ? "BENAR! LUAR BIASA 🔥" : "KURANG TEPAT! Jawabannya: " + currentAns;
-    
-    btn.onclick = isCorrect ? startRound : () => { bar.classList.remove('bar-wrong'); };
+  function nextRound() {
+    document.getElementById('correctBar').style.display = 'none';
+    if(xp >= 100) {
+      alert("HORE! LEVEL SELESAI 🔥");
+      location.href = 'index.html';
+    } else {
+      loadGame();
+    }
   }
 
-  function finishGame() {
-    alert("LEVEL SELESAI! +100 XP 🔥");
-    location.href = 'index.html';
+  function closeWrong() {
+    document.getElementById('wrongBar').style.display = 'none';
+    loadGame();
   }
 
-  startRound();
+  loadGame();
 </script>
 </body>
 </html>
