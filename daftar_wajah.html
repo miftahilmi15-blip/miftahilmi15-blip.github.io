@@ -3,27 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrasi Wajah | E-Santri AI</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <title>Registrasi Wajah Kilat | E-Santri</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1f6f51; --gold: #eab308; --bg: #f8fafc; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); text-align: center; padding: 20px; }
         .card { max-width: 450px; margin: auto; background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         #camera-box { position: relative; width: 100%; border-radius: 20px; overflow: hidden; border: 3px solid var(--primary); margin: 20px 0; display: none; }
-        video { width: 100%; transform: scaleX(-1); }
-        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; margin-top: 10px; }
+        video { width: 100%; transform: scaleX(-1); background: #000; }
+        .btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 800; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-gold { background: var(--gold); color: white; }
-        select, input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 2px solid #eee; }
-        #status { font-size: 12px; font-weight: bold; margin-top: 10px; color: var(--primary); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        select, input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 2px solid #eee; font-family: inherit; }
+        #status { font-size: 13px; font-weight: bold; margin-top: 10px; color: var(--primary); min-height: 20px; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h2 style="color: var(--primary);">Pendaftaran Wajah</h2>
-        <p style="font-size: 12px; color: #666;">Silakan daftarkan wajah santri untuk akses ujian digital.</p>
+        <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Versi Kilat: Tanpa Loading AI Berat.</p>
 
         <select id="user-kelas">
             <option value="">-- Pilih Kelas --</option>
@@ -32,57 +32,128 @@
         
         <div style="display: flex; gap: 5px;">
             <input type="number" id="user-nipd" placeholder="Masukkan NIPD">
-            <button class="btn-gold" style="width: 80px;" onclick="cekNama()">CEK</button>
+            <button id="btn-cek" class="btn-gold" style="width: 100px; border-radius:10px; border:none; font-weight:700;" onclick="cekNama()">CEK</button>
         </div>
         
-        <input type="text" id="user-nama" placeholder="Nama Santri" readonly style="background: #f1f5f9;">
+        <input type="text" id="user-nama" placeholder="Nama Santri Muncul Di Sini" readonly style="background: #f1f5f9; text-align: center;">
 
         <div id="camera-box">
             <video id="webcam" autoplay muted playsinline></video>
-            <div id="status">Memuat AI...</div>
+            <div id="status">Kamera Siap</div>
         </div>
 
-        <button id="btn-snap" class="btn btn-primary" onclick="rekamWajah()" style="display: none;">AMBIL & SIMPAN FOTO WAJAH</button>
+        <button id="btn-snap" class="btn btn-primary" onclick="rekamWajah()" style="display: none;">AMBIL & SIMPAN FOTO</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
     <script>
- const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
- // HAPUS SEMUA face-api.js, GANTI PAKE JEPRET BIASA
-    async function rekamWajah() {
-        const video = document.getElementById('webcam');
-        const canvas = document.createElement('canvas');
-        const status = document.getElementById('status');
-        const nipd = document.getElementById('user-nipd').value;
-        const nama = document.getElementById('user-nama').value;
-
-        status.innerText = "📸 JEPRET...";
-
-        // Set resolusi canvas
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        // CONFIG FIREBASE
+        const firebaseConfig = { 
+            databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
         
-        // Gambar foto dari video ke canvas
-        const ctx = canvas.getContext('2d');
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1); // Mirror balik biar gak kebalik fotonya
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // URL Google Sheets Apps Script Bos
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
-        // Convert ke Base64 (Gambar string pendek)
-        const dataFoto = canvas.toDataURL('image/jpeg', 0.7); // Kualitas 70% biar enteng
+        // FUNGSI CEK NAMA KILAT
+        async function cekNama() {
+            const kls = document.getElementById('user-kelas').value;
+            const nipd = document.getElementById('user-nipd').value;
+            const btnCek = document.getElementById('btn-cek');
+            const inputNama = document.getElementById('user-nama');
 
-        // LANGSUNG SIMPAN KE FIREBASE (Tanpa Analisis AI yang Lemot)
-        db.ref(`database_wajah/${nipd}`).set({
-            nama: nama,
-            foto: dataFoto, // Simpan mentahannya aja Bos
-            timestamp: Date.now()
-        }).then(() => {
-            alert("BERHASIL! Wajah " + nama + " Terdaftar.");
-            location.reload();
-        }).catch(e => alert("Gagal Simpan!"));
-    }
+            if(!kls || !nipd) return alert("Pilih kelas & isi NIPD!");
+
+            // Loading state
+            btnCek.innerText = "...";
+            btnCek.disabled = true;
+            inputNama.value = "Sedang mencari data...";
+
+            try {
+                // Tambah timestamp biar gak kena cache
+                const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}&t=${Date.now()}`);
+                const data = await res.json();
+                const s = data.find(item => item.nipd == nipd);
+
+                if(s) {
+                    inputNama.value = s.nama;
+                    startCamera();
+                } else {
+                    inputNama.value = "";
+                    alert("Data Santri Tidak Ditemukan!");
+                }
+            } catch(e) {
+                alert("Gagal ambil data dari Google Sheets!");
+                inputNama.value = "";
+            } finally {
+                btnCek.innerText = "CEK";
+                btnCek.disabled = false;
+            }
+        }
+
+        // NYALAIN KAMERA
+        async function startCamera() {
+            const camBox = document.getElementById('camera-box');
+            const btnSnap = document.getElementById('btn-snap');
+            const video = document.getElementById('webcam');
+            
+            camBox.style.display = "block";
+            btnSnap.style.display = "block";
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user", width: 480, height: 480 } 
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                alert("Gagal akses kamera! Pastikan izin kamera aktif.");
+            }
+        }
+
+        // JEPRET & SIMPAN KILAT (Pake Base64)
+        async function rekamWajah() {
+            const video = document.getElementById('webcam');
+            const status = document.getElementById('status');
+            const nipd = document.getElementById('user-nipd').value;
+            const nama = document.getElementById('user-nama').value;
+            const btnSnap = document.getElementById('btn-snap');
+
+            if(!nama) return alert("Cek NIPD dulu Bos!");
+
+            status.innerText = "⏳ MEMPROSES...";
+            btnSnap.disabled = true;
+
+            // Pake Canvas buat ambil frame foto
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // Mirroring biar fotonya gak kebalik
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Ubah jadi JPEG kualitas menengah biar hemat database
+            const dataFoto = canvas.toDataURL('image/jpeg', 0.6);
+
+            // Simpan ke Firebase Realtime Database
+            db.ref(`database_wajah/${nipd}`).set({
+                nama: nama,
+                foto: dataFoto,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                alert("BERHASIL! Wajah " + nama + " sudah terdaftar.");
+                location.reload();
+            }).catch(e => {
+                alert("Gagal simpan ke database!");
+                btnSnap.disabled = false;
+            });
+        }
     </script>
 </body>
 </html>
