@@ -49,19 +49,21 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
     <script>
-        const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
+ const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
-    // 1. Load Model AI - Pakai SSD Mobilenet (Lebih Cepat & Akurat)
+    // 1. LOAD MODEL KILAT
     async function init() {
         const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
-        // Kita pakai SsdMobilenetv1 tapi nanti kita setting ringan
-        await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL); 
-        await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-        await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-        document.getElementById('status').innerText = "AI Siap Tempur!";
+        // Pakai TinyFaceDetector tapi versi optimasi input
+        await Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+            faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL), // Versi tiny lebih kenceng
+            faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+        ]);
+        document.getElementById('status').innerText = "⚡ AI SIAP TEMPUR!";
     }
     init();
 
@@ -85,8 +87,14 @@
         document.getElementById('camera-box').style.display = "block";
         document.getElementById('btn-snap').style.display = "block";
         const video = document.getElementById('webcam');
+        
+        // Optimasi Resolusi Kamera (Jangan kegedean biar gak lemot)
         const stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { width: 640, height: 480, frameRate: { ideal: 30 } } 
+            video: { 
+                width: { ideal: 400 }, 
+                height: { ideal: 400 },
+                facingMode: "user" 
+            } 
         });
         video.srcObject = stream;
     }
@@ -97,30 +105,28 @@
         const nipd = document.getElementById('user-nipd').value;
         const nama = document.getElementById('user-nama').value;
 
-        status.innerHTML = "<i class='fas fa-spinner fa-spin'></i> KILAT SCANNING...";
+        status.innerHTML = "🚀 PROSES KILAT...";
 
-        // 2. Settingan SSD Mobilenet Versi Ringan (Biar gak loading lama)
-        const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 });
-
-        // Proses Analisis (Hanya Ambil 1 Frame Tercepat)
-        const detection = await faceapi.detectSingleFace(video, options)
-            .withFaceLandmarks()
-            .withFaceDescriptor();
+        // 2. SETTINGAN DETEKSI PALING RINGAN
+        const detection = await faceapi.detectSingleFace(
+            video, 
+            new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.5 }) 
+        ).withFaceLandmarks(true).withFaceDescriptor(); // true = pakai tiny landmarks
 
         if (!detection) {
-            alert("WAJAH TIDAK TERDETEKSI!\n\nTips:\n1. Dekatkan wajah ke kamera\n2. Jangan pakai masker\n3. Pastikan cahaya terang");
+            alert("WAJAH GAK KELIATAN BOS! Deketin lagi mukanya.");
             status.innerText = "Gagal. Coba lagi.";
             return;
         }
 
-        // 3. Simpan Descriptor ke Firebase
         const faceData = Array.from(detection.descriptor);
+        
+        // 3. LANGSUNG TEMBAK KE FIREBASE
         db.ref(`database_wajah/${nipd}`).set({
             nama: nama,
             descriptor: faceData
         }).then(() => {
-            status.innerText = "TERSAVE!";
-            alert("MANTAP BOS! Wajah " + nama + " Berhasil Didaftarkan.");
+            alert("MANTAP! Wajah " + nama + " Berhasil Didaftarkan.");
             location.reload();
         }).catch(e => alert("Gagal Simpan!"));
     }
