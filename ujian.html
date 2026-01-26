@@ -6,8 +6,11 @@
     <title>Exam Center | E-Santri Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
     <style>
-        :root { --primary: #1f6f51; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; }
+        :root { --primary: #1f6f51; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gold: #eab308; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); line-height: 1.6; user-select: none; }
 
@@ -24,8 +27,14 @@
         label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 15px; }
         input, select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; }
         
+        /* CSS KHUSUS AI CAMERA */
+        #ai-container { position: relative; width: 100%; max-width: 300px; margin: 15px auto; border-radius: 20px; overflow: hidden; border: 3px solid var(--gold); display: none; }
+        #webcam { width: 100%; transform: scaleX(-1); }
+        #ai-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: scaleX(-1); }
+        .scanning-line { position: absolute; width: 100%; height: 2px; background: var(--gold); top: 0; animation: scan 2s infinite linear; z-index: 5; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
         .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; }
-        
         .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
         .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; }
         .teks-soal { font-weight: 700; font-size: 15px; margin-bottom: 15px; }
@@ -82,6 +91,16 @@
                 <label>Nama Lengkap (Otomatis)</label>
                 <input type="text" id="user-nama" placeholder="Nama muncul otomatis..." readonly style="background: #f1f5f9;">
                 
+                <div id="ai-section" class="hidden" style="text-align: center; margin-top: 20px;">
+                    <label id="ai-label">Konfirmasi Wajah</label>
+                    <div id="ai-container">
+                        <div class="scanning-line"></div>
+                        <video id="webcam" autoplay muted playsinline></video>
+                        <canvas id="ai-canvas"></canvas>
+                    </div>
+                    <p id="ai-status" style="font-size: 10px; color: var(--gold); font-weight: 800;">AI Sedang Memuat...</p>
+                </div>
+
                 <div id="btn-mulai-box" class="hidden">
                     <button class="btn-start" onclick="cekMasuk()" style="margin-top: 20px;">MULAI UJIAN</button>
                 </div>
@@ -129,21 +148,36 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // URL Apps Script Bos untuk Tarik Data Nama
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
     let sesiUjian = null;
     let listSoal = [];
     let intervalTimer;
+    let faceAiLoaded = false;
+
+    // 1. LOAD AI MODELS SAAT PAGE DIBUKA
+    async function loadAi() {
+        try {
+            const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+            await Promise.all([
+                faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL)
+            ]);
+            faceAiLoaded = true;
+            console.log("AI Model Loaded");
+        } catch (e) { console.error("AI Gagal Load", e); }
+    }
+    loadAi();
 
     function resetForm() {
         document.getElementById('user-mapel').value = "";
         document.getElementById('form-isi').classList.add('hidden');
+        document.getElementById('ai-section').classList.add('hidden');
         document.getElementById('badge-status').className = "status-badge status-off";
         document.getElementById('badge-status').innerText = "Mengecek...";
+        stopCamera();
     }
 
-    // FUNGSI CEK JADWAL OTOMATIS BERDASARKAN JAM
     function cekJadwalAktif() {
         const kls = document.getElementById('user-kelas').value;
         const mpl = document.getElementById('user-mapel').value;
@@ -151,34 +185,22 @@
 
         db.ref(`jadwal_ujian/${kls}/${mpl}`).on('value', snap => {
             sesiUjian = snap.val();
-            sesiUjian.mapel = mpl; // Sinkronkan nama mapel
+            if(!sesiUjian) return;
+            sesiUjian.mapel = mpl;
             
             const badge = document.getElementById('badge-status');
             const infoMapel = document.getElementById('info-mapel');
             
-            if(!sesiUjian) {
-                badge.innerText = "Belum Ada Jadwal";
-                badge.className = "status-badge status-off";
-                return;
-            }
-
-            // Logika Jam Otomatis
             const sekarang = new Date();
             const tglSekarang = sekarang.toISOString().split('T')[0];
             const jamSekarang = sekarang.getHours().toString().padStart(2, '0') + ":" + sekarang.getMinutes().toString().padStart(2, '0');
 
             if(tglSekarang !== sesiUjian.tanggal) {
-                badge.innerText = "Bukan Hari Ini";
-                badge.className = "status-badge status-off";
-                infoMapel.innerText = "Jadwal: " + sesiUjian.tanggal;
+                badge.innerText = "Bukan Hari Ini"; badge.className = "status-badge status-off";
             } else if(jamSekarang < sesiUjian.jam_mulai) {
-                badge.innerText = "Belum Dimulai";
-                badge.className = "status-badge status-off";
-                infoMapel.innerText = "Mulai Jam: " + sesiUjian.jam_mulai;
+                badge.innerText = "Belum Dimulai"; badge.className = "status-badge status-off";
             } else if(jamSekarang > sesiUjian.jam_selesai) {
-                badge.innerText = "Waktu Habis";
-                badge.className = "status-badge status-off";
-                infoMapel.innerText = "Selesai Jam: " + sesiUjian.jam_selesai;
+                badge.innerText = "Waktu Habis"; badge.className = "status-badge status-off";
             } else {
                 badge.innerText = "Ujian Aktif";
                 badge.className = "status-badge status-on";
@@ -188,7 +210,6 @@
         });
     }
 
-    // FUNGSI TARIK NAMA DARI SPREADSHEET (APPS SCRIPT)
     async function verifikasiSiswa() {
         const kls = document.getElementById('user-kelas').value;
         const nipd = document.getElementById('user-nipd').value;
@@ -204,32 +225,84 @@
 
             if(siswa) {
                 document.getElementById('user-nama').value = siswa.nama;
-                document.getElementById('btn-mulai-box').classList.remove('hidden');
-                alert("Halo " + siswa.nama + ", silakan klik mulai!");
+                alert("NIPD Ditemukan. Silakan Verifikasi Wajah!");
+                startFaceScan(); // BUKA SCANNER
             } else {
-                alert("NIPD tidak ditemukan di kelas ini!");
-                document.getElementById('user-nama').value = "";
-                document.getElementById('btn-mulai-box').classList.add('hidden');
+                alert("NIPD tidak ditemukan!");
             }
+        } catch (e) { alert("Gagal koneksi server!"); }
+        finally { btn.innerText = "CEK"; }
+    }
+
+    // 2. FUNGSI SCANNER WAJAH
+    let scannerActive = false;
+    async function startFaceScan() {
+        const aiSection = document.getElementById('ai-section');
+        const aiContainer = document.getElementById('ai-container');
+        const video = document.getElementById('webcam');
+        const status = document.getElementById('ai-status');
+
+        aiSection.classList.remove('hidden');
+        aiContainer.style.display = "block";
+        status.innerText = "Membuka Kamera...";
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            scannerActive = true;
+
+            video.addEventListener('play', () => {
+                const canvas = document.getElementById('ai-canvas');
+                const displaySize = { width: video.videoWidth, height: video.videoHeight };
+                faceapi.matchDimensions(canvas, displaySize);
+
+                const interval = setInterval(async () => {
+                    if(!scannerActive) { clearInterval(interval); return; }
+
+                    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
+                    
+                    if(detections.length > 0) {
+                        status.innerText = "WAJAH TERDETEKSI! OK";
+                        status.style.color = "#00ff00";
+                        document.getElementById('btn-mulai-box').classList.remove('hidden');
+                        // Optional: Berhenti scan jika sudah ketemu
+                        // stopCamera(); scannerActive = false;
+                    } else {
+                        status.innerText = "Posisikan Wajah di Tengah";
+                        status.style.color = var(--gold);
+                        document.getElementById('btn-mulai-box').classList.add('hidden');
+                    }
+                }, 500);
+            });
         } catch (e) {
-            alert("Gagal ambil data absen!");
-        } finally {
-            btn.innerText = "CEK";
+            status.innerText = "Gagal Akses Kamera!";
+            console.error(e);
         }
     }
 
+    function stopCamera() {
+        const video = document.getElementById('webcam');
+        if(video.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+        }
+        scannerActive = false;
+    }
+
     function cekMasuk() {
+        stopCamera(); // Matikan kamera saat mulai ujian
         const nama = document.getElementById('user-nama').value.trim();
         const kls = document.getElementById('user-kelas').value;
         const mpl = sesiUjian.mapel;
 
         db.ref(`bank_soal/${kls}/${mpl}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum tersedia di Bank Soal!");
+            if(!snap.exists()) return alert("Soal belum tersedia!");
             listSoal = [];
             snap.forEach(s => { listSoal.push(s.val()); });
             mulaiUjian(nama, kls);
         });
     }
+
+    // --- SISA FUNGSI (mulaiUjian, kirimJawaban, dll) TETAP SAMA ---
 
     function mulaiUjian(nama, kls) {
         document.getElementById('login-screen').classList.add('hidden');
@@ -254,14 +327,13 @@
             container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><div class="teks-soal">${s.soal}</div><div>${htmlOpsi}</div></div>`;
         });
 
-        // Hitung durasi otomatis dari selisih jam
         const sekarang = new Date();
         const [jamS, minS] = sesiUjian.jam_selesai.split(':');
         const waktuSelesai = new Date();
         waktuSelesai.setHours(jamS, minS, 0);
         
         let detik = Math.floor((waktuSelesai - sekarang) / 1000);
-        if(detik <= 0) detik = 3600; // Default 1 jam jika error
+        if(detik <= 0) detik = 3600;
 
         intervalTimer = setInterval(() => {
             let m = Math.floor(detik/60); let s = detik%60;
@@ -297,7 +369,7 @@
             essay: jawEssay, 
             waktu: new Date().toLocaleString('id-ID') 
         }).then(() => {
-            alert("Alhamdulillah! Jawaban berhasil terkirim.");
+            alert("Jawaban terkirim!");
             location.reload();
         });
     }
@@ -321,26 +393,12 @@
             snap.forEach(mapelSnap => {
                 const mapelName = mapelSnap.key;
                 if(filterMpl && mapelName !== filterMpl) return;
-                
                 mapelSnap.forEach(siswaSnap => {
                     const d = siswaSnap.val();
                     const keySiswa = siswaSnap.key;
                     let essayHtml = "";
-                    if(d.essay){
-                        d.essay.forEach(e => {
-                            essayHtml += `<div class="essay-view"><b>Q:</b> ${e.soal}<br><b>A:</b> ${e.jawaban}</div>`;
-                        });
-                    }
-                    
-                    body.innerHTML += `
-                        <tr>
-                            <td><b>${d.nama}</b><br><small>${mapelName}</small>${essayHtml}</td>
-                            <td>${d.skor}</td>
-                            <td>
-                                <input type="number" id="manual-${keySiswa}" style="width:50px; padding:5px;" value="${d.nilai_essay || 0}">
-                                <button onclick="simpanKoreksi('${kls}','${mapelName}','${keySiswa}')" style="font-size:9px; background:var(--primary); color:white; border:none; padding:5px; border-radius:5px; margin-top:5px;">Simpan</button>
-                            </td>
-                        </tr>`;
+                    if(d.essay) d.essay.forEach(e => { essayHtml += `<div class="essay-view"><b>Q:</b> ${e.soal}<br><b>A:</b> ${e.jawaban}</div>`; });
+                    body.innerHTML += `<tr><td><b>${d.nama}</b><br><small>${mapelName}</small>${essayHtml}</td><td>${d.skor}</td><td><input type="number" id="manual-${keySiswa}" style="width:50px; padding:5px;" value="${d.nilai_essay || 0}"><button onclick="simpanKoreksi('${kls}','${mapelName}','${keySiswa}')" style="font-size:9px; background:var(--primary); color:white; border:none; padding:5px; border-radius:5px; margin-top:5px;">Simpan</button></td></tr>`;
                 });
             });
         });
@@ -348,8 +406,7 @@
 
     function simpanKoreksi(kls, mpl, key) {
         const n = document.getElementById(`manual-${key}`).value;
-        db.ref(`nilai_ujian/${kls}/${mpl}/${key}`).update({ nilai_essay: n })
-        .then(() => alert("Nilai Essay Disimpan!"));
+        db.ref(`nilai_ujian/${kls}/${mpl}/${key}`).update({ nilai_essay: n }).then(() => alert("Tersimpan!"));
     }
 </script>
 </body>
