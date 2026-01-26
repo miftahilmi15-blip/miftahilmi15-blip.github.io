@@ -50,75 +50,80 @@
 
     <script>
         const firebaseConfig = { databaseURL: "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
-        let faceMatcher = null;
-        
-        // 1. Load Model AI
-        async function init() {
-            const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
-            await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-            await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-            await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-            document.getElementById('status').innerText = "AI Siap!";
+    // 1. Load Model AI - Pakai SSD Mobilenet (Lebih Cepat & Akurat)
+    async function init() {
+        const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
+        // Kita pakai SsdMobilenetv1 tapi nanti kita setting ringan
+        await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL); 
+        await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+        await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+        document.getElementById('status').innerText = "AI Siap Tempur!";
+    }
+    init();
+
+    async function cekNama() {
+        const kls = document.getElementById('user-kelas').value;
+        const nipd = document.getElementById('user-nipd').value;
+        if(!kls || !nipd) return alert("Pilih kelas & isi NIPD!");
+
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+            const data = await res.json();
+            const s = data.find(item => item.nipd == nipd);
+            if(s) {
+                document.getElementById('user-nama').value = s.nama;
+                startCamera();
+            } else { alert("Data tidak ditemukan!"); }
+        } catch(e) { alert("Gagal koneksi!"); }
+    }
+
+    async function startCamera() {
+        document.getElementById('camera-box').style.display = "block";
+        document.getElementById('btn-snap').style.display = "block";
+        const video = document.getElementById('webcam');
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: 640, height: 480, frameRate: { ideal: 30 } } 
+        });
+        video.srcObject = stream;
+    }
+
+    async function rekamWajah() {
+        const video = document.getElementById('webcam');
+        const status = document.getElementById('status');
+        const nipd = document.getElementById('user-nipd').value;
+        const nama = document.getElementById('user-nama').value;
+
+        status.innerHTML = "<i class='fas fa-spinner fa-spin'></i> KILAT SCANNING...";
+
+        // 2. Settingan SSD Mobilenet Versi Ringan (Biar gak loading lama)
+        const options = new faceapi.SsdMobilenetv1Options({ minConfidence: 0.5 });
+
+        // Proses Analisis (Hanya Ambil 1 Frame Tercepat)
+        const detection = await faceapi.detectSingleFace(video, options)
+            .withFaceLandmarks()
+            .withFaceDescriptor();
+
+        if (!detection) {
+            alert("WAJAH TIDAK TERDETEKSI!\n\nTips:\n1. Dekatkan wajah ke kamera\n2. Jangan pakai masker\n3. Pastikan cahaya terang");
+            status.innerText = "Gagal. Coba lagi.";
+            return;
         }
-        init();
 
-        async function cekNama() {
-            const kls = document.getElementById('user-kelas').value;
-            const nipd = document.getElementById('user-nipd').value;
-            if(!kls || !nipd) return alert("Pilih kelas & isi NIPD!");
-
-            try {
-                const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-                const data = await res.json();
-                const s = data.find(item => item.nipd == nipd);
-                if(s) {
-                    document.getElementById('user-nama').value = s.nama;
-                    startCamera();
-                } else { alert("Data tidak ditemukan!"); }
-            } catch(e) { alert("Gagal koneksi!"); }
-        }
-
-        async function startCamera() {
-            document.getElementById('camera-box').style.display = "block";
-            document.getElementById('btn-snap').style.display = "block";
-            const video = document.getElementById('webcam');
-            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-            video.srcObject = stream;
-        }
-
-        async function rekamWajah() {
-            const video = document.getElementById('webcam');
-            const status = document.getElementById('status');
-            const nipd = document.getElementById('user-nipd').value;
-            const nama = document.getElementById('user-nama').value;
-
-            status.innerText = "Sedang Menganalisa Wajah...";
-
-            // 2. Ambil Descriptor (Koordinat Wajah)
-            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks()
-                .withFaceDescriptor();
-
-            if (!detection) {
-                alert("Wajah tidak jelas! Pastikan cahaya terang dan hadap depan.");
-                status.innerText = "Gagal. Coba lagi.";
-                return;
-            }
-
-            // 3. Simpan Descriptor (Array Angka) ke Firebase
-            const faceData = Array.from(detection.descriptor);
-            db.ref(`database_wajah/${nipd}`).set({
-                nama: nama,
-                descriptor: faceData
-            }).then(() => {
-                alert("BERHASIL! Wajah " + nama + " sudah terdaftar.");
-                location.reload();
-            }).catch(e => alert("Gagal Simpan!"));
-        }
+        // 3. Simpan Descriptor ke Firebase
+        const faceData = Array.from(detection.descriptor);
+        db.ref(`database_wajah/${nipd}`).set({
+            nama: nama,
+            descriptor: faceData
+        }).then(() => {
+            status.innerText = "TERSAVE!";
+            alert("MANTAP BOS! Wajah " + nama + " Berhasil Didaftarkan.");
+            location.reload();
+        }).catch(e => alert("Gagal Simpan!"));
+    }
     </script>
 </body>
 </html>
