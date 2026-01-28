@@ -10,7 +10,7 @@
         :root { --primary: #10b981; --bg: #f1f5f9; --white: #ffffff; --text: #0f172a; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        body { background: var(--bg); color: var(--text); padding-bottom: 100px; } /* Ruang untuk footer melayang */
+        body { background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
         header { background: var(--white); padding: 15px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
         .brand { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; text-align: center; }
@@ -22,12 +22,10 @@
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 14px; outline: none; }
         
-        /* List Siswa 1 Kolom (Urut ke bawah) */
         .list { padding: 15px; display: flex; flex-direction: column; gap: 12px; }
         .item { background: var(--white); padding: 15px; border-radius: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .student-info b { font-size: 14px; text-transform: uppercase; color: #334155; }
 
-        /* Status Buttons */
         .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
         .status-grid button { padding: 12px 0; border-radius: 10px; border: 1px solid #f1f5f9; background: #f8fafc; font-weight: 800; font-size: 14px; color: #64748b; cursor: pointer; transition: 0.2s; }
         
@@ -36,7 +34,6 @@
         .i-active { background: #dbeafe !important; color: #1d4ed8 !important; border-color: #3b82f6 !important; transform: scale(1.05); }
         .a-active { background: #fee2e2 !important; color: #b91c1c !important; border-color: #ef4444 !important; transform: scale(1.05); }
 
-        /* Footer Melayang (Fixed) */
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); padding: 15px 20px; border-top: 1px solid #e2e8f0; z-index: 1000; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); }
         .btn-save { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
 
@@ -217,14 +214,17 @@ async function prosesRekap() {
 }
 
 function renderTabel(rekap, tipe) {
-    let html = `<table id="tabel-data"><thead><tr><th>Nama Santri</th>${tipe==='harian'?'<th>Status</th>':'<th>H</th><th>S</th><th>I</th><th>A</th>'}</tr></thead><tbody>`;
+    const tglPilih = document.getElementById('tgl-absen').value;
+    const namaBulan = document.getElementById('bulan-rekap').options[document.getElementById('bulan-rekap').selectedIndex].text;
+    
+    let html = `<table id="tabel-data"><thead><tr><th>Nama Santri</th>${tipe==='harian'?'<th>Tanggal</th><th>Status</th>':'<th>Bulan</th><th>H</th><th>S</th><th>I</th><th>A</th>'}</tr></thead><tbody>`;
     Object.values(rekap).forEach(r => {
         html += `<tr><td class="text-left">${r.nama}</td>`;
         if(tipe === 'harian') {
             let color = r.statusHarian === 'H' ? 'green' : (r.statusHarian === '-' ? '#999' : 'red');
-            html += `<td style="font-weight:bold; color:${color}">${r.statusHarian}</td>`;
+            html += `<td>${tglPilih}</td><td style="font-weight:bold; color:${color}">${r.statusHarian}</td>`;
         } else {
-            html += `<td>${r.H}</td><td>${r.S}</td><td>${r.I}</td><td>${r.A}</td>`;
+            html += `<td>${namaBulan}</td><td>${r.H}</td><td>${r.S}</td><td>${r.I}</td><td>${r.A}</td>`;
         }
         html += `</tr>`;
     });
