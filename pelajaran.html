@@ -9,25 +9,19 @@
     <style>
         :root { --primary: #1f6f51; --bg: #f4f7f6; }
         body { background: var(--bg); font-family: 'Poppins', sans-serif; margin: 0; padding: 15px; color: #333; }
-        
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: var(--primary); text-decoration: none; }
-
         .tab-menu { display: flex; background: #e0e0e0; padding: 5px; border-radius: 15px; margin-bottom: 20px; }
         .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; color: #666; font-size: 13px; transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; }
-
         select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; }
-
         .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
         .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display: inline-block; text-transform: uppercase; }
-        
-        .slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; }
+        .slot { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f2f2f2; }
         .slot:last-child { border-bottom: none; }
-        .waktu { font-size: 11px; color: var(--primary); font-weight: 700; min-width: 80px; }
-        .mapel { font-size: 13px; font-weight: 600; color: #333; text-align: right; flex: 1; }
-        
-        .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
+        .waktu { font-size: 10px; color: var(--primary); font-weight: 700; min-width: 85px; }
+        .mapel { font-size: 12px; font-weight: 600; color: #333; text-align: right; flex: 1; }
+        .loading { text-align: center; padding: 40px; color: #999; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -42,25 +36,19 @@
     </div>
 
     <div class="tab-menu">
-        <button class="tab-btn active" id="btnPel" onclick="switchTab('pelajaran')">📚 Pelajaran</button>
-        <button class="tab-btn" id="btnPik" onclick="switchTab('piket')">🧹 Piket Guru</button>
+        <button class="tab-btn active" onclick="switchTab('pelajaran')">📚 Pelajaran</button>
+        <button class="tab-btn" onclick="switchTab('piket')">🧹 Piket Guru</button>
     </div>
 
     <div id="sec-pelajaran">
         <select id="pilihKelas" onchange="muatPelajaran()">
             <option value="">-- Pilih Kelas --</option>
-            <option value="2">VII A</option>
-            <option value="3">VII B</option>
-            <option value="4">VII C</option>
-            <option value="5">VII D</option>
-            <option value="6">VIII A</option>
-            <option value="7">VIII B</option>
-            <option value="8">VIII C</option>
-            <option value="9">VIII D</option>
-            <option value="10">IX A</option>
-            <option value="11">IX B</option>
-            <option value="12">IX C</option>
-            <option value="13">IX D</option>
+            <option value="VII A">VII A</option><option value="VII B">VII B</option>
+            <option value="VII C">VII C</option><option value="VII D">VII D</option>
+            <option value="VIII A">VIII A</option><option value="VIII B">VIII B</option>
+            <option value="VIII C">VIII C</option><option value="VIII D">VIII D</option>
+            <option value="IX A">IX A</option><option value="IX B">IX B</option>
+            <option value="IX C">IX C</option><option value="IX D">IX D</option>
         </select>
         <div id="list-pelajaran"></div>
     </div>
@@ -70,76 +58,79 @@
     </div>
 
 <script>
-    const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/export?format=csv&gid=0"; 
-    
-    // Tampilkan Tanggal Hari Ini
+    const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/export?format=csv&gid=0";
     document.getElementById('tgl-info').innerHTML = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    function switchTab(type) {
-        document.getElementById('sec-pelajaran').classList.toggle('hidden', type !== 'pelajaran');
-        document.getElementById('sec-piket').classList.toggle('hidden', type === 'pelajaran');
-        document.getElementById('btnPel').classList.toggle('active', type === 'pelajaran');
-        document.getElementById('btnPik').classList.toggle('active', type !== 'pelajaran');
+    function switchTab(t) {
+        document.getElementById('sec-pelajaran').classList.toggle('hidden', t !== 'pelajaran');
+        document.getElementById('sec-piket').classList.toggle('hidden', t === 'pelajaran');
     }
 
     async function muatPelajaran() {
         const container = document.getElementById('list-pelajaran');
-        const kIdx = document.getElementById('pilihKelas').value;
-        if (!kIdx) return container.innerHTML = "";
+        const kelasTarget = document.getElementById('pilihKelas').value;
+        if (!kelasTarget) return container.innerHTML = "";
         
-        container.innerHTML = "<div class='loading'>Sedang mengambil data...</div>";
+        container.innerHTML = "<div class='loading'>Sedang memproses jadwal ruwet...</div>";
         
         try {
             const res = await fetch(urlPelajaran);
             const text = await res.text();
-            // Pecah CSV jadi baris dan kolom
             const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             
             let html = "";
-            let currentHari = "";
-            let kontenHari = "";
+            const hariList = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
 
-            // Baca dari baris kedua (lewati judul)
-            for (let i = 1; i < rows.length; i++) {
-                let row = rows[i];
-                let hariDiSheet = row[0] ? row[0].toUpperCase() : "";
+            hariList.forEach(hari => {
+                let currentKonten = "";
+                let colOffset = -1;
+                let rowStart = -1;
 
-                // Daftar hari yang valid
-                const listHari = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
-
-                // Jika kolom pertama berisi Nama Hari
-                if (listHari.includes(hariDiSheet)) {
-                    // Simpan data hari sebelumnya dulu kalau ada
-                    if (currentHari !== "" && kontenHari !== "") {
-                        html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
+                // 1. Cari baris dan kolom hari (Senin & Selasa bisa satu baris tapi beda kolom)
+                for (let r = 0; r < rows.length; r++) {
+                    let colIdx = rows[r].indexOf(hari);
+                    if (colIdx !== -1) {
+                        rowStart = r;
+                        colOffset = colIdx; 
+                        break;
                     }
-                    currentHari = hariDiSheet;
-                    kontenHari = "";
-                } 
-
-                // Ambil jam (Kolom B) dan Mapel (Kolom Pilihan)
-                let jam = row[1];
-                let mapel = row[kIdx];
-
-                if (jam && mapel && mapel !== "-" && mapel !== "") {
-                    kontenHari += `
-                    <div class="slot">
-                        <span class="waktu">${jam}</span>
-                        <span class="mapel">${mapel}</span>
-                    </div>`;
                 }
-            }
 
-            // Tambahkan hari terakhir
-            if (currentHari !== "" && kontenHari !== "") {
-                html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
-            }
+                if (rowStart !== -1) {
+                    // Cari baris "VII A, VII B..." di bawah hari untuk dapet index kolom kelas
+                    let headerRow = rows[rowStart + 1];
+                    let targetColIdx = -1;
+                    
+                    for(let c = colOffset; c < headerRow.length; c++) {
+                        if(headerRow[c] === kelasTarget) {
+                            targetColIdx = c;
+                            break;
+                        }
+                    }
 
-            container.innerHTML = html || "<div class='loading'>Jadwal tidak ditemukan. Pastikan kolom hari diisi di sebelah kiri.</div>";
+                    if (targetColIdx !== -1) {
+                        // Ambil data ke bawah sampai ketemu "NO" lagi atau baris kosong
+                        for (let i = rowStart + 2; i < rows.length; i++) {
+                            let rData = rows[i];
+                            if (rData[colOffset] === "NO" || (rData[colOffset] === "" && rData[colOffset+1] === "")) break;
+                            
+                            let jam = rData[colOffset + 1]; // Jam selalu di sebelah kanan NO
+                            let mapel = rData[targetColIdx];
 
-        } catch (e) {
-            container.innerHTML = "<div class='loading'>Error: Gagal konek ke Google Sheets.</div>";
-        }
+                            if (jam && mapel && mapel !== "." && mapel !== "") {
+                                currentKonten += `<div class="slot"><span class="waktu">${jam}</span><span class="mapel">${mapel}</span></div>`;
+                            }
+                        }
+                    }
+                }
+
+                if (currentKonten) {
+                    html += `<div class="hari-box"><span class="hari-nama">${hari}</span>${currentKonten}</div>`;
+                }
+            });
+
+            container.innerHTML = html || "<div class='loading'>Jadwal tidak ditemukan.</div>";
+        } catch (e) { container.innerHTML = "<div class='loading'>Gagal memuat data.</div>"; }
     }
 </script>
 </body>
