@@ -17,11 +17,9 @@
         .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; color: #666; font-size: 13px; transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; }
 
-        .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+        .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
         .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display: inline-block; text-transform: uppercase; }
         
         .slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; }
@@ -37,7 +35,10 @@
 
     <div class="header">
         <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-        <h2 style="margin:0; font-size: 18px;">Informasi Jadwal</h2>
+        <div>
+            <h2 style="margin:0; font-size: 18px;">Informasi Jadwal</h2>
+            <p id="tgl-info" style="margin:0; font-size:11px; color:var(--primary); font-weight:bold;"></p>
+        </div>
     </div>
 
     <div class="tab-menu">
@@ -69,114 +70,76 @@
     </div>
 
 <script>
-    // URL CSV yang sudah diformat
     const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/export?format=csv&gid=0"; 
-    const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/export?format=csv&gid=0"; 
+    
+    // Tampilkan Tanggal Hari Ini
+    document.getElementById('tgl-info').innerHTML = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
     function switchTab(type) {
-        if(type === 'pelajaran') {
-            document.getElementById('sec-pelajaran').classList.remove('hidden');
-            document.getElementById('sec-piket').classList.add('hidden');
-            document.getElementById('btnPel').classList.add('active');
-            document.getElementById('btnPik').classList.remove('active');
-        } else {
-            document.getElementById('sec-piket').classList.remove('hidden');
-            document.getElementById('sec-pelajaran').classList.add('hidden');
-            document.getElementById('btnPik').classList.add('active');
-            document.getElementById('btnPel').classList.remove('active');
-            muatPiketGuru();
-        }
+        document.getElementById('sec-pelajaran').classList.toggle('hidden', type !== 'pelajaran');
+        document.getElementById('sec-piket').classList.toggle('hidden', type === 'pelajaran');
+        document.getElementById('btnPel').classList.toggle('active', type === 'pelajaran');
+        document.getElementById('btnPik').classList.toggle('active', type !== 'pelajaran');
     }
 
     async function muatPelajaran() {
         const container = document.getElementById('list-pelajaran');
-        const kolomIdx = parseInt(document.getElementById('pilihKelas').value);
-        if (!kolomIdx) { container.innerHTML = ""; return; }
+        const kIdx = document.getElementById('pilihKelas').value;
+        if (!kIdx) return container.innerHTML = "";
         
-        container.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Memuat data...</div>";
+        container.innerHTML = "<div class='loading'>Sedang mengambil data...</div>";
         
         try {
-            const resp = await fetch(urlPelajaran);
-            const csvText = await resp.text();
-            // Parsing CSV dengan menangani tanda kutip
-            const rows = csvText.split('\n').map(row => 
-                row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"|"$/g, '').trim())
-            );
+            const res = await fetch(urlPelajaran);
+            const text = await res.text();
+            // Pecah CSV jadi baris dan kolom
+            const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             
             let html = "";
-            const daftarHari = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+            let currentHari = "";
+            let kontenHari = "";
 
-            daftarHari.forEach(hariTarget => {
-                let kontenHari = "";
-                let barisMulai = -1;
-
-                // 1. Cari baris di mana hari tersebut berada
-                for (let i = 0; i < rows.length; i++) {
-                    if (rows[i][0] && rows[i][0].toUpperCase() === hariTarget) {
-                        barisMulai = i;
-                        break;
-                    }
-                }
-
-                // 2. Jika ketemu, ambil data di bawahnya sampai ketemu hari berikutnya atau baris kosong
-                if (barisMulai !== -1) {
-                    for (let j = barisMulai + 1; j < rows.length; j++) {
-                        const row = rows[j];
-                        // Berhenti jika ketemu hari lain di kolom pertama
-                        if (row[0] && daftarHari.includes(row[0].toUpperCase())) break;
-                        
-                        const waktu = row[1]; // Kolom B
-                        const mapel = row[kolomIdx]; // Kolom sesuai pilihan kelas
-                        
-                        if (waktu && mapel && mapel !== "-" && mapel !== "") {
-                            kontenHari += `
-                            <div class="slot">
-                                <span class="waktu">${waktu}</span>
-                                <span class="mapel">${mapel}</span>
-                            </div>`;
-                        }
-                    }
-                }
-
-                if (kontenHari !== "") {
-                    html += `<div class="hari-box"><span class="hari-nama">${hariTarget}</span>${kontenHari}</div>`;
-                }
-            });
-
-            container.innerHTML = html || "<p class='loading'>Belum ada jadwal untuk kelas ini.</p>";
-        } catch (e) { 
-            console.error(e);
-            container.innerHTML = "<p class='loading'>Gagal memuat jadwal. Pastikan izin akses sudah dibuka.</p>"; 
-        }
-    }
-
-    async function muatPiketGuru() {
-        const container = document.getElementById('list-piket');
-        container.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Memuat data piket...</div>";
-        
-        try {
-            const resp = await fetch(urlPiket);
-            const data = await resp.text();
-            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
-            
-            let html = "", currentDay = "";
+            // Baca dari baris kedua (lewati judul)
             for (let i = 1; i < rows.length; i++) {
-                const col = rows[i];
-                if (!col[0]) continue;
+                let row = rows[i];
+                let hariDiSheet = row[0] ? row[0].toUpperCase() : "";
 
-                if (col[0] !== currentDay) {
-                    if (currentDay !== "") html += `</div>`;
-                    currentDay = col[0];
-                    html += `<div class="hari-box"><span class="hari-nama">${currentDay}</span>`;
+                // Daftar hari yang valid
+                const listHari = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+
+                // Jika kolom pertama berisi Nama Hari
+                if (listHari.includes(hariDiSheet)) {
+                    // Simpan data hari sebelumnya dulu kalau ada
+                    if (currentHari !== "" && kontenHari !== "") {
+                        html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
+                    }
+                    currentHari = hariDiSheet;
+                    kontenHari = "";
+                } 
+
+                // Ambil jam (Kolom B) dan Mapel (Kolom Pilihan)
+                let jam = row[1];
+                let mapel = row[kIdx];
+
+                if (jam && mapel && mapel !== "-" && mapel !== "") {
+                    kontenHari += `
+                    <div class="slot">
+                        <span class="waktu">${jam}</span>
+                        <span class="mapel">${mapel}</span>
+                    </div>`;
                 }
-                html += `
-                <div class="slot" style="flex-direction:column; align-items:flex-start;">
-                    <span class="waktu">${col[1] || ''} - ${col[3] || ''}</span>
-                    <span class="mapel" style="text-align:left; font-size:14px; margin-top:5px; font-weight:700;">${col[2] || '-'}</span>
-                </div>`;
             }
-            container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat data piket.</p>"; }
+
+            // Tambahkan hari terakhir
+            if (currentHari !== "" && kontenHari !== "") {
+                html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
+            }
+
+            container.innerHTML = html || "<div class='loading'>Jadwal tidak ditemukan. Pastikan kolom hari diisi di sebelah kiri.</div>";
+
+        } catch (e) {
+            container.innerHTML = "<div class='loading'>Error: Gagal konek ke Google Sheets.</div>";
+        }
     }
 </script>
 </body>
