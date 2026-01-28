@@ -22,7 +22,7 @@
         .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
         .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-block; }
         
-        .slot { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 10px; }
+        .slot { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 10px; }
         .slot:last-child { border-bottom: none; }
         
         .waktu-box { background: #e8f5e9; color: var(--primary); font-size: 10px; font-weight: 800; padding: 8px; border-radius: 10px; border: 1px solid #c8e6c9; min-width: 105px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
@@ -30,6 +30,10 @@
         
         .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
         .hidden { display: none !important; }
+
+        /* Style khusus untuk menangani multi-nama di Piket */
+        .piket-guru-container { display: flex; flex-direction: column; gap: 2px; }
+        .piket-guru-name { display: block; font-weight: 700; color: #1f6f51; }
     </style>
 </head>
 <body>
@@ -96,10 +100,9 @@
             const daftarHari = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
 
             for (let i = 0; i < rows.length; i++) {
-                let cellHari = rows[i][2] ? rows[i][2].toUpperCase() : ""; // Nama Hari ada di Kolom C (index 2)
+                let cellHari = rows[i][2] ? rows[i][2].toUpperCase() : "";
 
                 if (daftarHari.includes(cellHari)) {
-                    // Simpan hari sebelumnya
                     if (currentHari && kontenHari) {
                         html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
                     }
@@ -107,8 +110,8 @@
                     kontenHari = "";
                 }
 
-                let jam = rows[i][1]; // Kolom Waktu (index 1)
-                let mapel = rows[i][colIdx]; // Kolom Kelas sesuai pilihan
+                let jam = rows[i][1];
+                let mapel = rows[i][colIdx];
 
                 if (jam && mapel && mapel !== "-" && mapel !== "." && mapel !== "Waktu" && !daftarHari.includes(mapel)) {
                     kontenHari += `
@@ -119,7 +122,6 @@
                 }
             }
 
-            // Tambahkan hari terakhir
             if (currentHari && kontenHari) {
                 html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
             }
@@ -136,17 +138,26 @@
             const data = await resp.text();
             const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             let html = "", currentDay = "";
+            
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
                 if (!col[0]) continue;
+                
                 if (col[0] !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
                     currentDay = col[0];
-                    html += `<div class="hari-box"><span class="hari-nama" style="background:#eab308">${currentDay}</span>`;
+                    html += `<div class="hari-box" style="border-left-color: #eab308;"><span class="hari-nama" style="background:#eab308">${currentDay}</span>`;
                 }
+
+                // Memecah nama guru jika ada koma atau baris baru
+                let daftarNama = (col[2] || "-").split(/,|\n/);
+                let listNamaHtml = daftarNama.map(nama => `<span class="piket-guru-name">${nama.trim()}</span>`).join('');
+
                 html += `<div class="slot">
                     <div class="waktu-box" style="background:#fff9c4; color:#854d0e; border-color:#fde68a;"><i class="fa-solid fa-user-clock"></i> ${col[1]} - ${col[3]}</div>
-                    <div class="mapel"><b>${col[2]}</b></div>
+                    <div class="mapel">
+                        <div class="piket-guru-container">${listNamaHtml}</div>
+                    </div>
                 </div>`;
             }
             container.innerHTML = html + "</div>";
