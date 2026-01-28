@@ -149,22 +149,30 @@
                     html += `<div class="hari-box" style="border-left-color: #eab308;"><span class="hari-nama" style="background:#eab308">${currentDay}</span>`;
                 }
 
-                // Logika Pembersihan Jam dari Gelar
+                // AMBIL JAM (Hanya format jamnya saja)
                 let jamMentah = (col[1] || "") + " " + (col[3] || "");
                 let jamBersih = jamMentah.match(/\d{2}[:.]\d{2}\s*-\s*\d{2}[:.]\d{2}/);
                 let tampilkanJam = jamBersih ? jamBersih[0] : (col[1] || "Waktu");
 
-                // Logika Penggabungan Nama Guru & Gelar
+                // GABUNGKAN NAMA & BERSIHKAN TULISAN "SHIFT"
                 let namaLengkap = "";
                 for(let j=2; j < col.length; j++) {
                     if(col[j] && !col[j].match(/\d{2}[:.]\d{2}/) && col[j] !== col[0]) {
                         namaLengkap += col[j] + " ";
                     }
                 }
+                
+                // Hilangkan tulisan "Shift" dan angka romawi dibelakangnya
+                namaLengkap = namaLengkap.replace(/Shift\s+[IVXLM]+/gi, "").trim();
 
-                // Pecah jika ada koma (untuk 2 orang)
+                // Pecah jika ada 2 orang (pake koma)
                 let daftarNama = namaLengkap.split(',');
-                let listNamaHtml = daftarNama.map(n => n.trim() !== "" ? `<span class="piket-guru-name">${n.trim()}</span>` : "").join('');
+                let listNamaHtml = daftarNama.map(n => {
+                    if(n.trim() === "") return "";
+                    // Bikin gelar jadi agak kecil (opsional, biar rapi)
+                    let namaCakep = n.trim().replace(/(S\.P|S\.A|M\.P|S\.T|S\.S).*/gi, (match) => `<small style="font-weight:400; opacity:0.8"> ${match}</small>`);
+                    return `<span class="piket-guru-name">${namaCakep}</span>`;
+                }).join('');
 
                 html += `<div class="slot">
                     <div class="waktu-box" style="background:#fff9c4; color:#854d0e; border-color:#fde68a; min-width:115px;">
