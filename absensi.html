@@ -59,14 +59,13 @@
     </div>
 
     <div id="filterAbsen">
-        <div class="controls">
+        <div class="controls" style="grid-template-columns: 1fr;">
             <select id="pilih-kelas" onchange="muatSiswa()">
                 <option value="">Pilih Kelas</option>
                 <option value="7A">7A</option><option value="7B">7B</option><option value="7C">7C</option><option value="7D">7D</option>
                 <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
                 <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
             </select>
-            <input type="date" id="tgl-absen">
         </div>
         <button onclick="setSemua('H')" style="width:100%; margin-top:10px; padding:10px; border-radius:10px; border:1px dashed var(--primary); color:var(--primary); font-weight:700; background:none; cursor:pointer; font-size: 12px;">✅ HADIRKAN SEMUA ANAK</button>
     </div>
@@ -79,22 +78,23 @@
                 <option value="8A">8A</option><option value="8B">8B</option><option value="8C">8C</option><option value="8D">8D</option>
                 <option value="9A">9A</option><option value="9B">9B</option><option value="9C">9C</option><option value="9D">9D</option>
             </select>
+            <input type="date" id="tgl-rekap">
+        </div>
+        <div class="controls" style="margin-top: 10px;">
             <select id="bulan-rekap">
                 <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
                 <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
                 <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
                 <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
-        </div>
-        <div class="controls" style="margin-top: 10px;">
             <select id="mode-rekap">
                 <option value="harian">Rekap Harian</option>
                 <option value="bulanan">Rekap Bulanan</option>
             </select>
-            <div style="display:flex; gap:8px">
-                <button onclick="prosesRekap()" style="flex:2; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📊 LIHAT</button>
-                <button onclick="exportExcel()" style="flex:1; padding:12px; background:#107c41; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📥 XL</button>
-            </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+            <button onclick="prosesRekap()" style="flex:2; padding:12px; background:var(--primary); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📊 LIHAT</button>
+            <button onclick="exportExcel()" style="flex:1; padding:12px; background:#107c41; color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer">📥 XL</button>
         </div>
     </div>
 </header>
@@ -118,7 +118,8 @@
 const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
 
-document.getElementById('tgl-absen').valueAsDate = new Date();
+// Set default tanggal hari ini untuk rekap
+document.getElementById('tgl-rekap').valueAsDate = new Date();
 
 function switchMenu(m) {
     document.getElementById('areaAbsen').style.display = m === 'absen' ? 'block' : 'none';
@@ -167,9 +168,12 @@ function setSemua(stat) {
 
 async function simpanKeFirebase() {
     const items = document.querySelectorAll('.item');
-    const tglFull = document.getElementById('tgl-absen').value;
-    if(!tglFull) return alert("Pilih tanggal!");
-    const [thn, bln, tgl] = tglFull.split("-");
+    // Saat simpan, otomatis pakai tanggal hari ini
+    const d = new Date();
+    const thn = d.getFullYear();
+    const bln = d.getMonth() + 1;
+    const tgl = d.getDate();
+    
     const kls = document.getElementById('pilih-kelas').value;
     const dataKirim = {};
     let count = 0;
@@ -179,8 +183,8 @@ async function simpanKeFirebase() {
     });
     if(count === 0) return alert("Belum ada santri yang diabsen!");
     document.getElementById('overlay').style.display = 'flex';
-    await fetch(`${FIREBASE_URL}/absensi/${thn}/${parseInt(bln)}/${parseInt(tgl)}/${kls}.json`, { method: 'PUT', body: JSON.stringify(dataKirim) });
-    alert("Berhasil! " + count + " santri tercatat.");
+    await fetch(`${FIREBASE_URL}/absensi/${thn}/${bln}/${tgl}/${kls}.json`, { method: 'PUT', body: JSON.stringify(dataKirim) });
+    alert("Berhasil! " + count + " santri tercatat tanggal " + tgl + "/" + bln + "/" + thn);
     location.reload();
 }
 
@@ -188,13 +192,14 @@ async function prosesRekap() {
     const mode = document.getElementById('mode-rekap').value;
     const kls = document.getElementById('kelas-rekap').value;
     const bln = document.getElementById('bulan-rekap').value;
-    const tglPilih = document.getElementById('tgl-absen').value;
+    const tglPilih = document.getElementById('tgl-rekap').value;
     if(!kls) return alert("Pilih Kelas dulu!");
     document.getElementById('overlay').style.display = 'flex';
     const resSiswa = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
     const daftarSiswa = await resSiswa.json();
     let rekap = {};
     daftarSiswa.forEach(s => rekap[s.nipd] = { nama: s.nama, H:0, S:0, I:0, A:0, statusHarian: '-' });
+    
     if(mode === 'harian') {
         const [y, m, d] = tglPilih.split("-");
         const res = await fetch(`${FIREBASE_URL}/absensi/${y}/${parseInt(m)}/${parseInt(d)}/${kls}.json`);
@@ -214,7 +219,7 @@ async function prosesRekap() {
 }
 
 function renderTabel(rekap, tipe) {
-    const tglPilih = document.getElementById('tgl-absen').value;
+    const tglPilih = document.getElementById('tgl-rekap').value;
     const namaBulan = document.getElementById('bulan-rekap').options[document.getElementById('bulan-rekap').selectedIndex].text;
     
     let html = `<table id="tabel-data"><thead><tr><th>Nama Santri</th>${tipe==='harian'?'<th>Tanggal</th><th>Status</th>':'<th>Bulan</th><th>H</th><th>S</th><th>I</th><th>A</th>'}</tr></thead><tbody>`;
