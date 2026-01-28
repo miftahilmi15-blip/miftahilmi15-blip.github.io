@@ -22,17 +22,18 @@
         .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
         .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display: inline-block; text-transform: uppercase; }
         
-        .slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; }
+        /* DESAIN SLOT JAM & MAPEL BARU */
+        .slot { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 12px; }
         .slot:last-child { border-bottom: none; }
-        .waktu { font-size: 11px; color: var(--primary); font-weight: 700; min-width: 95px; background: #e8f5e9; padding: 4px 8px; border-radius: 6px; margin-right: 10px; }
-        .mapel { font-size: 13px; font-weight: 600; color: #333; text-align: right; flex: 1; line-height: 1.4; }
+        
+        /* Jam Kotak */
+        .waktu-wrapper { min-width: 100px; }
+        .waktu-box { background: #e8f5e9; color: var(--primary); font-size: 10px; font-weight: 800; padding: 6px 8px; border-radius: 8px; border: 1px solid #c8e6c9; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+        
+        .mapel { font-size: 13px; font-weight: 600; color: #333; flex: 1; line-height: 1.4; padding-top: 4px; }
         
         .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
         .hidden { display: none !important; }
-
-        /* Style khusus Piket */
-        .piket-item { border-left: 6px solid #eab308; }
-        .piket-guru { font-size: 14px; font-weight: 700; color: #1f6f51; display: block; }
     </style>
 </head>
 <body>
@@ -93,12 +94,13 @@
         const kelasTarget = document.getElementById('pilihKelas').value;
         if (!kelasTarget) return;
         
-        container.innerHTML = "<div class='loading'>🔄 Mengambil jadwal terbaru...</div>";
+        container.innerHTML = "<div class='loading'>🔄 Mengambil data dari jam ke jam...</div>";
         
         try {
             const res = await fetch(urlPelajaran);
             const text = await res.text();
-            const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
+            // Parsing CSV cerdas
+            const rows = text.split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim()));
             
             let html = "";
             const hariList = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
@@ -108,13 +110,10 @@
                 let colOffset = -1;
                 let rowStart = -1;
 
+                // Cari Posisi Hari & Kolomnya
                 for (let r = 0; r < rows.length; r++) {
                     let colIdx = rows[r].indexOf(hari);
-                    if (colIdx !== -1) {
-                        rowStart = r;
-                        colOffset = colIdx; 
-                        break;
-                    }
+                    if (colIdx !== -1) { rowStart = r; colOffset = colIdx; break; }
                 }
 
                 if (rowStart !== -1) {
@@ -127,13 +126,22 @@
                     if (targetColIdx !== -1) {
                         for (let i = rowStart + 2; i < rows.length; i++) {
                             let rData = rows[i];
+                            // Berhenti jika ketemu NO lagi atau baris pembatas
                             if (!rData || rData[colOffset] === "NO" || (rData[colOffset] === "" && rData[colOffset+1] === "")) break;
                             
-                            let jam = rData[colOffset + 1]; 
+                            let jam = rData[colOffset + 1]; // Kolom Waktu
                             let mapel = rData[targetColIdx];
 
                             if (jam && mapel && mapel !== "." && mapel !== "") {
-                                currentKonten += `<div class="slot"><span class="waktu"><i class="fa-regular fa-clock"></i> ${jam}</span><span class="mapel">${mapel}</span></div>`;
+                                currentKonten += `
+                                <div class="slot">
+                                    <div class="waktu-wrapper">
+                                        <div class="waktu-box">
+                                            <i class="fa-regular fa-clock"></i> ${jam}
+                                        </div>
+                                    </div>
+                                    <div class="mapel">${mapel}</div>
+                                </div>`;
                             }
                         }
                     }
@@ -147,26 +155,22 @@
     async function muatPiketGuru() {
         const container = document.getElementById('list-piket');
         container.innerHTML = "<div class='loading'>🔄 Memuat data piket...</div>";
-        
         try {
             const resp = await fetch(urlPiket);
             const data = await resp.text();
             const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
-            
             let html = "", currentDay = "";
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
                 if (!col[0] || col[0] === "") continue;
-
                 if (col[0] !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
                     currentDay = col[0];
-                    html += `<div class="hari-box piket-item"><span class="hari-nama" style="background:#eab308">${currentDay}</span>`;
+                    html += `<div class="hari-box"><span class="hari-nama" style="background:#eab308">${currentDay}</span>`;
                 }
-                html += `
-                <div class="slot">
-                    <span class="waktu" style="color:#854d0e; background:#fef9c3"> <i class="fa-solid fa-user-clock"></i> ${col[1] || ''} - ${col[3] || ''}</span>
-                    <span class="mapel" style="text-align:left; flex:1;"><b class="piket-guru">${col[2] || '-'}</b></span>
+                html += `<div class="slot">
+                    <div class="waktu-wrapper"><div class="waktu-box" style="background:#fff9c4; color:#854d0e;"><i class="fa-solid fa-user-clock"></i> ${col[1]} - ${col[3]}</div></div>
+                    <div class="mapel"><b>${col[2]}</b></div>
                 </div>`;
             }
             container.innerHTML = html + "</div>";
