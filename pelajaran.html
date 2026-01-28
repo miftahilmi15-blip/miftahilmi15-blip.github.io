@@ -22,15 +22,15 @@
         .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
         .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-block; text-transform: uppercase; }
         
-        .slot { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 12px; }
+        .slot { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 10px; }
         .slot:last-child { border-bottom: none; }
         
-        .waktu-box { background: #e8f5e9; color: var(--primary); font-size: 11px; font-weight: 800; padding: 8px; border-radius: 10px; border: 1px solid #c8e6c9; min-width: 100px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .mapel { font-size: 13px; font-weight: 600; color: #333; flex: 1; line-height: 1.4; padding-top: 2px; }
+        .waktu-box { background: #e8f5e9; color: var(--primary); font-size: 10px; font-weight: 800; padding: 8px; border-radius: 10px; border: 1px solid #c8e6c9; min-width: 105px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .mapel { font-size: 13px; font-weight: 600; color: #333; flex: 1; line-height: 1.4; }
         
         .piket-guru-container { display: flex; flex-direction: column; gap: 4px; }
-        .piket-guru-name { display: block; font-weight: 700; color: #1f6f51; }
-        small { font-weight: 400; color: #666; font-size: 11px; }
+        .piket-guru-name { display: block; font-weight: 700; color: #1f6f51; line-height: 1.2; }
+        small { font-weight: 400; opacity: 0.8; font-size: 0.9em; }
 
         .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
         .hidden { display: none !important; }
@@ -86,68 +86,102 @@
         const container = document.getElementById('list-pelajaran');
         const colIdx = document.getElementById('pilihKelas').value;
         if (!colIdx) return;
-        container.innerHTML = "<div class='loading'>🔄 Memuat Jadwal Pelajaran...</div>";
+        
+        container.innerHTML = "<div class='loading'><i class='fas fa-sync fa-spin'></i> Memuat Jadwal...</div>";
+        
         try {
             const res = await fetch(urlPelajaran);
             const text = await res.text();
             const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
-            let html = "", currentHari = "", kontenHari = "";
+            
+            let html = "";
+            let currentHari = "";
+            let kontenHari = "";
             const daftarHari = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+
             for (let i = 0; i < rows.length; i++) {
                 let cellHari = rows[i][2] ? rows[i][2].toUpperCase() : "";
+
                 if (daftarHari.includes(cellHari)) {
-                    if (currentHari && kontenHari) html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
-                    currentHari = cellHari; kontenHari = "";
+                    if (currentHari && kontenHari) {
+                        html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
+                    }
+                    currentHari = cellHari;
+                    kontenHari = "";
                 }
-                let jam = rows[i][1], mapel = rows[i][colIdx];
-                if (jam && mapel && mapel !== "-" && mapel !== "." && !daftarHari.includes(mapel.toUpperCase())) {
-                    kontenHari += `<div class="slot"><div class="waktu-box"><i class="fa-regular fa-clock"></i> ${jam}</div><div class="mapel">${mapel}</div></div>`;
+
+                let jam = rows[i][1];
+                let mapel = rows[i][colIdx];
+
+                if (jam && mapel && mapel !== "-" && mapel !== "." && mapel !== "Waktu" && !daftarHari.includes(mapel.toUpperCase())) {
+                    kontenHari += `
+                    <div class="slot">
+                        <div class="waktu-box"><i class="fa-regular fa-clock"></i> ${jam}</div>
+                        <div class="mapel">${mapel}</div>
+                    </div>`;
                 }
             }
-            if (currentHari && kontenHari) html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
-            container.innerHTML = html || "<div class='loading'>Jadwal kosong.</div>";
-        } catch (e) { container.innerHTML = "Gagal memuat."; }
+
+            if (currentHari && kontenHari) {
+                html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
+            }
+
+            container.innerHTML = html || "<div class='loading'>Jadwal tidak ditemukan.</div>";
+        } catch (e) { container.innerHTML = "<div class='loading'>Gagal memuat data.</div>"; }
     }
 
     async function muatPiketGuru() {
         const container = document.getElementById('list-piket');
-        container.innerHTML = "<div class='loading'>🔄 Memuat Jadwal Piket...</div>";
+        container.innerHTML = "<div class='loading'>🔄 Memuat piket...</div>";
         try {
             const resp = await fetch(urlPiket);
             const data = await resp.text();
             const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             let html = "", currentDay = "";
+            
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
-                if (!col[0] || col[0].toLowerCase().includes("no")) continue;
+                if (!col[0] || col[0] === "" || col[0].toLowerCase().includes("hari") || col[0].toLowerCase().includes("no")) continue;
+                
                 if (col[0] !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
                     currentDay = col[0];
-                    html += `<div class="hari-box" style="border-left-color:var(--accent)"><span class="hari-nama" style="background:var(--accent)">${currentDay}</span>`;
+                    html += `<div class="hari-box" style="border-left-color: var(--accent);"><span class="hari-nama" style="background:var(--accent)">${currentDay}</span>`;
                 }
-                let jam = (col[1] || "") + (col[3] ? " - " + col[3] : "");
-                let jamClean = jam.match(/\d{2}[:.]\d{2}\s*-\s*\d{2}[:.]\d{2}/) ? jam.match(/\d{2}[:.]\d{2}\s*-\s*\d{2}[:.]\d{2}/)[0] : col[1];
-                
-                let rawNames = "";
-                for(let j=2; j < col.length; j++) { if(col[j] && !col[j].match(/\d{2}[:.]\d{2}/)) rawNames += col[j] + " "; }
-                
-                // Menghilangkan kata 'Shift' dan merapikan gelar
-                let cleanNames = rawNames.replace(/Shift\s+[IVX]+/gi, "").trim();
-                let nameArr = cleanNames.split(/,|\n/);
 
-                let namesHtml = nameArr.map(n => {
-                    if(!n.trim()) return "";
-                    let formatted = n.trim().replace(/(S\.P|S\.A|S\.S|M\.P|S\.T|S\.H|S\.O).*/gi, (m) => `<small> ${m}</small>`);
+                // Saringan Jam (Format 00.00 - 00.00)
+                let jamMentah = (col[1] || "") + " " + (col[3] || "");
+                let jamBersih = jamMentah.match(/\d{2}[:.]\d{2}\s*-\s*\d{2}[:.]\d{2}/);
+                let tampilkanJam = jamBersih ? jamBersih[0] : (col[1] || "Waktu");
+
+                // Gabungkan Nama & Bersihkan 'Shift'
+                let namaLengkap = "";
+                for(let j=2; j < col.length; j++) {
+                    if(col[j] && !col[j].match(/\d{2}[:.]\d{2}/) && col[j] !== col[0]) {
+                        namaLengkap += col[j] + " ";
+                    }
+                }
+                namaLengkap = namaLengkap.replace(/Shift\s+[IVXLM]+/gi, "").trim();
+
+                // Pecah jika ada 2 orang
+                let daftarNama = namaLengkap.split(',');
+                let listNamaHtml = daftarNama.map(n => {
+                    if(n.trim() === "") return "";
+                    let formatted = n.trim().replace(/(S\.P|S\.A|M\.P|S\.T|S\.S|S\.H|S\.O).*/gi, (match) => `<small> ${match}</small>`);
                     return `<span class="piket-guru-name">${formatted}</span>`;
                 }).join('');
 
                 html += `<div class="slot">
-                    <div class="waktu-box" style="background:#fff9c4; color:#854d0e; border-color:#fde68a;"><i class="fa-solid fa-user-clock"></i> ${jamClean}</div>
-                    <div class="mapel"><div class="piket-guru-container">${namesHtml}</div></div>
+                    <div class="waktu-box" style="background:#fff9c4; color:#854d0e; border-color:#fde68a;">
+                        <i class="fa-solid fa-user-clock"></i> ${tampilkanJam}
+                    </div>
+                    <div class="mapel">
+                        <div class="piket-guru-container">${listNamaHtml}</div>
+                    </div>
                 </div>`;
             }
             container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "Gagal memuat."; }
+        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat piket.</p>"; }
     }
 </script>
 </body>
