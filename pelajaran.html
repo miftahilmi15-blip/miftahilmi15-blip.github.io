@@ -20,7 +20,7 @@
         select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; }
 
         .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
-        .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 15px; display: inline-block; text-transform: uppercase; }
+        .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: inline-block; }
         
         .slot { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 10px; }
         .slot:last-child { border-bottom: none; }
@@ -50,12 +50,12 @@
     <div id="sec-pelajaran">
         <select id="pilihKelas" onchange="muatPelajaran()">
             <option value="">-- Pilih Kelas --</option>
-            <option value="VII A">VII A</option><option value="VII B">VII B</option>
-            <option value="VII C">VII C</option><option value="VII D">VII D</option>
-            <option value="VIII A">VIII A</option><option value="VIII B">VIII B</option>
-            <option value="VIII C">VIII C</option><option value="VIII D">VIII D</option>
-            <option value="IX A">IX A</option><option value="IX B">IX B</option>
-            <option value="IX C">IX C</option><option value="IX D">IX D</option>
+            <option value="2">VII A</option><option value="3">VII B</option>
+            <option value="4">VII C</option><option value="5">VII D</option>
+            <option value="6">VIII A</option><option value="7">VIII B</option>
+            <option value="8">VIII C</option><option value="9">VIII D</option>
+            <option value="10">IX A</option><option value="11">IX B</option>
+            <option value="12">IX C</option><option value="13">IX D</option>
         </select>
         <div id="list-pelajaran"></div>
     </div>
@@ -80,10 +80,10 @@
 
     async function muatPelajaran() {
         const container = document.getElementById('list-pelajaran');
-        const kls = document.getElementById('pilihKelas').value.replace(/\s/g, '').toUpperCase();
-        if (!kls) return;
+        const colIdx = document.getElementById('pilihKelas').value;
+        if (!colIdx) return;
         
-        container.innerHTML = "<div class='loading'><i class='fas fa-sync fa-spin'></i> Mencari data IX C & IX D...</div>";
+        container.innerHTML = "<div class='loading'><i class='fas fa-sync fa-spin'></i> Memuat Jadwal...</div>";
         
         try {
             const res = await fetch(urlPelajaran);
@@ -91,55 +91,41 @@
             const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             
             let html = "";
-            const hariList = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
+            let currentHari = "";
+            let kontenHari = "";
+            const daftarHari = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
 
-            hariList.forEach(targetHari => {
-                let currentKonten = "";
-                
-                // Cari semua sel yang mengandung Nama Hari (karena Senin dan Selasa bisa di baris yang sama)
-                for (let r = 0; r < rows.length; r++) {
-                    for (let c = 0; c < rows[r].length; c++) {
-                        if (rows[r][c].toUpperCase() === targetHari) {
-                            
-                            // Ketemu Hari! Sekarang cari kolom kelas di bawah hari ini (max 2 baris ke bawah)
-                            let targetCol = -1;
-                            for (let hR = r + 1; hR <= r + 2; hR++) {
-                                if (!rows[hR]) continue;
-                                for (let hC = c; hC < c + 15; hC++) { // Cari kelas dalam radius 15 kolom
-                                    if (rows[hR][hC] && rows[hR][hC].replace(/\s/g, '').toUpperCase() === kls) {
-                                        targetCol = hC;
-                                        break;
-                                    }
-                                }
-                                if (targetCol !== -1) break;
-                            }
+            for (let i = 0; i < rows.length; i++) {
+                let cellHari = rows[i][2] ? rows[i][2].toUpperCase() : ""; // Nama Hari ada di Kolom C (index 2)
 
-                            // Jika Kolom Kelas Ketemu, ambil datanya ke bawah
-                            if (targetCol !== -1) {
-                                for (let i = r + 2; i < rows.length; i++) {
-                                    if (!rows[i] || rows[i][c] === "NO" || (rows[i][c] === "" && rows[i][c+1] === "")) {
-                                        if (i > r + 3) break; else continue; 
-                                    }
-                                    
-                                    let jam = rows[i][c + 1]; // Jam selalu di kanan NO
-                                    let mapel = rows[i][targetCol];
-
-                                    if (jam && mapel && mapel !== "." && mapel !== "-" && mapel !== "") {
-                                        currentKonten += `
-                                        <div class="slot">
-                                            <div class="waktu-box"><i class="fa-regular fa-clock"></i> ${jam}</div>
-                                            <div class="mapel">${mapel}</div>
-                                        </div>`;
-                                    }
-                                }
-                            }
-                        }
+                if (daftarHari.includes(cellHari)) {
+                    // Simpan hari sebelumnya
+                    if (currentHari && kontenHari) {
+                        html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
                     }
+                    currentHari = cellHari;
+                    kontenHari = "";
                 }
-                if (currentKonten) html += `<div class="hari-box"><span class="hari-nama">${targetHari}</span>${currentKonten}</div>`;
-            });
-            container.innerHTML = html || "<div class='loading'>Jadwal tidak ditemukan. Periksa nama kelas di Sheets.</div>";
-        } catch (e) { container.innerHTML = "<div class='loading'>Gagal koneksi.</div>"; }
+
+                let jam = rows[i][1]; // Kolom Waktu (index 1)
+                let mapel = rows[i][colIdx]; // Kolom Kelas sesuai pilihan
+
+                if (jam && mapel && mapel !== "-" && mapel !== "." && mapel !== "Waktu" && !daftarHari.includes(mapel)) {
+                    kontenHari += `
+                    <div class="slot">
+                        <div class="waktu-box"><i class="fa-regular fa-clock"></i> ${jam}</div>
+                        <div class="mapel">${mapel}</div>
+                    </div>`;
+                }
+            }
+
+            // Tambahkan hari terakhir
+            if (currentHari && kontenHari) {
+                html += `<div class="hari-box"><span class="hari-nama">${currentHari}</span>${kontenHari}</div>`;
+            }
+
+            container.innerHTML = html || "<div class='loading'>Jadwal tidak ditemukan.</div>";
+        } catch (e) { container.innerHTML = "<div class='loading'>Gagal memuat data.</div>"; }
     }
 
     async function muatPiketGuru() {
