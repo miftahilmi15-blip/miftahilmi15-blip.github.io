@@ -10,25 +10,23 @@
         :root { --primary: #1f6f51; --bg: #f4f7f6; }
         body { background: var(--bg); font-family: 'Poppins', sans-serif; margin: 0; padding: 15px; color: #333; }
         
-        /* Header */
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { background: white; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: var(--primary); text-decoration: none; }
 
-        /* Tabs */
         .tab-menu { display: flex; background: #e0e0e0; padding: 5px; border-radius: 15px; margin-bottom: 20px; }
         .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; color: #666; font-size: 13px; transition: 0.3s; }
         .tab-btn.active { background: var(--primary); color: white; }
 
-        /* Form */
-        select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; }
+        select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-        /* Card Style */
-        .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
+        .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display: inline-block; text-transform: uppercase; }
         
         .slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; }
         .slot:last-child { border-bottom: none; }
-        .waktu { font-size: 11px; color: #1f6f51; font-weight: 700; min-width: 80px; }
+        .waktu { font-size: 11px; color: var(--primary); font-weight: 700; min-width: 80px; }
         .mapel { font-size: 13px; font-weight: 600; color: #333; text-align: right; flex: 1; }
         
         .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
@@ -71,8 +69,9 @@
     </div>
 
 <script>
-    const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/gviz/tq?tqx=out:csv&sheet=Sheet1"; 
-    const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/gviz/tq?tqx=out:csv&sheet=Sheet1"; 
+    // URL CSV yang sudah diformat
+    const urlPelajaran = "https://docs.google.com/spreadsheets/d/1WVGM1V3TAjh6ine6CPxAKquGjaowy6OcF5agAYKNbbA/export?format=csv&gid=0"; 
+    const urlPiket = "https://docs.google.com/spreadsheets/d/1rGLFGnCpiQAwCoPSG-xfnaHkW34uMvvmm43uI2E1IZo/export?format=csv&gid=0"; 
 
     function switchTab(type) {
         if(type === 'pelajaran') {
@@ -91,38 +90,64 @@
 
     async function muatPelajaran() {
         const container = document.getElementById('list-pelajaran');
-        const kolomIdx = document.getElementById('pilihKelas').value;
+        const kolomIdx = parseInt(document.getElementById('pilihKelas').value);
         if (!kolomIdx) { container.innerHTML = ""; return; }
         
         container.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Memuat data...</div>";
         
         try {
             const resp = await fetch(urlPelajaran);
-            const data = await resp.text();
-            // Pembersihan data yang lebih kuat
-            const rows = data.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
+            const csvText = await resp.text();
+            // Parsing CSV dengan menangani tanda kutip
+            const rows = csvText.split('\n').map(row => 
+                row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"|"$/g, '').trim())
+            );
             
-            let html = "", currentDay = "";
-            for (let i = 1; i < rows.length; i++) {
-                const col = rows[i];
-                if (!col[0] || col[0] === "") continue;
+            let html = "";
+            const daftarHari = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
 
-                // Cek Nama Hari
-                let namaHari = col[0];
-                if (namaHari !== currentDay) {
-                    if (currentDay !== "") html += `</div>`;
-                    currentDay = namaHari;
-                    html += `<div class="hari-box"><span class="hari-nama">${currentDay}</span>`;
+            daftarHari.forEach(hariTarget => {
+                let kontenHari = "";
+                let barisMulai = -1;
+
+                // 1. Cari baris di mana hari tersebut berada
+                for (let i = 0; i < rows.length; i++) {
+                    if (rows[i][0] && rows[i][0].toUpperCase() === hariTarget) {
+                        barisMulai = i;
+                        break;
+                    }
                 }
-                
-                html += `
-                <div class="slot">
-                    <span class="waktu">${col[1] || ''}</span>
-                    <span class="mapel">${col[kolomIdx] || '-'}</span>
-                </div>`;
-            }
-            container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat jadwal.</p>"; }
+
+                // 2. Jika ketemu, ambil data di bawahnya sampai ketemu hari berikutnya atau baris kosong
+                if (barisMulai !== -1) {
+                    for (let j = barisMulai + 1; j < rows.length; j++) {
+                        const row = rows[j];
+                        // Berhenti jika ketemu hari lain di kolom pertama
+                        if (row[0] && daftarHari.includes(row[0].toUpperCase())) break;
+                        
+                        const waktu = row[1]; // Kolom B
+                        const mapel = row[kolomIdx]; // Kolom sesuai pilihan kelas
+                        
+                        if (waktu && mapel && mapel !== "-" && mapel !== "") {
+                            kontenHari += `
+                            <div class="slot">
+                                <span class="waktu">${waktu}</span>
+                                <span class="mapel">${mapel}</span>
+                            </div>`;
+                        }
+                    }
+                }
+
+                if (kontenHari !== "") {
+                    html += `<div class="hari-box"><span class="hari-nama">${hariTarget}</span>${kontenHari}</div>`;
+                }
+            });
+
+            container.innerHTML = html || "<p class='loading'>Belum ada jadwal untuk kelas ini.</p>";
+        } catch (e) { 
+            console.error(e);
+            container.innerHTML = "<p class='loading'>Gagal memuat jadwal. Pastikan izin akses sudah dibuka.</p>"; 
+        }
     }
 
     async function muatPiketGuru() {
@@ -137,7 +162,7 @@
             let html = "", currentDay = "";
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
-                if (!col[0] || col[0] === "") continue;
+                if (!col[0]) continue;
 
                 if (col[0] !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
@@ -146,12 +171,12 @@
                 }
                 html += `
                 <div class="slot" style="flex-direction:column; align-items:flex-start;">
-                    <span class="waktu" style="color:var(--primary)">${col[1] || ''} - ${col[3] || ''}</span>
+                    <span class="waktu">${col[1] || ''} - ${col[3] || ''}</span>
                     <span class="mapel" style="text-align:left; font-size:14px; margin-top:5px; font-weight:700;">${col[2] || '-'}</span>
                 </div>`;
             }
             container.innerHTML = html + "</div>";
-        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat data.</p>"; }
+        } catch (e) { container.innerHTML = "<p class='loading'>Gagal memuat data piket.</p>"; }
     }
 </script>
 </body>
