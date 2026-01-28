@@ -20,17 +20,13 @@
         select { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid var(--primary); margin-bottom: 20px; font-weight: 700; font-family: 'Poppins'; background: white; outline: none; }
 
         .hari-box { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-left: 6px solid var(--primary); }
-        .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 10px; display: inline-block; text-transform: uppercase; }
+        .hari-nama { background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; margin-bottom: 15px; display: inline-block; text-transform: uppercase; }
         
-        /* DESAIN SLOT JAM & MAPEL BARU */
-        .slot { display: flex; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 12px; }
+        .slot { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f2f2; gap: 10px; }
         .slot:last-child { border-bottom: none; }
         
-        /* Jam Kotak */
-        .waktu-wrapper { min-width: 100px; }
-        .waktu-box { background: #e8f5e9; color: var(--primary); font-size: 10px; font-weight: 800; padding: 6px 8px; border-radius: 8px; border: 1px solid #c8e6c9; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
-        
-        .mapel { font-size: 13px; font-weight: 600; color: #333; flex: 1; line-height: 1.4; padding-top: 4px; }
+        .waktu-box { background: #e8f5e9; color: var(--primary); font-size: 10px; font-weight: 800; padding: 8px; border-radius: 10px; border: 1px solid #c8e6c9; min-width: 105px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .mapel { font-size: 13px; font-weight: 600; color: #333; flex: 1; line-height: 1.4; }
         
         .loading { text-align: center; padding: 40px; color: #999; font-size: 13px; }
         .hidden { display: none !important; }
@@ -75,86 +71,80 @@
     document.getElementById('tgl-info').innerHTML = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
     function switchTab(type) {
-        if(type === 'pelajaran') {
-            document.getElementById('sec-pelajaran').classList.remove('hidden');
-            document.getElementById('sec-piket').classList.add('hidden');
-            document.getElementById('btnPel').classList.add('active');
-            document.getElementById('btnPik').classList.remove('active');
-        } else {
-            document.getElementById('sec-piket').classList.remove('hidden');
-            document.getElementById('sec-pelajaran').classList.add('hidden');
-            document.getElementById('btnPik').classList.add('active');
-            document.getElementById('btnPel').classList.remove('active');
-            muatPiketGuru();
-        }
+        document.getElementById('sec-pelajaran').classList.toggle('hidden', type !== 'pelajaran');
+        document.getElementById('sec-piket').classList.toggle('hidden', type === 'pelajaran');
+        document.getElementById('btnPel').classList.toggle('active', type === 'pelajaran');
+        document.getElementById('btnPik').classList.toggle('active', type !== 'pelajaran');
+        if(type === 'piket') muatPiketGuru();
     }
 
     async function muatPelajaran() {
         const container = document.getElementById('list-pelajaran');
-        const kelasTarget = document.getElementById('pilihKelas').value;
-        if (!kelasTarget) return;
+        const kls = document.getElementById('pilihKelas').value.replace(/\s/g, '').toUpperCase();
+        if (!kls) return;
         
-        container.innerHTML = "<div class='loading'>🔄 Mengambil data dari jam ke jam...</div>";
+        container.innerHTML = "<div class='loading'><i class='fas fa-sync fa-spin'></i> Mencari data IX C & IX D...</div>";
         
         try {
             const res = await fetch(urlPelajaran);
             const text = await res.text();
-            // Parsing CSV cerdas
-            const rows = text.split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim()));
+            const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g, '').trim()));
             
             let html = "";
             const hariList = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
 
-            hariList.forEach(hari => {
+            hariList.forEach(targetHari => {
                 let currentKonten = "";
-                let colOffset = -1;
-                let rowStart = -1;
-
-                // Cari Posisi Hari & Kolomnya
+                
+                // Cari semua sel yang mengandung Nama Hari (karena Senin dan Selasa bisa di baris yang sama)
                 for (let r = 0; r < rows.length; r++) {
-                    let colIdx = rows[r].indexOf(hari);
-                    if (colIdx !== -1) { rowStart = r; colOffset = colIdx; break; }
-                }
-
-                if (rowStart !== -1) {
-                    let headerRow = rows[rowStart + 1];
-                    let targetColIdx = -1;
-                    for(let c = colOffset; c < headerRow.length; c++) {
-                        if(headerRow[c] === kelasTarget) { targetColIdx = c; break; }
-                    }
-
-                    if (targetColIdx !== -1) {
-                        for (let i = rowStart + 2; i < rows.length; i++) {
-                            let rData = rows[i];
-                            // Berhenti jika ketemu NO lagi atau baris pembatas
-                            if (!rData || rData[colOffset] === "NO" || (rData[colOffset] === "" && rData[colOffset+1] === "")) break;
+                    for (let c = 0; c < rows[r].length; c++) {
+                        if (rows[r][c].toUpperCase() === targetHari) {
                             
-                            let jam = rData[colOffset + 1]; // Kolom Waktu
-                            let mapel = rData[targetColIdx];
+                            // Ketemu Hari! Sekarang cari kolom kelas di bawah hari ini (max 2 baris ke bawah)
+                            let targetCol = -1;
+                            for (let hR = r + 1; hR <= r + 2; hR++) {
+                                if (!rows[hR]) continue;
+                                for (let hC = c; hC < c + 15; hC++) { // Cari kelas dalam radius 15 kolom
+                                    if (rows[hR][hC] && rows[hR][hC].replace(/\s/g, '').toUpperCase() === kls) {
+                                        targetCol = hC;
+                                        break;
+                                    }
+                                }
+                                if (targetCol !== -1) break;
+                            }
 
-                            if (jam && mapel && mapel !== "." && mapel !== "") {
-                                currentKonten += `
-                                <div class="slot">
-                                    <div class="waktu-wrapper">
-                                        <div class="waktu-box">
-                                            <i class="fa-regular fa-clock"></i> ${jam}
-                                        </div>
-                                    </div>
-                                    <div class="mapel">${mapel}</div>
-                                </div>`;
+                            // Jika Kolom Kelas Ketemu, ambil datanya ke bawah
+                            if (targetCol !== -1) {
+                                for (let i = r + 2; i < rows.length; i++) {
+                                    if (!rows[i] || rows[i][c] === "NO" || (rows[i][c] === "" && rows[i][c+1] === "")) {
+                                        if (i > r + 3) break; else continue; 
+                                    }
+                                    
+                                    let jam = rows[i][c + 1]; // Jam selalu di kanan NO
+                                    let mapel = rows[i][targetCol];
+
+                                    if (jam && mapel && mapel !== "." && mapel !== "-" && mapel !== "") {
+                                        currentKonten += `
+                                        <div class="slot">
+                                            <div class="waktu-box"><i class="fa-regular fa-clock"></i> ${jam}</div>
+                                            <div class="mapel">${mapel}</div>
+                                        </div>`;
+                                    }
+                                }
                             }
                         }
                     }
                 }
-                if (currentKonten) html += `<div class="hari-box"><span class="hari-nama">${hari}</span>${currentKonten}</div>`;
+                if (currentKonten) html += `<div class="hari-box"><span class="hari-nama">${targetHari}</span>${currentKonten}</div>`;
             });
-            container.innerHTML = html || "<div class='loading'>Jadwal belum tersedia.</div>";
-        } catch (e) { container.innerHTML = "<div class='loading'>Koneksi gagal.</div>"; }
+            container.innerHTML = html || "<div class='loading'>Jadwal tidak ditemukan. Periksa nama kelas di Sheets.</div>";
+        } catch (e) { container.innerHTML = "<div class='loading'>Gagal koneksi.</div>"; }
     }
 
     async function muatPiketGuru() {
         const container = document.getElementById('list-piket');
-        container.innerHTML = "<div class='loading'>🔄 Memuat data piket...</div>";
+        container.innerHTML = "<div class='loading'>🔄 Memuat piket...</div>";
         try {
             const resp = await fetch(urlPiket);
             const data = await resp.text();
@@ -162,14 +152,14 @@
             let html = "", currentDay = "";
             for (let i = 1; i < rows.length; i++) {
                 const col = rows[i];
-                if (!col[0] || col[0] === "") continue;
+                if (!col[0]) continue;
                 if (col[0] !== currentDay) {
                     if (currentDay !== "") html += `</div>`;
                     currentDay = col[0];
                     html += `<div class="hari-box"><span class="hari-nama" style="background:#eab308">${currentDay}</span>`;
                 }
                 html += `<div class="slot">
-                    <div class="waktu-wrapper"><div class="waktu-box" style="background:#fff9c4; color:#854d0e;"><i class="fa-solid fa-user-clock"></i> ${col[1]} - ${col[3]}</div></div>
+                    <div class="waktu-box" style="background:#fff9c4; color:#854d0e; border-color:#fde68a;"><i class="fa-solid fa-user-clock"></i> ${col[1]} - ${col[3]}</div>
                     <div class="mapel"><b>${col[2]}</b></div>
                 </div>`;
             }
