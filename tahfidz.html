@@ -28,6 +28,7 @@
         table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 500px; }
         th, td { padding: 10px; border: 1px solid #eee; text-align: left; }
         th { background: #f9f9f9; color: var(--primary); font-weight: 700; }
+        .ringkasan-box { background: #f0f7f4; border: 1px solid var(--primary); padding: 10px; border-radius: 12px; margin-top: 10px; font-size: 12px; color: var(--primary); }
         .menu-rekap { margin-top: 25px; padding-top: 15px; border-top: 2px dashed #eee; text-align: center; }
         .btn-excel { width: 100%; background: #107c41; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; }
         #loading { display: none; text-align: center; font-weight: 700; color: var(--primary); margin: 10px 0; }
@@ -114,12 +115,13 @@
                 <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
                 <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
             </select>
-            <select id="tgl-rekap">
-                <option value="">Pilih Tanggal (Opsional)</option>
-                </select>
+            <select id="tgl-rekap"><option value="">Semua Tanggal</option></select>
             <button onclick="prosesRekap()" style="background:var(--primary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">CARI</button>
         </div>
-        <div class="wadah-tabel" id="wadah-tabel"><p style="text-align:center; padding:20px; font-size:12px; color:#999;">Atur filter lalu klik CARI.</p></div>
+        
+        <div id="summary-rekap"></div> <div class="wadah-tabel" id="wadah-tabel">
+            <p style="text-align:center; padding:20px; font-size:12px; color:#999;">Atur filter lalu klik CARI.</p>
+        </div>
         <div class="menu-rekap">
             <button class="btn-excel" onclick="exportExcel()">📥 DOWNLOAD EXCEL (TABEL)</button>
         </div>
@@ -158,7 +160,6 @@
     const KODE_RAHASIA = "152003"; 
     const LINK_GITHUB_PAGES_BOS = "https://miftahilmi15-blip.github.io/rapotalquran.html"; 
 
-    // Generate tanggal 1-31 di filter rekap
     const tglSelect = document.getElementById('tgl-rekap');
     for(let i=1; i<=31; i++) { tglSelect.options.add(new Option(i, i)); }
 
@@ -226,6 +227,7 @@
         } catch(e) { alert("Gagal koneksi!"); } finally { document.getElementById('loading').style.display = 'none'; }
     }
 
+    // --- LOGIKA REKAP CERDAS (UNIQUE & CALCULATION) ---
     async function prosesRekap() {
         const kls = document.getElementById('kls-rekap').value;
         const blnCari = document.getElementById('bln-rekap').value;
@@ -234,45 +236,71 @@
         if(!kls || !blnCari) return alert("Pilih Kelas dan Bulan!");
 
         document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Memuat data...</p>";
+        document.getElementById('summary-rekap').innerHTML = "";
         
         try {
-            // Kita ambil data per bulan saja agar lebih cepat dan hemat kuota Firebase
             let path = `${FIREBASE_BASE_URL}/${blnCari}.json`;
-            if(tglCari) path = `${FIREBASE_BASE_URL}/${blnCari}/${tglCari}.json`;
-
             const res = await fetch(path);
             const allData = await res.json();
             
             let html = `<table id="tabel-rekap"><thead><tr><th>Tgl</th><th>Nama</th><th>Materi</th><th>Hal/Ayat</th><th>Status</th><th>★</th></tr></thead><tbody>`;
-            let ada = false;
+            
+            let dataTersaring = [];
+            let trackerUnik = {}; // Untuk memastikan 1 anak 1 kali per hari
 
             if (allData) {
-                // Jika pilih tanggal spesifik, allData adalah kumpulan object di tgl itu
-                if (tglCari) {
-                    Object.values(allData).forEach(item => {
-                        if(item.kelas === kls) {
-                            html += `<tr><td>${item.tgl_input}</td><td>${item.nama}</td><td>${item.materi}</td><td>${item.ayat}</td><td>${item.status}</td><td>${item.nilai}</td></tr>`;
-                            ada = true;
+                // Loop menembus struktur Tanggal
+                for (let tgl in allData) {
+                    // Jika user pilih tanggal tertentu, lewati tanggal lain
+                    if (tglCari && tgl !== tglCari) continue;
+
+                    for (let id in allData[tgl]) {
+                        let item = allData[tgl][id];
+                        if (item.kelas === kls) {
+                            // Kunci unik: NAMA + TANGGAL (Agar anak yg sama di tgl yg sama cuma muncul 1)
+                            // Mengambil inputan terakhir (overwrite)
+                            trackerUnik[item.nama + "_" + tgl] = item;
                         }
-                    });
-                } else {
-                    // Jika pilih bulan saja, allData berisi kumpulan folder tanggal
-                    for(let tgl in allData) {
-                        Object.values(allData[tgl]).forEach(item => {
-                            if(item.kelas === kls) {
-                                html += `<tr><td>${item.tgl_input}</td><td>${item.nama}</td><td>${item.materi}</td><td>${item.ayat}</td><td>${item.status}</td><td>${item.nilai}</td></tr>`;
-                                ada = true;
-                            }
-                        });
                     }
                 }
             }
 
-            document.getElementById('wadah-tabel').innerHTML = ada ? html + `</tbody></table>` : "<p style='text-align:center; padding:20px;'>Data tidak ditemukan di periode ini.</p>";
-        } catch(e) { document.getElementById('wadah-tabel').innerHTML = "Gagal memuat rekap."; }
+            dataTersaring = Object.values(trackerUnik);
+
+            // Sortir data berdasarkan tanggal (biar rapi)
+            dataTersaring.sort((a,b) => {
+                let tA = parseInt(a.tgl_input.split('/')[0]);
+                let tB = parseInt(b.tgl_input.split('/')[0]);
+                return tA - tB;
+            });
+
+            let totalBintang = 0;
+            let totalSetoran = dataTersaring.length;
+
+            dataTersaring.forEach(item => {
+                html += `<tr><td>${item.tgl_input}</td><td>${item.nama}</td><td>${item.materi}</td><td>${item.ayat}</td><td>${item.status}</td><td>${item.nilai}</td></tr>`;
+                totalBintang += parseInt(item.nilai);
+            });
+
+            if (totalSetoran > 0) {
+                let rataBintang = (totalBintang / totalSetoran).toFixed(1);
+                document.getElementById('summary-rekap').innerHTML = `
+                    <div class="ringkasan-box">
+                        <strong>📊 Ringkasan Rekap:</strong><br>
+                        Total Setoran: ${totalSetoran} kali | Rata-rata Kualitas: ⭐ ${rataBintang}
+                    </div>`;
+                document.getElementById('wadah-tabel').innerHTML = html + `</tbody></table>`;
+            } else {
+                document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Data tidak ditemukan.</p>";
+            }
+
+        } catch(e) { 
+            console.error(e);
+            document.getElementById('wadah-tabel').innerHTML = "Gagal memuat rekap."; 
+        }
     }
 
-    // RAPOR LOGIC (Sama seperti sebelumnya)
+    // RAPOR LOGIC (Tetap sama)
     async function loadSantriRapor() {
         const kls = document.getElementById('r-kelas').value;
         const sel = document.getElementById('r-nama');
