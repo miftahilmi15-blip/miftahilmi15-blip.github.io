@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Perpustakaan Digital | E-Santri</title>
+<title>Dashboard | E-Santri Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   :root {
     --primary: #1f6f51;
@@ -17,22 +18,23 @@
     font-family: 'Poppins', sans-serif;
     padding: 20px;
     color: #2d3436;
+    margin: 0;
   }
 
-  /* Header Halaman (Senada dengan Login) */
+  /* Header Halaman */
   .page-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin: 30px 0 40px;
   }
 
   .title-4d {
     font-family: 'Montserrat', sans-serif;
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 900;
     color: #fff;
     -webkit-text-stroke: 1.2px var(--primary);
     text-transform: uppercase;
-    text-shadow: 0 5px 10px rgba(31, 111, 81, 0.2);
+    text-shadow: 0 5px 15px rgba(31, 111, 81, 0.2);
     display: inline-block;
     animation: float 3s ease-in-out infinite;
   }
@@ -42,148 +44,136 @@
     50% { transform: translateY(-5px); }
   }
 
-  /* Search Bar */
-  .search-box {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto 25px;
-    position: relative;
-  }
-
-  .search-box input {
-    width: 100%;
-    padding: 15px 20px;
-    border-radius: 15px;
-    border: 2px solid rgba(31, 111, 81, 0.1);
-    outline: none;
-    font-size: 14px;
-    transition: 0.3s;
-  }
-
-  .search-box input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 5px 15px rgba(31, 111, 81, 0.1);
-  }
-
-  /* Grid Buku */
-  .book-grid {
+  /* Grid Menu 10 Item */
+  .menu-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr); /* 2 Kolom */
     gap: 15px;
     max-width: 500px;
     margin: 0 auto;
   }
 
-  .book-card {
+  .menu-card {
     background: var(--card);
-    border-radius: 15px;
-    padding: 10px;
+    border-radius: 20px;
+    padding: 25px 15px;
     text-align: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
     transition: 0.3s;
-    border: 1px solid rgba(0,0,0,0.02);
+    border: 1px solid rgba(31, 111, 81, 0.05);
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
-  .book-card:active { transform: scale(0.95); }
-
-  .book-cover {
-    width: 100%;
-    aspect-ratio: 3/4;
-    background: #e0e0e0;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    object-fit: cover;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  .menu-card:active {
+    transform: scale(0.92);
+    background: #fdfdfd;
   }
 
-  .book-title {
+  /* Lingkaran Icon */
+  .icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 24px;
+    color: white;
+  }
+
+  .menu-label {
     font-size: 13px;
     font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 5px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    color: #444;
+    letter-spacing: 0.5px;
   }
 
-  .btn-read {
-    background: var(--primary);
-    color: white;
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    text-decoration: none;
-    display: block;
-    margin-top: 5px;
-  }
+  /* Warna-warni Menu */
+  .bg-1 { background: #1f6f51; } /* Emerald */
+  .bg-2 { background: #3b82f6; } /* Blue */
+  .bg-3 { background: #f59e0b; } /* Amber */
+  .bg-4 { background: #ef4444; } /* Red */
+  .bg-5 { background: #8b5cf6; } /* Violet */
+  .bg-6 { background: #ec4899; } /* Pink */
+  .bg-7 { background: #06b6d4; } /* Cyan */
+  .bg-8 { background: #10b981; } /* Green */
+  .bg-9 { background: #6366f1; } /* Indigo */
+  .bg-10 { background: #475569; } /* Slate */
 
   .back-btn {
     display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     color: var(--primary);
     text-decoration: none;
     font-weight: 700;
-    font-size: 14px;
   }
 </style>
 </head>
 <body>
 
-<a href="index.html" class="back-btn">← Kembali</a>
+<a href="index.html" class="back-btn">← Keluar</a>
 
 <header class="page-header">
-  <h1 class="title-4d">MAKHTABAH DIGITAL</h1>
-  <p style="font-size: 12px; color: #666;">Silakan pilih kitab untuk dibaca</p>
+  <h1 class="title-4d">E-SANTRI PRO</h1>
+  <p style="font-size: 13px; color: #666; font-weight: 600;">Pusat Layanan Terpadu</p>
 </header>
 
-<div class="search-box">
-  <input type="text" placeholder="Cari kitab, judul, atau pengarang...">
+<div class="menu-grid">
+  <a href="absensi.html" class="menu-card">
+    <div class="icon-circle bg-1"><i class="fa-solid fa-user-check"></i></div>
+    <div class="menu-label">Absensi</div>
+  </a>
+
+  <a href="tahfidz.html" class="menu-card">
+    <div class="icon-circle bg-2"><i class="fa-solid fa-book-quran"></i></div>
+    <div class="menu-label">Tahfidz</div>
+  </a>
+
+  <a href="tabungan.html" class="menu-card">
+    <div class="icon-circle bg-3"><i class="fa-solid fa-wallet"></i></div>
+    <div class="menu-label">E-Saku</div>
+  </a>
+
+  <a href="pelanggaran.html" class="menu-card">
+    <div class="icon-circle bg-4"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div class="menu-label">Poin Disiplin</div>
+  </a>
+
+  <a href="izin.html" class="menu-card">
+    <div class="icon-circle bg-5"><i class="fa-solid fa-id-card-clip"></i></div>
+    <div class="menu-label">Izin Keluar</div>
+  </a>
+
+  <a href="prestasi.html" class="menu-card">
+    <div class="icon-circle bg-6"><i class="fa-solid fa-trophy"></i></div>
+    <div class="menu-label">Prestasi</div>
+  </a>
+
+  <a href="chat.html" class="menu-card">
+    <div class="icon-circle bg-7"><i class="fa-solid fa-comments"></i></div>
+    <div class="menu-label">Chat Wali</div>
+  </a>
+
+  <a href="info.html" class="menu-card">
+    <div class="icon-circle bg-8"><i class="fa-solid fa-bullhorn"></i></div>
+    <div class="menu-label">Pengumuman</div>
+  </a>
+
+  <a href="rapor.html" class="menu-card">
+    <div class="icon-circle bg-9"><i class="fa-solid fa-file-invoice"></i></div>
+    <div class="menu-label">Rapor Digital</div>
+  </a>
+
+  <a href="profil.html" class="menu-card">
+    <div class="icon-circle bg-10"><i class="fa-solid fa-user-gear"></i></div>
+    <div class="menu-label">Setelan</div>
+  </a>
 </div>
-
-<div class="book-grid">
-  <div class="book-card">
-    <img src="https://via.placeholder.com/150x200?text=Bulughul+Maram" class="book-cover">
-    <div class="book-title">Bulughul Maram</div>
-    <a href="#" class="btn-read">BACA PDF</a>
-  </div>
-
-  <div class="book-card">
-    <img src="https://via.placeholder.com/150x200?text=Riyadhus+Shalihin" class="book-cover">
-    <div class="book-title">Riyadhus Shalihin</div>
-    <a href="#" class="btn-read">BACA PDF</a>
-  </div>
-
-  <div class="book-card">
-    <img src="https://via.placeholder.com/150x200?text=Kitab+Tauhid" class="book-cover">
-    <div class="book-title">Kitab Tauhid</div>
-    <a href="#" class="btn-read">BACA PDF</a>
-  </div>
-
-  <div class="book-card">
-    <img src="https://via.placeholder.com/150x200?text=Adab+Santri" class="book-cover">
-    <div class="book-title">Adab & Akhlak Santri</div>
-    <a href="#" class="btn-read">BACA PDF</a>
-  </div>
-</div>
-
-<script>
-  // Fungsi pencarian sederhana
-  document.querySelector('.search-box input').addEventListener('input', function(e) {
-    let filter = e.target.value.toLowerCase();
-    let cards = document.querySelectorAll('.book-card');
-    
-    cards.forEach(card => {
-      let title = card.querySelector('.book-title').innerText.toLowerCase();
-      if(title.includes(filter)) {
-        card.style.display = "block";
-      } else {
-        card.style.display = "none";
-      }
-    });
-  });
-</script>
 
 </body>
 </html>
