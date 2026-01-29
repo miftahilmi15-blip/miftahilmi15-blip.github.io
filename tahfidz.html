@@ -235,7 +235,7 @@
 
         if(!kls || !blnCari) return alert("Pilih Kelas dan Bulan!");
 
-        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Memuat data...</p>";
+        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Memproses data terakhir...</p>";
         document.getElementById('summary-rekap').innerHTML = "";
         
         try {
@@ -243,66 +243,68 @@
             const res = await fetch(path);
             const allData = await res.json();
             
-            let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Tgl</th><th>Materi</th><th>Hal/Ayat</th><th>Status</th><th>★</th></tr></thead><tbody>`;
+            let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Tgl Terakhir</th><th>Materi</th><th>Hal/Ayat</th><th>Status</th><th>★</th></tr></thead><tbody>`;
             
-            let trackerUnik = {}; 
+            // OBJEK UNTUK MENYARING (1 NAMA = 1 DATA TERAKHIR)
+            let dataTerakhirPerSantri = {}; 
 
             if (allData) {
                 for (let tgl in allData) {
+                    // Jika ustadz pilih "Semua Tanggal", tglCari kosong, jadi semua diproses
                     if (tglCari && tgl !== tglCari) continue;
+
                     for (let id in allData[tgl]) {
                         let item = allData[tgl][id];
                         if (item.kelas === kls) {
-                            trackerUnik[item.nama + "_" + tgl] = item;
+                            let namaSantri = item.nama;
+                            let tglAngka = parseInt(tgl);
+
+                            // CEK: Jika belum ada data si santri OR tanggal ini lebih baru (lebih besar) dari yang tersimpan
+                            if (!dataTerakhirPerSantri[namaSantri] || tglAngka > dataTerakhirPerSantri[namaSantri].tglCek) {
+                                dataTerakhirPerSantri[namaSantri] = {
+                                    ...item,
+                                    tglCek: tglAngka // Simpan angka tanggal untuk pembanding
+                                };
+                            }
                         }
                     }
                 }
             }
 
-            let dataTersaring = Object.values(trackerUnik);
+            let hasilFinal = Object.values(dataTerakhirPerSantri);
 
-            // URUTKAN BERDASARKAN NAMA (ABSEN) DULU, BARU TANGGAL
-            dataTersaring.sort((a, b) => {
-                if (a.nama < b.nama) return -1;
-                if (a.nama > b.nama) return 1;
-                let tA = parseInt(a.tgl_input.split('/')[0]);
-                let tB = parseInt(b.tgl_input.split('/')[0]);
-                return tA - tB;
-            });
+            // URUTKAN BERDASARKAN NAMA (A-Z)
+            hasilFinal.sort((a, b) => a.nama.localeCompare(b.nama));
 
-            let totalBintang = 0;
-            let totalSetoran = dataTersaring.length;
+            let totalSantri = hasilFinal.length;
 
-            dataTersaring.forEach(item => {
+            hasilFinal.forEach(item => {
                 html += `<tr>
                     <td style="font-weight:bold; color:var(--primary);">${item.nama}</td>
-                    <td>${item.tgl_input}</td>
+                    <td style="text-align:center">${item.tgl_input}</td>
                     <td>${item.materi}</td>
-                    <td>${item.ayat}</td>
-                    <td>${item.status}</td>
-                    <td>${item.nilai}</td>
+                    <td style="text-align:center">${item.ayat}</td>
+                    <td style="text-align:center">${item.status}</td>
+                    <td style="text-align:center">${item.nilai}</td>
                 </tr>`;
-                totalBintang += parseInt(item.nilai);
             });
 
-            if (totalSetoran > 0) {
-                let rataBintang = (totalBintang / totalSetoran).toFixed(1);
+            if (totalSantri > 0) {
                 document.getElementById('summary-rekap').innerHTML = `
                     <div class="ringkasan-box">
-                        <strong>📊 Ringkasan Rekap Kelas ${kls}:</strong><br>
-                        Total Setoran: ${totalSetoran} kali | Rata-rata Kualitas: ⭐ ${rataBintang}
+                        <strong>📊 Ringkasan Capaian Akhir Bulan ${blnCari}:</strong><br>
+                        Total Santri Aktif: ${totalSantri} Anak
                     </div>`;
                 document.getElementById('wadah-tabel').innerHTML = html + `</tbody></table>`;
             } else {
-                document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Data tidak ditemukan.</p>";
+                document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Tidak ada setoran ditemukan.</p>";
             }
 
         } catch(e) { 
             console.error(e);
-            document.getElementById('wadah-tabel').innerHTML = "Gagal memuat rekap."; 
+            document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; 
         }
     }
-
     async function loadSantriRapor() {
         const kls = document.getElementById('r-kelas').value;
         const sel = document.getElementById('r-nama');
