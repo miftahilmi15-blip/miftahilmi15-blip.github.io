@@ -250,7 +250,7 @@
 
             if (allData) {
                 for (let tgl in allData) {
-                    // Jika ustadz pilih "Semua Tanggal", tglCari kosong, jadi semua diproses
+                    // Filter berdasarkan tanggal jika user memilih tanggal tertentu
                     if (tglCari && tgl !== tglCari) continue;
 
                     for (let id in allData[tgl]) {
@@ -259,11 +259,11 @@
                             let namaSantri = item.nama;
                             let tglAngka = parseInt(tgl);
 
-                            // CEK: Jika belum ada data si santri OR tanggal ini lebih baru (lebih besar) dari yang tersimpan
+                            // CEK: Jika belum ada data si santri OR tanggal ini lebih baru dari yang sudah disimpan
                             if (!dataTerakhirPerSantri[namaSantri] || tglAngka > dataTerakhirPerSantri[namaSantri].tglCek) {
                                 dataTerakhirPerSantri[namaSantri] = {
                                     ...item,
-                                    tglCek: tglAngka // Simpan angka tanggal untuk pembanding
+                                    tglCek: tglAngka // Penanda tanggal untuk pembanding
                                 };
                             }
                         }
@@ -305,6 +305,7 @@
             document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; 
         }
     }
+
     async function loadSantriRapor() {
         const kls = document.getElementById('r-kelas').value;
         const sel = document.getElementById('r-nama');
