@@ -40,7 +40,7 @@
 </head>
 <body>
 <div id="lock-screen" style="position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
-    <h2>🔒 AKSES TERBATAS</h2>
+    <h2 style="margin-bottom:20px;">🔒 AKSES TERBATAS</h2>
     <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
     <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
 </div>
@@ -195,8 +195,9 @@
         const sub = document.getElementById('materi');
         sub.innerHTML = '<option value="">-- Pilih Detail --</option>';
         
-        // Membuat daftar Juz 1 sampai Juz 30 otomatis
+        // Gabungkan Juz 1-30 dan Seluruh Nama Surah
         const daftarJuz = Array.from({length: 30}, (_, i) => `Juz ${i + 1}`);
+        const listTahfidzLengkap = [...daftarJuz, ...surah30Juz];
 
         const dataMateri = {
             "Jilid": ["Jilid 1A", "Jilid 1B", "Jilid 2A", "Jilid 2B", "Jilid 3A", "Jilid 3B", "Jilid 4A", "Jilid 4B"],
@@ -204,7 +205,7 @@
             "Tadarus30": surah30Juz, 
             "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`), 
             "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`), 
-            "Tahfidz": daftarJuz
+            "Tahfidz": listTahfidzLengkap
         };
         if (dataMateri[kat]) { dataMateri[kat].forEach(x => sub.options.add(new Option(x, x))); }
     }
@@ -239,25 +240,18 @@
         const kls = document.getElementById('kls-rekap').value;
         const blnCari = document.getElementById('bln-rekap').value;
         const tglCari = document.getElementById('tgl-rekap').value;
-
         if(!kls || !blnCari) return alert("Pilih Kelas dan Bulan!");
-
         document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Memproses data terakhir...</p>";
         document.getElementById('summary-rekap').innerHTML = "";
-        
         try {
             let path = `${FIREBASE_BASE_URL}/${blnCari}.json`;
             const res = await fetch(path);
             const allData = await res.json();
-            
             let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Tgl Terakhir</th><th>Materi</th><th>Hal/Ayat</th><th>Status</th><th>★</th></tr></thead><tbody>`;
-            
             let dataTerakhirPerSantri = {}; 
-
             if (allData) {
                 for (let tgl in allData) {
                     if (tglCari && tgl !== tglCari) continue;
-
                     for (let id in allData[tgl]) {
                         let item = allData[tgl][id];
                         if (item.kelas === kls) {
@@ -270,38 +264,19 @@
                     }
                 }
             }
-
             let hasilFinal = Object.values(dataTerakhirPerSantri);
             hasilFinal.sort((a, b) => a.nama.localeCompare(b.nama));
-
             let totalSantri = hasilFinal.length;
-
             hasilFinal.forEach(item => {
-                html += `<tr>
-                    <td style="font-weight:bold; color:var(--primary);">${item.nama}</td>
-                    <td style="text-align:center">${item.tgl_input}</td>
-                    <td>${item.materi}</td>
-                    <td style="text-align:center">${item.ayat}</td>
-                    <td style="text-align:center">${item.status}</td>
-                    <td style="text-align:center">${item.nilai}</td>
-                </tr>`;
+                html += `<tr><td style="font-weight:bold; color:var(--primary);">${item.nama}</td><td style="text-align:center">${item.tgl_input}</td><td>${item.materi}</td><td style="text-align:center">${item.ayat}</td><td style="text-align:center">${item.status}</td><td style="text-align:center">${item.nilai}</td></tr>`;
             });
-
             if (totalSantri > 0) {
-                document.getElementById('summary-rekap').innerHTML = `
-                    <div class="ringkasan-box">
-                        <strong>📊 Ringkasan Capaian Akhir Bulan ${blnCari}:</strong><br>
-                        Total Santri Aktif: ${totalSantri} Anak
-                    </div>`;
+                document.getElementById('summary-rekap').innerHTML = `<div class="ringkasan-box"><strong>📊 Ringkasan Capaian Akhir Bulan ${blnCari}:</strong><br>Total Santri Aktif: ${totalSantri} Anak</div>`;
                 document.getElementById('wadah-tabel').innerHTML = html + `</tbody></table>`;
             } else {
                 document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Tidak ada setoran ditemukan.</p>";
             }
-
-        } catch(e) { 
-            console.error(e);
-            document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; 
-        }
+        } catch(e) { document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; }
     }
 
     async function loadSantriRapor() {
