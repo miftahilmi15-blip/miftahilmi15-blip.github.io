@@ -36,12 +36,13 @@
         .box-rapor { border: 2px solid #1f6f51; padding: 15px; border-radius: 15px; background: #fff; margin-top: 10px; }
         .btn-rapor-final { width:100%; background:var(--red); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px; }
         .btn-masal { background: #2563eb !important; }
+        #info-juz { font-size: 10px; color: var(--blue); font-weight: bold; margin-top: 2px; display: block; }
     </style>
 </head>
 <body>
 <div id="lock-screen" style="position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
-    <h2 style="margin-bottom:20px;">🔒 AKSES TERBATAS</h2>
-    <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
+    <h2>🔒 AKSES TERBATAS</h2>
+    <input type="password" id="passcode" style="width:200px; text-align:center; margin:15px 0; letter-spacing: 5px;" placeholder="****">
     <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
 </div>
 
@@ -76,7 +77,11 @@
                 <option value="Tahfidz">Tahfidz 30 Juz</option>
             </select>
         </div>
-        <div class="form-grup"><label>Detail Materi</label><select id="materi"><option value="">-- Pilih Kategori Dulu --</option></select></div>
+        <div class="form-grup">
+            <label>Detail Materi</label>
+            <select id="materi" onchange="deteksiJuz()"><option value="">-- Pilih Kategori Dulu --</option></select>
+            <span id="info-juz"></span>
+        </div>
         <div class="grid-2">
             <div class="form-grup"><label>Dari (Hal/Ayat)</label><input type="text" id="awal"></div>
             <div class="form-grup"><label>Sampai (Hal/Ayat)</label><input type="text" id="akhir"></div>
@@ -118,7 +123,6 @@
             <select id="tgl-rekap"><option value="">Semua Tanggal</option></select>
             <button onclick="prosesRekap()" style="background:var(--primary); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">CARI</button>
         </div>
-        
         <div id="summary-rekap"></div>
         <div class="wadah-tabel" id="wadah-tabel">
             <p style="text-align:center; padding:20px; font-size:12px; color:#999;">Atur filter lalu klik CARI.</p>
@@ -144,11 +148,9 @@
             <label>CAPAIAN TAHSIN</label>
             <input type="text" id="r-tahsin" placeholder="Contoh: Jilid 4 Hal 1-20">
             <textarea id="r-ket-tahsin" rows="2" placeholder="Keterangan Tahsin..."></textarea>
-            
             <label style="margin-top:10px; display:block">CAPAIAN TAHFIZH</label>
             <input type="text" id="r-tahfizh" placeholder="Contoh: Juz 30 (An-Naba)">
             <textarea id="r-ket-tahfizh" rows="2" placeholder="Keterangan Tahfizh..."></textarea>
-            
             <button class="btn-rapor-final" onclick="cetakRaporFinal()">🚀 SIMPAN & BUAT RAPOR</button>
             <button class="btn-rapor-final btn-masal" onclick="cetakSatuKelas()">🖨️ CETAK SATU KELAS (MASAL)</button>
         </div>
@@ -165,7 +167,13 @@
     for(let i=1; i<=31; i++) { tglSelect.options.add(new Option(i, i)); }
 
     let dataSiswaRapor = [];
-    const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
+    
+    // DATA SURAH DENGAN JUZ NYA
+    const dataSurahQuran = [
+        {s: "Al-Fatihah", j: 1}, {s: "Al-Baqarah", j: 1}, {s: "Ali 'Imran", j: 3}, {s: "An-Nisa'", j: 4}, {s: "Al-Ma'idah", j: 6}, {s: "Al-An'am", j: 7}, {s: "Al-A'raf", j: 8}, {s: "Al-Anfal", j: 9}, {s: "At-Taubah", j: 10}, {s: "Yunus", j: 11}, {s: "Hud", j: 11}, {s: "Yusuf", j: 12}, {s: "Ar-Ra'd", j: 13}, {s: "Ibrahim", j: 13}, {s: "Al-Hijr", j: 14}, {s: "An-Nahl", j: 14}, {s: "Al-Isra'", j: 15}, {s: "Al-Kahf", j: 15}, {s: "Maryam", j: 16}, {s: "Thaha", j: 16}, {s: "Al-Anbiya'", j: 17}, {s: "Al-Hajj", j: 17}, {s: "Al-Mu'minun", j: 18}, {s: "An-Nur", j: 18}, {s: "Al-Furqan", j: 18}, {s: "Asy-Syu'ara'", j: 19}, {s: "An-Naml", j: 19}, {s: "Al-Qashash", j: 20}, {s: "Al-'Ankabut", j: 20}, {s: "Ar-Rum", j: 21}, {s: "Luqman", j: 21}, {s: "As-Sajdah", j: 21}, {s: "Al-Ahzab", j: 21}, {s: "Saba'", j: 22}, {s: "Fathir", j: 22}, {s: "Yasin", j: 22}, {s: "Ash-Shaffat", j: 23}, {s: "Shad", j: 23}, {s: "Az-Zumar", j: 23}, {s: "Ghafir", j: 24}, {s: "Fushshilat", j: 24}, {s: "Asy-Syura", j: 25}, {s: "Az-Zukhruf", j: 25}, {s: "Ad-Dukhan", j: 25}, {s: "Al-Jatsiyah", j: 25}, {s: "Al-Ahqaf", j: 26}, {s: "Muhammad", j: 26}, {s: "Al-Fath", j: 26}, {s: "Al-Hujurat", j: 26}, {s: "Qaf", j: 26}, {s: "Adz-Dzariyat", j: 26}, {s: "Ath-Thur", j: 27}, {s: "An-Najm", j: 27}, {s: "Al-Qamar", j: 27}, {s: "Ar-Rahman", j: 27}, {s: "Al-Waqi'ah", j: 27}, {s: "Al-Hadid", j: 27}, {s: "Al-Mujadilah", j: 28}, {s: "Al-Hasyr", j: 28}, {s: "Al-Mumtahanah", j: 28}, {s: "Ash-Shaff", j: 28}, {s: "Al-Jumu'ah", j: 28}, {s: "Al-Munafiqun", j: 28}, {s: "At-Taghabun", j: 28}, {s: "Ath-Thalaq", j: 28}, {s: "At-Tahrim", j: 28}, {s: "Al-Mulk", j: 29}, {s: "Al-Qalam", j: 29}, {s: "Al-Haqqah", j: 29}, {s: "Al-Ma'arij", j: 29}, {s: "Nuh", j: 29}, {s: "Al-Jinn", j: 29}, {s: "Al-Muzzammil", j: 29}, {s: "Al-Muddatstsir", j: 29}, {s: "Al-Qiyamah", j: 29}, {s: "Al-Insan", j: 29}, {s: "Al-Mursalat", j: 29}, {s: "An-Naba'", j: 30}, {s: "An-Nazi'at", j: 30}, {s: "'Abasa", j: 30}, {s: "At-Takwir", j: 30}, {s: "Al-Infithar", j: 30}, {s: "Al-Muthaffifin", j: 30}, {s: "Al-Insyiqaq", j: 30}, {s: "Al-Buruj", j: 30}, {s: "Ath-Thariq", j: 30}, {s: "Al-A'la", j: 30}, {s: "Al-Ghasyiyah", j: 30}, {s: "Al-Fajr", j: 30}, {s: "Al-Balad", j: 30}, {s: "Asy-Syams", j: 30}, {s: "Al-Lail", j: 30}, {s: "Ad-Dhuha", j: 30}, {s: "Asy-Syarh", j: 30}, {s: "At-Tin", j: 30}, {s: "Al-'Alaq", j: 30}, {s: "Al-Qadr", j: 30}, {s: "Al-Bayyinah", j: 30}, {s: "Az-Zalzalah", j: 30}, {s: "Al-'Adiyat", j: 30}, {s: "Al-Qari'ah", j: 30}, {s: "At-Takatsur", j: 30}, {s: "Al-'Asr", j: 30}, {s: "Al-Humazah", j: 30}, {s: "Al-Fil", j: 30}, {s: "Quraisy", j: 30}, {s: "Al-Ma'un", j: 30}, {s: "Al-Kautsar", j: 30}, {s: "Al-Kafirun", j: 30}, {s: "An-Nashr", j: 30}, {s: "Al-Lahab", j: 30}, {s: "Al-Ikhlash", j: 30}, {s: "Al-Falaq", j: 30}, {s: "An-Nas", j: 30}
+    ];
+
+    const surahNames = dataSurahQuran.map(x => x.s);
 
     window.onload = function() { if(localStorage.getItem('isLoggedIn') === 'true') { document.getElementById('lock-screen').style.display = 'none'; } }
     function cekLogin() { if (document.getElementById('passcode').value === KODE_RAHASIA) { localStorage.setItem('isLoggedIn', 'true'); document.getElementById('lock-screen').style.display = 'none'; } else { alert("Kode Salah!"); } }
@@ -197,9 +205,33 @@
         const dataMateri = {
             "Jilid": ["Jilid 1A", "Jilid 1B", "Jilid 2A", "Jilid 2B", "Jilid 3A", "Jilid 3B", "Jilid 4A", "Jilid 4B"],
             "Tadarus27": ["Adz-Dzariyat", "Ath-Thur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid"],
-            "Tadarus30": surah30Juz, "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`), "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`), "Tahfidz": surah30Juz
+            "Tadarus30": surahNames, 
+            "Ghorib": Array.from({length: 40}, (_, i) => `Halaman ${i + 1}`), 
+            "Tajwid": Array.from({length: 13}, (_, i) => `Pelajaran ${i + 1}`), 
+            "Tahfidz": surahNames
         };
         if (dataMateri[kat]) { dataMateri[kat].forEach(x => sub.options.add(new Option(x, x))); }
+        document.getElementById('info-juz').innerText = "";
+    }
+
+    // FUNGSI BARU UNTUK DETEKSI JUZ
+    function deteksiJuz() {
+        const kat = document.getElementById('kategori-materi').value;
+        const surah = document.getElementById('materi').value;
+        const info = document.getElementById('info-juz');
+        
+        if (kat === "Tahfidz" || kat === "Tadarus30" || kat === "Tadarus27") {
+            const find = dataSurahQuran.find(x => x.s === surah);
+            if (find) {
+                info.innerText = `Terdeteksi: Juz ${find.j}`;
+                // Opsional: Masukkan otomatis ke catatan jika mau
+                document.getElementById('catatan').value = `Juz ${find.j} - ` + document.getElementById('catatan').value;
+            } else {
+                info.innerText = "";
+            }
+        } else {
+            info.innerText = "";
+        }
     }
 
     async function simpan() {
@@ -212,8 +244,16 @@
         const skrg = new Date();
         const bln = skrg.getMonth() + 1;
         const tgl = skrg.getDate();
+        
+        // Cek Juz untuk payload materi
+        let materiLabel = `${kat}: ${mat}`;
+        const findJuz = dataSurahQuran.find(x => x.s === mat);
+        if (findJuz && (kat === "Tahfidz" || kat === "Tadarus30")) {
+            materiLabel = `${kat}: ${mat} (Juz ${findJuz.j})`;
+        }
+
         const payload = {
-            nipd: s.value, nama: s.options[s.selectedIndex].text, kelas: kls, materi: `${kat}: ${mat}`,
+            nipd: s.value, nama: s.options[s.selectedIndex].text, kelas: kls, materi: materiLabel,
             ayat: document.getElementById('awal').value + "-" + document.getElementById('akhir').value,
             status: document.getElementById('status').value, nilai: bin, catatan: document.getElementById('catatan').value,
             tgl_input: `${tgl}/${bln}/2026`
@@ -225,6 +265,7 @@
             fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             alert("✅ Berhasil!");
             document.getElementById('awal').value = ""; document.getElementById('akhir').value = ""; document.getElementById('catatan').value = "";
+            document.getElementById('info-juz').innerText = "";
         } catch(e) { alert("Gagal koneksi!"); } finally { document.getElementById('loading').style.display = 'none'; }
     }
 
@@ -232,78 +273,35 @@
         const kls = document.getElementById('kls-rekap').value;
         const blnCari = document.getElementById('bln-rekap').value;
         const tglCari = document.getElementById('tgl-rekap').value;
-
         if(!kls || !blnCari) return alert("Pilih Kelas dan Bulan!");
-
-        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Memproses data terakhir...</p>";
-        document.getElementById('summary-rekap').innerHTML = "";
-        
+        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Memproses data...</p>";
         try {
             let path = `${FIREBASE_BASE_URL}/${blnCari}.json`;
             const res = await fetch(path);
             const allData = await res.json();
-            
             let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Tgl Terakhir</th><th>Materi</th><th>Hal/Ayat</th><th>Status</th><th>★</th></tr></thead><tbody>`;
-            
-            // OBJEK UNTUK MENYARING (1 NAMA = 1 DATA TERAKHIR)
             let dataTerakhirPerSantri = {}; 
-
             if (allData) {
                 for (let tgl in allData) {
-                    // Filter berdasarkan tanggal jika user memilih tanggal tertentu
                     if (tglCari && tgl !== tglCari) continue;
-
                     for (let id in allData[tgl]) {
                         let item = allData[tgl][id];
                         if (item.kelas === kls) {
-                            let namaSantri = item.nama;
                             let tglAngka = parseInt(tgl);
-
-                            // CEK: Jika belum ada data si santri OR tanggal ini lebih baru dari yang sudah disimpan
-                            if (!dataTerakhirPerSantri[namaSantri] || tglAngka > dataTerakhirPerSantri[namaSantri].tglCek) {
-                                dataTerakhirPerSantri[namaSantri] = {
-                                    ...item,
-                                    tglCek: tglAngka // Penanda tanggal untuk pembanding
-                                };
+                            if (!dataTerakhirPerSantri[item.nama] || tglAngka > dataTerakhirPerSantri[item.nama].tglCek) {
+                                dataTerakhirPerSantri[item.nama] = { ...item, tglCek: tglAngka };
                             }
                         }
                     }
                 }
             }
-
-            let hasilFinal = Object.values(dataTerakhirPerSantri);
-
-            // URUTKAN BERDASARKAN NAMA (A-Z)
-            hasilFinal.sort((a, b) => a.nama.localeCompare(b.nama));
-
-            let totalSantri = hasilFinal.length;
-
+            let hasilFinal = Object.values(dataTerakhirPerSantri).sort((a, b) => a.nama.localeCompare(b.nama));
             hasilFinal.forEach(item => {
-                html += `<tr>
-                    <td style="font-weight:bold; color:var(--primary);">${item.nama}</td>
-                    <td style="text-align:center">${item.tgl_input}</td>
-                    <td>${item.materi}</td>
-                    <td style="text-align:center">${item.ayat}</td>
-                    <td style="text-align:center">${item.status}</td>
-                    <td style="text-align:center">${item.nilai}</td>
-                </tr>`;
+                html += `<tr><td>${item.nama}</td><td>${item.tgl_input}</td><td>${item.materi}</td><td>${item.ayat}</td><td>${item.status}</td><td>${item.nilai}</td></tr>`;
             });
-
-            if (totalSantri > 0) {
-                document.getElementById('summary-rekap').innerHTML = `
-                    <div class="ringkasan-box">
-                        <strong>📊 Ringkasan Capaian Akhir Bulan ${blnCari}:</strong><br>
-                        Total Santri Aktif: ${totalSantri} Anak
-                    </div>`;
-                document.getElementById('wadah-tabel').innerHTML = html + `</tbody></table>`;
-            } else {
-                document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Tidak ada setoran ditemukan.</p>";
-            }
-
-        } catch(e) { 
-            console.error(e);
-            document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; 
-        }
+            document.getElementById('summary-rekap').innerHTML = `<div class="ringkasan-box">Total Santri Aktif: ${hasilFinal.length} Anak</div>`;
+            document.getElementById('wadah-tabel').innerHTML = hasilFinal.length ? html + `</tbody></table>` : "<p style='text-align:center; padding:20px;'>Kosong.</p>";
+        } catch(e) { document.getElementById('wadah-tabel').innerHTML = "Gagal."; }
     }
 
     async function loadSantriRapor() {
@@ -322,7 +320,7 @@
         const kelas = document.getElementById('r-kelas').value;
         const nisn = document.getElementById('r-nisn').value;
         const data = { nama: dataSiswaRapor[idx].nama, kelas: kelas, nisn: nisn, semester: document.getElementById('r-semester').value, tp: document.getElementById('r-tp').value, tahsin: document.getElementById('r-tahsin').value, k_tahsin: document.getElementById('r-ket-tahsin').value, tahfizh: document.getElementById('r-tahfizh').value, k_tahfizh: document.getElementById('r-ket-tahfizh').value };
-        try { document.getElementById('loading').style.display = 'block'; const path = `https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor/${kelas}/${nisn}.json`; await fetch(path, { method: 'PUT', body: JSON.stringify(data) }); const params = new URLSearchParams(data); window.open(`${LINK_GITHUB_PAGES_BOS}?${params.toString()}`, '_blank'); } catch(e) { alert("Gagal!"); } finally { document.getElementById('loading').style.display = 'none'; }
+        try { document.getElementById('loading').style.display = 'block'; await fetch(`https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor/${kelas}/${nisn}.json`, { method: 'PUT', body: JSON.stringify(data) }); window.open(`${LINK_GITHUB_PAGES_BOS}?${new URLSearchParams(data).toString()}`, '_blank'); } catch(e) { alert("Gagal!"); } finally { document.getElementById('loading').style.display = 'none'; }
     }
     function cetakSatuKelas() { const kls = document.getElementById('r-kelas').value; if(!kls) return alert("Pilih Kelas!"); window.open(`${LINK_GITHUB_PAGES_BOS}?mode=kelas&kelas=${kls}`, '_blank'); }
     function setStar(n) { document.getElementById('nilai-bintang').value = n; document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd"); }
