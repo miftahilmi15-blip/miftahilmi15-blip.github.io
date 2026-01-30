@@ -10,27 +10,41 @@
         :root { --primary: #1f6f51; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --gold: #eab308; --red: #e11d48; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); color: var(--text); line-height: 1.6; user-select: none; }
+        
         .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
         .card { background: var(--card); border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 20px; border: 1px solid #f1f5f9; }
+        
         .status-badge { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; }
         .status-on { background: #dcfce7; color: #166534; }
         .status-off { background: #fee2e2; color: #991b1b; }
+        
         label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; display: block; margin-bottom: 8px; margin-top: 15px; }
         input, select, textarea { width: 100%; padding: 15px; border-radius: 16px; border: 2px solid #f1f5f9; background: #f8fafc; font-size: 14px; outline: none; }
+        
         .btn-start { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 18px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .btn-start:active { transform: scale(0.98); opacity: 0.9; }
+        
         .soal-card { background: white; padding: 20px; border-radius: 24px; margin-bottom: 20px; border: 1px solid #f1f5f9; }
         .nomor-soal { width: 40px; height: 40px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-weight: 800; margin-bottom: 15px; }
         .option-label { display: flex; align-items: center; padding: 15px; background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 16px; margin-bottom: 10px; cursor: pointer; }
+        
         #timer { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 20px; font-weight: 800; z-index: 1000; }
         .hidden { display: none !important; }
+        
         table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
         th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
         th { background: #f1f5f9; color: var(--primary); font-weight: 800; }
+        
         .status-selesai { color: #166534; font-weight: 800; }
         .status-belum { color: #94a3b8; font-style: italic; }
         .skor-box { background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-weight: 800; }
+
+        /* Modal Essay */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
+        .modal-content { background: white; width: 100%; max-width: 450px; border-radius: 24px; padding: 25px; max-height: 85vh; overflow-y: auto; position: relative; }
+        .essay-item { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
+        .btn-save { background: var(--gold); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: 800; margin-top: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -83,30 +97,28 @@
             
             <div id="koreksi-content" class="card hidden" style="margin-top:20px; padding: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="font-size:16px; font-weight: 800;">REKAP NILAI KELAS</h3>
+                    <h3 style="font-size:16px; font-weight: 800;">REKAP NILAI</h3>
                     <button onclick="document.getElementById('koreksi-content').classList.add('hidden')" style="background:none; border:none; color:var(--red); font-weight:800;">X</button>
                 </div>
 
-                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-                    <select id="filter-rekap-kls" style="flex:1; padding: 10px; font-size: 12px;">
-                        <option value="">Pilih Kelas</option>
+                <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                    <select id="filter-rekap-kls" style="flex:1; padding: 10px; font-size: 11px;">
+                        <option value="">Kelas</option>
                         <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
                         <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
                         <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
                     </select>
-                    <select id="filter-rekap-mapel" style="flex:1; padding: 10px; font-size: 12px;">
-                        <option value="">Pilih Mapel</option>
-                        <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option>
+                    <select id="filter-rekap-mapel" style="flex:1; padding: 10px; font-size: 11px;">
+                        <option value="">Mapel</option>
+                        <option>Mtk</option><option>IPA</option><option>IPS</option><option>PKN</option><option>B.Indo</option><option>B.Ing</option>
                     </select>
                 </div>
                 <button onclick="loadRekapData()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:12px; font-weight:800; margin-bottom:15px;">TAMPILKAN DATA</button>
 
                 <div style="overflow-x: auto;">
                     <table id="tabel-rekap">
-                        <thead><tr><th>No</th><th>Nama Santri</th><th>Status</th><th>Skor</th></tr></thead>
-                        <tbody id="tabel-rekap-body">
-                            <tr><td colspan="4" style="text-align:center; color:#94a3b8;">Pilih filter lalu klik tampilkan.</td></tr>
-                        </tbody>
+                        <thead><tr><th>No</th><th>Nama</th><th>Status</th><th>Skor</th></tr></thead>
+                        <tbody id="tabel-rekap-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -117,6 +129,17 @@
         <div id="timer">⏳ <span id="time-left">00:00</span></div>
         <div id="konten-soal"></div>
         <button class="btn-start" onclick="kirimJawaban()" style="background: #6c5ce7; margin-bottom: 80px;">SELESAI & KIRIM</button>
+    </div>
+</div>
+
+<div id="modal-essay" class="modal hidden">
+    <div class="modal-content">
+        <h3 style="margin-bottom: 15px; font-size: 16px;">Koreksi Essay - <span id="nama-siswa-essay" style="color: var(--primary);"></span></h3>
+        <div id="list-essay-santri"></div>
+        <label>Input Nilai Total Akhir</label>
+        <input type="number" id="input-skor-essay" placeholder="Nilai Akhir (PG + Essay)">
+        <button class="btn-save" onclick="simpanNilaiEssay()">SIMPAN NILAI</button>
+        <button onclick="tutupModal()" style="width: 100%; background: none; border: none; margin-top: 10px; color: #94a3b8; font-weight: 600; cursor:pointer;">Batal</button>
     </div>
 </div>
 
@@ -131,8 +154,8 @@
     let sesiUjian = null;
     let listSoal = [];
     let intervalTimer;
+    let nipdTerpilih = "";
 
-    // Login & Jadwal Logic
     function resetForm() {
         document.getElementById('form-isi').classList.add('hidden');
         document.getElementById('btn-mulai-box').classList.add('hidden');
@@ -189,7 +212,7 @@
     function cekMasuk() {
         const kls = document.getElementById('user-kelas').value;
         db.ref(`bank_soal/${kls}/${sesiUjian.mapel}`).once('value', snap => {
-            if(!snap.exists()) return alert("Soal belum siap!");
+            if(!snap.exists()) return alert("Soal belum diinput!");
             listSoal = [];
             snap.forEach(s => listSoal.push(s.val()));
             mulaiUjian();
@@ -208,7 +231,7 @@
                 arr.forEach((t, x) => {
                     opsi += `<label class="option-label"><input type="radio" name="q${i}" value="${hrf[x]}"> &nbsp; ${hrf[x]}. ${t}</label>`;
                 });
-            } else { opsi = `<textarea id="essay${i}" rows="4" placeholder="Jawaban essay..."></textarea>`; }
+            } else { opsi = `<textarea id="essay${i}" rows="4" placeholder="Ketik jawaban essay..."></textarea>`; }
             container.innerHTML += `<div class="soal-card"><div class="nomor-soal">${i+1}</div><p style="font-weight:600">${s.soal}</p><br>${opsi}</div>`;
         });
         let limit = (sesiUjian.durasi || 60) * 60;
@@ -221,7 +244,7 @@
     }
 
     function kirimJawaban(auto=false) {
-        if(!auto && !confirm("Kirim sekarang?")) return;
+        if(!auto && !confirm("Kirim jawaban sekarang?")) return;
         clearInterval(intervalTimer);
         let benar = 0; let totalPG = 0; let essayResp = [];
         listSoal.forEach((s, i) => {
@@ -236,10 +259,10 @@
             nama: document.getElementById('user-nama').value,
             skor: totalPG > 0 ? Math.round((benar/totalPG)*100) : 0,
             essay: essayResp, waktu: new Date().toLocaleString()
-        }).then(() => { alert("Terkirim!"); location.reload(); });
+        }).then(() => { alert("Jawaban Berhasil Terkirim!"); location.reload(); });
     }
 
-    // GURU MODE LOGIC
+    // --- LOGIKA GURU ---
     function bukaKoreksi() {
         if(prompt("PIN GURU:") === "152003") document.getElementById('koreksi-content').classList.remove('hidden');
     }
@@ -248,45 +271,55 @@
         const kls = document.getElementById('filter-rekap-kls').value;
         const mpl = document.getElementById('filter-rekap-mapel').value;
         if(!kls || !mpl) return alert("Pilih Kelas & Mapel!");
-
         const body = document.getElementById('tabel-rekap-body');
-        body.innerHTML = '<tr><td colspan="4" style="text-align:center;">Memuat Data Santri...</td></tr>';
-
+        body.innerHTML = '<tr><td colspan="4" style="text-align:center;">Memuat Data...</td></tr>';
         try {
-            // 1. Ambil Semua Nama Santri di Kelas tersebut dari Google Sheet
             const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
             const dataSantri = await res.json();
-
-            // 2. Ambil Nilai yang sudah ada di Firebase
             const snapNilai = await db.ref(`nilai_ujian/${kls}/${mpl}`).once('value');
             const dataNilai = snapNilai.val() || {};
-
-            // 3. Gabungkan Data
             body.innerHTML = "";
             dataSantri.sort((a,b) => a.nama.localeCompare(b.nama)).forEach((s, i) => {
-                const nilaiSantri = dataNilai[s.nipd];
-                const statusHtml = nilaiSantri 
-                    ? `<span class="status-selesai">Selesai</span>` 
-                    : `<span class="status-belum">Belum Ujian</span>`;
-                const skorHtml = nilaiSantri 
-                    ? `<span class="skor-box">${nilaiSantri.skor}</span>` 
-                    : `-`;
-
+                const n = dataNilai[s.nipd];
+                const btnEssay = (n && n.essay) ? `<br><button onclick="bukaKoreksiEssay('${s.nipd}', '${s.nama}')" style="background:var(--gold); border:none; color:white; padding:4px 8px; border-radius:6px; font-size:9px; font-weight:800; cursor:pointer; margin-top:5px;">NILAI ESSAY</button>` : '';
                 body.innerHTML += `
                     <tr>
                         <td>${i+1}</td>
-                        <td><div style="font-weight:700; font-size:12px;">${s.nama}</div><div style="font-size:10px; color:#94a3b8;">${s.nipd}</div></td>
-                        <td>${statusHtml}</td>
-                        <td>${skorHtml}</td>
+                        <td><div style="font-weight:700; font-size:12px;">${s.nama}</div>${btnEssay}</td>
+                        <td>${n ? '<span class="status-selesai">Selesai</span>' : '<span class="status-belum">Belum</span>'}</td>
+                        <td>${n ? '<span class="skor-box">'+(n.skor_akhir || n.skor)+'</span>' : '-'}</td>
                     </tr>`;
             });
-
-            if(dataSantri.length === 0) body.innerHTML = '<tr><td colspan="4" style="text-align:center;">Kelas Kosong.</td></tr>';
-
-        } catch(e) { 
-            body.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Gagal memuat data!</td></tr>';
-        }
+        } catch(e) { body.innerHTML = '<tr><td colspan="4" style="text-align:center;">Gagal Memuat!</td></tr>'; }
     }
+
+    function bukaKoreksiEssay(nipd, nama) {
+        nipdTerpilih = nipd;
+        const kls = document.getElementById('filter-rekap-kls').value;
+        const mpl = document.getElementById('filter-rekap-mapel').value;
+        db.ref(`nilai_ujian/${kls}/${mpl}/${nipd}`).once('value', snap => {
+            const d = snap.val();
+            document.getElementById('nama-siswa-essay').innerText = nama;
+            const container = document.getElementById('list-essay-santri');
+            container.innerHTML = "";
+            d.essay.forEach((item, idx) => {
+                container.innerHTML += `<div class="essay-item"><p style="font-size:10px; font-weight:800; color:#64748b;">SOAL ${idx+1}:</p><p style="font-size:13px; margin-bottom:5px;">${item.q}</p><p style="font-size:10px; font-weight:800; color:var(--primary);">JAWABAN:</p><p style="font-size:13px; color:#1e293b; background:white; padding:8px; border-radius:8px;">${item.a || '<em>Kosong</em>'}</p></div>`;
+            });
+            document.getElementById('input-skor-essay').value = d.skor_akhir || d.skor;
+            document.getElementById('modal-essay').classList.remove('hidden');
+        });
+    }
+
+    function simpanNilaiEssay() {
+        const kls = document.getElementById('filter-rekap-kls').value;
+        const mpl = document.getElementById('filter-rekap-mapel').value;
+        const skor = document.getElementById('input-skor-essay').value;
+        if(!skor) return alert("Isi Nilai!");
+        db.ref(`nilai_ujian/${kls}/${mpl}/${nipdTerpilih}`).update({ skor_akhir: parseInt(skor) })
+        .then(() => { alert("Nilai Diupdate!"); tutupModal(); loadRekapData(); });
+    }
+
+    function tutupModal() { document.getElementById('modal-essay').classList.add('hidden'); }
 </script>
 </body>
 </html>
