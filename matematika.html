@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Math-Pro | Kalkulator Pintar</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --primary: #1e293b;
+    --accent: #3b82f6;
+    --bg: #f1f5f9;
+    --glass: rgba(255, 255, 255, 0.9);
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Poppins', sans-serif;
+    padding: 15px; margin: 0;
+    display: flex; justify-content: center;
+  }
+
+  .container { width: 100%; max-width: 400px; }
+
+  /* Display Hasil */
+  .display-box {
+    background: var(--primary);
+    color: white;
+    padding: 30px 20px;
+    border-radius: 24px;
+    text-align: right;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+
+  #result { font-size: 32px; font-weight: 700; word-wrap: break-word; }
+  #formula { font-size: 14px; opacity: 0.6; margin-bottom: 5px; }
+
+  /* Menu Tabs Rumus */
+  .tabs {
+    display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;
+  }
+  .tab-btn {
+    background: white; border: none; padding: 8px 15px; border-radius: 12px;
+    font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; color: #64748b;
+  }
+  .tab-btn.active { background: var(--accent); color: white; }
+
+  /* Grid Angka */
+  .calc-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+
+  .btn {
+    background: white; border: none; padding: 20px; border-radius: 18px;
+    font-size: 18px; font-weight: 700; color: #334155; cursor: pointer;
+    transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  }
+
+  .btn:active { transform: scale(0.9); background: #e2e8f0; }
+  .btn.op { color: var(--accent); background: #eff6ff; }
+  .btn.equal { background: var(--accent); color: white; grid-column: span 2; }
+  .btn.clear { color: #ef4444; }
+
+  /* Panel Rumus Bangun */
+  .formula-panel {
+    background: white; padding: 20px; border-radius: 20px; display: none;
+  }
+  .input-group { margin-bottom: 15px; }
+  label { font-size: 11px; font-weight: 700; color: #64748b; display: block; margin-bottom: 5px; }
+  input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; box-sizing: border-box; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header style="text-align:center; margin-bottom:20px;">
+    <h1 style="font-family:'Montserrat'; font-size:22px; color:var(--primary); margin:0;">MATH-PRO</h1>
+    <span style="font-size:10px; letter-spacing:2px; font-weight:700; color:#64748b;">SMART CALCULATOR</span>
+  </header>
+
+  <div class="display-box">
+    <div id="formula">0</div>
+    <div id="result">0</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchMode('basic')">Standar</button>
+    <button class="tab-btn" onclick="switchMode('luas')">Luas Persegi</button>
+    <button class="tab-btn" onclick="switchMode('lingkaran')">Lingkaran</button>
+    <button class="tab-btn" onclick="switchMode('segitiga')">Segitiga</button>
+  </div>
+
+  <div id="basic-calc" class="calc-grid">
+    <button class="btn clear" onclick="clearAll()">C</button>
+    <button class="btn op" onclick="appendOp('/')">÷</button>
+    <button class="btn op" onclick="appendOp('*')">×</button>
+    <button class="btn op" onclick="deleteLast()"><i class="fa-solid fa-backspace"></i></button>
+    
+    <button class="btn" onclick="appendNum('7')">7</button>
+    <button class="btn" onclick="appendNum('8')">8</button>
+    <button class="btn" onclick="appendNum('9')">9</button>
+    <button class="btn op" onclick="appendOp('-')">-</button>
+    
+    <button class="btn" onclick="appendNum('4')">4</button>
+    <button class="btn" onclick="appendNum('5')">5</button>
+    <button class="btn" onclick="appendNum('6')">6</button>
+    <button class="btn op" onclick="appendOp('+')">+</button>
+    
+    <button class="btn" onclick="appendNum('1')">1</button>
+    <button class="btn" onclick="appendNum('2')">2</button>
+    <button class="btn" onclick="appendNum('3')">3</button>
+    <button class="btn op" onclick="appendNum('.')">.</button>
+    
+    <button class="btn" onclick="appendNum('0')">0</button>
+    <button class="btn" onclick="appendNum('00')">00</button>
+    <button class="btn equal" onclick="calculate()">=</button>
+  </div>
+
+  <div id="formula-calc" class="formula-panel">
+    <div id="input-fields"></div>
+    <button class="btn equal" style="width:100%;" onclick="calculateFormula()">HITUNG LUAS</button>
+  </div>
+</div>
+
+<script>
+  let currentInput = "";
+  let currentFormula = "";
+  let activeMode = "basic";
+
+  function switchMode(mode) {
+    activeMode = mode;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if(mode === 'basic') {
+      document.getElementById('basic-calc').style.display = 'grid';
+      document.getElementById('formula-calc').style.display = 'none';
+    } else {
+      document.getElementById('basic-calc').style.display = 'none';
+      document.getElementById('formula-calc').style.display = 'block';
+      renderInputs(mode);
+    }
+  }
+
+  function renderInputs(mode) {
+    const container = document.getElementById('input-fields');
+    container.innerHTML = "";
+    if(mode === 'luas') {
+      container.innerHTML = `<div class="input-group"><label>Sisi (cm)</label><input type="number" id="val1"></div>`;
+    } else if(mode === 'segitiga') {
+      container.innerHTML = `<div class="input-group"><label>Alas</label><input type="number" id="val1"></div><div class="input-group"><label>Tinggi</label><input type="number" id="val2"></div>`;
+    } else if(mode === 'lingkaran') {
+      container.innerHTML = `<div class="input-group"><label>Jari-jari (r)</label><input type="number" id="val1"></div>`;
+    }
+  }
+
+  function appendNum(num) {
+    currentInput += num;
+    updateDisplay();
+  }
+
+  function appendOp(op) {
+    if(currentInput === "") return;
+    currentInput += op;
+    updateDisplay();
+  }
+
+  function clearAll() {
+    currentInput = "";
+    updateDisplay("0", "0");
+  }
+
+  function deleteLast() {
+    currentInput = currentInput.slice(0, -1);
+    updateDisplay();
+  }
+
+  function updateDisplay(res, form) {
+    document.getElementById('result').innerText = res || currentInput || "0";
+    document.getElementById('formula').innerText = form || currentInput || "0";
+  }
+
+  function calculate() {
+    try {
+      let res = eval(currentInput);
+      updateDisplay(res, currentInput);
+      currentInput = res.toString();
+    } catch(e) {
+      updateDisplay("Error");
+    }
+  }
+
+  function calculateFormula() {
+    const v1 = parseFloat(document.getElementById('val1').value);
+    const v2 = document.getElementById('val2') ? parseFloat(document.getElementById('val2').value) : 0;
+    let hasil = 0;
+    
+    if(activeMode === 'luas') {
+      hasil = v1 * v1;
+      updateDisplay(hasil, `${v1} × ${v1}`);
+    } else if(activeMode === 'segitiga') {
+      hasil = 0.5 * v1 * v2;
+      updateDisplay(hasil, `½ × ${v1} × ${v2}`);
+    } else if(activeMode === 'lingkaran') {
+      hasil = (3.14 * v1 * v1).toFixed(2);
+      updateDisplay(hasil, `π × ${v1}²`);
+    }
+  }
+</script>
+</body>
+</html>
