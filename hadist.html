@@ -3,86 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arba'in Nawawi - API Engine</title>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <title>Arba'in Nawawi Full Matan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #059669; --bg: #eff6ff; }
+        :root { --primary: #064e3b; --secondary: #10b981; --bg: #f8fafc; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; }
-        .header { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 40px 40px; }
+        .header { background: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; }
         .container { padding: 20px; max-width: 800px; margin: auto; }
-        .loader { text-align: center; padding: 50px; font-weight: bold; color: var(--primary); }
-        
-        /* Card Style */
-        .hadits-card {
-            background: white; border-radius: 25px; padding: 25px; margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
-        }
-        .no-badge { background: #d1fae5; color: #065f46; padding: 5px 15px; border-radius: 10px; font-weight: 800; font-size: 12px; }
-        .arab { 
-            font-family: 'Amiri', serif; font-size: 28px; line-height: 2.5; 
-            text-align: right; direction: rtl; margin: 20px 0; color: #111827;
-        }
-        .arti { 
-            font-size: 15px; color: #4b5563; line-height: 1.8; 
-            background: #f9fafb; padding: 15px; border-radius: 15px; border-left: 4px solid var(--primary);
-        }
-        .loading-spinner {
-            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
-            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
-            margin: auto;
-        }
+        .card { background: white; border-radius: 20px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .no-badge { background: var(--secondary); color: white; padding: 5px 15px; border-radius: 10px; font-weight: bold; font-size: 12px; }
+        .arab { font-family: 'Amiri', serif; font-size: 28px; line-height: 2.5; text-align: right; direction: rtl; margin: 20px 0; color: #1e293b; }
+        .arti { font-size: 15px; color: #475569; line-height: 1.8; background: #f1f5f9; padding: 15px; border-radius: 15px; text-align: justify; }
+        .loading { text-align: center; padding: 50px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--secondary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 style="margin:0;">Arba'in Nawawi</h1>
-    <p>Data Lengkap via API Engine</p>
+    <h1 style="margin:0;">Hadits Arba'in Nawawi</h1>
+    <p>Kitab Lengkap 42 Hadits Tanpa Potongan</p>
 </div>
 
-<div class="container" id="app">
-    <div class="loader" id="loader">
-        <div class="loading-spinner"></div>
-        <p>Menembak API... Mohon Tunggu Bos!</p>
+<div class="container">
+    <div id="loader" class="loading">
+        <div class="spinner"></div>
+        <p>Lagi Loading Matan Panjang, Bos...</p>
     </div>
     <div id="hadits-list"></div>
 </div>
 
 <script>
-    // Link API Arba'in (Gunakan API publik atau raw file dari provider terpercaya)
-    const API_URL = 'https://raw.githubusercontent.com/mifathilmi/dummy-api/main/arbain_full.json'; 
-    // Note: Jika Bos punya endpoint sendiri, ganti di sini. 
-    // Sebagai cadangan, kita pakai simulator fetch agar Bos lihat hasilnya langsung.
-
-    async function tembakAPI() {
+    async function getFullHadits() {
         try {
-            // Kita gunakan API publik yang stabil untuk hadits
-            const res = await fetch('https://api.npoint.io/63683f12071f76d47d4e'); 
-            const data = await res.json();
+            // Kita tembak API yang nyediain raw data hadits arbain
+            // Ini link data yang matannya lengkap (sanad + isi)
+            const response = await fetch('https://raw.githubusercontent.com/azharimm/hadith-api/main/data/arbain.json');
+            const data = await response.json();
             
-            displayData(data);
-        } catch (err) {
-            document.getElementById('loader').innerHTML = "Gagal Tembak API, Bos! Cek Koneksi.";
+            const list = document.getElementById('hadits-list');
+            document.getElementById('loader').style.display = 'none';
+
+            data.forEach(h => {
+                list.innerHTML += `
+                    <div class="card">
+                        <span class="no-badge">HADITS ${h.no}</span>
+                        <h3 style="margin: 15px 0 10px 0; color: #064e3b;">${h.title}</h3>
+                        <div class="arab">${h.arabic}</div>
+                        <div class="arti">
+                            <b>Terjemah:</b><br>${h.translation}
+                        </div>
+                    </div>
+                `;
+            });
+        } catch (error) {
+            document.getElementById('loader').innerHTML = "Waduh Bos, API-nya ngadat! Coba Refresh.";
+            console.error(error);
         }
     }
 
-    function displayData(data) {
-        const list = document.getElementById('hadits-list');
-        document.getElementById('loader').style.display = 'none';
-        
-        list.innerHTML = data.map(h => `
-            <div class="hadits-card">
-                <span class="no-badge">HADITS KE-${h.no}</span>
-                <h3 style="margin-top:10px;">${h.judul}</h3>
-                <div class="arab">${h.arab}</div>
-                <div class="arti"><b>Artinya:</b> <br>${h.arti}</div>
-            </div>
-        `).join('');
-    }
-
-    // Eksekusi!
-    tembakAPI();
+    getFullHadits();
 </script>
 
 </body>
