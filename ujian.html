@@ -40,7 +40,6 @@
         .status-belum { color: #94a3b8; font-style: italic; }
         .skor-box { background: var(--primary); color: white; padding: 2px 6px; border-radius: 6px; font-weight: 800; }
 
-        /* Modal Essay */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
         .modal-content { background: white; width: 100%; max-width: 450px; border-radius: 24px; padding: 25px; max-height: 85vh; overflow-y: auto; position: relative; }
         .essay-item { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--primary); }
@@ -136,8 +135,9 @@
     <div class="modal-content">
         <h3 style="margin-bottom: 15px; font-size: 16px;">Koreksi Essay - <span id="nama-siswa-essay" style="color: var(--primary);"></span></h3>
         <div id="list-essay-santri"></div>
-        <label>Input Nilai Total Akhir</label>
-        <input type="number" id="input-skor-essay" placeholder="Nilai Akhir (PG + Essay)">
+        <label id="label-skor-pg" style="color:var(--primary); font-size:10px;"></label>
+        <label>Input Nilai Tambahan Essay</label>
+        <input type="number" id="input-skor-essay" placeholder="Contoh: 20">
         <button class="btn-save" onclick="simpanNilaiEssay()">SIMPAN NILAI</button>
         <button onclick="tutupModal()" style="width: 100%; background: none; border: none; margin-top: 10px; color: #94a3b8; font-weight: 600; cursor:pointer;">Batal</button>
     </div>
@@ -167,7 +167,6 @@
         const kls = document.getElementById('user-kelas').value;
         const mpl = document.getElementById('user-mapel').value;
         if(!kls || !mpl) return;
-
         db.ref(`jadwal_ujian/${kls}/${mpl}`).once('value', snap => {
             sesiUjian = snap.val();
             const badge = document.getElementById('badge-status');
@@ -262,9 +261,11 @@
         }).then(() => { alert("Jawaban Berhasil Terkirim!"); location.reload(); });
     }
 
-    // --- LOGIKA GURU ---
     function bukaKoreksi() {
-        if(prompt("PIN GURU:") === "152003") document.getElementById('koreksi-content').classList.remove('hidden');
+        if(prompt("PIN GURU:") === "152003") {
+            document.getElementById('koreksi-content').classList.remove('hidden');
+            document.getElementById('rekap-area').scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
     async function loadRekapData() {
@@ -276,82 +277,50 @@
         try {
             const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
             const dataSantri = await res.json();
-            const snapNilai = await db.ref(`nilai_ujian/${kls}/${mpl}`).once('value');
-            const dataNilai = snapNilai.val() || {};
-            body.innerHTML = "";
-            dataSantri.sort((a,b) => a.nama.localeCompare(b.nama)).forEach((s, i) => {
-                const n = dataNilai[s.nipd];
-                const btnEssay = (n && n.essay) ? `<br><button onclick="bukaKoreksiEssay('${s.nipd}', '${s.nama}')" style="background:var(--gold); border:none; color:white; padding:4px 8px; border-radius:6px; font-size:9px; font-weight:800; cursor:pointer; margin-top:5px;">NILAI ESSAY</button>` : '';
-                body.innerHTML += `
-                    <tr>
-                        <td>${i+1}</td>
-                        <td><div style="font-weight:700; font-size:12px;">${s.nama}</div>${btnEssay}</td>
-                        <td>${n ? '<span class="status-selesai">Selesai</span>' : '<span class="status-belum">Belum</span>'}</td>
-                        <td>${n ? '<span class="skor-box">'+(n.skor_akhir || n.skor)+'</span>' : '-'}</td>
-                    </tr>`;
+            db.ref(`nilai_ujian/${kls}/${mpl}`).on('value', snap => {
+                const dataNilai = snap.val() || {};
+                body.innerHTML = "";
+                dataSantri.sort((a,b) => a.nama.localeCompare(b.nama)).forEach((s, i) => {
+                    const n = dataNilai[s.nipd];
+                    const btnEssay = (n && n.essay) ? `<br><button onclick="bukaKoreksiEssay('${s.nipd}', '${s.nama}')" style="background:var(--gold); border:none; color:white; padding:4px 8px; border-radius:6px; font-size:9px; font-weight:800; cursor:pointer; margin-top:5px;">NILAI ESSAY</button>` : '';
+                    body.innerHTML += `<tr><td>${i+1}</td><td><div style="font-weight:700; font-size:12px;">${s.nama}</div>${btnEssay}</td><td>${n ? '<span class="status-selesai">Selesai</span>' : '<span class="status-belum">Belum</span>'}</td><td>${n ? '<span class="skor-box">'+(n.skor_akhir || n.skor)+'</span>' : '-'}</td></tr>`;
+                });
             });
         } catch(e) { body.innerHTML = '<tr><td colspan="4" style="text-align:center;">Gagal Memuat!</td></tr>'; }
     }
 
-    // Ganti fungsi bukaKoreksiEssay dan simpanNilaiEssay dengan ini:
-
-function bukaKoreksiEssay(nipd, nama) {
-    nipdTerpilih = nipd;
-    const kls = document.getElementById('filter-rekap-kls').value;
-    const mpl = document.getElementById('filter-rekap-mapel').value;
-
-    db.ref(`nilai_ujian/${kls}/${mpl}/${nipd}`).once('value', snap => {
-        const d = snap.val();
-        document.getElementById('nama-siswa-essay').innerText = nama;
-        
-        // Tampilkan info nilai PG yang sudah ada
-        const container = document.getElementById('list-essay-santri');
-        container.innerHTML = `
-            <div style="background:var(--primary); color:white; padding:10px; border-radius:12px; margin-bottom:15px; text-align:center;">
-                <p style="font-size:10px; font-weight:800;">SKOR PILIHAN GANDA (OTOMATIS)</p>
-                <p style="font-size:24px; font-weight:800;">${d.skor}</p>
-            </div>
-        `;
-
-        d.essay.forEach((item, idx) => {
-            container.innerHTML += `
-                <div class="essay-item">
-                    <p style="font-size:10px; font-weight:800; color:#64748b;">SOAL ${idx+1}:</p>
-                    <p style="font-size:13px; margin-bottom:5px;">${item.q}</p>
-                    <p style="font-size:10px; font-weight:800; color:var(--primary);">JAWABAN SANTRI:</p>
-                    <p style="font-size:13px; color:#1e293b; background:white; padding:8px; border-radius:8px;">${item.a || '<em>Kosong</em>'}</p>
-                </div>`;
+    function bukaKoreksiEssay(nipd, nama) {
+        nipdTerpilih = nipd;
+        const kls = document.getElementById('filter-rekap-kls').value;
+        const mpl = document.getElementById('filter-rekap-mapel').value;
+        db.ref(`nilai_ujian/${kls}/${mpl}/${nipd}`).once('value', snap => {
+            const d = snap.val();
+            document.getElementById('nama-siswa-essay').innerText = nama;
+            document.getElementById('label-skor-pg').innerText = "SKOR PG ASLI: " + d.skor;
+            const container = document.getElementById('list-essay-santri');
+            container.innerHTML = "";
+            d.essay.forEach((item, idx) => {
+                container.innerHTML += `<div class="essay-item"><p style="font-size:10px; font-weight:800; color:#64748b;">SOAL ${idx+1}:</p><p style="font-size:13px; margin-bottom:5px;">${item.q}</p><p style="font-size:10px; font-weight:800; color:var(--primary);">JAWABAN:</p><p style="font-size:13px; color:#1e293b; background:white; padding:8px; border-radius:8px;">${item.a || '<em>Kosong</em>'}</p></div>`;
+            });
+            document.getElementById('input-skor-essay').value = d.skor_essay || 0;
+            document.getElementById('modal-essay').classList.remove('hidden');
         });
+    }
 
-        // Input skor_essay (awalnya 0 atau nilai yang pernah disimpan)
-        document.getElementById('input-skor-essay').value = d.skor_essay || 0;
-        document.getElementById('input-skor-essay').placeholder = "Masukkan Nilai Essay Saja";
-        document.getElementById('modal-essay').classList.remove('hidden');
-    });
-}
-
-function simpanNilaiEssay() {
-    const kls = document.getElementById('filter-rekap-kls').value;
-    const mpl = document.getElementById('filter-rekap-mapel').value;
-    const nilaiEssayBaru = parseInt(document.getElementById('input-skor-essay').value) || 0;
-
-    db.ref(`nilai_ujian/${kls}/${mpl}/${nipdTerpilih}`).once('value', snap => {
-        const dataLama = snap.val();
-        const nilaiPGOtomatis = dataLama.skor; // Nilai asli dari sistem
-        
-        // Gabungkan Nilai PG + Nilai Essay
-        const totalAkhir = nilaiPGOtomatis + nilaiEssayBaru;
-
-        db.ref(`nilai_ujian/${kls}/${mpl}/${nipdTerpilih}`).update({
-            skor_essay: nilaiEssayBaru,
-            skor_akhir: totalAkhir
-        }).then(() => {
-            alert("Selesai! Nilai PG: " + nilaiPGOtomatis + " + Essay: " + nilaiEssayBaru + " = Total: " + totalAkhir);
-            tutupModal();
-            loadRekapData();
+    function simpanNilaiEssay() {
+        const kls = document.getElementById('filter-rekap-kls').value;
+        const mpl = document.getElementById('filter-rekap-mapel').value;
+        const nEssay = parseInt(document.getElementById('input-skor-essay').value) || 0;
+        db.ref(`nilai_ujian/${kls}/${mpl}/${nipdTerpilih}`).once('value', snap => {
+            const pg = snap.val().skor;
+            db.ref(`nilai_ujian/${kls}/${mpl}/${nipdTerpilih}`).update({
+                skor_essay: nEssay,
+                skor_akhir: pg + nEssay
+            }).then(() => { alert("Nilai Berhasil Disimpan!"); tutupModal(); });
         });
-    });
-}
+    }
+
+    function tutupModal() { document.getElementById('modal-essay').classList.add('hidden'); }
 </script>
 </body>
 </html>
