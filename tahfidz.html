@@ -235,43 +235,88 @@
         const kls = document.getElementById('kls-rekap').value;
         const blnCari = document.getElementById('bln-rekap').value;
         const tglCari = document.getElementById('tgl-rekap').value;
+
         if(!kls || !blnCari) return alert("Pilih Kelas dan Bulan!");
-        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Memproses data terakhir...</p>";
+
+        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Mengkalkulasi data sebulan...</p>";
         document.getElementById('summary-rekap').innerHTML = "";
+        
         try {
             let path = `${FIREBASE_BASE_URL}/${blnCari}.json`;
             const res = await fetch(path);
             const allData = await res.json();
-            let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Tgl Terakhir</th><th>Materi</th><th>Hal/Ayat</th><th>Status</th><th>★</th></tr></thead><tbody>`;
-            let dataTerakhirPerSantri = {}; 
+            
+            let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Total Setoran</th><th>Capaian Terakhir</th><th>Hal/Ayat</th><th>Status</th><th>Rata-rata ★</th></tr></thead><tbody>`;
+            
+            let rekapAkumulasi = {}; 
+
             if (allData) {
                 for (let tgl in allData) {
                     if (tglCari && tgl !== tglCari) continue;
+
                     for (let id in allData[tgl]) {
                         let item = allData[tgl][id];
                         if (item.kelas === kls) {
-                            let namaSantri = item.nama;
+                            let nama = item.nama;
                             let tglAngka = parseInt(tgl);
-                            if (!dataTerakhirPerSantri[namaSantri] || tglAngka > dataTerakhirPerSantri[namaSantri].tglCek) {
-                                dataTerakhirPerSantri[namaSantri] = { ...item, tglCek: tglAngka };
+
+                            if (!rekapAkumulasi[nama]) {
+                                rekapAkumulasi[nama] = {
+                                    nama: nama,
+                                    totalSetoran: 0,
+                                    materiTerakhir: item.materi,
+                                    ayatTerakhir: item.ayat,
+                                    statusTerakhir: item.status,
+                                    totalBintang: 0,
+                                    tglCek: tglAngka
+                                };
                             }
+
+                            if (tglAngka >= rekapAkumulasi[nama].tglCek) {
+                                rekapAkumulasi[nama].materiTerakhir = item.materi;
+                                rekapAkumulasi[nama].ayatTerakhir = item.ayat;
+                                rekapAkumulasi[nama].statusTerakhir = item.status;
+                                rekapAkumulasi[nama].tglCek = tglAngka;
+                            }
+
+                            rekapAkumulasi[nama].totalSetoran += 1;
+                            rekapAkumulasi[nama].totalBintang += parseInt(item.nilai);
                         }
                     }
                 }
             }
-            let hasilFinal = Object.values(dataTerakhirPerSantri);
+
+            let hasilFinal = Object.values(rekapAkumulasi);
             hasilFinal.sort((a, b) => a.nama.localeCompare(b.nama));
-            let totalSantri = hasilFinal.length;
+
             hasilFinal.forEach(item => {
-                html += `<tr><td style="font-weight:bold; color:var(--primary);">${item.nama}</td><td style="text-align:center">${item.tgl_input}</td><td>${item.materi}</td><td style="text-align:center">${item.ayat}</td><td style="text-align:center">${item.status}</td><td style="text-align:center">${item.nilai}</td></tr>`;
+                let rataBintang = (item.totalBintang / item.totalSetoran).toFixed(1);
+                html += `<tr>
+                    <td style="font-weight:bold; color:var(--primary);">${item.nama}</td>
+                    <td style="text-align:center">${item.totalSetoran} Kali</td>
+                    <td>${item.materiTerakhir}</td>
+                    <td style="text-align:center">${item.ayatTerakhir}</td>
+                    <td style="text-align:center">${item.statusTerakhir}</td>
+                    <td style="text-align:center">⭐ ${rataBintang}</td>
+                </tr>`;
             });
-            if (totalSantri > 0) {
-                document.getElementById('summary-rekap').innerHTML = `<div class="ringkasan-box"><strong>📊 Ringkasan Capaian Akhir Bulan ${blnCari}:</strong><br>Total Santri Aktif: ${totalSantri} Anak</div>`;
+
+            if (hasilFinal.length > 0) {
+                document.getElementById('summary-rekap').innerHTML = `
+                    <div class="ringkasan-box">
+                        <strong>📊 Akumulasi Capaian Bulan ${blnCari}:</strong><br>
+                        Total Santri Aktif: ${hasilFinal.length} Anak<br>
+                        Periode: Tanggal 1 s/d ${tglCari ? tglCari : 'Akhir Bulan'}
+                    </div>`;
                 document.getElementById('wadah-tabel').innerHTML = html + `</tbody></table>`;
             } else {
-                document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Tidak ada setoran ditemukan.</p>";
+                document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Tidak ada data pada periode ini.</p>";
             }
-        } catch(e) { document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; }
+
+        } catch(e) { 
+            console.error(e);
+            document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; 
+        }
     }
 
     async function loadSantriRapor() {
