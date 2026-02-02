@@ -203,23 +203,39 @@ function prosesData() {
             if(aggr[a].modus >= 3) htmlKekuatan += item; else htmlPerhatian += item;
         });
 
+        // TEMPLATE BARU SESUAI REQUEST BOS
         container.innerHTML += `
             <div class="kertas-laporan">
                 <div class="header-lp">
                     <h2 style="margin:0">LAPORAN PERKEMBANGAN KARAKTER SANTRI</h2>
                     <p style="font-size:12px; margin:5px 0;">Semester Ganjil 2025/2026 - MTs As Sunnah Kota Cirebon</p>
                 </div>
-                <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:20px; border:1px solid #eee; padding:10px; border-radius:8px;">
-                    <div><b>Nama:</b> ${nama}<br><b>Kelas:</b> ${kls}</div>
-                    <div style="text-align:right"><b>Wali Kelas:</b> Fahrijal Umar, S.Pd.I., Gr.<br><b>Tanggal:</b> 02/02/2026</div>
+                
+                <div style="margin-bottom:20px; border:1px solid #e2e8f0; padding:15px; border-radius:8px; background:#f8fafc; line-height:1.8;">
+                    <div style="font-size:14px;"><b>Nama Santri :</b> ${nama}</div>
+                    <div style="font-size:14px;"><b>Wali Kelas   :</b> Fahrijal Umar, S.Pd.I., Gr.</div>
+                    <div style="font-size:14px;"><b>Kelas        :</b> ${kls}</div>
                 </div>
+
                 <div class="section-header">🌟 PENDAHULUAN</div>
-                <p style="font-size:12.5px; text-align:justify;">Laporan ini disusun sebagai instrumen refleksi diri, merangkum pandangan 29 rekan sebaya untuk memberikan perspektif yang jujur dan objektif bagi perkembangan Ananda.</p>
-                <div class="section-header">✅ KEKUATAN UTAMA</div> ${htmlKekuatan || '<p>Memerlukan bimbingan lebih lanjut.</p>'}
-                <div class="section-header">💡 AREA PERHATIAN KHUSUS</div> ${htmlPerhatian || '<p>Pertahankan perilaku positif Ananda.</p>'}
+                <p style="font-size:12.5px; text-align:justify;">Laporan ini disusun sebagai instrumen refleksi diri, merangkum pandangan rekan sebaya untuk memberikan perspektif yang jujur dan objektif bagi perkembangan karakter Ananda.</p>
+                
+                <div class="section-header">✅ KEKUATAN UTAMA</div> 
+                ${htmlKekuatan || '<p style="font-size:12px; font-style:italic;">Belum ada aspek yang menonjol.</p>'}
+                
+                <div class="section-header">💡 AREA PERHATIAN KHUSUS</div> 
+                ${htmlPerhatian || '<p style="font-size:12px; font-style:italic;">Seluruh aspek menunjukkan tren positif.</p>'}
+                
                 <div class="section-header">🤝 TINDAK LANJUT</div>
-                <p style="font-size:12px;">Mohon dukungan orang tua di rumah untuk terus memberikan penguatan pada aspek yang sudah baik dan membimbing aspek yang masih memerlukan perhatian.</p>
-                <div class="footer-ttd"><div class="ttd-box">Cirebon, 02 Feb 2026<br>Wali Kelas,<br><br><br><br><b>Fahrijal Umar, S.Pd.I., Gr.</b></div></div>
+                <p style="font-size:12px;">Mohon dukungan orang tua di rumah untuk terus memberikan penguatan pada aspek yang sudah baik dan membimbing aspek yang masih memerlukan perhatian agar tercapai kematangan karakter yang optimal.</p>
+                
+                <div class="footer-ttd">
+                    <div class="ttd-box">
+                        Cirebon, 02 Februari 2026<br>
+                        Wali Kelas,<br><br><br><br><br>
+                        <b>Fahrijal Umar, S.Pd.I., Gr.</b>
+                    </div>
+                </div>
             </div>`;
     });
 }
