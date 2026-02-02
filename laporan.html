@@ -3,53 +3,58 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Generator Laporan Karakter v9</title>
+    <title>Sistem Laporan Karakter MTs As Sunnah</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --primary: #10b981; --bg: #f1f5f9; --text: #1e293b; }
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
 
         .no-print { 
-            max-width: 900px; margin: 0 auto 20px auto; 
+            max-width: 1000px; margin: 0 auto 20px auto; 
             background: white; padding: 20px; border-radius: 12px; 
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
         }
-        .controls { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 10px; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr auto auto auto; gap: 10px; align-items: end; }
+        label { font-size: 11px; font-weight: 700; color: #64748b; }
         select, button { padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; outline: none; }
-        button { background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        button:hover { opacity: 0.9; }
+        button { background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; }
+        .btn-excel { background: #16a34a; }
+        .btn-print { background: #475569; }
 
-        /* Kertas Laporan Sesuai Permintaan Bos */
+        /* Kertas Laporan */
         .kertas-laporan { 
             background: white; width: 210mm; min-height: 297mm; 
-            margin: auto; padding: 20mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); 
-            position: relative;
+            margin: auto; padding: 15mm 20mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); 
         }
 
         .header-lp { text-align: center; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 20px; }
-        .header-lp h2 { margin: 0; font-size: 18px; text-transform: uppercase; }
+        .header-lp h2 { margin: 0; font-size: 16px; text-transform: uppercase; }
         
-        .info-baris { display: flex; font-size: 13px; margin-bottom: 5px; }
-        .info-label { width: 120px; font-weight: 600; }
-
-        .section-title { 
-            font-size: 15px; font-weight: 800; margin: 25px 0 10px 0; 
-            display: flex; align-items: center; gap: 10px;
-        }
+        .info-santri { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px; margin-bottom: 20px; border: 1px solid #eee; padding: 10px; border-radius: 5px; }
         
-        .isi-narasi { font-size: 13px; line-height: 1.6; text-align: justify; }
-        .box-aspek { margin-bottom: 15px; border-left: 3px solid #e2e8f0; padding-left: 15px; }
-        .judul-aspek { font-weight: 700; color: var(--primary); margin-bottom: 3px; }
-        .nilai-info { font-size: 11px; color: #64748b; font-style: italic; margin-bottom: 5px; }
+        .section-title { background: #f8fafc; padding: 5px 10px; font-weight: 800; font-size: 13px; margin: 15px 0 8px 0; border-left: 4px solid var(--primary); }
+        
+        .isi-narasi { font-size: 12px; line-height: 1.5; text-align: justify; }
+        .aspek-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .box-aspek { border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
+        .judul-aspek { font-weight: 700; color: var(--primary); display: flex; justify-content: space-between; }
+        .skor-badge { font-size: 10px; color: #64748b; }
 
-        .footer-ttd { margin-top: 50px; display: flex; justify-content: flex-end; }
-        .ttd-box { text-align: center; width: 250px; font-size: 13px; }
+        .footer-ttd { margin-top: 30px; display: flex; justify-content: flex-end; }
+        .ttd-box { text-align: center; width: 200px; font-size: 12px; }
+
+        /* Style Tabel Rekap */
+        #area-rekap { margin-top: 30px; background: white; padding: 20px; border-radius: 12px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background: #f4f7f6; }
 
         @media print {
             body { background: white; padding: 0; }
-            .no-print { display: none; }
-            .kertas-laporan { box-shadow: none; margin: 0; width: 100%; padding: 10mm; }
+            .no-print, #area-rekap { display: none; }
+            .kertas-laporan { box-shadow: none; margin: 0; width: 100%; }
         }
     </style>
 </head>
@@ -57,50 +62,82 @@
 
 <div class="no-print">
     <div class="controls">
-        <select id="pilih-kls">
-            <option value="">-- Pilih Kelas --</option>
-            <option>9A</option><option>8A</option><option>7A</option>
-        </select>
-        <select id="pilih-nama">
-            <option value="">-- Pilih Santri --</option>
-        </select>
-        <button onclick="generateLaporan()">📄 GENERATE NARASI</button>
-        <button onclick="window.print()" style="background:#64748b;">🖨️ PRINT PDF</button>
+        <div><label>KELAS</label><br><select id="pilih-kls" onchange="muatDaftarNama()"><option value="">-- Pilih --</option><option>9A</option><option>9B</option><option>8A</option><option>7A</option></select></div>
+        <div><label>SANTRI</label><br><select id="pilih-nama"><option value="">Pilih Kelas Dulu</option></select></div>
+        <button onclick="generateLaporan()">📄 LIHAT PDF</button>
+        <button class="btn-excel" onclick="exportExcel()">📊 EXCEL REKAP</button>
+        <button class="btn-print" onclick="window.print()">🖨️ PRINT</button>
     </div>
 </div>
 
 <div id="konten-laporan" class="kertas-laporan">
-    <div style="text-align:center; padding-top:100px; color:#cbd5e1;">Pilih data untuk memproses laporan narasi.</div>
+    <p style="text-align:center; color:#ccc; margin-top:100px;">Data akan muncul di sini...</p>
+</div>
+
+<div id="area-rekap" class="no-print">
+    <h3 style="font-size: 14px;">Preview Rekap Kelas (Untuk Excel)</h3>
+    <table id="tabel-rekap">
+        <thead>
+            <tr>
+                <th>Nama Santri</th>
+                <th>Perkataan</th><th>Berpakaian</th><th>Akhlak</th><th>Disiplin</th>
+                <th>Jujur</th><th>Tjwb</th><th>Ibadah</th><th>Peduli</th>
+                <th>Rata-rata</th>
+            </tr>
+        </thead>
+        <tbody id="body-rekap"></tbody>
+    </table>
 </div>
 
 <script>
 const DB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
+const aspekList = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
 
-// BANK KALIMAT NARASI OTOMATIS
-const narasiBank = {
-    Perkataan: {
-        tinggi: "Sangat menjaga lisan dan tutur katanya memberikan pengaruh positif bagi lingkungan.",
-        cukup: "Cukup mampu menjaga ucapan dan berkomunikasi dengan baik di lingkungan sekolah.",
-        kurang: "Perlu bimbingan lebih dalam menjaga etika berbicara saat berinteraksi."
-    },
-    Akhlak: {
-        gap_rendah_diri: "Ananda memiliki kesadaran diri dan kerendahan hati yang baik (menilai diri kurang), meskipun teman melihatnya sudah cukup baik.",
-        sejalan: "Ananda dan teman-temannya memiliki pandangan yang sama mengenai kualitas akhlak yang sudah baik.",
-        perlu_bimbingan: "Perlu ditingkatkan konsistensi dalam bersikap sopan santun kepada guru dan rekan."
-    }
-};
-
-// Fungsi Mengambil Data Santri (Ganti SCRIPT_URL Bos di sini)
-document.getElementById('pilih-kls').onchange = async function() {
-    const kls = this.value;
+async function muatDaftarNama() {
+    const kls = document.getElementById('pilih-kls').value;
     const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
     const data = await res.json() || {};
     let listNama = new Set();
     Object.keys(data).forEach(tgl => Object.keys(data[tgl]).forEach(n => listNama.add(n)));
+    
     const select = document.getElementById('pilih-nama');
     select.innerHTML = '<option value="">-- Pilih Santri --</option>';
     Array.from(listNama).sort().forEach(n => select.innerHTML += `<option>${n}</option>`);
-};
+    
+    updateTabelRekap(data);
+}
+
+function updateTabelRekap(data) {
+    const body = document.getElementById('body-rekap');
+    body.innerHTML = "";
+    
+    // Logic menghitung rata-rata per anak untuk rekap
+    let rekapAnak = {};
+    Object.keys(data).forEach(tgl => {
+        Object.keys(data[tgl]).forEach(nama => {
+            if(!rekapAnak[nama]) rekapAnak[nama] = { total: 0, count: 0, aspek: {} };
+            const entry = Object.values(data[tgl][nama])[0]; // Ambil salah satu penilai
+            if(entry && entry.skor) {
+                aspekList.forEach(a => {
+                    let v = parseInt(entry.skor[a] || 3);
+                    rekapAnak[nama].aspek[a] = v;
+                });
+            }
+        });
+    });
+
+    Object.keys(rekapAnak).sort().forEach(nama => {
+        let tr = `<tr><td>${nama}</td>`;
+        let sum = 0;
+        aspekList.forEach(a => {
+            let n = rekapAnak[nama].aspek[a] || 0;
+            tr += `<td>${n}</td>`;
+            sum += n;
+        });
+        tr += `<td>${(sum/8).toFixed(1)}</td></tr>`;
+        body.innerHTML += tr;
+    });
+}
 
 async function generateLaporan() {
     const kls = document.getElementById('pilih-kls').value;
@@ -108,48 +145,52 @@ async function generateLaporan() {
     if(!nama) return alert("Pilih Nama!");
 
     const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
-    const dataKelas = await res.json() || {};
+    const data = await res.json() || {};
     
-    // Logika pengolahan data rata-rata Diri vs Teman
-    // Di sini kita asumsikan struktur data: skor: { Perkataan: { diri: 3, teman: 4 }, ... }
-    
+    // Ambil data terbaru (tanggal terakhir)
+    const tanggalSemua = Object.keys(data).sort().reverse();
+    const dataAnak = data[tanggalSemua[0]][nama];
+    // Ambil skor dari penilai pertama (misal: Guru)
+    const penilaiKey = Object.keys(dataAnak)[0];
+    const skor = dataAnak[penilaiKey].skor;
+
     let html = `
         <div class="header-lp">
-            <h2>📝 Laporan Perkembangan Karakter Santri</h2>
-            <p>MTs As Sunnah Kota Cirebon | Semester Ganjil 2025/2026</p>
+            <h2>LAPORAN PERKEMBANGAN KARAKTER SANTRI</h2>
+            <p style="font-size:12px; margin:2px;">MTs As Sunnah Kota Cirebon | Ganjil 2025/2026</p>
         </div>
 
         <div class="info-santri">
-            <div class="info-baris"><span class="info-label">Nama Santri</span>: ${nama}</div>
-            <div class="info-baris"><span class="info-label">Kelas</span>: ${kls}</div>
-            <div class="info-baris"><span class="info-label">Wali Kelas</span>: Fahrijal Umar, S.Pd.I., Gr.</div>
+            <div><b>Nama:</b> ${nama}</div>
+            <div><b>Kelas:</b> ${kls}</div>
+            <div><b>Wali Kelas:</b> Fahrijal Umar, S.Pd.I., Gr.</div>
+            <div><b>Tanggal:</b> ${tanggalSemua[0]}</div>
         </div>
 
         <div class="isi-narasi">
             <div class="section-title">🌟 Pendahuluan</div>
-            <p>Laporan ini disusun berdasarkan observasi teman sebaya dan penilaian diri Ananda sendiri. Tujuannya adalah memberikan gambaran menyeluruh mengenai perkembangan karakter, kekuatan, serta area yang memerlukan pendampingan lanjutan.</p>
+            <p>Laporan ini merupakan hasil observasi perilaku harian. Tujuan laporan ini adalah memberikan gambaran menyeluruh mengenai perkembangan karakter Ananda.</p>
 
-            <div class="section-title">📈 Rangkuman Hasil Observasi</div>
-            <p>Secara keseluruhan, Ananda ${nama.split(' ')[0]} menunjukkan perkembangan yang stabil. Terlihat adanya potensi karakter yang kuat, disertai kesadaran diri yang baik—terutama pada aspek yang menurutnya perlu diperbaiki.</p>
+            <div class="section-title">✅ Kekuatan & Aspek Karakter</div>
+            <div class="aspek-grid">
+    `;
 
-            <div class="section-title">✅ Kekuatan Utama</div>
-            
+    // LOOPING SEMUA ASPEK AGAR MASUK SEMUA
+    aspekList.forEach(a => {
+        let n = parseInt(skor[a] || 3);
+        let ket = n >= 4 ? "Sangat Baik" : (n >= 3 ? "Baik" : "Cukup");
+        html += `
             <div class="box-aspek">
-                <div class="judul-aspek">Perkataan - Cukup</div>
-                <div class="nilai-info">(Berdasarkan Mayoritas Penilaian Teman Sebaya)</div>
-                <p>${narasiBank.Perkataan.cukup} Terdapat potensi unggul dalam cara Ananda berinteraksi secara harian.</p>
+                <div class="judul-aspek"><span>${a}</span> <span class="skor-badge">Status: ${ket}</span></div>
+                <p style="margin:2px 0;">Ananda menunjukkan kualitas ${a.toLowerCase()} yang ${ket.toLowerCase()} dalam interaksi harian di sekolah.</p>
             </div>
+        `;
+    });
 
-            <div class="section-title">💡 Area Perhatian Khusus</div>
-            
-            <div class="box-aspek">
-                <div class="judul-aspek">1. Akhlak</div>
-                <div class="nilai-info">Penilaian Teman: Cukup Baik | Penilaian Diri: Kurang</div>
-                <p>${narasiBank.Akhlak.gap_rendah_diri} Wali kelas akan membantu membangun kepercayaan diri Ananda.</p>
+    html += `
             </div>
-
-            <div class="section-title">🤝 Tindak Lanjut dan Sinergi</div>
-            <p><b>Dukungan Rumah:</b> Mohon membiasakan Ananda menjaga disiplin harian dan ibadah wajib. Dorong komunikasi terbuka agar Ananda nyaman berbagi kekhawatirannya.</p>
+            <div class="section-title">🤝 Tindak Lanjut</div>
+            <p>Diharapkan orang tua tetap memberikan penguatan positif di rumah agar konsistensi karakter Ananda tetap terjaga.</p>
         </div>
 
         <div class="footer-ttd">
@@ -162,6 +203,14 @@ async function generateLaporan() {
     `;
 
     document.getElementById('konten-laporan').innerHTML = html;
+}
+
+function exportExcel() {
+    const kls = document.getElementById('pilih-kls').value;
+    if(!kls) return alert("Pilih Kelas!");
+    const table = document.getElementById("tabel-rekap");
+    const wb = XLSX.utils.table_to_book(table);
+    XLSX.writeFile(wb, `Rekap_Karakter_${kls}.xlsx`);
 }
 </script>
 </body>
