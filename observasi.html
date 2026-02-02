@@ -1,193 +1,173 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Observasi & Rekap Karakter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBSERVASI KOLEKTIF | v8</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #10b981; --bg: #f1f5f9; --white: #ffffff; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: #334155; }
+        :root { --primary: #1f6f51; --bg: #f4f7f6; --blue: #2563eb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); padding: 10px; display: flex; justify-content: center; }
+        .wadah { width: 100%; max-width: 700px; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         
-        /* Menu Navigasi */
-        nav { 
-            background: var(--white); 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 15px 0; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            position: sticky; top: 0; z-index: 1000;
-        }
-        nav a { 
-            text-decoration: none; 
-            color: #64748b; 
-            font-weight: 700; 
-            font-size: 14px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-        nav a.active { background: var(--primary); color: white; }
-        nav a:hover:not(.active) { background: #f1f5f9; }
+        header h1 { color: var(--primary); font-size: 18px; text-align: center; margin-bottom: 15px; font-weight: 800; }
+        
+        /* Menu Navigasi Sesuai Request (Nyambung ke Laporan) */
+        nav { display: flex; gap: 8px; margin-bottom: 15px; background: #eee; padding: 4px; border-radius: 10px; }
+        .nav-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; font-size: 12px; cursor: pointer; color: #666; text-align: center; text-decoration: none; }
+        .nav-btn.active { background: var(--primary); color: white; }
 
-        header { padding: 25px 20px; text-align: center; }
-        .brand { font-weight: 800; color: var(--primary); font-size: 1.4rem; letter-spacing: -0.5px; }
+        .form-grup { margin-bottom: 12px; }
+        label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 4px; }
+        select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 13px; outline: none; }
+        
+        #pilih-santri-box { width: 100%; max-height: 180px; overflow-y: auto; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; background: #fff; }
+        .item-santri { display: flex; align-items: center; padding: 8px 12px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .item-santri span { margin-left: 10px; font-size: 13px; color: #333; flex: 1; }
 
-        .card { background: white; margin: 0 15px 15px 15px; padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        h3 { font-size: 14px; margin-bottom: 15px; color: var(--primary); border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
+        .baris-aspek { display: flex; align-items: center; justify-content: space-between; background: #fafafa; padding: 8px 15px; border-radius: 10px; margin-bottom: 6px; border: 1px solid #eee; }
+        .judul-aspek { font-size: 10px; font-weight: 700; color: var(--primary); width: 40%; text-transform: uppercase; }
+        .rating { display: flex; gap: 12px; }
+        .star { cursor: pointer; font-size: 24px; color: #ddd; transition: 0.2s; }
+        .star.active[data-val="1"] { color: #ef4444; }
+        .star.active[data-val="2"] { color: #f97316; }
+        .star.active[data-val="3"] { color: #fbbf24; }
+        .star.active[data-val="4"] { color: #22c55e; }
 
-        label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 6px; color: #94a3b8; letter-spacing: 0.5px; }
-        select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 14px; margin-bottom: 20px; outline: none; transition: 0.3s; }
-        select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .aspek-item { background: #ffffff; padding: 12px; border-radius: 12px; border: 1px solid #f1f5f9; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        .aspek-name { font-size: 12px; font-weight: 700; margin-bottom: 8px; display: block; color: #475569; }
-
-        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 25px; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); transition: 0.3s; }
-        .btn-save:active { transform: scale(0.98); }
-
-        #overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(4px); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f1f5f9; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .btn-aksi { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; font-size: 14px; margin-top: 8px; }
+        .btn-simpan { background: var(--primary); color: white; }
+        
+        #overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; flex-direction: column; }
+        .spinner { width: 30px; height: 30px; border: 3px solid #ddd; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<nav>
-    <a href="observasi.html" class="active">📝 INPUT OBSERVASI</a>
-    <a href="laporan.html">📊 LIHAT REKAP (LAPORAN)</a>
-</nav>
+<div id="overlay"><div class="spinner"></div><p style="margin-top:10px; font-weight:700; color:var(--primary)">MENYIMPAN DATA...</p></div>
 
-<div id="overlay"><div class="spinner"></div><p style="margin-top:15px; font-weight: 600;">Memproses Data...</p></div>
+<div class="wadah">
+    <header><h1>OBSERVASI KARAKTER</h1></header>
 
-<header>
-    <div class="brand">OBSERVASI KARAKTER</div>
-    <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Input Penilaian Karakter Teman Sebaya</p>
-</header>
+    <nav>
+        <div class="nav-btn active">INPUT DATA</div>
+        <a href="laporan.html" class="nav-btn">📊 REKAP (LAPORAN)</a>
+    </nav>
 
-<div class="card">
-    <h3>1. Data Diri Penilai</h3>
-    <label>KELAS ANDA</label>
-    <select id="pilih-kls" onchange="muatDaftarNama()">
-        <option value="">-- Pilih Kelas --</option>
-        <optgroup label="KELAS 7">
-            <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-        </optgroup>
-        <optgroup label="KELAS 8">
-            <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-        </optgroup>
-        <optgroup label="KELAS 9">
-            <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-        </optgroup>
-    </select>
-
-    <label>NAMA ANDA</label>
-    <select id="nama-penilai" onchange="muatDaftarTeman()">
-        <option value="">-- Pilih Nama Anda --</option>
-    </select>
-</div>
-
-<div id="area-penilaian" class="card" style="display:none;">
-    <h3>2. Penilaian Teman</h3>
-    <label>PILIH TEMAN YANG DINILAI</label>
-    <select id="nama-teman" onchange="cekForm()"></select>
-
-    <div id="inputs" style="display:none;">
-        <div class="form-grid" id="container-aspek"></div>
-        <button class="btn-save" onclick="simpanObservasi()">KIRIM PENILAIAN</button>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="form-grup">
+            <label>KELAS</label>
+            <select id="pilih-kelas" onchange="loadSantri()">
+                <option value="">Pilih Kelas</option>
+                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+            </select>
+        </div>
+        <div class="form-grup">
+            <label>NAMA PENILAI</label>
+            <select id="nama-penilai">
+                <option value="">Pilih Nama</option>
+            </select>
+        </div>
     </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+        <label>PILIH BANYAK ANAK (YANG DINILAI)</label>
+        <button onclick="pilihSemuaAnak(true)" style="border:none; background:none; color:var(--blue); font-weight:700; cursor:pointer; font-size:10px;">☑ PILIH SEMUA</button>
+    </div>
+    <div id="pilih-santri-box"></div>
+    
+    <button onclick="setSemua4()" style="width:100%; padding:8px; margin-bottom:10px; border-radius:8px; border:1px dashed var(--primary); color:var(--primary); font-weight:700; cursor:pointer; font-size: 11px; background: #fff;">⚡ SET SEMUA 4 BINTANG</button>
+
+    <div id="area-aspek">
+        </div>
+
+    <button class="btn-aksi btn-simpan" onclick="simpanKolektif()">💾 SIMPAN KOLEKTIF</button>
 </div>
 
 <script>
-const DB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
-const aspekList = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
+    const FIREBASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+    const aspekList = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
 
-let dataSantriLengkap = [];
-
-async function muatDaftarNama() {
-    const kls = document.getElementById('pilih-kls').value;
-    if(!kls) return;
-    document.getElementById('overlay').style.display = 'flex';
-    const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-    dataSantriLengkap = await res.json();
-    const selectPenilai = document.getElementById('nama-penilai');
-    selectPenilai.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
-    dataSantriLengkap.forEach(s => selectPenilai.innerHTML += `<option value="${s.nama}">${s.nama}</option>`);
-    document.getElementById('overlay').style.display = 'none';
-}
-
-async function muatDaftarTeman() {
-    const penilai = document.getElementById('nama-penilai').value;
-    const kls = document.getElementById('pilih-kls').value;
-    if(!penilai) return document.getElementById('area-penilaian').style.display = 'none';
-
-    document.getElementById('overlay').style.display = 'flex';
-    const tgl = new Date().toISOString().split('T')[0];
-    const resSudah = await fetch(`${DB_URL}/observasi/${kls}/${tgl}.json`);
-    const dataSudah = await resSudah.json() || {};
-    
-    let temanSudah = [];
-    Object.keys(dataSudah).forEach(namaTarget => {
-        if(dataSudah[namaTarget][penilai.replace(/\./g, '_')]) temanSudah.push(namaTarget);
-    });
-
-    const selectTeman = document.getElementById('nama-teman');
-    selectTeman.innerHTML = '<option value="">-- Pilih Teman --</option>';
-    let adaTeman = false;
-    dataSantriLengkap.forEach(s => {
-        if(s.nama !== penilai && !temanSudah.includes(s.nama)) {
-            selectTeman.innerHTML += `<option value="${s.nama}">${s.nama}</option>`;
-            adaTeman = true;
-        }
-    });
-    document.getElementById('area-penilaian').style.display = 'block';
-    if(!adaTeman) selectTeman.innerHTML = '<option value="">Semua teman sudah dinilai hari ini!</option>';
-    document.getElementById('overlay').style.display = 'none';
-}
-
-function cekForm() {
-    const target = document.getElementById('nama-teman').value;
-    const inputArea = document.getElementById('inputs');
-    if(!target) return inputArea.style.display = 'none';
-    inputArea.style.display = 'block';
-    const container = document.getElementById('container-aspek');
-    container.innerHTML = aspekList.map(a => `
-        <div class="aspek-item">
-            <span class="aspek-name">${a}</span>
-            <select id="val-${a}">
-                <option value="4">4 - Sangat Baik</option>
-                <option value="3">3 - Baik</option>
-                <option value="2">2 - Cukup</option>
-                <option value="1">1 - Kurang</option>
-            </select>
+    // Render Aspek Otomatis
+    const areaAspek = document.getElementById('area-aspek');
+    areaAspek.innerHTML = aspekList.map(a => `
+        <div class="baris-aspek" data-aspek="${a}">
+            <div class="judul-aspek">${a}</div>
+            <div class="rating">
+                <span class="star" data-val="1" onclick="klikStar(this,1)">★</span>
+                <span class="star" data-val="2" onclick="klikStar(this,2)">★</span>
+                <span class="star" data-val="3" onclick="klikStar(this,3)">★</span>
+                <span class="star" data-val="4" onclick="klikStar(this,4)">★</span>
+            </div>
         </div>
     `).join('');
-}
 
-async function simpanObservasi() {
-    const kls = document.getElementById('pilih-kls').value;
-    const penilai = document.getElementById('nama-penilai').value;
-    const teman = document.getElementById('nama-teman').value;
-    const tgl = new Date().toISOString().split('T')[0];
-    const idPenilai = penilai.replace(/\./g, '_');
+    async function loadSantri() {
+        const k = document.getElementById('pilih-kelas').value;
+        const b = document.getElementById('pilih-santri-box');
+        const p = document.getElementById('nama-penilai');
+        if(!k) return;
+        b.innerHTML = '<p style="text-align:center; padding:10px; font-size:12px;">Memuat...</p>';
+        const r = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${k}`);
+        const data = await r.json();
+        
+        b.innerHTML = '';
+        p.innerHTML = '<option value="">Pilih Nama</option>';
+        data.forEach(s => {
+            // Dropdown Penilai
+            p.innerHTML += `<option value="${s.nama}">${s.nama}</option>`;
+            // Checkbox Anak yang dinilai
+            const d = document.createElement('div');
+            d.className = 'item-santri';
+            d.innerHTML = `<input type="checkbox" class="cb-santri" value="${s.nipd}" data-nama="${s.nama}"> <span>${s.nama}</span>`;
+            d.onclick = (e) => { if(e.target.tagName !== 'INPUT') { const c = d.querySelector('input'); c.checked = !c.checked; } };
+            b.appendChild(d);
+        });
+    }
 
-    document.getElementById('overlay').style.display = 'flex';
-    let skor = {};
-    aspekList.forEach(a => skor[a] = document.getElementById(`val-${a}`).value);
+    function pilihSemuaAnak(v) { document.querySelectorAll('.cb-santri').forEach(c => c.checked = v); }
 
-    // Simpan ke Firebase dengan struktur yang dibaca laporan.html
-    await fetch(`${DB_URL}/observasi/${kls}/${tgl}/${teman}/${idPenilai}.json`, {
-        method: 'PUT',
-        body: JSON.stringify({ skor: skor, timestamp: Date.now() })
-    });
+    function klikStar(el, n) {
+        const p = el.parentElement;
+        p.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n));
+        p.parentElement.setAttribute('data-nilai', n);
+    }
 
-    alert("Berhasil menyimpan penilaian untuk " + teman);
-    document.getElementById('inputs').style.display = 'none';
-    muatDaftarTeman();
-}
+    function setSemua4() { document.querySelectorAll('.baris-aspek').forEach(b => klikStar(b.querySelectorAll('.star')[3], 4)); }
+
+    async function simpanKolektif() {
+        const cbs = document.querySelectorAll('.cb-santri:checked');
+        const asp = document.querySelectorAll('.baris-aspek');
+        const kls = document.getElementById('pilih-kelas').value;
+        const penilai = document.getElementById('nama-penilai').value;
+        
+        if(cbs.length === 0 || !penilai) return alert("Pilih Penilai dan Santri yang dinilai!");
+        
+        document.getElementById('overlay').style.display = 'flex';
+        const tgl = new Date().toISOString().split('T')[0];
+        const penilaiId = penilai.replace(/\./g, '_');
+
+        let skorObj = {};
+        asp.forEach(a => {
+            skorObj[a.getAttribute('data-aspek')] = a.getAttribute('data-nilai') || 4;
+        });
+
+        for(let c of cbs) {
+            const namaTarget = c.getAttribute('data-nama');
+            await fetch(`${FIREBASE_URL}/observasi/${kls}/${tgl}/${namaTarget}/${penilaiId}.json`, { 
+                method: 'PUT', 
+                body: JSON.stringify({ skor: skorObj, timestamp: Date.now() }) 
+            });
+        }
+        
+        document.getElementById('overlay').style.display = 'none';
+        alert("Berhasil simpan " + cbs.length + " data!");
+        location.reload();
+    }
 </script>
 </body>
 </html>
