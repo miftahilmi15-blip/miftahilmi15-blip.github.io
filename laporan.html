@@ -171,10 +171,18 @@ function prosesData() {
             let narasi = `Mayoritas teman menilai aspek ${a.toLowerCase()} Ananda berada pada level ${ket(d.modus).toLowerCase()}. `;
             narasi += d.diri < d.modus ? "Ananda cenderung rendah hati dalam menilai diri sendiri." : (d.diri > d.modus ? "Ananda memiliki percaya diri yang kuat namun perlu penyesuaian." : "Penilaian diri Ananda sudah selaras dengan pengamatan sosial.");
             
-            let item = `<div class="box-aspek"><b>${a}</b><br><span style="font-size:12px; text-align:justify; display:block;">${narasi}</span></div>`;
-            if(d.modus >= 3) { htmlKekuatan += item; listKekuatan.push(a.toLowerCase()); }
-            else { htmlPerhatian += item; listPerhatian.push(a.toLowerCase()); }
-        });
+            let item = `
+    <div class="box-aspek">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <b>${a} – ${ket(d.modus)}</b>
+            <span style="font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">
+                Statistik Teman: (SB:${d.c[4]} B:${d.c[3]} C:${d.c[2]} K:${d.c[1]})
+            </span>
+        </div>
+        <span style="font-size:12px; text-align:justify; display:block; margin-top: 5px;">
+            ${narasi} <i>(Penilaian Diri: ${ket(d.diri)})</i>
+        </span>
+    </div>`;
 
         container.innerHTML += `
             <div class="kertas-laporan">
