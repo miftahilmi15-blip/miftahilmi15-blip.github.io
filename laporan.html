@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cetak Laporan Karakter Santri</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #10b981; --bg: #f1f5f9; --text: #1e293b; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+
+        /* Panel Kontrol (Tidak Ikut Diprint) */
+        .no-print { 
+            max-width: 800px; margin: 0 auto 20px auto; 
+            background: white; padding: 20px; border-radius: 12px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
+        }
+        .controls { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 10px; }
+        select, button { padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; outline: none; }
+        button { background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        button:hover { opacity: 0.9; }
+        .btn-print { background: #64748b; }
+
+        /* Kertas Laporan */
+        .kertas-laporan { 
+            background: white; width: 210mm; min-height: 297mm; 
+            margin: auto; padding: 25mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); 
+            position: relative;
+        }
+
+        .header-lp { text-align: center; border-bottom: 3px double #334155; padding-bottom: 15px; margin-bottom: 30px; }
+        .header-lp h1 { margin: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-lp p { margin: 5px 0 0 0; font-size: 14px; color: #64748b; }
+
+        .info-santri { margin-bottom: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; }
+        .info-santri div { padding: 5px 0; border-bottom: 1px solid #f1f5f9; }
+
+        .section-title { 
+            background: #f8fafc; padding: 8px 12px; border-left: 4px solid var(--primary); 
+            font-size: 16px; font-weight: 700; margin: 25px 0 15px 0; 
+        }
+        
+        .isi-narasi { line-height: 1.7; text-align: justify; font-size: 14px; }
+        .aspek-item { margin-bottom: 15px; }
+        .aspek-item b { color: var(--primary); text-transform: uppercase; font-size: 13px; }
+
+        .footer-ttd { margin-top: 60px; display: flex; justify-content: flex-end; }
+        .ttd-box { text-align: center; width: 200px; font-size: 14px; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none; }
+            .kertas-laporan { box-shadow: none; margin: 0; width: 100%; padding: 15mm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <h3 style="margin-top:0; font-size: 16px;">🖨️ Generator Laporan Narasi</h3>
+    <div class="controls">
+        <select id="pilih-kls">
+            <option value="">-- Pilih Kelas --</option>
+            <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+            <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+            <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+        </select>
+        <select id="pilih-nama">
+            <option value="">-- Pilih Santri --</option>
+        </select>
+        <button onclick="generateLaporan()">PROSES NARASI</button>
+        <button class="btn-print" onclick="window.print()">PRINT / PDF</button>
+    </div>
+</div>
+
+<div id="konten-laporan" class="kertas-laporan">
+    <div style="text-align:center; padding-top:150px; color:#cbd5e1;">
+        <p>Silakan pilih data dan klik "PROSES NARASI" untuk melihat laporan.</p>
+    </div>
+</div>
+
+<script>
+const DB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
+const aspekList = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
+
+// BANK KALIMAT LENGKAP (Logika 1-4)
+const bankNarasi = {
+    "Perkataan": {
+        4: "Menjadi teladan dalam menjaga lisan, tutur katanya sangat santun, menyejukkan, dan memberikan pengaruh positif.",
+        3: "Mampu menjaga ucapan dengan baik, berkomunikasi secara positif, dan sopan dalam berinteraksi harian.",
+        2: "Sudah cukup baik dalam berbicara, namun sesekali masih perlu diingatkan untuk konsisten menjaga kesantunan.",
+        1: "Memerlukan bimbingan intensif dalam membiasakan etika berbicara dan kontrol lisan saat berinteraksi."
+    },
+    "Berpakaian": {
+        4: "Sangat rapi, bersih, dan konsisten mematuhi standar kerapian pondok tanpa perlu diingatkan.",
+        3: "Berpakaian rapi dan bersih sesuai aturan, menunjukkan kesadaran diri yang baik terhadap kerapian.",
+        2: "Kerapian berpakaian sudah cukup, namun terkadang masih perlu diingatkan untuk lebih detail.",
+        1: "Perlu bimbingan rutin dalam hal kerapian dan kebersihan pakaian sesuai standar yang ditetapkan."
+    },
+    "Akhlak": {
+        4: "Menunjukkan akhlakul karimah yang luar biasa, sangat hormat kepada guru dan peduli kepada teman.",
+        3: "Memiliki sikap yang sopan, menghargai sesama, dan berperilaku baik dalam lingkungan sekolah.",
+        2: "Perilaku sudah cukup baik, namun perlu peningkatan dalam konsistensi sikap sopan santun.",
+        1: "Membutuhkan perhatian dan pembinaan khusus dalam pengembangan karakter serta sikap terhadap lingkungan."
+    },
+    "Disiplin": {
+        4: "Sangat disiplin dalam mengikuti seluruh jadwal kegiatan dan memiliki manajemen waktu yang sangat baik.",
+        3: "Mampu mengikuti peraturan sekolah dengan tertib dan hadir tepat waktu dalam setiap kegiatan.",
+        2: "Sudah mulai disiplin, namun sesekali masih memerlukan dorongan untuk mematuhi aturan tertentu.",
+        1: "Sangat memerlukan pendampingan agar dapat membiasakan diri hidup disiplin dan taat aturan."
+    },
+    "Jujur": {
+        4: "Memiliki integritas tinggi, selalu berkata jujur dan berani mengakui kesalahan dengan sportif.",
+        3: "Menunjukkan kejujuran dalam perbuatan maupun perkataan di berbagai situasi.",
+        2: "Sudah bersikap jujur, namun terkadang masih ragu dalam menunjukkan keterbukaan.",
+        1: "Perlu bimbingan khusus untuk menanamkan nilai kejujuran sebagai dasar karakter utama."
+    },
+    "Tanggung Jawab": {
+        4: "Sangat bertanggung jawab atas tugas yang diberikan dan mampu menyelesaikannya dengan hasil maksimal.",
+        3: "Melaksanakan tugas dan amanah dengan baik serta menunjukkan rasa tanggung jawab yang stabil.",
+        2: "Sudah berusaha bertanggung jawab, namun terkadang memerlukan pengawasan agar tugas tuntas.",
+        1: "Memerlukan motivasi kuat untuk mulai belajar mengemban tanggung jawab pribadi maupun kelompok."
+    },
+    "Ibadah": {
+        4: "Menunjukkan kesadaran ibadah yang luar biasa, istiqomah, dan menjadi penggerak bagi teman lainnya.",
+        3: "Konsisten melaksanakan ibadah wajib dengan baik dan mulai terbiasa dengan ibadah sunnah.",
+        2: "Pelaksanaan ibadah sudah cukup lancar, namun perlu ditingkatkan semangat dan kekhusyuannya.",
+        1: "Memerlukan pendampingan lebih dekat untuk meningkatkan kedisiplinan dan kesadaran dalam beribadah."
+    },
+    "Peduli": {
+        4: "Memiliki empati yang sangat tinggi, ringan tangan membantu sesama, dan aktif dalam kegiatan sosial.",
+        3: "Menunjukkan kepedulian yang baik terhadap kondisi teman dan lingkungan sekitarnya.",
+        2: "Cukup peduli, namun terkadang masih perlu diarahkan untuk lebih peka terhadap kebutuhan sesama.",
+        1: "Perlu bimbingan untuk menumbuhkan rasa empati dan kepedulian sosial dalam kehidupan bermasyarakat."
+    }
+};
+
+// Mengambil Nama dari Folder Observasi
+document.getElementById('pilih-kls').onchange = async function() {
+    const kls = this.value;
+    if(!kls) return;
+    const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
+    const data = await res.json() || {};
+    
+    let listNama = new Set();
+    Object.keys(data).forEach(tgl => {
+        Object.keys(data[tgl]).forEach(nama => listNama.add(nama));
+    });
+
+    const select = document.getElementById('pilih-nama');
+    select.innerHTML = '<option value="">-- Pilih Nama --</option>';
+    Array.from(listNama).sort().forEach(n => select.innerHTML += `<option>${n}</option>`);
+};
+
+async function generateLaporan() {
+    const kls = document.getElementById('pilih-kls').value;
+    const nama = document.getElementById('pilih-nama').value;
+    if(!nama) return alert("Pilih Santri dulu!");
+
+    const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
+    const dataKelas = await res.json() || {};
+    
+    let totalSkor = {};
+    let jumlahData = 0;
+
+    // Hitung Rata-rata dari semua tanggal yang ada
+    Object.keys(dataKelas).forEach(tgl => {
+        if(dataKelas[tgl][nama]) {
+            const s = dataKelas[tgl][nama].skor;
+            aspekList.forEach(a => {
+                if(!totalSkor[a]) totalSkor[a] = 0;
+                // Gabungan nilai Diri dan Teman
+                totalSkor[a] += (parseInt(s[a].diri) + parseInt(s[a].teman)) / 2;
+            });
+            jumlahData++;
+        }
+    });
+
+    let html = `
+        <div class="header-lp">
+            <h1>Laporan Perkembangan Karakter Santri</h1>
+            <p>MTs AS SUNNAH KOTA CIREBON | Tahun Pelajaran 2025/2026</p>
+        </div>
+
+        <div class="info-santri">
+            <div><b>Nama Santri:</b> ${nama}</div>
+            <div><b>Kelas:</b> ${kls}</div>
+            <div><b>Tanggal Cetak:</b> ${new Date().toLocaleDateString('id-ID')}</div>
+            <div><b>Wali Kelas:</b> (Diisi Manual)</div>
+        </div>
+
+        <div class="isi-lp">
+            <div class="section-title">🌟 Pendahuluan</div>
+            <p>Laporan ini merupakan rangkuman dari hasil observasi berkelanjutan yang melibatkan penilaian mandiri oleh santri dan observasi teman sebaya. Laporan ini bertujuan untuk memberikan refleksi bagi Ananda dan informasi bagi orang tua dalam proses pembinaan karakter.</p>
+
+            <div class="section-title">✅ Kekuatan Utama</div>
+            <p>Berdasarkan hasil observasi, berikut adalah aspek-aspek karakter unggul yang ditunjukkan oleh Ananda:</p>
+    `;
+
+    let adaBimbingan = false;
+    aspekList.forEach(a => {
+        let rata = Math.round(totalSkor[a] / jumlahData) || 3;
+        if(rata >= 3) {
+            html += `<div class="aspek-item"><b>${a}:</b> ${bankNarasi[a][rata]}</div>`;
+        } else {
+            adaBimbingan = true;
+        }
+    });
+
+    html += `<div class="section-title">💡 Rekomendasi & Tindak Lanjut</div>`;
+    if(adaBimbingan) {
+        html += `<p>Beberapa aspek yang memerlukan perhatian dan pendampingan lebih lanjut antara lain:</p><ul>`;
+        aspekList.forEach(a => {
+            let rata = Math.round(totalSkor[a] / jumlahData) || 3;
+            if(rata <= 2) {
+                html += `<li><b>${a}:</b> ${bankNarasi[a][rata]}</li>`;
+            }
+        });
+        html += `</ul>`;
+    } else {
+        html += `<p>Ananda secara umum telah menunjukkan perkembangan karakter yang sangat baik. Kami merekomendasikan agar Ananda terus mempertahankan konsistensi ini dan mulai menjadi tutor sebaya bagi teman-temannya.</p>`;
+    }
+
+    html += `
+            <p style="margin-top:20px;">Dukungan positif dari orang tua di rumah akan sangat memperkuat pertumbuhan karakter Ananda menjadi pribadi yang lebih matang.</p>
+        </div>
+
+        <div class="footer-ttd">
+            <div class="ttd-box">
+                <p>Cirebon, ${new Date().toLocaleDateString('id-ID')}</p>
+                <p>Wali Kelas,</p>
+                <br><br><br><br>
+                <p><b>( ____________________ )</b></p>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('konten-laporan').innerHTML = html;
+}
+</script>
+</body>
+</html>
