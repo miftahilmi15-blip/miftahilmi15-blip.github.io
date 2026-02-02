@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sistem Laporan Karakter MTs As Sunnah</title>
+    <title>E-SANTRI | Generator Laporan Narasi</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -19,42 +19,41 @@
         .controls { display: grid; grid-template-columns: 1fr 1fr auto auto auto; gap: 10px; align-items: end; }
         label { font-size: 11px; font-weight: 700; color: #64748b; }
         select, button { padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; outline: none; }
-        button { background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; }
+        button { background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn-excel { background: #16a34a; }
         .btn-print { background: #475569; }
 
-        /* Kertas Laporan */
+        /* KERTAS LAPORAN (MIRIP DOCX) */
         .kertas-laporan { 
             background: white; width: 210mm; min-height: 297mm; 
-            margin: auto; padding: 15mm 20mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); 
+            margin: auto; padding: 20mm 25mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); 
         }
 
         .header-lp { text-align: center; border-bottom: 2px solid #1e293b; padding-bottom: 10px; margin-bottom: 20px; }
         .header-lp h2 { margin: 0; font-size: 16px; text-transform: uppercase; }
         
-        .info-santri { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 12px; margin-bottom: 20px; border: 1px solid #eee; padding: 10px; border-radius: 5px; }
+        .info-santri { font-size: 13px; margin-bottom: 25px; line-height: 1.6; }
         
-        .section-title { background: #f8fafc; padding: 5px 10px; font-weight: 800; font-size: 13px; margin: 15px 0 8px 0; border-left: 4px solid var(--primary); }
+        .section-title { font-weight: 800; font-size: 14px; margin: 20px 0 10px 0; display: flex; align-items: center; gap: 10px; }
+        .isi-narasi { font-size: 13px; line-height: 1.7; text-align: justify; }
         
-        .isi-narasi { font-size: 12px; line-height: 1.5; text-align: justify; }
-        .aspek-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        .box-aspek { border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
-        .judul-aspek { font-weight: 700; color: var(--primary); display: flex; justify-content: space-between; }
-        .skor-badge { font-size: 10px; color: #64748b; }
+        .box-aspek { margin-bottom: 15px; }
+        .judul-aspek { font-weight: 700; border-bottom: 1px solid #eee; margin-bottom: 5px; padding-bottom: 2px; }
+        .label-skor { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; }
 
-        .footer-ttd { margin-top: 30px; display: flex; justify-content: flex-end; }
-        .ttd-box { text-align: center; width: 200px; font-size: 12px; }
+        .footer-ttd { margin-top: 50px; display: flex; justify-content: flex-end; }
+        .ttd-box { text-align: center; width: 250px; font-size: 13px; border-top: 1px solid transparent; }
 
-        /* Style Tabel Rekap */
+        /* TABEL REKAP EXCEL */
         #area-rekap { margin-top: 30px; background: white; padding: 20px; border-radius: 12px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background: #f4f7f6; }
+        th { background: #f8fafc; }
 
         @media print {
             body { background: white; padding: 0; }
             .no-print, #area-rekap { display: none; }
-            .kertas-laporan { box-shadow: none; margin: 0; width: 100%; }
+            .kertas-laporan { box-shadow: none; margin: 0; width: 100%; padding: 15mm; }
         }
     </style>
 </head>
@@ -62,26 +61,26 @@
 
 <div class="no-print">
     <div class="controls">
-        <div><label>KELAS</label><br><select id="pilih-kls" onchange="muatDaftarNama()"><option value="">-- Pilih --</option><option>9A</option><option>9B</option><option>8A</option><option>7A</option></select></div>
-        <div><label>SANTRI</label><br><select id="pilih-nama"><option value="">Pilih Kelas Dulu</option></select></div>
-        <button onclick="generateLaporan()">📄 LIHAT PDF</button>
-        <button class="btn-excel" onclick="exportExcel()">📊 EXCEL REKAP</button>
+        <div><label>KELAS</label><br><select id="pilih-kls" onchange="muatDaftarSantri()"><option value="">-- Pilih --</option><option>9A</option><option>8A</option><option>7A</option></select></div>
+        <div><label>NAMA SANTRI</label><br><select id="pilih-nama"><option value="">Pilih Kelas Dulu</option></select></div>
+        <button onclick="generateLaporan()">📄 GENERATE PDF</button>
+        <button class="btn-excel" onclick="exportExcel()">📊 REKAP EXCEL</button>
         <button class="btn-print" onclick="window.print()">🖨️ PRINT</button>
     </div>
 </div>
 
 <div id="konten-laporan" class="kertas-laporan">
-    <p style="text-align:center; color:#ccc; margin-top:100px;">Data akan muncul di sini...</p>
+    <p style="text-align:center; color:#ccc; margin-top:150px;">Silakan pilih Santri dan klik "Generate PDF"</p>
 </div>
 
 <div id="area-rekap" class="no-print">
-    <h3 style="font-size: 14px;">Preview Rekap Kelas (Untuk Excel)</h3>
+    <h3 style="font-size: 14px;">Preview Rekap Nilai Kelas</h3>
     <table id="tabel-rekap">
         <thead>
             <tr>
                 <th>Nama Santri</th>
                 <th>Perkataan</th><th>Berpakaian</th><th>Akhlak</th><th>Disiplin</th>
-                <th>Jujur</th><th>Tjwb</th><th>Ibadah</th><th>Peduli</th>
+                <th>Jujur</th><th>Tanggung Jawab</th><th>Ibadah</th><th>Peduli</th>
                 <th>Rata-rata</th>
             </tr>
         </thead>
@@ -93,7 +92,8 @@
 const DB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
 const aspekList = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
 
-async function muatDaftarNama() {
+// FUNGSI MUAT NAMA SANTRI
+async function muatDaftarSantri() {
     const kls = document.getElementById('pilih-kls').value;
     const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
     const data = await res.json() || {};
@@ -104,93 +104,75 @@ async function muatDaftarNama() {
     select.innerHTML = '<option value="">-- Pilih Santri --</option>';
     Array.from(listNama).sort().forEach(n => select.innerHTML += `<option>${n}</option>`);
     
-    updateTabelRekap(data);
+    renderTableRekap(data);
 }
 
-function updateTabelRekap(data) {
-    const body = document.getElementById('body-rekap');
-    body.innerHTML = "";
-    
-    // Logic menghitung rata-rata per anak untuk rekap
-    let rekapAnak = {};
-    Object.keys(data).forEach(tgl => {
-        Object.keys(data[tgl]).forEach(nama => {
-            if(!rekapAnak[nama]) rekapAnak[nama] = { total: 0, count: 0, aspek: {} };
-            const entry = Object.values(data[tgl][nama])[0]; // Ambil salah satu penilai
-            if(entry && entry.skor) {
-                aspekList.forEach(a => {
-                    let v = parseInt(entry.skor[a] || 3);
-                    rekapAnak[nama].aspek[a] = v;
-                });
-            }
-        });
-    });
-
-    Object.keys(rekapAnak).sort().forEach(nama => {
-        let tr = `<tr><td>${nama}</td>`;
-        let sum = 0;
-        aspekList.forEach(a => {
-            let n = rekapAnak[nama].aspek[a] || 0;
-            tr += `<td>${n}</td>`;
-            sum += n;
-        });
-        tr += `<td>${(sum/8).toFixed(1)}</td></tr>`;
-        body.innerHTML += tr;
-    });
-}
-
+// FUNGSI GENERATE LAPORAN (Sesuai Template Docx)
 async function generateLaporan() {
     const kls = document.getElementById('pilih-kls').value;
     const nama = document.getElementById('pilih-nama').value;
-    if(!nama) return alert("Pilih Nama!");
+    if(!nama) return alert("Pilih Santri!");
 
     const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
     const data = await res.json() || {};
+    const tglTerakhir = Object.keys(data).sort().reverse()[0];
+    const dataAnak = data[tglTerakhir][nama];
     
-    // Ambil data terbaru (tanggal terakhir)
-    const tanggalSemua = Object.keys(data).sort().reverse();
-    const dataAnak = data[tanggalSemua[0]][nama];
-    // Ambil skor dari penilai pertama (misal: Guru)
+    // Asumsi: Kita ambil satu sampel penilaian (misal dari Wali Kelas/Guru)
     const penilaiKey = Object.keys(dataAnak)[0];
     const skor = dataAnak[penilaiKey].skor;
 
+    const getKet = (val) => val >= 4 ? "Sangat Baik" : (val >= 3 ? "Baik" : (val >= 2 ? "Cukup" : "Kurang"));
+
     let html = `
         <div class="header-lp">
-            <h2>LAPORAN PERKEMBANGAN KARAKTER SANTRI</h2>
-            <p style="font-size:12px; margin:2px;">MTs As Sunnah Kota Cirebon | Ganjil 2025/2026</p>
+            <h2>📝 Laporan Perkembangan Karakter Santri</h2>
+            <p style="font-size:12px; margin:2px;">MTs As Sunnah Kota Cirebon | Semester Ganjil 2025/2026</p>
         </div>
 
         <div class="info-santri">
-            <div><b>Nama:</b> ${nama}</div>
-            <div><b>Kelas:</b> ${kls}</div>
-            <div><b>Wali Kelas:</b> Fahrijal Umar, S.Pd.I., Gr.</div>
-            <div><b>Tanggal:</b> ${tanggalSemua[0]}</div>
+            <b>Nama Santri:</b> ${nama}<br>
+            <b>Kelas:</b> ${kls}<br>
+            <b>Wali Kelas:</b> Fahrijal Umar, S.Pd.I., Gr.
         </div>
 
         <div class="isi-narasi">
             <div class="section-title">🌟 Pendahuluan</div>
-            <p>Laporan ini merupakan hasil observasi perilaku harian. Tujuan laporan ini adalah memberikan gambaran menyeluruh mengenai perkembangan karakter Ananda.</p>
+            <p>Yth. Bapak/Ibu Wali Santri, Terima kasih atas kepercayaan Bapak/Ibu dalam mendampingi pendidikan karakter Ananda. Laporan ini disusun berdasarkan observasi untuk memberikan gambaran menyeluruh mengenai perkembangan karakter, kekuatan, serta area yang memerlukan pendampingan.</p>
 
-            <div class="section-title">✅ Kekuatan & Aspek Karakter</div>
-            <div class="aspek-grid">
+            <div class="section-title">📈 Rangkuman Hasil Observasi</div>
+            <p>Secara keseluruhan, Ananda menunjukkan perkembangan yang cukup baik dan stabil. Terlihat bahwa Ananda memiliki potensi karakter yang kuat disertai kesadaran diri yang baik—terutama pada aspek yang menurutnya perlu diperbaiki.</p>
+
+            <div class="section-title">✅ Kekuatan Utama</div>
+            <p>(Berdasarkan penilaian harian di sekolah):</p>
+            <div class="box-aspek">
+                <div class="judul-aspek">Perkataan – ${getKet(skor.Perkataan)}</div>
+                <p>Ananda mampu menjaga ucapan dan berkomunikasi dengan baik di lingkungan sekolah.</p>
+            </div>
+            <div class="box-aspek">
+                <div class="judul-aspek">Berpakaian – ${getKet(skor.Berpakaian)}</div>
+                <p>Penampilan Ananda dinilai rapi dan mampu mematuhi aturan kerapian pada banyak kesempatan.</p>
+            </div>
+
+            <div class="section-title">💡 Area Perhatian Khusus</div>
     `;
 
-    // LOOPING SEMUA ASPEK AGAR MASUK SEMUA
-    aspekList.forEach(a => {
-        let n = parseInt(skor[a] || 3);
-        let ket = n >= 4 ? "Sangat Baik" : (n >= 3 ? "Baik" : "Cukup");
+    // Looping Aspek Sisanya (Akhlak, Jujur, dll)
+    const sisaAspek = ["Akhlak", "Jujur", "Tanggung Jawab", "Peduli", "Ibadah", "Disiplin"];
+    sisaAspek.forEach((asp, index) => {
+        let val = parseInt(skor[asp] || 3);
         html += `
             <div class="box-aspek">
-                <div class="judul-aspek"><span>${a}</span> <span class="skor-badge">Status: ${ket}</span></div>
-                <p style="margin:2px 0;">Ananda menunjukkan kualitas ${a.toLowerCase()} yang ${ket.toLowerCase()} dalam interaksi harian di sekolah.</p>
+                <div class="judul-aspek">${index + 1}. ${asp}</div>
+                <span class="label-skor">Status: ${getKet(val)}</span>
+                <p>Diperlukan konsistensi lebih lanjut dalam aspek ${asp.toLowerCase()} agar selaras dengan harapan sekolah dan lingkungan.</p>
             </div>
         `;
     });
 
     html += `
-            </div>
-            <div class="section-title">🤝 Tindak Lanjut</div>
-            <p>Diharapkan orang tua tetap memberikan penguatan positif di rumah agar konsistensi karakter Ananda tetap terjaga.</p>
+            <div class="section-title">🤝 Tindak Lanjut & Sinergi</div>
+            <p><b>Dukungan Rumah:</b> Mohon Bapak/Ibu membiasakan Ananda menjaga disiplin harian dan ibadah wajib. Komunikasi terbuka akan membantu Ananda merasa lebih percaya diri dalam berproses.</p>
         </div>
 
         <div class="footer-ttd">
@@ -203,6 +185,35 @@ async function generateLaporan() {
     `;
 
     document.getElementById('konten-laporan').innerHTML = html;
+}
+
+// RENDER TABEL UNTUK EXCEL
+function renderTableRekap(data) {
+    const body = document.getElementById('body-rekap');
+    body.innerHTML = "";
+    let dataMap = {};
+
+    Object.keys(data).forEach(tgl => {
+        Object.keys(data[tgl]).forEach(nama => {
+            if(!dataMap[nama]) dataMap[nama] = { total: 0, count: 0, s: {} };
+            const entry = Object.values(data[tgl][nama])[0];
+            if(entry && entry.skor) {
+                aspekList.forEach(a => { dataMap[nama].s[a] = entry.skor[a] || 0; });
+            }
+        });
+    });
+
+    Object.keys(dataMap).sort().forEach(nama => {
+        let tr = `<tr><td>${nama}</td>`;
+        let sum = 0;
+        aspekList.forEach(a => {
+            let n = parseInt(dataMap[nama].s[a] || 0);
+            tr += `<td>${n}</td>`;
+            sum += n;
+        });
+        tr += `<td>${(sum/8).toFixed(1)}</td></tr>`;
+        body.innerHTML += tr;
+    });
 }
 
 function exportExcel() {
