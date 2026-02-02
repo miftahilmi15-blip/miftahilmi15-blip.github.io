@@ -3,183 +3,209 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Input Observasi Teman Sebaya</title>
+    <title>Rekap & Laporan Karakter</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #10b981; --bg: #f1f5f9; --white: #ffffff; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); padding-bottom: 50px; color: #334155; }
+        :root { --primary: #10b981; --bg: #f1f5f9; --text: #1e293b; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); margin: 0; padding: 20px; color: var(--text); }
+
+        header { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .nav-tabs { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; background: #eee; }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        select, button { padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; }
+        button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
+
+        /* Style Tabel Rekap Excel */
+        .table-container { background: white; padding: 15px; border-radius: 12px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { border: 1px solid #e2e8f0; padding: 10px; text-align: center; }
+        th { background: #f8fafc; }
+
+        /* Style Kertas PDF */
+        .kertas-pdf { 
+            display: none; background: white; width: 210mm; min-height: 297mm; 
+            margin: auto; padding: 20mm; box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+        }
+        .header-lp { text-align: center; border-bottom: 3px double #334155; padding-bottom: 10px; margin-bottom: 20px; }
+        .section-title { background: #f8fafc; padding: 8px; border-left: 4px solid var(--primary); font-weight: 700; margin: 20px 0 10px 0; }
         
-        header { background: var(--white); padding: 20px; text-align: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
-        .brand { font-weight: 800; color: var(--primary); font-size: 1.2rem; }
-
-        .card { background: white; margin: 15px; padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        h3 { font-size: 14px; margin-bottom: 15px; color: var(--primary); border-left: 4px solid var(--primary); padding-left: 10px; }
-
-        label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 5px; color: #64748b; }
-        select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 14px; margin-bottom: 15px; outline: none; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .aspek-item { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #eee; }
-        .aspek-name { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: block; }
-
-        .btn-save { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
-
-        #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 2000; }
-        .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @media print {
+            .no-print { display: none; }
+            .kertas-pdf { display: block !important; box-shadow: none; width: 100%; margin: 0; padding: 10mm; }
+        }
     </style>
 </head>
 <body>
 
-<div id="overlay"><div class="spinner"></div><p style="margin-top:10px">Menyimpan data...</p></div>
+<div class="no-print">
+    <header>
+        <h2 style="margin:0; color:var(--primary)">📊 REKAP & LAPORAN</h2>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchMenu('excel')">REKAP EXCEL</button>
+            <button class="tab-btn" onclick="switchMenu('pdf')">CETAK PDF (NARASI)</button>
+        </div>
+    </header>
 
-<header>
-    <div class="brand">🟢 OBSERVASI TEMAN SEBAYA</div>
-</header>
+    <div class="controls">
+        <select id="pilih-kls" onchange="loadSantri()">
+            <option value="">-- Pilih Kelas --</option>
+            <option>9A</option><option>9B</option><option>8A</option><option>7A</option>
+        </select>
+        <select id="pilih-bln">
+            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+        </select>
+    </div>
 
-<div class="card">
-    <h3>1. Identitas Penilai</h3>
-    <label>PILIH KELAS</label>
-    <select id="pilih-kls" onchange="muatDaftarNama()">
-        <option value="">-- Pilih Kelas --</option>
-        <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
-        <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
-        <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
-    </select>
+    <div id="panel-excel">
+        <button onclick="prosesRekapExcel()" style="width:100%">TAMPILKAN REKAP KELAS</button>
+        <button onclick="downloadExcel()" style="width:100%; background:#107c41; margin-top:10px;">📥 DOWNLOAD EXCEL (.xlsx)</button>
+        <div class="table-container" style="margin-top:20px;" id="wadah-rekap"></div>
+    </div>
 
-    <label>NAMA ANDA (PENILAI)</label>
-    <select id="nama-penilai" onchange="muatDaftarTeman()">
-        <option value="">-- Pilih Nama Anda --</option>
-    </select>
-</div>
-
-<div id="area-penilaian" class="card" style="display:none;">
-    <h3>2. Berikan Penilaian Untuk:</h3>
-    <label>PILIH TEMAN</label>
-    <select id="nama-teman" onchange="cekForm()"></select>
-
-    <div id="inputs" style="display:none;">
-        <p style="font-size: 11px; color: #ef4444; margin-bottom: 10px;">*Berikan nilai 1 (Kurang) sampai 4 (Sangat Baik)</p>
-        <div class="form-grid" id="container-aspek">
-            </div>
-        <button class="btn-save" onclick="simpanObservasi()">SIMPAN NILAI TEMAN</button>
+    <div id="panel-pdf" style="display:none;">
+        <select id="pilih-nama" style="width:100%; margin-bottom:10px;"><option value="">-- Pilih Santri --</option></select>
+        <button onclick="generatePDF()" style="width:100%">GENERATE NARASI PDF</button>
+        <button onclick="window.print()" style="width:100%; background:#64748b; margin-top:10px;">🖨️ PRINT / SAVE PDF</button>
     </div>
 </div>
 
+<div id="konten-pdf" class="kertas-pdf"></div>
+
 <script>
 const DB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
-const aspekList = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
+const aspek = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
 
-let dataSantriLengkap = [];
+const bankNarasi = {
+    "Perkataan": { 4: "Sangat santun dan teladan dalam menjaga lisan.", 3: "Mampu berkomunikasi dengan positif dan sopan.", 2: "Sudah cukup baik, perlu ditingkatkan kesantunannya.", 1: "Perlu bimbingan intensif dalam etika berbicara." },
+    "Berpakaian": { 4: "Sangat rapi dan konsisten sesuai standar pondok.", 3: "Berpakaian rapi dan bersih dalam kesehariannya.", 2: "Kerapian sudah cukup, perlu perhatian pada detail.", 1: "Perlu bimbingan rutin dalam hal kerapian pakaian." },
+    "Akhlak": { 4: "Menunjukkan akhlakul karimah yang luar biasa.", 3: "Berperilaku sopan dan menghargai sesama.", 2: "Sikap cukup baik, perlu peningkatan konsistensi.", 1: "Membutuhkan pembinaan karakter lebih intensif." },
+    "Disiplin": { 4: "Sangat disiplin dan tepat waktu dalam segala hal.", 3: "Mampu mengikuti aturan sekolah dengan tertib.", 2: "Mulai disiplin, sesekali masih perlu dorongan.", 1: "Sangat memerlukan pendampingan disiplin." },
+    "Jujur": { 4: "Memiliki integritas tinggi dan selalu jujur.", 3: "Menunjukkan kejujuran dalam perbuatannya.", 2: "Sudah jujur, terkadang masih ragu terbuka.", 1: "Perlu bimbingan menanamkan nilai kejujuran." },
+    "Tanggung Jawab": { 4: "Sangat bertanggung jawab atas setiap tugas.", 3: "Melaksanakan amanah dengan baik dan tuntas.", 2: "Bertanggung jawab namun perlu pengawasan.", 1: "Perlu motivasi untuk belajar mengemban tugas." },
+    "Ibadah": { 4: "Ibadah sangat istiqomah dan menjadi penggerak.", 3: "Konsisten melaksanakan ibadah wajib dengan baik.", 2: "Ibadah cukup lancar, perlu peningkatan khusyu.", 1: "Perlu bimbingan kesadaran dalam beribadah." },
+    "Peduli": { 4: "Empati sangat tinggi dan ringan tangan membantu.", 3: "Menunjukkan kepedulian yang baik kepada sesama.", 2: "Cukup peduli, perlu diarahkan untuk lebih peka.", 1: "Perlu bimbingan menumbuhkan rasa empati." }
+};
 
-async function muatDaftarNama() {
-    const kls = document.getElementById('pilih-kls').value;
-    if(!kls) return;
-    
-    document.getElementById('overlay').style.display = 'flex';
-    const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-    dataSantriLengkap = await res.json();
-
-    const selectPenilai = document.getElementById('nama-penilai');
-    selectPenilai.innerHTML = '<option value="">-- Pilih Nama Anda --</option>';
-    dataSantriLengkap.forEach(s => {
-        selectPenilai.innerHTML += `<option value="${s.nama}">${s.nama}</option>`;
-    });
-
-    document.getElementById('overlay').style.display = 'none';
+function switchMenu(m) {
+    document.getElementById('panel-excel').style.display = m === 'excel' ? 'block' : 'none';
+    document.getElementById('panel-pdf').style.display = m === 'pdf' ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
 }
 
-async function muatDaftarTeman() {
-    const penilai = document.getElementById('nama-penilai').value;
+async function loadSantri() {
     const kls = document.getElementById('pilih-kls').value;
-    if(!penilai) return document.getElementById('area-penilaian').style.display = 'none';
+    const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
+    const data = await res.json() || {};
+    let listNama = new Set();
+    Object.keys(data).forEach(tgl => {
+        Object.keys(data[tgl]).forEach(nama => listNama.add(nama));
+    });
+    const select = document.getElementById('pilih-nama');
+    select.innerHTML = '<option value="">-- Pilih Santri --</option>';
+    Array.from(listNama).sort().forEach(n => select.innerHTML += `<option>${n}</option>`);
+}
 
-    document.getElementById('overlay').style.display = 'flex';
+async function prosesRekapExcel() {
+    const kls = document.getElementById('pilih-kls').value;
+    const bln = document.getElementById('pilih-bln').value;
+    const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
+    const dataKelas = await res.json() || {};
     
-    // Ambil data yang sudah dinilai OLEH penilai ini hari ini
-    const tgl = new Date().toISOString().split('T')[0];
-    const resSudah = await fetch(`${DB_URL}/observasi/${kls}/${tgl}.json`);
-    const dataSudah = await resSudah.json() || {};
-    
-    // Cari teman mana saja yang sudah dinilai oleh si 'penilai'
-    let temanSudah = [];
-    Object.keys(dataSudah).forEach(namaTarget => {
-        if(dataSudah[namaTarget].penilai === penilai) {
-            temanSudah.push(namaTarget);
+    let rekap = {}; // { Nama: { Perkataan: [nilai], ... } }
+
+    Object.keys(dataKelas).forEach(tgl => {
+        if(tgl.split("-")[1] == parseInt(bln)) {
+            Object.keys(dataKelas[tgl]).forEach(namaSiswa => {
+                if(!rekap[namaSiswa]) rekap[namaSiswa] = {};
+                const masukan = dataKelas[tgl][namaSiswa];
+                Object.keys(masukan).forEach(key => {
+                    if(key.startsWith('skor_dari_')) {
+                        const s = masukan[key].skor;
+                        aspek.forEach(a => {
+                            if(!rekap[namaSiswa][a]) rekap[namaSiswa][a] = [];
+                            rekap[namaSiswa][a].push(parseInt(s[a]));
+                        });
+                    }
+                });
+            });
         }
     });
 
-    const selectTeman = document.getElementById('nama-teman');
-    selectTeman.innerHTML = '<option value="">-- Pilih Teman --</option>';
+    let html = `<table id="tabel-export"><thead><tr><th>NAMA SANTRI</th>`;
+    aspek.forEach(a => html += `<th>${a.toUpperCase()}</th>`);
+    html += `<th>RATA</th></tr></thead><tbody>`;
+
+    Object.keys(rekap).forEach(nama => {
+        html += `<tr><td style="text-align:left">${nama}</td>`;
+        let totalAll = 0;
+        aspek.forEach(a => {
+            let avg = rekap[nama][a].reduce((p,c) => p+c, 0) / rekap[nama][a].length;
+            html += `<td>${avg.toFixed(1)}</td>`;
+            totalAll += avg;
+        });
+        html += `<td style="font-weight:bold">${(totalAll/aspek.length).toFixed(1)}</td></tr>`;
+    });
+    document.getElementById('wadah-rekap').innerHTML = html + `</tbody></table>`;
+}
+
+async function generatePDF() {
+    const kls = document.getElementById('pilih-kls').value;
+    const nama = document.getElementById('pilih-nama').value;
+    const bln = document.getElementById('pilih-bln').value;
     
-    let adaTeman = false;
-    dataSantriLengkap.forEach(s => {
-        // LOGIKA: Bukan diri sendiri DAN belum dinilai oleh penilai ini
-        if(s.nama !== penilai && !temanSudah.includes(s.nama)) {
-            selectTeman.innerHTML += `<option value="${s.nama}">${s.nama}</option>`;
-            adaTeman = true;
+    // Logika hitung rata-rata sama seperti excel
+    const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
+    const dataKelas = await res.json() || {};
+    let skorAnak = {};
+    aspek.forEach(a => skorAnak[a] = []);
+
+    Object.keys(dataKelas).forEach(tgl => {
+        if(tgl.split("-")[1] == parseInt(bln) && dataKelas[tgl][nama]) {
+            Object.keys(dataKelas[tgl][nama]).forEach(key => {
+                if(key.startsWith('skor_dari_')) {
+                    const s = dataKelas[tgl][nama][key].skor;
+                    aspek.forEach(a => skorAnak[a].push(parseInt(s[a])));
+                }
+            });
         }
     });
 
-    document.getElementById('area-penilaian').style.display = 'block';
-    if(!adaTeman) selectTeman.innerHTML = '<option value="">Semua teman sudah dinilai!</option>';
-    
-    document.getElementById('overlay').style.display = 'none';
-}
-
-function cekForm() {
-    const target = document.getElementById('nama-teman').value;
-    const inputArea = document.getElementById('inputs');
-    if(!target) return inputArea.style.display = 'none';
-
-    inputArea.style.display = 'block';
-    const container = document.getElementById('container-aspek');
-    container.innerHTML = aspekList.map(a => `
-        <div class="aspek-item">
-            <span class="aspek-name">${a}</span>
-            <select id="val-${a}">
-                <option value="4">4 - Sangat Baik</option>
-                <option value="3">3 - Baik</option>
-                <option value="2">2 - Cukup</option>
-                <option value="1">1 - Kurang</option>
-            </select>
+    let html = `
+        <div class="header-lp">
+            <h1>LAPORAN KARAKTER SANTRI</h1>
+            <p>MTs AS SUNNAH KOTA CIREBON</p>
         </div>
-    `).join('');
+        <p><b>Nama:</b> ${nama} | <b>Kelas:</b> ${kls}</p>
+        <div class="section-title">KEKUATAN UTAMA</div>`;
+    
+    aspek.forEach(a => {
+        let rata = Math.round(skorAnak[a].reduce((p,c)=>p+c,0) / skorAnak[a].length) || 3;
+        if(rata >= 3) html += `<p><b>${a}:</b> ${bankNarasi[a][rata]}</p>`;
+    });
+
+    html += `<div class="section-title">REKOMENDASI</div><ul>`;
+    aspek.forEach(a => {
+        let rata = Math.round(skorAnak[a].reduce((p,c)=>p+c,0) / skorAnak[a].length) || 3;
+        if(rata <= 2) html += `<li>Perlu bimbingan pada aspek <b>${a}</b>.</li>`;
+    });
+    
+    document.getElementById('konten-pdf').innerHTML = html + `</ul><div style="margin-top:50px;text-align:right"><p>Cirebon, ${new Date().toLocaleDateString('id-ID')}</p><p>Wali Kelas,</p><br><br><p><b>( ________________ )</b></p></div>`;
+    document.getElementById('konten-pdf').style.display = 'block';
 }
 
-async function simpanObservasi() {
-    const kls = document.getElementById('pilih-kls').value;
-    const penilai = document.getElementById('nama-penilai').value;
-    const teman = document.getElementById('nama-teman').value;
-    const tgl = new Date().toISOString().split('T')[0];
-
-    if(!teman) return;
-
-    document.getElementById('overlay').style.display = 'flex';
-
-    let skor = {};
-    aspekList.forEach(a => {
-        skor[a] = document.getElementById(`val-${a}`).value;
-    });
-
-    // Simpan data dengan menyertakan siapa yang menilai
-    // Struktur: observasi / [Kelas] / [Tanggal] / [NamaTeman] / [Penilai]
-    const cleanPenilai = penilai.replace(/[.#$/[\]]/g, ""); // Bersihkan nama untuk path Firebase
-    
-    await fetch(`${DB_URL}/observasi/${kls}/${tgl}/${teman}/skor_dari_${cleanPenilai}.json`, {
-        method: 'PUT',
-        body: JSON.stringify({
-            penilai: penilai,
-            skor: skor,
-            timestamp: Date.now()
-        })
-    });
-
-    alert("Nilai untuk " + teman + " berhasil disimpan!");
-    document.getElementById('inputs').style.display = 'none';
-    muatDaftarTeman(); // Nama teman akan hilang dari list
+function downloadExcel() {
+    const table = document.getElementById("tabel-export");
+    if(!table) return alert("Tampilkan data dulu!");
+    XLSX.writeFile(XLSX.utils.table_to_book(table), "Rekap_Karakter.xlsx");
 }
 </script>
 </body>
