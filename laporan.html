@@ -203,7 +203,7 @@ function prosesData() {
             if(aggr[a].modus >= 3) htmlKekuatan += item; else htmlPerhatian += item;
         });
 
-        // TEMPLATE BARU SESUAI REQUEST BOS
+        // UPDATE URUTAN: NAMA -> KELAS -> WALI KELAS
         container.innerHTML += `
             <div class="kertas-laporan">
                 <div class="header-lp">
@@ -213,8 +213,8 @@ function prosesData() {
                 
                 <div style="margin-bottom:20px; border:1px solid #e2e8f0; padding:15px; border-radius:8px; background:#f8fafc; line-height:1.8;">
                     <div style="font-size:14px;"><b>Nama Santri :</b> ${nama}</div>
-                    <div style="font-size:14px;"><b>Wali Kelas   :</b> Fahrijal Umar, S.Pd.I., Gr.</div>
                     <div style="font-size:14px;"><b>Kelas        :</b> ${kls}</div>
+                    <div style="font-size:14px;"><b>Wali Kelas   :</b> Fahrijal Umar, S.Pd.I., Gr.</div>
                 </div>
 
                 <div class="section-header">🌟 PENDAHULUAN</div>
