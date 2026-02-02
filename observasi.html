@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>E-SANTRI | OBSERVASI KARAKTER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root { --primary: #10b981; --bg: #f1f5f9; --white: #ffffff; --text: #0f172a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
+        
+        header { background: var(--white); padding: 15px; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .brand { font-size: 1.1rem; font-weight: 800; color: var(--primary); text-align: center; margin-bottom: 10px; }
+        
+        .nav-tabs { display: flex; gap: 8px; background: #eee; padding: 4px; border-radius: 10px; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: 700; font-size: 11px; cursor: pointer; color: #666; }
+        .tab-btn.active { background: var(--primary); color: white; }
+
+        .card { background: white; margin: 15px; padding: 15px; border-radius: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h3 { font-size: 14px; margin-bottom: 12px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        
+        select, input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 14px; outline: none; margin-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { padding: 10px; border: 1px solid #eee; text-align: center; }
+        th { background: #f8fafc; font-weight: 700; }
+        .text-left { text-align: left; font-weight: 600; }
+
+        .btn-save { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 15px; }
+        .btn-xl { background: #107c41; margin-top: 10px; }
+
+        #overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; flex-direction: column; align-items: center; justify-content: center; color: white; z-index: 2000; }
+        .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div id="overlay"><div class="spinner"></div><p style="margin-top:10px">Mohon Tunggu...</p></div>
+
+<header>
+    <div class="brand">🔍 OBSERVASI KARAKTER</div>
+    <div class="nav-tabs">
+        <button id="tabInput" class="tab-btn active" onclick="switchTab('input')">INPUT NILAI</button>
+        <button id="tabRekap" class="tab-btn" onclick="switchTab('rekap')">REKAP BULANAN</button>
+    </div>
+</header>
+
+<div id="areaInput">
+    <div class="card">
+        <h3>Pilih Santri</h3>
+        <select id="pilih-kls" onchange="muatSantri()">
+            <option value="">-- Pilih Kelas --</option>
+            <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+            <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+            <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+        </select>
+        <select id="pilih-nama" onchange="toggleForm()">
+            <option value="">-- Pilih Nama --</option>
+        </select>
+    </div>
+
+    <div id="form-nilai" class="card" style="display:none;">
+        <h3>Penilaian (1-4)</h3>
+        <div style="overflow-x:auto">
+            <table>
+                <thead>
+                    <tr><th>Aspek</th><th>Diri</th><th>Teman</th></tr>
+                </thead>
+                <tbody id="body-input"></tbody>
+            </table>
+        </div>
+        <button class="btn-save" onclick="simpanObs()">SIMPAN PENILAIAN</button>
+    </div>
+</div>
+
+<div id="areaRekap" style="display:none;">
+    <div class="card">
+        <h3>Filter Rekap</h3>
+        <select id="rekap-kls"><option value="">-- Pilih Kelas --</option><option>9A</option><option>9B</option></select>
+        <select id="rekap-bln">
+            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+        </select>
+        <button class="btn-save" onclick="prosesRekap()">LIHAT REKAP</button>
+        <button class="btn-save btn-xl" onclick="exportExcel()">DOWNLOAD EXCEL</button>
+    </div>
+    <div class="card" id="wadah-rekap" style="overflow-x:auto;">
+        <p style="text-align:center; color:#999; font-size:12px;">Belum ada data ditampilkan</p>
+    </div>
+</div>
+
+<script>
+const DB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
+const aspek = ["Perkataan", "Berpakaian", "Akhlak", "Disiplin", "Jujur", "Tanggung Jawab", "Ibadah", "Peduli"];
+
+function switchTab(t) {
+    document.getElementById('areaInput').style.display = t === 'input' ? 'block' : 'none';
+    document.getElementById('areaRekap').style.display = t === 'rekap' ? 'block' : 'none';
+    document.getElementById('tabInput').classList.toggle('active', t === 'input');
+    document.getElementById('tabRekap').classList.toggle('active', t === 'rekap');
+}
+
+async function muatSantri() {
+    const kls = document.getElementById('pilih-kls').value;
+    if(!kls) return;
+    document.getElementById('overlay').style.display = 'flex';
+    
+    const tgl = new Date().toISOString().split('T')[0];
+    const resSiswa = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
+    const listSiswa = await resSiswa.json();
+    
+    const resSudah = await fetch(`${DB_URL}/observasi/${kls}/${tgl}.json`);
+    const dataSudah = await resSudah.json() || {};
+    const sudahDinilai = Object.keys(dataSudah);
+
+    const select = document.getElementById('pilih-nama');
+    select.innerHTML = '<option value="">-- Pilih Nama --</option>';
+    listSiswa.forEach(s => {
+        if(!sudahDinilai.includes(s.nama)) {
+            select.innerHTML += `<option value="${s.nama}">${s.nama}</option>`;
+        }
+    });
+    document.getElementById('overlay').style.display = 'none';
+}
+
+function toggleForm() {
+    const nama = document.getElementById('pilih-nama').value;
+    const form = document.getElementById('form-nilai');
+    if(!nama) return form.style.display = 'none';
+    
+    form.style.display = 'block';
+    const tbody = document.getElementById('body-input');
+    tbody.innerHTML = aspek.map(a => `
+        <tr>
+            <td class="text-left">${a}</td>
+            <td><select id="d-${a}"><option>4</option><option>3</option><option>2</option><option>1</option></select></td>
+            <td><select id="t-${a}"><option>4</option><option>3</option><option>2</option><option>1</option></select></td>
+        </tr>
+    `).join('');
+}
+
+async function simpanObs() {
+    const kls = document.getElementById('pilih-kls').value;
+    const nama = document.getElementById('pilih-nama').value;
+    const tgl = new Date().toISOString().split('T')[0];
+    
+    let skor = {};
+    aspek.forEach(a => {
+        skor[a] = { diri: document.getElementById(`d-${a}`).value, teman: document.getElementById(`t-${a}`).value };
+    });
+
+    document.getElementById('overlay').style.display = 'flex';
+    await fetch(`${DB_URL}/observasi/${kls}/${tgl}/${nama}.json`, {
+        method: 'PUT',
+        body: JSON.stringify({ nama: nama, skor: skor })
+    });
+    
+    alert("Berhasil disimpan!");
+    document.getElementById('form-nilai').style.display = 'none';
+    muatSantri();
+}
+
+async function prosesRekap() {
+    const kls = document.getElementById('rekap-kls').value;
+    const bln = document.getElementById('rekap-bln').value;
+    if(!kls) return alert("Pilih Kelas!");
+
+    document.getElementById('overlay').style.display = 'flex';
+    const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
+    const dataKelas = await res.json() || {};
+    
+    let rekap = {}; // { Nama: { Perkataan: [nilai], ... } }
+
+    Object.keys(dataKelas).forEach(tgl => {
+        const [y, m, d] = tgl.split("-");
+        if(parseInt(m) === parseInt(bln)) {
+            Object.values(dataKelas[tgl]).forEach(s => {
+                if(!rekap[s.nama]) rekap[s.nama] = {};
+                aspek.forEach(a => {
+                    if(!rekap[s.nama][a]) rekap[s.nama][a] = [];
+                    // Rata-rata Diri + Teman
+                    let rata = (parseInt(s.skor[a].diri) + parseInt(s.skor[a].teman)) / 2;
+                    rekap[s.nama][a].push(rata);
+                });
+            });
+        }
+    });
+
+    let html = `<table id="tabel-rekap"><thead><tr><th>Nama Santri</th>`;
+    aspek.forEach(a => html += `<th>${a.substring(0,4)}</th>`);
+    html += `<th>RATA</th></tr></thead><tbody>`;
+
+    Object.keys(rekap).forEach(nama => {
+        html += `<tr><td class="text-left">${nama}</td>`;
+        let totalSiswa = 0;
+        aspek.forEach(a => {
+            let avg = rekap[nama][a].reduce((p,c) => p+c, 0) / rekap[nama][a].length;
+            html += `<td>${avg.toFixed(1)}</td>`;
+            totalSiswa += avg;
+        });
+        html += `<td style="font-weight:bold; background:#f0fff4;">${(totalSiswa/aspek.length).toFixed(1)}</td></tr>`;
+    });
+
+    document.getElementById('wadah-rekap').innerHTML = html + `</tbody></table>`;
+    document.getElementById('overlay').style.display = 'none';
+}
+
+function exportExcel() {
+    const table = document.getElementById('tabel-rekap');
+    if(!table) return alert("Proses data dulu!");
+    XLSX.writeFile(XLSX.utils.table_to_book(table), `Rekap_Karakter_${new Date().getTime()}.xlsx`);
+}
+</script>
+</body>
+</html>
