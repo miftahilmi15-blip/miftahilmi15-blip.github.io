@@ -11,7 +11,6 @@
         * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg); margin: 0; padding: 0; color: #1e293b; }
 
-        /* Navigation Controls */
         .no-print { background: white; padding: 20px; border-bottom: 2px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .nav-tab { display: flex; gap: 10px; max-width: 1200px; margin: 0 auto 15px auto; }
         .tab-btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; background: #e2e8f0; transition: 0.3s; }
@@ -22,27 +21,26 @@
         .btn-proses { background: var(--accent); color: white; border: none; font-weight: 700; cursor: pointer; }
         .btn-excel { background: #16a34a; color: white; border: none; font-weight: 700; cursor: pointer; }
 
-        /* Tab Content */
         .tab-content { display: none; padding: 20px; }
         .tab-content.active { display: block; }
 
-        /* Tabel Rekap Modern */
         .wrap-table { background: white; padding: 20px; border-radius: 12px; max-width: 1300px; margin: auto; overflow-x: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 1100px; }
         th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: center; }
         th { background: #f1f5f9; position: sticky; top: 0; }
         .name-col { text-align: left; font-weight: 700; min-width: 180px; position: sticky; left: 0; background: white; z-index: 10; }
         
-        /* Style Isi Sel Rekap */
         .cell-main { font-size: 14px; font-weight: 800; display: block; }
         .cell-sub { font-size: 9px; color: #64748b; white-space: nowrap; display: block; margin-top: 2px; }
         .badge-diri { font-size: 9px; background: #e0f2fe; color: #0369a1; padding: 1px 4px; border-radius: 4px; display: inline-block; margin-top: 3px; font-weight: 700; }
 
-        /* Layout Kertas A4 (PDF) */
-        .kertas-laporan { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; padding: 25mm 20mm; box-shadow: 0 4px 20px rgba(0,0,0,0.1); page-break-after: always; }
-        .header-lp { border-bottom: 3px double #000; padding-bottom: 15px; margin-bottom: 25px; text-align: center; }
-        .section-header { font-weight: 800; font-size: 15px; margin-top: 25px; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; }
-        .box-aspek { margin-bottom: 20px; padding-left: 15px; border-left: 3px solid #e2e8f0; }
+        .kertas-laporan { background: white; width: 210mm; min-height: 297mm; margin: 0 auto 30px auto; padding: 20mm 15mm; box-shadow: 0 4px 20px rgba(0,0,0,0.1); page-break-after: always; color: #000; }
+        .header-lp { border-bottom: 3px double #000; padding-bottom: 10px; margin-bottom: 15px; text-align: center; }
+        .section-header { font-weight: 800; font-size: 14px; margin-top: 20px; border-bottom: 1px solid #000; padding-bottom: 3px; }
+        .box-aspek { margin-bottom: 15px; padding-left: 10px; border-left: 2px solid #eee; }
+
+        .footer-ttd { margin-top: 40px; display: flex; justify-content: space-between; }
+        .ttd-box { text-align: center; width: 250px; font-size: 13px; line-height: 1.5; }
 
         @media print {
             .no-print { display: none !important; }
@@ -111,10 +109,8 @@ async function muatData() {
     if(!kls) return;
     const res = await fetch(`${DB_URL}/observasi/${kls}.json`);
     globalRaw = await res.json() || {};
-    
     let namaUnik = new Set();
     Object.values(globalRaw).forEach(t => Object.keys(t).forEach(n => namaUnik.add(n)));
-    
     const sel = document.getElementById('pilih-nama');
     sel.innerHTML = '<option value="ALL">Cetak Seluruh Kelas</option>';
     Array.from(namaUnik).sort().forEach(n => sel.innerHTML += `<option value="${n}">${n}</option>`);
@@ -123,7 +119,6 @@ async function muatData() {
 function hitungAgregasi(nama) {
     let res = {};
     aspekList.forEach(a => res[a] = { c: {4:0, 3:0, 2:0, 1:0}, diri: 3 });
-    
     Object.values(globalRaw).forEach(tgl => {
         if(tgl[nama]) {
             Object.entries(tgl[nama]).forEach(([penilai, konten]) => {
@@ -135,29 +130,12 @@ function hitungAgregasi(nama) {
             });
         }
     });
-
     aspekList.forEach(a => {
         let max = -1, mode = 3;
         for(let i=1; i<=4; i++) { if(res[a].c[i] >= max) { max = res[a].c[i]; mode = i; } }
         res[a].modus = mode;
     });
     return res;
-}
-
-function getNarasi(aspek, d) {
-    const ket = (v) => v >= 4 ? "Sangat Baik" : (v >= 3 ? "Baik" : (v >= 2 ? "Cukup" : "Kurang"));
-    let nrs = `Berdasarkan konsensus sosial dari 29 rekan sebaya, mayoritas menilai aspek ${aspek.toLowerCase()} Ananda berada pada level ${ket(d.modus).toLowerCase()}. `;
-    
-    if(d.diri < d.modus) {
-        nrs += `Terdapat indikasi sikap rendah hati yang menonjol, di mana Ananda menilai dirinya ${ket(d.diri).toLowerCase()}, padahal lingkungan sekitarnya menangkap potensi yang jauh lebih unggul.`;
-    } else if(d.diri > d.modus) {
-        nrs += `Ananda memiliki keyakinan diri yang kuat, namun teman-teman mengharapkan adanya peningkatan stabilitas perilaku agar lebih selaras dengan persepsi internalnya.`;
-    } else {
-        nrs += `Penilaian diri Ananda sudah sangat objektif dan selaras dengan apa yang dirasakan oleh rekan-rekannya di sekolah.`;
-    }
-
-    let stats = `(SB: ${d.c[4]}, Baik: ${d.c[3]}, Cukup: ${d.c[2]}, Kurang: ${d.c[1]})`;
-    return { nrs, stats };
 }
 
 function prosesData() {
@@ -174,51 +152,48 @@ function prosesData() {
 
     daftar.sort().forEach(nama => {
         const aggr = hitungAgregasi(nama);
+        const namaPanggilan = nama.split(' ')[0];
         
-        // 1. ISI TABEL REKAP
         let rowHtml = `<td class="name-col">${nama}</td>`;
         let sumModus = 0;
         aspekList.forEach(a => {
             const d = aggr[a]; sumModus += d.modus;
             let color = d.modus >= 4 ? '#059669' : (d.modus >= 3 ? '#2563eb' : '#d97706');
-            rowHtml += `<td>
-                <span class="cell-main" style="color:${color}">${d.modus}</span>
-                <span class="cell-sub">SB:${d.c[4]} B:${d.c[3]} C:${d.c[2]} K:${d.c[1]}</span>
-                <span class="badge-diri">Diri: ${d.diri}</span>
-            </td>`;
+            rowHtml += `<td><span class="cell-main" style="color:${color}">${d.modus}</span><span class="cell-sub">SB:${d.c[4]} B:${d.c[3]} C:${d.c[2]} K:${d.c[1]}</span><span class="badge-diri">Diri: ${d.diri}</span></td>`;
         });
         rowHtml += `<td style="background:#f8fafc; font-weight:800;">${(sumModus/8).toFixed(1)}</td>`;
         bodyRekap.innerHTML += `<tr>${rowHtml}</tr>`;
 
-        // 2. ISI RAPOR PDF
-        let htmlKekuatan = "", htmlPerhatian = "";
+        let htmlKekuatan = "", htmlPerhatian = "", listKekuatan = [], listPerhatian = [];
         aspekList.forEach(a => {
-            const dataNarasi = getNarasi(a, aggr[a]);
-            const item = `
-                <div class="box-aspek">
-                    <div style="font-weight:700; color:var(--accent); font-size:14px;">${a} – ${aggr[a].modus >= 3 ? 'Kekuatan' : 'Perlu Bimbingan'}</div>
-                    <div style="font-size:11px; color:#64748b; margin-bottom:5px;">Statistik: ${dataNarasi.stats} | Penilaian Diri: ${aggr[a].diri}</div>
-                    <div style="font-size:12.5px; text-align:justify;">${dataNarasi.nrs}</div>
-                </div>`;
-            if(aggr[a].modus >= 3) htmlKekuatan += item; else htmlPerhatian += item;
+            const d = aggr[a];
+            const ket = (v) => v >= 4 ? "Sangat Baik" : (v >= 3 ? "Baik" : (v >= 2 ? "Cukup" : "Kurang"));
+            let narasi = `Mayoritas teman menilai aspek ${a.toLowerCase()} Ananda berada pada level ${ket(d.modus).toLowerCase()}. `;
+            narasi += d.diri < d.modus ? "Ananda cenderung rendah hati dalam menilai diri sendiri." : (d.diri > d.modus ? "Ananda memiliki percaya diri yang kuat namun perlu penyesuaian." : "Penilaian diri Ananda sudah selaras dengan pengamatan sosial.");
+            
+            let item = `<div class="box-aspek"><b>${a}</b><br><span style="font-size:12px; text-align:justify; display:block;">${narasi}</span></div>`;
+            if(d.modus >= 3) { htmlKekuatan += item; listKekuatan.push(a.toLowerCase()); }
+            else { htmlPerhatian += item; listPerhatian.push(a.toLowerCase()); }
         });
 
-        // UPDATE URUTAN: NAMA -> KELAS -> WALI KELAS
         container.innerHTML += `
             <div class="kertas-laporan">
                 <div class="header-lp">
                     <h2 style="margin:0">LAPORAN PERKEMBANGAN KARAKTER SANTRI</h2>
-                    <p style="font-size:12px; margin:5px 0;">Semester Ganjil 2025/2026 - MTs As Sunnah Kota Cirebon</p>
+                    <p style="font-size:11px; margin:5px 0;">Semester Ganjil 2025/2026 - MTs As Sunnah Kota Cirebon</p>
                 </div>
                 
-                <div style="margin-bottom:20px; border:1px solid #e2e8f0; padding:15px; border-radius:8px; background:#f8fafc; line-height:1.8;">
-                    <div style="font-size:14px;"><b>Nama Santri :</b> ${nama}</div>
-                    <div style="font-size:14px;"><b>Kelas        :</b> ${kls}</div>
-                    <div style="font-size:14px;"><b>Wali Kelas   :</b> Fahrijal Umar, S.Pd.I., Gr.</div>
+                <div style="margin-bottom:15px; border:1px solid #000; padding:10px; line-height:1.6;">
+                    <div style="font-size:13px;"><b>Nama Santri :</b> ${nama}</div>
+                    <div style="font-size:13px;"><b>Kelas        :</b> ${kls}</div>
+                    <div style="font-size:13px;"><b>Wali Kelas   :</b> Fahrijal Umar, S.Pd.I., Gr.</div>
                 </div>
 
                 <div class="section-header">🌟 PENDAHULUAN</div>
-                <p style="font-size:12.5px; text-align:justify;">Laporan ini disusun sebagai instrumen refleksi diri, merangkum pandangan rekan sebaya untuk memberikan perspektif yang jujur dan objektif bagi perkembangan karakter Ananda.</p>
+                <p style="font-size:12px; text-align:justify;">Yth. Bapak/Ibu Wali Santri, Terima kasih atas kepercayaan Bapak/Ibu kepada kami dalam mendampingi pendidikan karakter Ananda <b>${nama}</b>. Laporan ini disusun berdasarkan observasi teman sebaya dan penilaian diri Ananda sendiri guna memberikan gambaran menyeluruh mengenai perkembangan karakter.</p>
+
+                <div class="section-header">📈 RANGKUMAN HASIL OBSERVASI</div>
+                <p style="font-size:12px; text-align:justify;">Secara keseluruhan, Ananda <b>${namaPanggilan}</b> menunjukkan perkembangan yang cukup baik. Terlihat bahwa Ananda memiliki potensi karakter yang kuat, disertai kesadaran diri yang baik—terutama pada aspek yang menurutnya perlu diperbaiki.</p>
                 
                 <div class="section-header">✅ KEKUATAN UTAMA</div> 
                 ${htmlKekuatan || '<p style="font-size:12px; font-style:italic;">Belum ada aspek yang menonjol.</p>'}
@@ -227,14 +202,15 @@ function prosesData() {
                 ${htmlPerhatian || '<p style="font-size:12px; font-style:italic;">Seluruh aspek menunjukkan tren positif.</p>'}
                 
                 <div class="section-header">🤝 TINDAK LANJUT</div>
-                <p style="font-size:12px;">Mohon dukungan orang tua di rumah untuk terus memberikan penguatan pada aspek yang sudah baik dan membimbing aspek yang masih memerlukan perhatian agar tercapai kematangan karakter yang optimal.</p>
-                
+                <div style="font-size:12px; line-height:1.4;">
+                    <p><b>1. Pujian:</b> Apresiasi atas aspek ${listKekuatan.join(', ')}.</p>
+                    <p><b>2. Wali Kelas:</b> Pembinaan pada aspek ${listPerhatian.length > 0 ? listPerhatian.join(', ') : 'sosial'}.</p>
+                    <p><b>3. Orang Tua:</b> Mohon dukungan komunikasi terbuka di rumah.</p>
+                </div>
+
                 <div class="footer-ttd">
-                    <div class="ttd-box">
-                        Cirebon, 02 Februari 2026<br>
-                        Wali Kelas,<br><br><br><br><br>
-                        <b>Fahrijal Umar, S.Pd.I., Gr.</b>
-                    </div>
+                    <div class="ttd-box">Mengetahui,<br>Kepala Madrasah<br><br><br><br><br><b>Abdullah Banawi, Lc.</b></div>
+                    <div class="ttd-box">Cirebon, 02 Februari 2026<br>Wali Kelas,<br><br><br><br><br><b>Fahrijal Umar, S.Pd.I., Gr.</b></div>
                 </div>
             </div>`;
     });
