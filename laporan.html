@@ -172,17 +172,19 @@ function prosesData() {
             narasi += d.diri < d.modus ? "Ananda cenderung rendah hati dalam menilai diri sendiri." : (d.diri > d.modus ? "Ananda memiliki percaya diri yang kuat namun perlu penyesuaian." : "Penilaian diri Ananda sudah selaras dengan pengamatan sosial.");
             
             let item = `
-    <div class="box-aspek">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <b>${a} – ${ket(d.modus)}</b>
-            <span style="font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">
-                Statistik Teman: (SB:${d.c[4]} B:${d.c[3]} C:${d.c[2]} K:${d.c[1]})
-            </span>
-        </div>
-        <span style="font-size:12px; text-align:justify; display:block; margin-top: 5px;">
-            ${narasi} <i>(Penilaian Diri: ${ket(d.diri)})</i>
-        </span>
-    </div>`;
+                <div class="box-aspek">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #eee; padding-bottom: 3px; margin-bottom: 5px;">
+                        <b>${a} – ${ket(d.modus)}</b>
+                        <span style="font-size: 10px; color: #64748b;">Statistik: SB:${d.c[4]} B:${d.c[3]} C:${d.c[2]} K:${d.c[1]}</span>
+                    </div>
+                    <span style="font-size:12px; text-align:justify; display:block;">
+                        ${narasi} <small>(Diri: ${ket(d.diri)})</small>
+                    </span>
+                </div>`;
+
+            if(d.modus >= 3) { htmlKekuatan += item; listKekuatan.push(a.toLowerCase()); }
+            else { htmlPerhatian += item; listPerhatian.push(a.toLowerCase()); }
+        });
 
         container.innerHTML += `
             <div class="kertas-laporan">
@@ -198,10 +200,10 @@ function prosesData() {
                 </div>
 
                 <div class="section-header">🌟 PENDAHULUAN</div>
-                <p style="font-size:12px; text-align:justify;">Yth. Bapak/Ibu Wali Santri, Terima kasih atas kepercayaan Bapak/Ibu kepada kami dalam mendampingi pendidikan karakter Ananda <b>${nama}</b>. Laporan ini disusun berdasarkan observasi teman sebaya dan penilaian diri Ananda sendiri guna memberikan gambaran menyeluruh mengenai perkembangan karakter.</p>
+                <p style="font-size:12px; text-align:justify;">Yth. Bapak/Ibu Wali Santri, Terima kasih atas kepercayaan Bapak/Ibu dalam mendampingi pendidikan karakter Ananda <b>${nama}</b>. Laporan ini disusun berdasarkan observasi teman sebaya dan penilaian diri guna memberikan gambaran objektif bagi perkembangan Ananda.</p>
 
                 <div class="section-header">📈 RANGKUMAN HASIL OBSERVASI</div>
-                <p style="font-size:12px; text-align:justify;">Secara keseluruhan, Ananda <b>${namaPanggilan}</b> menunjukkan perkembangan yang cukup baik. Terlihat bahwa Ananda memiliki potensi karakter yang kuat, disertai kesadaran diri yang baik—terutama pada aspek yang menurutnya perlu diperbaiki.</p>
+                <p style="font-size:12px; text-align:justify;">Secara keseluruhan, Ananda <b>${namaPanggilan}</b> menunjukkan perkembangan yang stabil. Ananda memiliki potensi karakter yang kuat disertai kesadaran diri yang baik—terutama pada aspek yang menurutnya perlu diperbaiki.</p>
                 
                 <div class="section-header">✅ KEKUATAN UTAMA</div> 
                 ${htmlKekuatan || '<p style="font-size:12px; font-style:italic;">Belum ada aspek yang menonjol.</p>'}
