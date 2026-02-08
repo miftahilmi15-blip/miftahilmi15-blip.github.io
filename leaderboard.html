@@ -3,112 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAPAN PERINGKAT SANTRI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>E-SANTRI | LIGA TAHFIDZ</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1f6f51; --accent: #eab308; --bg: #f0f7f4; }
+        :root { --primary: #1f6f51; --accent: #eab308; --gaming-blue: #1cb0f6; --white: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: center; }
+        
+        body { background: var(--primary); color: var(--white); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .wadah-lb { width: 100%; max-width: 450px; }
-        header { text-align: center; margin-bottom: 30px; }
-        header h1 { font-size: 24px; font-weight: 800; color: var(--accent); }
-        header p { font-size: 13px; opacity: 0.9; }
 
-        .kartu-lb { background: white; color: #333; border-radius: 20px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 15px; position: relative; overflow: hidden; transition: 0.3s; }
-        .kartu-lb:nth-child(1) { border: 3px solid var(--accent); transform: scale(1.05); margin-bottom: 20px; }
-        .rank { font-size: 20px; font-weight: 800; width: 35px; text-align: center; color: var(--primary); }
-        .info { flex: 1; }
-        .info h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; }
-        .info p { font-size: 11px; color: #666; }
-        .xp-box { text-align: right; }
-        .xp-value { display: block; font-size: 16px; font-weight: 800; color: var(--primary); }
-        .xp-label { font-size: 10px; font-weight: 600; color: #999; }
+        /* Header Bersih tanpa tulisan papan peringkat */
+        header { text-align: center; padding: 30px 0; margin-bottom: 10px; }
+        header .icon-top { font-size: 50px; margin-bottom: 10px; display: block; }
+        header h1 { font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: 1px; }
+        header p { font-size: 13px; opacity: 0.8; margin-top: 5px; }
+        
+        /* Dropdown Bulan */
+        .filter-section { margin-bottom: 25px; }
+        #filter-bulan { width: 100%; padding: 12px; border-radius: 15px; border: none; background: white; font-weight: 700; color: var(--primary); cursor: pointer; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 
-        .trophy { position: absolute; right: -10px; top: -10px; font-size: 40px; opacity: 0.1; }
-        #loading { text-align: center; padding: 50px; }
-        .filter-box { margin-bottom: 20px; }
-        select { width: 100%; padding: 10px; border-radius: 10px; border: none; font-weight: 600; }
+        /* Kartu List */
+        .kartu-lb { background: var(--white); color: #333; border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.15); position: relative; }
+        
+        .rank-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; background: #f0f0f0; }
+        .top-1 { background: var(--accent); color: white; }
+        .top-2 { background: #e5e5e5; }
+        .top-3 { background: #cd7f32; color: white; }
+
+        .avatar-box { width: 50px; height: 50px; background: #f9f9f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #eee; }
+        
+        .info-santri { flex: 1; }
+        .info-santri h3 { font-size: 15px; font-weight: 800; color: #111; text-transform: uppercase; }
+        .info-santri p { font-size: 12px; color: #777; font-weight: 600; }
+
+        .progress-container { width: 100%; background: #eee; height: 6px; border-radius: 10px; margin-top: 8px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--gaming-blue); border-radius: 10px; }
+
+        .xp-display { text-align: right; min-width: 80px; }
+        .xp-value { display: block; font-size: 20px; font-weight: 800; color: var(--primary); }
+        .xp-label { font-size: 10px; font-weight: 700; color: #aaa; }
+
+        #loading-state { text-align: center; padding: 40px; font-weight: 700; }
     </style>
 </head>
 <body>
 
 <div class="wadah-lb">
     <header>
-        <p>🏆 TOP SANTRI BULAN INI</p>
-        <h1 id="judul-bulan">LEADERBOARD</h1>
-        <p>Terus setoran, kumpulkan XP, dan jadilah yang terbaik!</p>
+        <span class="icon-top">🏆</span>
+        <h1>LIGA TAHFIDZ</h1> <p>Kumpulkan poin XP dari setiap setoranmu!</p>
     </header>
 
-    <div class="filter-box">
+    <div class="filter-section">
         <select id="filter-bulan" onchange="muatPeringkat()">
             <option value="1">Januari 2026</option>
             <option value="2">Februari 2026</option>
             <option value="3">Maret 2026</option>
             <option value="4">April 2026</option>
-            </select>
+        </select>
     </div>
 
     <div id="konten-peringkat">
-        <div id="loading">Memuat Peringkat...</div>
-    </div>
+        </div>
 </div>
 
 <script>
     const FIREBASE_LB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/leaderboard";
-    
-    // Set default bulan ke bulan sekarang
-    const skrg = new Date();
-    document.getElementById('filter-bulan').value = skrg.getMonth() + 1;
+    document.getElementById('filter-bulan').value = new Date().getMonth() + 1;
 
     async function muatPeringkat() {
         const bln = document.getElementById('filter-bulan').value;
         const blnKey = `2026-${bln}`;
         const container = document.getElementById('konten-peringkat');
-        container.innerHTML = '<div id="loading">Mengkalkulasi XP...</div>';
+        container.innerHTML = '<div id="loading-state">Memproses Skor...</div>';
 
         try {
             const res = await fetch(`${FIREBASE_LB_URL}/${blnKey}.json`);
             const data = await res.json();
-
             if (!data) {
-                container.innerHTML = '<p style="text-align:center; padding:20px;">Belum ada data setoran bulan ini.</p>';
+                container.innerHTML = '<p style="text-align:center; opacity:0.6;">Belum ada aktivitas bulan ini.</p>';
                 return;
             }
 
-            // Convert object ke array dan sort berdasarkan XP tertinggi
-            let listSantri = Object.values(data);
-            listSantri.sort((a, b) => b.totalXP - a.totalXP);
-
+            let list = Object.values(data).sort((a, b) => b.totalXP - a.totalXP);
             let html = "";
-            listSantri.forEach((s, index) => {
-                let mahkota = "";
-                if(index === 0) mahkota = "🥇";
-                if(index === 1) mahkota = "🥈";
-                if(index === 2) mahkota = "🥉";
+
+            list.forEach((s, i) => {
+                let rankClass = (i === 0) ? "top-1" : (i === 1) ? "top-2" : (i === 2) ? "top-3" : "";
+                let emoji = (i === 0) ? "👑" : "👤";
+                let progress = Math.min((s.totalSetoran / 20) * 100, 100);
 
                 html += `
                 <div class="kartu-lb">
-                    <div class="rank">${index + 1}</div>
-                    <div class="info">
-                        <h3>${mahkota} ${s.nama}</h3>
+                    <div class="rank-circle ${rankClass}">${i + 1}</div>
+                    <div class="avatar-box">${emoji}</div>
+                    <div class="info-santri">
+                        <h3>${s.nama}</h3>
                         <p>Kelas ${s.kelas} • ${s.totalSetoran}x Setoran</p>
+                        <div class="progress-container"><div class="progress-bar" style="width: ${progress}%"></div></div>
                     </div>
-                    <div class="xp-box">
-                        <span class="xp-value">${s.totalXP.toLocaleString()}</span>
+                    <div class="xp-display">
+                        <span class="xp-value">${s.totalXP}</span>
                         <span class="xp-label">TOTAL XP</span>
                     </div>
-                    <span class="trophy">🏆</span>
-                </div>
-                `;
+                </div>`;
             });
-
             container.innerHTML = html;
         } catch (e) {
-            container.innerHTML = '<p style="text-align:center;">Gagal memuat data.</p>';
+            container.innerHTML = '<p style="text-align:center;">Gagal mengambil data.</p>';
         }
     }
-
-    // Jalankan saat startup
     muatPeringkat();
 </script>
 
