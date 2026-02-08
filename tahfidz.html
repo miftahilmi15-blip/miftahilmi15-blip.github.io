@@ -7,14 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; --red: #e11d48; }
+        :root { --primary: #1f6f51; --bg: #f0f7f4; --accent: #eab308; --blue: #2563eb; --red: #e11d48; --gold: #ffd700; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: var(--bg); padding: 15px; display: flex; justify-content: center; }
         .wadah { width: 100%; max-width: 450px; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
         header h1 { color: var(--primary); font-size: 20px; font-weight: 800; }
-        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #eee; padding: 4px; border-radius: 12px; }
-        .tab-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 700; font-size: 11px; cursor: pointer; color: #666; transition: 0.3s; }
+        .nav-tabs { display: flex; gap: 5px; margin-bottom: 20px; background: #eee; padding: 4px; border-radius: 12px; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 10px; border-radius: 10px; border: none; font-weight: 700; font-size: 10px; cursor: pointer; color: #666; transition: 0.3s; white-space: nowrap; }
         .tab-btn.active { background: var(--primary); color: white; }
         .form-grup { margin-bottom: 15px; }
         label { font-size: 11px; font-weight: 700; color: #444; display: block; margin-bottom: 5px; text-transform: uppercase; }
@@ -25,7 +25,7 @@
         .btn-simpan { width: 100%; background: var(--primary); color: white; border: none; padding: 16px; border-radius: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
         .rekap-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .wadah-tabel { overflow-x: auto; margin-top: 15px; border: 1px solid #eee; border-radius: 12px; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 500px; }
+        table { width: 100%; border-collapse: collapse; font-size: 11px; min-width: 400px; }
         th, td { padding: 10px; border: 1px solid #eee; text-align: left; }
         th { background: #f9f9f9; color: var(--primary); font-weight: 700; }
         .ringkasan-box { background: #f0f7f4; border: 1px solid var(--primary); padding: 10px; border-radius: 12px; margin-top: 10px; font-size: 12px; color: var(--primary); }
@@ -36,11 +36,17 @@
         .box-rapor { border: 2px solid #1f6f51; padding: 15px; border-radius: 15px; background: #fff; margin-top: 10px; }
         .btn-rapor-final { width:100%; background:var(--red); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; cursor:pointer; margin-top:10px; }
         .btn-masal { background: #2563eb !important; }
+        /* Style Leaderboard */
+        .rank-1 { background: #fff9c4 !important; font-weight: bold; }
+        .badge-rank { display: inline-block; width: 20px; height: 20px; border-radius: 50%; text-align: center; line-height: 20px; color: white; font-size: 10px; }
+        .bg-gold { background: #d4af37; }
+        .bg-silver { background: #aaa9ad; }
+        .bg-bronze { background: #cd7f32; }
     </style>
 </head>
 <body>
 <div id="lock-screen" style="position:fixed; inset:0; background:var(--primary); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white;">
-    <h2>🔒 AKSES TERBATAS</h2>
+    <h2 style="margin-bottom:20px;">🔒 AKSES TERBATAS</h2>
     <input type="password" id="passcode" style="width:200px; text-align:center; margin-bottom:15px; letter-spacing: 5px;" placeholder="****">
     <button onclick="cekLogin()" style="padding:10px 30px; border-radius:10px; border:none; background:var(--accent); color:var(--primary); font-weight:700; cursor:pointer;">BUKA MENU</button>
 </div>
@@ -48,8 +54,9 @@
 <div class="wadah">
     <header><h1>E-SANTRI TAHFIDZ</h1></header>
     <div class="nav-tabs">
-        <button id="tabInput" class="tab-btn active" onclick="switchMenu('input')">INPUT DATA</button>
+        <button id="tabInput" class="tab-btn active" onclick="switchMenu('input')">INPUT</button>
         <button id="tabRekap" class="tab-btn" onclick="switchMenu('rekap')">REKAP</button>
+        <button id="tabLeader" class="tab-btn" onclick="switchMenu('leader')" style="color:var(--blue)">🏆 RANK</button>
         <button id="tabRapor" class="tab-btn" onclick="switchMenu('rapor')" style="color:var(--red)">⭐ RAPOR</button>
     </div>
 
@@ -127,6 +134,24 @@
         </div>
     </div>
 
+    <div id="areaLeader" class="hidden">
+        <div class="form-grup">
+            <label>Lihat Peringkat Bulan Ini</label>
+            <div class="rekap-controls">
+                <select id="bln-leader">
+                    <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                    <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                    <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                    <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                </select>
+                <button onclick="loadLeaderboard()" style="background:var(--blue); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">TAMPILKAN</button>
+            </div>
+        </div>
+        <div id="wadah-leader" class="wadah-tabel">
+            <p style="text-align:center; padding:20px; font-size:12px; color:#999;">Klik tampilkan untuk melihat ranking.</p>
+        </div>
+    </div>
+
     <div id="areaRapor" class="hidden">
         <div class="form-grup">
             <label>Data Dasar Rapor</label>
@@ -155,7 +180,6 @@
 </div>
 
 <script>
-    // --- KONFIGURASI ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2V6YylCXh8TkmToeNXpSX9uRiuHsQnBElBUUturdGlV1XbwrK5XFIZegOZjC-zo0/exec";
     const FIREBASE_BASE_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/tahfidz/2026";
     const KODE_RAHASIA = "152003"; 
@@ -163,27 +187,24 @@
 
     const tglSelect = document.getElementById('tgl-rekap');
     for(let i=1; i<=31; i++) { tglSelect.options.add(new Option(i, i)); }
+    
+    // Set default bulan leaderboard ke bulan sekarang
+    document.getElementById('bln-leader').value = new Date().getMonth() + 1;
 
     let dataSiswaRapor = [];
     const surah30Juz = ["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahf","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
 
     window.onload = function() { if(localStorage.getItem('isLoggedIn') === 'true') { document.getElementById('lock-screen').style.display = 'none'; } }
-    
-    function cekLogin() { 
-        if (document.getElementById('passcode').value === KODE_RAHASIA) { 
-            localStorage.setItem('isLoggedIn', 'true'); 
-            document.getElementById('lock-screen').style.display = 'none'; 
-        } else { 
-            alert("Kode Salah!"); 
-        } 
-    }
+    function cekLogin() { if (document.getElementById('passcode').value === KODE_RAHASIA) { localStorage.setItem('isLoggedIn', 'true'); document.getElementById('lock-screen').style.display = 'none'; } else { alert("Kode Salah!"); } }
     
     function switchMenu(m) {
         document.getElementById('areaInput').classList.toggle('hidden', m !== 'input');
         document.getElementById('areaRekap').classList.toggle('hidden', m !== 'rekap');
+        document.getElementById('areaLeader').classList.toggle('hidden', m !== 'leader');
         document.getElementById('areaRapor').classList.toggle('hidden', m !== 'rapor');
         document.getElementById('tabInput').classList.toggle('active', m === 'input');
         document.getElementById('tabRekap').classList.toggle('active', m === 'rekap');
+        document.getElementById('tabLeader').classList.toggle('active', m === 'leader');
         document.getElementById('tabRapor').classList.toggle('active', m === 'rapor');
     }
 
@@ -243,86 +264,70 @@
         const kls = document.getElementById('kls-rekap').value;
         const blnCari = document.getElementById('bln-rekap').value;
         const tglCari = document.getElementById('tgl-rekap').value;
-
         if(!kls || !blnCari) return alert("Pilih Kelas dan Bulan!");
-
-        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Mengkalkulasi data sebulan...</p>";
-        document.getElementById('summary-rekap').innerHTML = "";
-        
+        document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Mengkalkulasi...</p>";
         try {
             let path = `${FIREBASE_BASE_URL}/${blnCari}.json`;
             const res = await fetch(path);
             const allData = await res.json();
-            
-            let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Total Setoran</th><th>Capaian Terakhir</th><th>Hal/Ayat</th><th>Status</th><th>Rata-rata ★</th></tr></thead><tbody>`;
-            
+            let html = `<table id="tabel-rekap"><thead><tr><th>Nama</th><th>Total</th><th>Materi</th><th>Hal/Ayat</th><th>Status</th><th>★</th></tr></thead><tbody>`;
             let rekapAkumulasi = {}; 
-
             if (allData) {
                 for (let tgl in allData) {
                     if (tglCari && tgl !== tglCari) continue;
                     for (let id in allData[tgl]) {
                         let item = allData[tgl][id];
                         if (item.kelas === kls) {
-                            let nama = item.nama;
-                            let tglAngka = parseInt(tgl);
-
-                            if (!rekapAkumulasi[nama]) {
-                                rekapAkumulasi[nama] = {
-                                    nama: nama,
-                                    totalSetoran: 0,
-                                    materiTerakhir: item.materi,
-                                    ayatTerakhir: item.ayat,
-                                    statusTerakhir: item.status,
-                                    totalBintang: 0,
-                                    tglCek: tglAngka
-                                };
+                            if (!rekapAkumulasi[item.nama]) {
+                                rekapAkumulasi[item.nama] = { nama: item.nama, totalSetoran: 0, materiTerakhir: item.materi, ayatTerakhir: item.ayat, statusTerakhir: item.status, totalBintang: 0, tglCek: parseInt(tgl) };
                             }
-
-                            if (tglAngka >= rekapAkumulasi[nama].tglCek) {
-                                rekapAkumulasi[nama].materiTerakhir = item.materi;
-                                rekapAkumulasi[nama].ayatTerakhir = item.ayat;
-                                rekapAkumulasi[nama].statusTerakhir = item.status;
-                                rekapAkumulasi[nama].tglCek = tglAngka;
+                            if (parseInt(tgl) >= rekapAkumulasi[item.nama].tglCek) {
+                                rekapAkumulasi[item.nama].materiTerakhir = item.materi; rekapAkumulasi[item.nama].ayatTerakhir = item.ayat;
+                                rekapAkumulasi[item.nama].statusTerakhir = item.status; rekapAkumulasi[item.nama].tglCek = parseInt(tgl);
                             }
-
-                            rekapAkumulasi[nama].totalSetoran += 1;
-                            rekapAkumulasi[nama].totalBintang += parseInt(item.nilai);
+                            rekapAkumulasi[item.nama].totalSetoran += 1;
+                            rekapAkumulasi[item.nama].totalBintang += parseInt(item.nilai);
                         }
                     }
                 }
             }
-
-            let hasilFinal = Object.values(rekapAkumulasi);
-            hasilFinal.sort((a, b) => a.nama.localeCompare(b.nama));
-
+            let hasilFinal = Object.values(rekapAkumulasi).sort((a, b) => a.nama.localeCompare(b.nama));
             hasilFinal.forEach(item => {
-                let rataBintang = (item.totalBintang / item.totalSetoran).toFixed(1);
-                html += `<tr>
-                    <td style="font-weight:bold; color:var(--primary);">${item.nama}</td>
-                    <td style="text-align:center">${item.totalSetoran} Kali</td>
-                    <td>${item.materiTerakhir}</td>
-                    <td style="text-align:center">${item.ayatTerakhir}</td>
-                    <td style="text-align:center">${item.statusTerakhir}</td>
-                    <td style="text-align:center">⭐ ${rataBintang}</td>
+                let rata = (item.totalBintang / item.totalSetoran).toFixed(1);
+                html += `<tr><td>${item.nama}</td><td>${item.totalSetoran}x</td><td>${item.materiTerakhir}</td><td>${item.ayatTerakhir}</td><td>${item.statusTerakhir}</td><td>⭐${rata}</td></tr>`;
+            });
+            document.getElementById('wadah-tabel').innerHTML = hasilFinal.length ? html + `</tbody></table>` : "<p style='padding:20px'>Data kosong.</p>";
+        } catch(e) { document.getElementById('wadah-tabel').innerHTML = "Error."; }
+    }
+
+    async function loadLeaderboard() {
+        const bln = document.getElementById('bln-leader').value;
+        const wadah = document.getElementById('wadah-leader');
+        wadah.innerHTML = "<p style='text-align:center; padding:20px;'>Menghitung Ranking...</p>";
+        try {
+            const res = await fetch(`${FIREBASE_BASE_URL}/${bln}.json`);
+            const data = await res.json();
+            if (!data) return wadah.innerHTML = "<p style='padding:20px'>Tidak ada setoran di bulan ini.</p>";
+            let counts = {};
+            for (let tgl in data) {
+                for (let id in data[tgl]) {
+                    let item = data[tgl][id];
+                    if (!counts[item.nama]) counts[item.nama] = { nama: item.nama, kelas: item.kelas, skor: 0 };
+                    counts[item.nama].skor++;
+                }
+            }
+            let sorted = Object.values(counts).sort((a, b) => b.skor - a.skor).slice(0, 10);
+            let html = `<table><thead><tr><th>Rank</th><th>Nama</th><th>Kelas</th><th>Setoran</th></tr></thead><tbody>`;
+            sorted.forEach((item, i) => {
+                let badge = "";
+                if(i==0) badge = "bg-gold"; else if(i==1) badge="bg-silver"; else if(i==2) badge="bg-bronze";
+                html += `<tr class="${i==0?'rank-1':''}">
+                    <td>${badge?`<span class="badge-rank ${badge}">${i+1}</span>`:i+1}</td>
+                    <td>${item.nama}</td><td>${item.kelas}</td><td><b>${item.skor} Kali</b></td>
                 </tr>`;
             });
-
-            if (hasilFinal.length > 0) {
-                document.getElementById('summary-rekap').innerHTML = `
-                    <div class="ringkasan-box">
-                        <strong>📊 Akumulasi Capaian Bulan ${blnCari}:</strong><br>
-                        Total Santri Aktif: ${hasilFinal.length} Anak<br>
-                        Periode: Tanggal 1 s/d ${tglCari ? tglCari : 'Akhir Bulan'}
-                    </div>`;
-                document.getElementById('wadah-tabel').innerHTML = html + `</tbody></table>`;
-            } else {
-                document.getElementById('wadah-tabel').innerHTML = "<p style='text-align:center; padding:20px;'>Tidak ada data pada periode ini.</p>";
-            }
-        } catch(e) { 
-            console.error(e);
-            document.getElementById('wadah-tabel').innerHTML = "Terjadi kesalahan koneksi."; 
-        }
+            wadah.innerHTML = html + "</tbody></table>";
+        } catch(e) { wadah.innerHTML = "Gagal memuat."; }
     }
 
     async function loadSantriRapor() {
@@ -334,12 +339,7 @@
         sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
         dataSiswaRapor.forEach((x, index) => { sel.options.add(new Option(x.nama, index)); });
     }
-
-    function isiNisnotomatis() { 
-        const idx = document.getElementById('r-nama').value; 
-        if(idx !== "") { document.getElementById('r-nisn').value = dataSiswaRapor[idx].nisn || ""; } 
-    }
-
+    function isiNisnotomatis() { const idx = document.getElementById('r-nama').value; if(idx !== "") { document.getElementById('r-nisn').value = dataSiswaRapor[idx].nisn || ""; } }
     async function cetakRaporFinal() {
         const idx = document.getElementById('r-nama').value;
         if(idx === "") return alert("Pilih Nama!");
@@ -352,27 +352,11 @@
             await fetch(path, { method: 'PUT', body: JSON.stringify(data) }); 
             const params = new URLSearchParams(data); 
             window.open(`${LINK_GITHUB_PAGES_BOS}?${params.toString()}`, '_blank'); 
-        } catch(e) { 
-            alert("Gagal!"); 
-        } finally { 
-            document.getElementById('loading').style.display = 'none'; 
-        }
+        } catch(e) { alert("Gagal!"); } finally { document.getElementById('loading').style.display = 'none'; }
     }
-
-    function cetakSatuKelas() { 
-        const kls = document.getElementById('r-kelas').value; 
-        if(!kls) return alert("Pilih Kelas!"); 
-        window.open(`${LINK_GITHUB_PAGES_BOS}?mode=kelas&kelas=${kls}`, '_blank'); 
-    }
-
-    function setStar(n) { 
-        document.getElementById('nilai-bintang').value = n; 
-        document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd"); 
-    }
-
-    function exportExcel() { 
-        XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap")), `Rekap_Tahfidz.xlsx`); 
-    }
+    function cetakSatuKelas() { const kls = document.getElementById('r-kelas').value; if(!kls) return alert("Pilih Kelas!"); window.open(`${LINK_GITHUB_PAGES_BOS}?mode=kelas&kelas=${kls}`, '_blank'); }
+    function setStar(n) { document.getElementById('nilai-bintang').value = n; document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd"); }
+    function exportExcel() { XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap")), `Rekap_Tahfidz.xlsx`); }
 </script>
 </body>
 </html>
