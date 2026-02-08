@@ -330,30 +330,44 @@
         } catch(e) { wadah.innerHTML = "Gagal memuat."; }
     }
 
-    async function loadSantriRapor() {
-        const kls = document.getElementById('r-kelas').value;
-        const sel = document.getElementById('r-nama');
-        sel.innerHTML = '<option>Memuat...</option>';
-        const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${kls}`);
-        dataSiswaRapor = await res.json();
-        sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
-        dataSiswaRapor.forEach((x, index) => { sel.options.add(new Option(x.nama, index)); });
-    }
-    function isiNisnotomatis() { const idx = document.getElementById('r-nama').value; if(idx !== "") { document.getElementById('r-nisn').value = dataSiswaRapor[idx].nisn || ""; } }
     async function cetakRaporFinal() {
-        const idx = document.getElementById('r-nama').value;
-        if(idx === "") return alert("Pilih Nama!");
-        const kelas = document.getElementById('r-kelas').value;
-        const nisn = document.getElementById('r-nisn').value;
-        const data = { nama: dataSiswaRapor[idx].nama, kelas: kelas, nisn: nisn, semester: document.getElementById('r-semester').value, tp: document.getElementById('r-tp').value, tahsin: document.getElementById('r-tahsin').value, k_tahsin: document.getElementById('r-ket-tahsin').value, tahfizh: document.getElementById('r-tahfizh').value, k_tahfizh: document.getElementById('r-ket-tahfizh').value };
-        try { 
-            document.getElementById('loading').style.display = 'block'; 
-            const path = `https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor/${kelas}/${nisn}.json`; 
-            await fetch(path, { method: 'PUT', body: JSON.stringify(data) }); 
-            const params = new URLSearchParams(data); 
-            window.open(`${LINK_GITHUB_PAGES_BOS}?${params.toString()}`, '_blank'); 
-        } catch(e) { alert("Gagal!"); } finally { document.getElementById('loading').style.display = 'none'; }
+    const idx = document.getElementById('r-nama').value;
+    if(idx === "") return alert("Pilih Nama!");
+    
+    const kelas = document.getElementById('r-kelas').value;
+    const nisn = document.getElementById('r-nisn').value;
+    
+    // Pastikan field tambahan terisi
+    const data = { 
+        nama: dataSiswaRapor[idx].nama, 
+        kelas: kelas, 
+        nisn: nisn, 
+        semester: document.getElementById('r-semester').value, 
+        tp: document.getElementById('r-tp').value, 
+        tahsin: document.getElementById('r-tahsin').value, 
+        k_tahsin: document.getElementById('r-ket-tahsin').value, 
+        tahfizh: document.getElementById('r-tahfizh').value, 
+        k_tahfizh: document.getElementById('r-ket-tahfizh').value 
+    };
+
+    try { 
+        document.getElementById('loading').style.display = 'block'; 
+        
+        // PERBAIKAN: Gunakan path yang konsisten dengan script rapor Bos
+        // Kita simpan di folder 'data_rapor' dengan kunci NISN agar tidak duplikat
+        const path = `https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/data_rapor/${nisn}.json`; 
+        
+        await fetch(path, { method: 'PUT', body: JSON.stringify(data) }); 
+        
+        const params = new URLSearchParams(data); 
+        window.open(`${LINK_GITHUB_PAGES_BOS}?${params.toString()}`, '_blank'); 
+    } catch(e) { 
+        console.error(e);
+        alert("Gagal menyimpan data!"); 
+    } finally { 
+        document.getElementById('loading').style.display = 'none'; 
     }
+}
     function cetakSatuKelas() { const kls = document.getElementById('r-kelas').value; if(!kls) return alert("Pilih Kelas!"); window.open(`${LINK_GITHUB_PAGES_BOS}?mode=kelas&kelas=${kls}`, '_blank'); }
     function setStar(n) { document.getElementById('nilai-bintang').value = n; document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd"); }
     function exportExcel() { XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap")), `Rekap_Tahfidz.xlsx`); }
