@@ -3,255 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
     <title>&#x200E;</title> 
-
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="display" content="standalone">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        :root { 
-            --primary: #1f6f51; 
-            --accent: #eab308; 
-            --gaming-blue: #1cb0f6; 
-            --white: #ffffff; 
-            --bg-dark: #16523c;
-        }
-
-        /* Reset & Base */
+        :root { --primary: #1f6f51; --accent: #eab308; --white: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         
         body { 
             background: var(--primary); 
             color: var(--white); 
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            /* Mengatur jarak aman untuk kamera/notch HP */
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: 30px;
+            padding-top: env(safe-area-inset-top); /* Biar gak kepotong kamera depan */
         }
 
-        .container {
-            width: 100%;
-            max-width: 480px;
-            padding: 0 20px;
-        }
+        .container { width: 100%; max-width: 480px; margin: auto; padding: 20px; }
 
-        /* Top Hero Section */
-        .hero {
-            text-align: center;
-            padding: 40px 0 20px 0;
-        }
-        .piala-icon {
-            font-size: 80px;
-            display: block;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
-            animation: bounce 2s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        /* Header piala saja */
+        .hero { text-align: center; padding: 30px 0; }
+        .piala { font-size: 70px; display: block; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.3)); }
 
-        /* Filter Bulan Style */
-        .filter-wrapper {
-            margin-bottom: 25px;
-            position: relative;
-        }
+        /* Filter minimalis */
+        .filter-box { margin-bottom: 20px; }
         #filter-bulan {
-            width: 100%;
-            padding: 15px;
-            border-radius: 18px;
-            border: none;
-            background: var(--white);
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 16px;
-            text-align: center;
-            appearance: none;
-            box-shadow: 0 5px 0 #ddd;
-            outline: none;
-            cursor: pointer;
+            width: 100%; padding: 12px; border-radius: 12px; border: none;
+            background: white; font-weight: 800; color: var(--primary);
+            text-align: center; outline: none;
         }
 
-        /* Leaderboard List */
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
+        /* List kartu santri */
         .card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 5px 0 rgba(0,0,0,0.15);
-            transition: transform 0.1s;
-            position: relative;
-            overflow: hidden;
-        }
-        .card:active { transform: translateY(2px); }
-
-        .rank {
-            width: 35px;
-            font-size: 22px;
-            font-weight: 900;
-            color: #ddd;
-            text-align: center;
-        }
-        .rank.top1 { color: var(--accent); }
-        .rank.top2 { color: #aaa; }
-        .rank.top3 { color: #cd7f32; }
-
-        .avatar {
-            width: 55px;
-            height: 55px;
-            background: #f0f0f0;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
+            background: white; color: #333; border-radius: 15px;
+            padding: 15px; margin-bottom: 10px; display: flex; align-items: center;
+            gap: 12px; box-shadow: 0 4px 0 rgba(0,0,0,0.1);
         }
 
+        .rank { width: 30px; font-size: 20px; font-weight: 900; color: #ccc; text-align: center; }
+        .top1 { color: var(--accent); }
+        .top2 { color: #aaa; }
+        .top3 { color: #cd7f32; }
+
+        .ava { width: 45px; height: 45px; background: #eee; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
         .info { flex: 1; }
-        .info h3 {
-            font-size: 15px;
-            font-weight: 800;
-            color: #222;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        .info p {
-            font-size: 11px;
-            color: #777;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
+        .info h3 { font-size: 14px; font-weight: 800; text-transform: uppercase; }
+        .info p { font-size: 10px; color: #888; font-weight: 600; }
 
-        /* XP Style */
-        .xp-group { text-align: right; }
-        .xp-value {
-            display: block;
-            font-size: 20px;
-            font-weight: 900;
-            color: var(--primary);
-            line-height: 1;
-        }
-        .xp-label {
-            font-size: 9px;
-            font-weight: 700;
-            color: #bbb;
-        }
+        .xp-val { font-size: 18px; font-weight: 900; color: var(--primary); text-align: right; }
 
-        /* Loading & Empty State */
-        .status-msg {
-            text-align: center;
-            padding: 50px 0;
-            font-weight: 800;
-            opacity: 0.5;
-            letter-spacing: 2px;
-        }
+        .status { text-align: center; padding: 40px; font-weight: 800; opacity: 0.5; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="hero">
-        <span class="piala-icon">🏆</span>
+        <span class="piala">🏆</span>
     </div>
 
-    <div class="filter-wrapper">
+    <div class="filter-box">
         <select id="filter-bulan" onchange="muatData()">
-            <option value="1">JANUARI 2026</option>
-            <option value="2">FEBRUARI 2026</option>
-            <option value="3">MARET 2026</option>
-            <option value="4">APRIL 2026</option>
-            <option value="5">MEI 2026</option>
-            <option value="6">JUNI 2026</option>
-            <option value="7">JULI 2026</option>
-            <option value="8">AGUSTUS 2026</option>
-            <option value="9">SEPTEMBER 2026</option>
-            <option value="10">OKTOBER 2026</option>
-            <option value="11">NOVEMBER 2026</option>
-            <option value="12">DESEMBER 2026</option>
+            <option value="1">JANUARI</option>
+            <option value="2">FEBRUARI</option>
+            <option value="3">MARET</option>
+            <option value="4">APRIL</option>
+            <option value="5">MEI</option>
+            <option value="6">JUNI</option>
+            <option value="7">JULI</option>
+            <option value="8">AGUSTUS</option>
+            <option value="9">SEPTEMBER</option>
+            <option value="10">OKTOBER</option>
+            <option value="11">NOVEMBER</option>
+            <option value="12">DESEMBER</option>
         </select>
     </div>
 
-    <div id="leaderboard-list" class="list-container">
-        </div>
+    <div id="list-data"></div>
 </div>
 
 <script>
-    // URL Database Bos (Pastikan sama dengan input data)
-    const DB_URL = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/leaderboard";
-    
-    // Set Otomatis ke bulan sekarang
-    const bulanSekarang = new Date().getMonth() + 1;
-    document.getElementById('filter-bulan').value = bulanSekarang;
+    const URL_DB = "https://e-santri-b62be-default-rtdb.asia-southeast1.firebasedatabase.app/leaderboard";
+    document.getElementById('filter-bulan').value = new Date().getMonth() + 1;
 
     async function muatData() {
-        const listArea = document.getElementById('leaderboard-list');
+        const area = document.getElementById('list-data');
         const bln = document.getElementById('filter-bulan').value;
-        const keyBulan = `2026-${bln}`;
-
-        listArea.innerHTML = '<div class="status-msg">MENYINKRONKAN...</div>';
+        const key = `2026-${bln}`;
+        area.innerHTML = '<div class="status">LOADING...</div>';
 
         try {
-            const response = await fetch(`${DB_URL}/${keyBulan}.json`);
-            const data = await response.json();
+            const res = await fetch(`${URL_DB}/${key}.json`);
+            const data = await res.json();
+            if (!data) { area.innerHTML = '<div class="status">KOSONG</div>'; return; }
 
-            if (!data) {
-                listArea.innerHTML = '<div class="status-msg">BELUM ADA DATA</div>';
-                return;
-            }
-
-            // Sorting: XP Terbanyak di atas
-            let santriArray = Object.values(data).sort((a, b) => b.totalXP - a.totalXP);
-            
-            let htmlBaru = "";
-            santriArray.forEach((s, index) => {
-                let rankClass = "";
-                let medal = "👤";
-                
-                if(index === 0) { rankClass = "top1"; medal = "🥇"; }
-                else if(index === 1) { rankClass = "top2"; medal = "🥈"; }
-                else if(index === 2) { rankClass = "top3"; medal = "🥉"; }
-
-                htmlBaru += `
+            let array = Object.values(data).sort((a,b) => b.totalXP - a.totalXP);
+            let html = "";
+            array.forEach((s, i) => {
+                let rClass = (i===0)?"top1":(i===1)?"top2":(i===2)?"top3":"";
+                let emoji = (i===0)?"🥇":(i===1)?"🥈":(i===2)?"🥉":"👤";
+                html += `
                     <div class="card">
-                        <div class="rank ${rankClass}">${index + 1}</div>
-                        <div class="avatar">${medal}</div>
+                        <div class="rank ${rClass}">${i+1}</div>
+                        <div class="ava">${emoji}</div>
                         <div class="info">
                             <h3>${s.nama}</h3>
                             <p>KELAS ${s.kelas} • ${s.totalSetoran} SETORAN</p>
                         </div>
-                        <div class="xp-group">
-                            <span class="xp-value">${s.totalXP}</span>
-                            <span class="xp-label">XP POIN</span>
-                        </div>
-                    </div>
-                `;
+                        <div class="xp-val">${s.totalXP}</div>
+                    </div>`;
             });
-
-            listArea.innerHTML = htmlBaru;
-
-        } catch (error) {
-            listArea.innerHTML = '<div class="status-msg">KONEKSI BERMASALAH</div>';
-        }
+            area.innerHTML = html;
+        } catch(e) { area.innerHTML = '<div class="status">ERROR</div>'; }
     }
-
-    // Jalankan fungsi saat halaman dibuka
     muatData();
 </script>
-
 </body>
 </html>
