@@ -3,62 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIGA TAHFIDZ</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>LIGA</title> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1f6f51; --accent: #eab308; --gaming-blue: #1cb0f6; --white: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         
-        body { background: var(--primary); color: var(--white); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
+        body { background: var(--primary); color: var(--white); padding: 10px; display: flex; justify-content: center; min-height: 100vh; }
         .wadah-lb { width: 100%; max-width: 450px; }
 
-        header { text-align: center; padding: 30px 0; margin-bottom: 10px; }
-        header .icon-top { font-size: 60px; margin-bottom: 10px; display: block; }
-        header h1 { font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: 1px; line-height: 1; }
-        header p { font-size: 13px; opacity: 0.8; margin-top: 10px; }
+        /* Bagian Atas Hanya Icon dan Nama Liga */
+        .top-hero { text-align: center; padding: 25px 0; }
+        .piala { font-size: 60px; display: block; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+        .nama-liga { font-size: 35px; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-top: 5px; }
+
+        .filter-section { margin: 20px 0; }
+        #filter-bulan { 
+            width: 100%; padding: 12px; border-radius: 12px; border: none; 
+            background: white; font-weight: 800; color: var(--primary); 
+            box-shadow: 0 5px 0 #ddd; outline: none; text-align: center;
+        }
+
+        .kartu-lb { 
+            background: var(--white); color: #333; border-radius: 15px; 
+            padding: 15px; margin-bottom: 10px; display: flex; align-items: center; 
+            gap: 12px; box-shadow: 0 4px 0 rgba(0,0,0,0.2); 
+        }
         
-        .filter-section { margin-bottom: 25px; }
-        #filter-bulan { width: 100%; padding: 14px; border-radius: 18px; border: none; background: white; font-weight: 700; color: var(--primary); cursor: pointer; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); appearance: none; text-align: center; }
+        .rank-box { font-size: 22px; font-weight: 900; color: #ccc; min-width: 30px; text-align: center; }
+        .gold { color: var(--accent); }
+        .silver { color: #aaa; }
+        .bronze { color: #cd7f32; }
 
-        .kartu-lb { background: var(--white); color: #333; border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.15); position: relative; }
+        .ava { width: 45px; height: 45px; background: #eee; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 25px; }
         
-        .rank-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; background: #f0f0f0; }
-        .top-1 { background: var(--accent); color: white; }
-        .top-2 { background: #e5e5e5; }
-        .top-3 { background: #cd7f32; color: white; }
+        .info { flex: 1; }
+        .info h3 { font-size: 14px; font-weight: 800; color: #222; margin-bottom: 2px; }
+        .info p { font-size: 11px; color: #777; font-weight: 600; }
 
-        .avatar-box { width: 50px; height: 50px; background: #f9f9f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #eee; }
-        
-        .info-santri { flex: 1; }
-        .info-santri h3 { font-size: 14px; font-weight: 800; color: #111; text-transform: uppercase; }
-        .info-santri p { font-size: 11px; color: #777; font-weight: 600; }
+        .xp-side { text-align: right; }
+        .xp-num { display: block; font-size: 18px; font-weight: 900; color: var(--primary); }
+        .xp-txt { font-size: 9px; font-weight: 700; color: #bbb; }
 
-        .progress-container { width: 100%; background: #eee; height: 6px; border-radius: 10px; margin-top: 8px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--gaming-blue); border-radius: 10px; }
-
-        .xp-display { text-align: right; min-width: 80px; }
-        .xp-value { display: block; font-size: 18px; font-weight: 800; color: var(--primary); }
-        .xp-label { font-size: 9px; font-weight: 700; color: #aaa; }
-
-        #loading-state { text-align: center; padding: 40px; font-weight: 700; }
+        #loading-state { text-align: center; margin-top: 50px; font-weight: 700; opacity: 0.5; }
     </style>
 </head>
 <body>
 
 <div class="wadah-lb">
-    <header>
-        <span class="icon-top">🏆</span>
-        <h1>LIGA TAHFIDZ</h1> 
-        <p>Kumpulkan poin XP dari setiap setoranmu!</p>
-    </header>
+    <div class="top-hero">
+        <span class="piala">🏆</span>
+        <div class="nama-liga">LIGA E-SANTRI</div>
+    </div>
 
     <div class="filter-section">
         <select id="filter-bulan" onchange="muatPeringkat()">
-            <option value="1">Januari 2026</option>
-            <option value="2">Februari 2026</option>
-            <option value="3">Maret 2026</option>
-            <option value="4">April 2026</option>
-            <option value="5">Mei 2026</option>
-            <option value="6">Juni 2026</option>
+            <option value="1">JANUARI</option>
+            <option value="2">FEBRUARI</option>
+            <option value="3">MARET</option>
+            <option value="4">APRIL</option>
+            <option value="5">MEI</option>
+            <option value="6">JUNI</option>
+            <option value="7">JULI</option>
+            <option value="8">AGUSTUS</option>
+            <option value="9">SEPTEMBER</option>
+            <option value="10">OKTOBER</option>
+            <option value="11">NOVEMBER</option>
+            <option value="12">DESEMBER</option>
         </select>
     </div>
 
@@ -74,13 +85,13 @@
         const bln = document.getElementById('filter-bulan').value;
         const blnKey = `2026-${bln}`;
         const container = document.getElementById('konten-peringkat');
-        container.innerHTML = '<div id="loading-state">Sinkronisasi Skor...</div>';
+        container.innerHTML = '<div id="loading-state">LOADING...</div>';
 
         try {
             const res = await fetch(`${FIREBASE_LB_URL}/${blnKey}.json`);
             const data = await res.json();
             if (!data) {
-                container.innerHTML = '<p style="text-align:center; opacity:0.6; padding-top:20px;">Belum ada aktivitas bulan ini.</p>';
+                container.innerHTML = '<p style="text-align:center; opacity:0.5; margin-top:30px;">BELUM ADA DATA</p>';
                 return;
             }
 
@@ -88,28 +99,26 @@
             let html = "";
 
             list.forEach((s, i) => {
-                let rankClass = (i === 0) ? "top-1" : (i === 1) ? "top-2" : (i === 2) ? "top-3" : "";
-                let emoji = (i === 0) ? "👑" : (i === 1) ? "🥈" : (i === 2) ? "🥉" : "👤";
-                let progress = Math.min((s.totalSetoran / 20) * 100, 100);
+                let rankStyle = (i === 0) ? "gold" : (i === 1) ? "silver" : (i === 2) ? "bronze" : "";
+                let emoji = (i === 0) ? "🥇" : (i === 1) ? "🥈" : (i === 2) ? "🥉" : "👤";
 
                 html += `
                 <div class="kartu-lb">
-                    <div class="rank-circle ${rankClass}">${i + 1}</div>
-                    <div class="avatar-box">${emoji}</div>
-                    <div class="info-santri">
+                    <div class="rank-box ${rankStyle}">${i + 1}</div>
+                    <div class="ava">${emoji}</div>
+                    <div class="info">
                         <h3>${s.nama}</h3>
-                        <p>Kelas ${s.kelas} • ${s.totalSetoran}x Setoran</p>
-                        <div class="progress-container"><div class="progress-bar" style="width: ${progress}%"></div></div>
+                        <p>KELAS ${s.kelas} • ${s.totalSetoran}x SETORAN</p>
                     </div>
-                    <div class="xp-display">
-                        <span class="xp-value">${s.totalXP}</span>
-                        <span class="xp-label">TOTAL XP</span>
+                    <div class="xp-side">
+                        <span class="xp-num">${s.totalXP}</span>
+                        <span class="xp-txt">XP POIN</span>
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         } catch (e) {
-            container.innerHTML = '<p style="text-align:center;">Gagal mengambil data.</p>';
+            container.innerHTML = '<p style="text-align:center;">ERROR</p>';
         }
     }
     muatPeringkat();
