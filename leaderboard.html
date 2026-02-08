@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-SANTRI | LIGA TAHFIDZ</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>LIGA TAHFIDZ</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1f6f51; --accent: #eab308; --gaming-blue: #1cb0f6; --white: #ffffff; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
@@ -11,17 +11,14 @@
         body { background: var(--primary); color: var(--white); padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
         .wadah-lb { width: 100%; max-width: 450px; }
 
-        /* Header Bersih tanpa tulisan papan peringkat */
         header { text-align: center; padding: 30px 0; margin-bottom: 10px; }
-        header .icon-top { font-size: 50px; margin-bottom: 10px; display: block; }
-        header h1 { font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: 1px; }
-        header p { font-size: 13px; opacity: 0.8; margin-top: 5px; }
+        header .icon-top { font-size: 60px; margin-bottom: 10px; display: block; }
+        header h1 { font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: 1px; line-height: 1; }
+        header p { font-size: 13px; opacity: 0.8; margin-top: 10px; }
         
-        /* Dropdown Bulan */
         .filter-section { margin-bottom: 25px; }
-        #filter-bulan { width: 100%; padding: 12px; border-radius: 15px; border: none; background: white; font-weight: 700; color: var(--primary); cursor: pointer; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #filter-bulan { width: 100%; padding: 14px; border-radius: 18px; border: none; background: white; font-weight: 700; color: var(--primary); cursor: pointer; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); appearance: none; text-align: center; }
 
-        /* Kartu List */
         .kartu-lb { background: var(--white); color: #333; border-radius: 20px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.15); position: relative; }
         
         .rank-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; background: #f0f0f0; }
@@ -32,15 +29,15 @@
         .avatar-box { width: 50px; height: 50px; background: #f9f9f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid #eee; }
         
         .info-santri { flex: 1; }
-        .info-santri h3 { font-size: 15px; font-weight: 800; color: #111; text-transform: uppercase; }
-        .info-santri p { font-size: 12px; color: #777; font-weight: 600; }
+        .info-santri h3 { font-size: 14px; font-weight: 800; color: #111; text-transform: uppercase; }
+        .info-santri p { font-size: 11px; color: #777; font-weight: 600; }
 
         .progress-container { width: 100%; background: #eee; height: 6px; border-radius: 10px; margin-top: 8px; overflow: hidden; }
         .progress-bar { height: 100%; background: var(--gaming-blue); border-radius: 10px; }
 
         .xp-display { text-align: right; min-width: 80px; }
-        .xp-value { display: block; font-size: 20px; font-weight: 800; color: var(--primary); }
-        .xp-label { font-size: 10px; font-weight: 700; color: #aaa; }
+        .xp-value { display: block; font-size: 18px; font-weight: 800; color: var(--primary); }
+        .xp-label { font-size: 9px; font-weight: 700; color: #aaa; }
 
         #loading-state { text-align: center; padding: 40px; font-weight: 700; }
     </style>
@@ -50,7 +47,8 @@
 <div class="wadah-lb">
     <header>
         <span class="icon-top">🏆</span>
-        <h1>LIGA TAHFIDZ</h1> <p>Kumpulkan poin XP dari setiap setoranmu!</p>
+        <h1>LIGA TAHFIDZ</h1> 
+        <p>Kumpulkan poin XP dari setiap setoranmu!</p>
     </header>
 
     <div class="filter-section">
@@ -59,6 +57,8 @@
             <option value="2">Februari 2026</option>
             <option value="3">Maret 2026</option>
             <option value="4">April 2026</option>
+            <option value="5">Mei 2026</option>
+            <option value="6">Juni 2026</option>
         </select>
     </div>
 
@@ -74,13 +74,13 @@
         const bln = document.getElementById('filter-bulan').value;
         const blnKey = `2026-${bln}`;
         const container = document.getElementById('konten-peringkat');
-        container.innerHTML = '<div id="loading-state">Memproses Skor...</div>';
+        container.innerHTML = '<div id="loading-state">Sinkronisasi Skor...</div>';
 
         try {
             const res = await fetch(`${FIREBASE_LB_URL}/${blnKey}.json`);
             const data = await res.json();
             if (!data) {
-                container.innerHTML = '<p style="text-align:center; opacity:0.6;">Belum ada aktivitas bulan ini.</p>';
+                container.innerHTML = '<p style="text-align:center; opacity:0.6; padding-top:20px;">Belum ada aktivitas bulan ini.</p>';
                 return;
             }
 
@@ -89,7 +89,7 @@
 
             list.forEach((s, i) => {
                 let rankClass = (i === 0) ? "top-1" : (i === 1) ? "top-2" : (i === 2) ? "top-3" : "";
-                let emoji = (i === 0) ? "👑" : "👤";
+                let emoji = (i === 0) ? "👑" : (i === 1) ? "🥈" : (i === 2) ? "🥉" : "👤";
                 let progress = Math.min((s.totalSetoran / 20) * 100, 100);
 
                 html += `
