@@ -368,6 +368,50 @@
         document.getElementById('loading').style.display = 'none'; 
     }
 }
+    // FUNGSI UNTUK MEMANGGIL NAMA SISWA DI MENU RAPOR
+    async function loadSantriRapor() {
+        const kls = document.getElementById('r-kelas').value;
+        const sel = document.getElementById('r-nama');
+        
+        if (!kls) {
+            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            return;
+        }
+
+        sel.innerHTML = '<option>⏳ Memuat...</option>';
+        
+        try {
+            // Mengambil data dari Google Sheets (SCRIPT_URL)
+            const res = await fetch(`${SCRIPT_URL}?action=getSantri&kelas=${encodeURIComponent(kls)}`);
+            dataSiswaRapor = await res.json();
+            
+            sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+            
+            if (dataSiswaRapor && dataSiswaRapor.length > 0) {
+                dataSiswaRapor.forEach((x, index) => { 
+                    // Simpan index sebagai value supaya gampang ambil NISN nanti
+                    sel.options.add(new Option(x.nama, index)); 
+                });
+            } else {
+                sel.innerHTML = '<option value="">Data Kosong</option>';
+            }
+        } catch (e) {
+            console.error(e);
+            sel.innerHTML = '<option value="">❌ Gagal muat data</option>';
+        }
+    }
+
+    // FUNGSI UNTUK ISI NISN OTOMATIS SAAT NAMA DIPILIH
+    function isiNisnotomatis() { 
+        const idx = document.getElementById('r-nama').value; 
+        if(idx !== "" && dataSiswaRapor[idx]) { 
+            // Pastikan kolom di Google Sheets Bos namanya 'nipd' atau 'nisn'
+            // Di fungsi loadSantri Bos pakai x.nipd, jadi di sini kita sesuaikan
+            document.getElementById('r-nisn').value = dataSiswaRapor[idx].nipd || dataSiswaRapor[idx].nisn || ""; 
+        } else {
+            document.getElementById('r-nisn').value = "";
+        }
+    }
     function cetakSatuKelas() { const kls = document.getElementById('r-kelas').value; if(!kls) return alert("Pilih Kelas!"); window.open(`${LINK_GITHUB_PAGES_BOS}?mode=kelas&kelas=${kls}`, '_blank'); }
     function setStar(n) { document.getElementById('nilai-bintang').value = n; document.querySelectorAll('.star').forEach((s, i) => s.style.color = i < n ? "#eab308" : "#ddd"); }
     function exportExcel() { XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap")), `Rekap_Tahfidz.xlsx`); }
