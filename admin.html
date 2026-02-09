@@ -13,7 +13,7 @@
     <style>
         :root { --primary: #1f6f51; --secondary: #2ecc71; --accent: #eab308; --bg: #f0f2f5; --red: #e74c3c; --blue: #2563eb; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--bg); color: #333; padding-bottom: 80px; } /* Ditambah padding biar gak ketutup nav */
+        body { background: var(--bg); color: #333; padding-bottom: 80px; }
 
         .sidebar { background: white; padding: 10px; display: flex; gap: 8px; overflow-x: auto; position: sticky; top: 0; z-index: 1000; border-bottom: 2px solid #ddd; scrollbar-width: none; }
         .nav-item { padding: 10px 15px; border-radius: 10px; background: #eee; border: none; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: 0.3s; }
@@ -49,7 +49,6 @@
         .msg-header { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
         .msg-text { font-size: 13px; line-height: 1.4; color: #444; }
 
-        /* Gaya Tombol Navigasi Bawah Baru */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; align-items: center; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); border-top: 1px solid #ddd; z-index: 2000; }
         .nav-btm { background: none; border: none; color: #666; font-size: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .nav-btm i { font-size: 18px; margin-bottom: 2px; }
@@ -80,7 +79,12 @@
     <div id="tab-absen" class="tab-content">
         <div class="card">
             <h3><i class="fas fa-eye"></i> Monitoring Absen</h3>
-            <select id="abs-kls" onchange="monAbsen()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>7C</option><option>7D</option><option>9A</option><option>9B</option></select>
+            <select id="abs-kls" onchange="monAbsen()">
+                <option value="">-- Pilih Kelas --</option>
+                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+            </select>
             <div id="list-absen"></div>
         </div>
     </div>
@@ -88,7 +92,21 @@
     <div id="tab-tahfidz" class="tab-content hidden">
         <div class="card">
             <h3><i class="fas fa-eye"></i> Monitoring Tahfidz</h3>
-            <select id="mon-thf-kls" onchange="loadMonTahfidz()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
+            <div class="grid-2">
+                <div>
+                    <span class="label-kecil">PILIH KELAS</span>
+                    <select id="mon-thf-kls" onchange="loadMonTahfidz()">
+                        <option value="">-- Pilih Kelas --</option>
+                        <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                        <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                        <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                    </select>
+                </div>
+                <div>
+                    <span class="label-kecil">PILIH TANGGAL</span>
+                    <input type="date" id="mon-thf-tgl" onchange="loadMonTahfidz()">
+                </div>
+            </div>
             <div id="list-tahfidz-mon"></div>
         </div>
     </div>
@@ -99,7 +117,11 @@
             <div class="grid-2">
                 <div>
                     <span class="label-kecil">KELAS</span>
-                    <select id="uj-kls"><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
+                    <select id="uj-kls">
+                        <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                        <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                        <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                    </select>
                 </div>
                 <div>
                     <span class="label-kecil">MATA PELAJARAN</span>
@@ -129,7 +151,12 @@
         <div class="card">
             <h3><i class="fas fa-users"></i> Rekap Nilai & Rata-Rata</h3>
             <div class="grid-2">
-                <select id="rek-kls" onchange="loadRekapNilai()"><option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option><option>9C</option><option>9D</option></select>
+                <select id="rek-kls" onchange="loadRekapNilai()">
+                    <option value="">-- Pilih Kelas --</option>
+                    <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                    <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                    <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
+                </select>
                 <button class="btn btn-accent" onclick="downloadExcel()">DOWNLOAD EXCEL</button>
             </div>
             <div class="table-wrapper">
@@ -195,7 +222,10 @@
         <div class="card">
             <h3><i class="fas fa-paper-plane"></i> Kirim Laporan Massal</h3>
             <select id="wa-kls-kirim">
-                <option value="">-- Pilih Kelas --</option><option>7A</option><option>7B</option><option>8A</option><option>8B</option><option>9A</option><option>9B</option>
+                <option value="">-- Pilih Kelas --</option>
+                <option>7A</option><option>7B</option><option>7C</option><option>7D</option>
+                <option>8A</option><option>8B</option><option>8C</option><option>8D</option>
+                <option>9A</option><option>9B</option><option>9C</option><option>9D</option>
             </select>
             <button class="btn btn-wa" id="btnKirimWA" onclick="kirimLaporanWA()" style="margin-top: 10px;"><i class="fab fa-whatsapp"></i> KIRIM LAPORAN KE ANTRIAN</button>
             <div id="wa-progress" class="hidden" style="margin-top: 15px;">
@@ -222,7 +252,11 @@
 
     const daftarMapel = ["Mtk","IPA","IPS","PKN","B.Indo","B.Ing","B.Arab","Fikih","Aqidah","Tarikh","Infor","B.Daerah","Seni"];
 
-    window.onload = () => { if(localStorage.getItem('admin_login') === 'true') document.getElementById('lock-screen').style.display='none'; };
+    window.onload = () => { 
+        if(localStorage.getItem('admin_login') === 'true') document.getElementById('lock-screen').style.display='none'; 
+        // Set default tanggal monitoring tahfidz ke hari ini
+        document.getElementById('mon-thf-tgl').value = new Date().toISOString().split('T')[0];
+    };
     
     function login() { 
         if(document.getElementById('pin').value === "152003") {
@@ -241,6 +275,59 @@
         if(id === 'adu') loadPengaduan();
     }
 
+    // --- FUNGSI TAHFIDZ ---
+    function loadMonTahfidz() {
+        const kls = document.getElementById('mon-thf-kls').value;
+        const tglPilih = document.getElementById('mon-thf-tgl').value;
+        if(!kls || !tglPilih) return;
+
+        db.ref(`tahfidz/2026`).on('value', snap => {
+            const box = document.getElementById('list-tahfidz-mon');
+            box.innerHTML = "";
+            let adaData = false;
+
+            snap.forEach(bulan => {
+                const dataTanggal = bulan.child(tglPilih);
+                if(dataTanggal.exists()){
+                    dataTanggal.forEach(entry => {
+                        const d = entry.val();
+                        if(d.kelas === kls) {
+                            adaData = true;
+                            box.innerHTML += `
+                                <div class="item-row">
+                                    <div style="display:flex; flex-direction:column;">
+                                        <b style="font-size:13px;">${d.nama}</b>
+                                        <span style="font-size:10px; color:var(--primary);">${d.materi}</span>
+                                    </div>
+                                    <button onclick="hapusSetoran('${bulan.key}','${tglPilih}','${entry.key}')" style="border:none; background:none; color:red; cursor:pointer;"><i class="fas fa-trash"></i></button>
+                                </div>`;
+                        }
+                    });
+                }
+            });
+            if(!adaData) box.innerHTML = `<p style="text-align:center; font-size:11px; color:#999; padding:15px;">Tidak ada setoran untuk kelas ${kls} pada tanggal ini.</p>`;
+        });
+    }
+
+    async function hapusSetoran(bulan, tgl, id) {
+        if(confirm("Yakin hapus data setoran ini?")) {
+            await db.ref(`tahfidz/2026/${bulan}/${tgl}/${id}`).remove();
+            alert("Data terhapus!");
+        }
+    }
+
+    // --- FUNGSI ABSEN ---
+    function monAbsen() {
+        const kls = document.getElementById('abs-kls').value;
+        const d = new Date();
+        db.ref(`absensi/2026/${d.getMonth()+1}/${d.getDate()}/${kls}`).on('value', snap => {
+            const box = document.getElementById('list-absen'); box.innerHTML = "";
+            if(!snap.exists()) { box.innerHTML = "<p style='text-align:center; font-size:11px; color:#999;'>Belum ada data absen hari ini.</p>"; return; }
+            snap.forEach(s => box.innerHTML += `<div class="item-row"><b>${s.val().nama}</b><span>${s.val().status}</span></div>`);
+        });
+    }
+
+    // --- FUNGSI UJIAN & BANK SOAL ---
     async function saveUjian() {
         const kls = document.getElementById('uj-kls').value;
         const mapel = document.getElementById('uj-mapel').value;
@@ -266,6 +353,7 @@
         document.getElementById('uj-bulk').value = "";
     }
 
+    // --- FUNGSI REKAP ---
     function loadRekapNilai() {
         const kls = document.getElementById('rek-kls').value;
         if(!kls) return;
@@ -301,6 +389,7 @@
         XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap-13")), `Rekap_Nilai_${kls}.xlsx`);
     }
 
+    // --- FUNGSI MATERI & REWARD ---
     function upMateri(type) {
         if(type === 'mahfuzat') {
             db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value });
@@ -311,7 +400,7 @@
             const indo = document.getElementById('doa-it').value;
             if(!judul || !arab || !indo) return alert("Lengkapi judul, arab, dan arti!");
             db.ref('konten/doa_harian').push({ judul: judul, arab: arab, indo: indo });
-            alert("Doa Berhasil Ditambah ke Daftar!");
+            alert("Doa Berhasil Ditambah!");
         }
     }
 
@@ -352,57 +441,10 @@
         });
     }
 
-    function monAbsen() {
-        const kls = document.getElementById('abs-kls').value;
-        const d = new Date();
-        db.ref(`absensi/2026/${d.getMonth()+1}/${d.getDate()}/${kls}`).on('value', snap => {
-            const box = document.getElementById('list-absen'); box.innerHTML = "";
-            snap.forEach(s => box.innerHTML += `<div class="item-row"><b>${s.val().nama}</b><span>${s.val().status}</span></div>`);
-        });
-    }
-
-    // Tambahkan input tanggal di HTML agar admin bisa cek setoran hari-hari sebelumnya
-// <input type="date" id="mon-thf-tgl" onchange="loadMonTahfidz()">
-
-function loadMonTahfidz() {
-    const kls = document.getElementById('mon-thf-kls').value;
-    // Gunakan input tanggal jika ada, jika tidak gunakan hari ini
-    const tglPilih = document.getElementById('mon-thf-tgl')?.value || new Date().toISOString().split('T')[0];
-    
-    if(!kls) return;
-
-    // Langsung tembak ke tahun 2026 (sesuai struktur anda)
-    db.ref(`tahfidz/2026`).on('value', snap => {
-        const box = document.getElementById('list-tahfidz-mon');
-        box.innerHTML = "";
-        let adaData = false;
-
-        snap.forEach(bulan => {
-            const dataTanggal = bulan.child(tglPilih);
-            if(dataTanggal.exists()){
-                dataTanggal.forEach(entry => {
-                    const d = entry.val();
-                    if(d.kelas === kls) {
-                        adaData = true;
-                        box.innerHTML += `
-                            <div class="item-row">
-                                <div style="display:flex; flex-direction:column;">
-                                    <b style="font-size:13px;">${d.nama}</b>
-                                    <span style="font-size:10px; color:var(--primary);">${d.materi}</span>
-                                </div>
-                                <button onclick="hapusSetoran('${bulan.key}','${tglPilih}','${entry.key}')" style="border:none; background:none; color:red;"><i class="fas fa-trash"></i></button>
-                            </div>`;
-                    }
-                });
-            }
-        });
-        // ... handling if !adaData ...
-    });
-}
-
+    // --- WA GATEWAY ---
     async function simpanNomorMassal() {
         const t = document.getElementById('wa-bulk-input').value.trim();
-        if(!t) return alert("Data Kosong, Bos!");
+        if(!t) return alert("Data Kosong!");
         const lines = t.split('\n');
         let c = 0;
         for(let l of lines) {
@@ -410,59 +452,46 @@ function loadMonTahfidz() {
             if(s.length >= 2) {
                 let n = s[1].trim().replace(/\D/g, ''); 
                 if (n.startsWith('0')) n = '62' + n.slice(1); 
-                await db.ref(`data_santri_wa/${s[0].trim()}`).set({ 
-                    nama: s[0].trim(), 
-                    no_wa: n 
-                });
+                await db.ref(`data_santri_wa/${s[0].trim()}`).set({ nama: s[0].trim(), no_wa: n });
                 c++;
             }
         }
-        alert("Mantap Bos! " + c + " Nomor WA Santri Tersimpan.");
+        alert("Sukses! " + c + " Nomor Tersimpan.");
         document.getElementById('wa-bulk-input').value = "";
     }
 
     async function kirimLaporanWA() {
         const kls = document.getElementById('wa-kls-kirim').value;
-        if(!kls) return alert("Pilih Kelas dulu, Bos!");
+        if(!kls) return alert("Pilih Kelas!");
         const btn = document.getElementById('btnKirimWA');
         const prog = document.getElementById('wa-progress');
         const bar = document.getElementById('wa-bar');
         const stat = document.getElementById('wa-status');
-        btn.disabled = true; 
-        prog.classList.remove('hidden');
+        btn.disabled = true; prog.classList.remove('hidden');
+        
         const snapWA = await db.ref(`data_santri_wa`).once('value');
         const dataWA = snapWA.val();
         const snapNilai = await db.ref(`nilai_ujian/${kls}`).once('value');
         const dataNilai = snapNilai.val();
-        if(!dataNilai) { 
-            alert("Data Nilai Kelas ini masih kosong!"); 
-            btn.disabled = false; 
-            return; 
-        }
+        
+        if(!dataNilai) { alert("Data Nilai Kosong!"); btn.disabled = false; return; }
+        
         let listSiswa = [];
-        for(let m in dataNilai) { 
-            for(let id in dataNilai[m]) { 
-                if(!listSiswa.includes(dataNilai[m][id].nama)) listSiswa.push(dataNilai[m][id].nama); 
-            } 
-        }
+        for(let m in dataNilai) { for(let id in dataNilai[m]) { if(!listSiswa.includes(dataNilai[m][id].nama)) listSiswa.push(dataNilai[m][id].nama); } }
+        
         let t = 0;
         for(let n of listSiswa) {
             const no = dataWA && dataWA[n] ? dataWA[n].no_wa : null;
             if(no) {
-                const p = `*LAPORAN BULANAN E-SANTRI*\n\nAssalamu'alaikum, laporan bulanan Ananda *${n}* (Kelas ${kls}) sudah tersedia di aplikasi.\n\nSyukron.`;
-                await db.ref('antrian_wa').push({ 
-                    nomor: no, 
-                    pesan: p,
-                    timestamp: Date.now()
-                });
+                const p = `*LAPORAN E-SANTRI*\nAssalamu'alaikum, laporan hasil belajar Ananda *${n}* (Kelas ${kls}) sudah diperbarui di aplikasi.\nSyukron.`;
+                await db.ref('antrian_wa').push({ nomor: no, pesan: p, timestamp: Date.now() });
                 t++;
             }
             bar.value = (t / listSiswa.length) * 100;
-            stat.innerText = `Mengantrekan: ${t}/${listSiswa.length} Orang...`;
+            stat.innerText = `Proses: ${t}/${listSiswa.length}`;
         }
-        alert("Antrian Selesai! Kurir WA akan mengirimnya satu per satu.");
-        btn.disabled = false; 
-        prog.classList.add('hidden');
+        alert("Selesai! Antrian WA telah dibuat.");
+        btn.disabled = false; prog.classList.add('hidden');
     }
 </script>
 </body>
