@@ -2,54 +2,64 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rapor Tahfidz Al-Irsyad - Presisi Final</title>
+    <title>Rapor Resmi SMP Al-Irsyad - Format Presisi</title>
     <style>
         @page { size: 215mm 330mm; margin: 0; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
         body { background: #555; display: flex; justify-content: center; padding: 20px; }
-        .page { width: 215mm; height: 330mm; background: white; padding: 10mm 15mm; position: relative; }
 
-        /* KOP SURAT PRESISI */
-        .kop { display: flex; align-items: center; border-bottom: 1px solid #000; padding-bottom: 5px; }
-        .kop img { width: 100px; height: auto; margin-right: 15px; }
+        .page {
+            width: 215mm; height: 330mm; background: white;
+            padding: 10mm 15mm; position: relative;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* KOP SURAT - WARNA HIJAU TUA LOGO */
+        .kop { display: flex; align-items: center; margin-bottom: 2px; }
+        .kop img { width: 110px; height: auto; margin-right: 15px; } 
         .kop-text { text-align: center; flex: 1; }
-        .kop-text .yayasan { font-size: 11pt; font-weight: bold; }
-        .kop-text .arab { font-size: 24pt; font-family: 'Times New Roman', serif; color: #008000; font-weight: bold; margin: -5px 0; }
-        .kop-text .sekolah { font-size: 16pt; color: #013F00; font-weight: 900; }
-        .kop-text .akreditasi { font-size: 9pt; font-weight: bold; }
-        .kop-text .izin { font-size: 8pt; margin: 2px 0; }
-        .kop-text .alamat { font-size: 8pt; border-top: 1px solid #000; padding-top: 3px; margin-top: 3px; }
-        .garis-tebal { border-bottom: 3px solid #000; margin-top: 2px; margin-bottom: 15px; }
+        .kop-text .yayasan { font-size: 10.5pt; font-weight: bold; color: #000; }
+        .kop-text .arab { font-size: 25pt; font-family: 'Times New Roman', serif; color: #006400; font-weight: bold; margin: -5px 0; }
+        .kop-text .sekolah { font-size: 16.5pt; color: #006400; font-weight: bold; margin: 2px 0; }
+        .kop-text .akreditasi { font-size: 9pt; font-weight: bold; color: #006400; }
+        .kop-text .izin { font-size: 7.8pt; color: #000; margin-top: 2px; }
+        .kop-text .alamat { font-size: 7.8pt; color: #000; border-top: 1.5px solid #000; padding-top: 4px; margin-top: 4px; font-weight: normal; }
 
-        /* JUDUL LAPORAN */
+        .garis-double { border-bottom: 1.5px solid #000; border-top: 3.5px solid #000; height: 6px; margin-top: 2px; margin-bottom: 15px; }
+
+        /* JUDUL */
         .judul-area { text-align: center; margin-bottom: 15px; }
-        .judul-area p { font-family: 'Times New Roman', serif; font-size: 12pt; font-style: italic; }
-        .judul-area h3 { font-size: 11pt; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
+        .judul-area p { font-family: 'Times New Roman', serif; font-size: 11.5pt; font-style: italic; margin-bottom: 5px; }
+        .judul-area h3 { font-size: 11pt; font-weight: bold; text-transform: uppercase; line-height: 1.4; }
 
-        /* DATA SISWA */
-        .info-siswa { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 10pt; }
+        /* INFO SISWA */
+        .info-siswa { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 10.5pt; }
         .info-kiri { width: 55%; }
         .info-kanan { width: 40%; }
-        .row-info { display: flex; margin-bottom: 3px; }
+        .row-info { display: flex; margin-bottom: 4px; }
         .label { width: 90px; }
-        .titik { width: 15px; }
+        .titik { width: 20px; text-align: center; }
         .val { flex: 1; font-weight: bold; }
 
-        /* TABEL SESUAI MASTER GAMBAR */
-        table { width: 100%; border: 2px solid #000; border-collapse: collapse; }
-        th { border: 1px solid #000; padding: 10px; font-size: 10pt; background: #fff; }
-        td { border: 1px solid #000; vertical-align: top; padding: 10px; font-size: 10.5pt; }
-        
-        .judul-materi { font-weight: bold; text-decoration: underline; margin-bottom: 8px; display: block; }
-        .isi-materi { min-height: 150px; line-height: 1.5; text-align: justify; }
+        /* TABEL GARIS UTUH - SESUAI MASTER */
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 1.5px solid #000; }
+        th { border: 1px solid #000; padding: 10px; font-size: 9.5pt; font-weight: bold; text-align: center; }
+        td { border: 1px solid #000; vertical-align: top; font-size: 10.5pt; }
 
-        /* FOOTER TTD */
-        .footer { margin-top: 40px; display: flex; justify-content: space-between; font-size: 11pt; }
-        .box-ttd { width: 45%; }
-        .space-ttd { height: 80px; }
-        .nama-ttd { font-weight: bold; text-decoration: underline; }
+        .sub-judul-box { font-weight: bold; padding: 6px 10px; background: #fff; border-bottom: 1px solid #000; display: block; }
+        .konten-isi { padding: 10px; min-height: 160px; text-align: justify; line-height: 1.5; }
 
-        @media print { body { background: none; padding: 0; } .page { box-shadow: none; } }
+        /* FOOTER TANDA TANGAN */
+        .footer { margin-top: 45px; display: flex; justify-content: space-between; font-size: 11pt; padding: 0 5px; }
+        .box-ttd { width: 48%; text-align: left; }
+        .space-ttd { height: 80px; } 
+        .nama-ttd { font-weight: bold; text-decoration: underline; display: block; margin-bottom: 2px; }
+        .nik-ttd { display: block; font-size: 10pt; }
+
+        @media print {
+            body { background: none; padding: 0; }
+            .page { margin: 0; box-shadow: none; border: none; }
+        }
     </style>
 </head>
 <body>
@@ -68,10 +78,12 @@
             const res = await fetch(FIREBASE_URL);
             const data = await res.json();
             container.innerHTML = "";
-            
+
             if (mode === 'kelas' && kelasTarget) {
                 Object.values(data).forEach(s => {
-                    if (s.kelas && s.kelas.toUpperCase() === kelasTarget.toUpperCase()) renderRapor(s, container);
+                    if (s && s.kelas && s.kelas.toUpperCase() === kelasTarget.toUpperCase()) {
+                        renderRapor(s, container);
+                    }
                 });
             } else {
                 renderRapor(Object.fromEntries(urlParams.entries()), container);
@@ -94,7 +106,7 @@
                     <p class="alamat">🏠 Jl. Panjunan No. 27 Cirebon 45112 | ☏ (0231) 234191 | ✉ smpalirsyad_crb@yahoo.co.id | 🌐 smp.alirsyadcrb.id</p>
                 </div>
             </div>
-            <div class="garis-tebal"></div>
+            <div class="garis-double"></div>
 
             <div class="judul-area">
                 <p>Bismillahirrohmaanirrohiim</p>
@@ -118,31 +130,29 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="40">NO.</th>
-                        <th width="240">PENCAPAIAN</th>
-                        <th>KETERANGAN</th>
+                        <th style="width: 8%;">NO.</th>
+                        <th style="width: 38%;">PENCAPAIAN</th>
+                        <th style="width: 54%;">KETERANGAN</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td align="center" style="vertical-align:middle">1</td>
-                        <td>
-                            <span class="judul-materi">Tahsin</span>
-                            <div class="isi-materi">${d.tahsin || ''}</div>
-                        </td>
-                        <td>
-                            <div class="isi-materi">${d.k_tahsin || ''}</div>
-                        </td>
+                        <td rowspan="2" align="center" style="vertical-align: middle; font-weight: bold;">1</td>
+                        <td style="padding: 0;"><div class="sub-judul-box">Tahsin</div></td>
+                        <td style="padding: 0;"><div class="sub-judul-box">&nbsp;</div></td>
                     </tr>
                     <tr>
-                        <td align="center" style="vertical-align:middle">2</td>
-                        <td>
-                            <span class="judul-materi">Tahfizh</span>
-                            <div class="isi-materi">${d.tahfizh || ''}</div>
-                        </td>
-                        <td>
-                            <div class="isi-materi">${d.k_tahfizh || ''}</div>
-                        </td>
+                        <td><div class="konten-isi">${d.tahsin || ''}</div></td>
+                        <td><div class="konten-isi">${d.k_tahsin || ''}</div></td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" align="center" style="vertical-align: middle; font-weight: bold;">2</td>
+                        <td style="padding: 0;"><div class="sub-judul-box">Tahfizh</div></td>
+                        <td style="padding: 0;"><div class="sub-judul-box">&nbsp;</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="konten-isi">${d.tahfizh || ''}</div></td>
+                        <td><div class="konten-isi">${d.k_tahfizh || ''}</div></td>
                     </tr>
                 </tbody>
             </table>
@@ -152,15 +162,15 @@
                     <p>Mengetahui,</p>
                     <p>Kepala SMP Al-Irsyad Al-Islamiyyah Kota Cirebon</p>
                     <div class="space-ttd"></div>
-                    <p class="nama-ttd">Siti Hamidah, M.Pd</p>
-                    <p>NIK. 19860720192027</p>
+                    <span class="nama-ttd">Siti Hamidah, M.Pd</span>
+                    <span class="nik-ttd">NIK. 19860720192027</span>
                 </div>
                 <div class="box-ttd">
                     <p>Cirebon, 22 Desember 2025</p>
                     <p>PJ. Al-Qur'an</p>
                     <div class="space-ttd"></div>
-                    <p class="nama-ttd">Ria Setiawati, A.Md</p>
-                    <p>NIK. 19900720172057</p>
+                    <span class="nama-ttd">Ria Setiawati, A.Md</span>
+                    <span class="nik-ttd">NIK. 19900720172057</span>
                 </div>
             </div>
         </div>`;
