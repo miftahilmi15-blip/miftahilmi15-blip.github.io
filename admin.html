@@ -178,7 +178,8 @@
     <div id="tab-materi" class="tab-content hidden">
         <div class="card">
             <h3><i class="fas fa-quote-left"></i> Update Materi</h3>
-            <input type="text" id="mh-ar" placeholder="Arab Mahfuzat"><textarea id="mh-it" placeholder="Arti Mahfuzat"></textarea>
+            <input type="text" id="mh-ar" placeholder="Arab Mahfuzat">
+            <textarea id="mh-it" placeholder="Arti Mahfuzat"></textarea>
             <button class="btn btn-primary" onclick="upMateri('mahfuzat')">UPDATE MAHFUZAT</button>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;">
             <span class="label-kecil">JUDUL DOA (CONTOH: DOA MAKAN)</span>
@@ -254,7 +255,6 @@
 
     window.onload = () => { 
         if(localStorage.getItem('admin_login') === 'true') document.getElementById('lock-screen').style.display='none'; 
-        // Set default tanggal monitoring tahfidz ke hari ini
         document.getElementById('mon-thf-tgl').value = new Date().toISOString().split('T')[0];
     };
     
@@ -275,17 +275,14 @@
         if(id === 'adu') loadPengaduan();
     }
 
-    // --- FUNGSI TAHFIDZ ---
     function loadMonTahfidz() {
         const kls = document.getElementById('mon-thf-kls').value;
         const tglPilih = document.getElementById('mon-thf-tgl').value;
         if(!kls || !tglPilih) return;
-
         db.ref(`tahfidz/2026`).on('value', snap => {
             const box = document.getElementById('list-tahfidz-mon');
             box.innerHTML = "";
             let adaData = false;
-
             snap.forEach(bulan => {
                 const dataTanggal = bulan.child(tglPilih);
                 if(dataTanggal.exists()){
@@ -316,7 +313,6 @@
         }
     }
 
-    // --- FUNGSI ABSEN ---
     function monAbsen() {
         const kls = document.getElementById('abs-kls').value;
         const d = new Date();
@@ -327,7 +323,6 @@
         });
     }
 
-    // --- FUNGSI UJIAN & BANK SOAL ---
     async function saveUjian() {
         const kls = document.getElementById('uj-kls').value;
         const mapel = document.getElementById('uj-mapel').value;
@@ -353,7 +348,6 @@
         document.getElementById('uj-bulk').value = "";
     }
 
-    // --- FUNGSI REKAP ---
     function loadRekapNilai() {
         const kls = document.getElementById('rek-kls').value;
         if(!kls) return;
@@ -389,7 +383,6 @@
         XLSX.writeFile(XLSX.utils.table_to_book(document.getElementById("tabel-rekap-13")), `Rekap_Nilai_${kls}.xlsx`);
     }
 
-    // --- FUNGSI MATERI & REWARD ---
     function upMateri(type) {
         if(type === 'mahfuzat') {
             db.ref('konten/mahfuzat').set({ arab: document.getElementById('mh-ar').value, indo: document.getElementById('mh-it').value });
@@ -441,7 +434,6 @@
         });
     }
 
-    // --- WA GATEWAY ---
     async function simpanNomorMassal() {
         const t = document.getElementById('wa-bulk-input').value.trim();
         if(!t) return alert("Data Kosong!");
