@@ -361,45 +361,44 @@
         });
     }
 
-    function loadMonTahfidz() {
-        const kls = document.getElementById('mon-thf-kls').value;
-        if(!kls) return;
+    // Tambahkan input tanggal di HTML agar admin bisa cek setoran hari-hari sebelumnya
+// <input type="date" id="mon-thf-tgl" onchange="loadMonTahfidz()">
 
-        // Ambil tanggal hari ini format YYYY-MM-DD
-        const hariIni = new Date().toISOString().split('T')[0]; 
+function loadMonTahfidz() {
+    const kls = document.getElementById('mon-thf-kls').value;
+    // Gunakan input tanggal jika ada, jika tidak gunakan hari ini
+    const tglPilih = document.getElementById('mon-thf-tgl')?.value || new Date().toISOString().split('T')[0];
+    
+    if(!kls) return;
 
-        db.ref(`tahfidz/2026`).on('value', snap => {
-            const box = document.getElementById('list-tahfidz-mon');
-            box.innerHTML = "";
-            let adaData = false;
+    // Langsung tembak ke tahun 2026 (sesuai struktur anda)
+    db.ref(`tahfidz/2026`).on('value', snap => {
+        const box = document.getElementById('list-tahfidz-mon');
+        box.innerHTML = "";
+        let adaData = false;
 
-            snap.forEach(bulan => {
-                bulan.forEach(tanggal => {
-                    // Cek apakah tanggal di database sama dengan hari ini
-                    if (tanggal.key === hariIni) { 
-                        tanggal.forEach(entry => {
-                            const d = entry.val();
-                            if(d.kelas === kls) {
-                                adaData = true;
-                                box.innerHTML += `
-                                    <div class="item-row">
-                                        <div style="display:flex; flex-direction:column;">
-                                            <b style="font-size:13px;">${d.nama}</b>
-                                            <span style="font-size:10px; color:var(--primary);">${d.materi}</span>
-                                        </div>
-                                        <span style="font-size:11px; background:#e8f5e9; padding:2px 8px; border-radius:5px; color:var(--primary);">HARI INI</span>
-                                    </div>`;
-                            }
-                        });
+        snap.forEach(bulan => {
+            const dataTanggal = bulan.child(tglPilih);
+            if(dataTanggal.exists()){
+                dataTanggal.forEach(entry => {
+                    const d = entry.val();
+                    if(d.kelas === kls) {
+                        adaData = true;
+                        box.innerHTML += `
+                            <div class="item-row">
+                                <div style="display:flex; flex-direction:column;">
+                                    <b style="font-size:13px;">${d.nama}</b>
+                                    <span style="font-size:10px; color:var(--primary);">${d.materi}</span>
+                                </div>
+                                <button onclick="hapusSetoran('${bulan.key}','${tglPilih}','${entry.key}')" style="border:none; background:none; color:red;"><i class="fas fa-trash"></i></button>
+                            </div>`;
                     }
                 });
-            });
-
-            if(!adaData) {
-                box.innerHTML = `<p style="text-align:center; font-size:12px; color:#999; padding:20px;">Belum ada setoran masuk hari ini untuk kelas ${kls}</p>`;
             }
         });
-    }
+        // ... handling if !adaData ...
+    });
+}
 
     async function simpanNomorMassal() {
         const t = document.getElementById('wa-bulk-input').value.trim();
